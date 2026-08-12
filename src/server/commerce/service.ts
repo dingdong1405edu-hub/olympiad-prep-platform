@@ -29,14 +29,26 @@ import { EVENTS, track } from '@/lib/analytics';
 import { RATE_LIMITS, enforceRateLimit } from '@/lib/rate-limit';
 import { addDays, daysUntil, formatDateVN } from '@/lib/dates';
 import { GRADE_BAND_LABEL, LEVEL_LABEL, SUBJECT_LABEL, formatVnd } from '@/lib/domain';
-import { appBaseUrl, getGateway, type ParsedWebhook } from './gateway';
+import {
+  appBaseUrl,
+  buildGatewayDescription,
+  getGateway,
+  type CreatePaymentResult,
+  type ParsedWebhook,
+  type PaymentGateway,
+  type PaymentQrPayload,
+} from './gateway';
+import { PAYOS_DUPLICATE_ORDER_CODE, PayosApiError } from './payos';
+import { tryBuildQrArtwork, type QrArtwork } from './qr';
 import {
   applyCouponSchema,
+  cancelPaymentSchema,
   createCheckoutSchema,
   extendEnrollmentSchema,
   listCouponsSchema,
   listPaymentsSchema,
   manualActivationSchema,
+  orderCodeSchema,
   previewCheckoutSchema,
   refundPaymentSchema,
   upsertCouponSchema,
@@ -124,12 +136,41 @@ export interface CheckoutPreview {
 export interface CreateCheckoutResult {
   paymentId: string;
   orderCode: string;
+  /** Chỉ có với cổng chuyển hướng. Cổng QR tại chỗ luôn để null. */
   redirectUrl: string | null;
   total: number;
   currency: string;
   /** true khi tổng tiền = 0 (voucher 100%) → quyền truy cập kích hoạt ngay. */
   activatedImmediately: boolean;
   enrollmentId?: string;
+  gateway: string;
+  /**
+   * Có giá trị khi cổng vẽ QR tại chỗ: đủ dữ liệu để mở thẳng màn hình quét mã
+   * mà không phải gọi thêm một vòng API nào nữa.
+   */
+  session: PaymentSession | null;
+  /** Trang theo dõi đơn — dùng khi cần rời khỏi luồng hiện tại. */
+  resultUrl: string;
+}
+
+/** Trạng thái đơn cho màn hình chờ thanh toán — không lộ dữ liệu của người khác. */
+export interface PaymentSession {
+  orderCode: string;
+  status: PaymentStatus;
+  statusLabel: string;
+  gateway: string;
+  amount: number;
+  amountLabel: string;
+  currency: string;
+  createdAt: string;
+  /** null khi cổng không trả QR (MANUAL) hoặc đơn đã đóng. */
+  qr: PaymentQrPayload | null;
+  qrArtwork: QrArtwork | null;
+  /** Có sau khi thanh toán thành công — nơi học sinh đi tiếp. */
+  enrollmentId: string | null;
+  course: { id: string; name: string; programName: string };
+  /** Cổng đã hết hạn nhận tiền cho đơn này. */
+  expired: boolean;
 }
 
 export interface WebhookResult {
@@ -331,6 +372,63 @@ function generateOrderCode(): string {
   return `OLP-${stamp}-${suffix}`;
 }
 
+/**
+ * Mã đơn dạng số cho cổng bắt buộc kiểu number (PayOS).
+ *
+ * 9 chữ số nằm gọn trong Int32 nên cột vẫn là INTEGER, khỏi kéo BigInt vào tầng
+ * JSON. Trùng thì đã có ràng buộc UNIQUE chặn lại và vòng lặp sinh mã khác.
+ */
+function generateNumericOrderRef(): number {
+  return 100_000_000 + Math.floor(Math.random() * 900_000_000);
+}
+
+/** Hạn hiệu lực của mã QR. Quá hạn cổng từ chối tiền vào, tránh trả tiền vào đơn chết. */
+const QR_TTL_MINUTES = 30;
+
+function qrExpiryFrom(createdAt: Date): Date {
+  return new Date(createdAt.getTime() + QR_TTL_MINUTES * 60_000);
+}
+
+/**
+ * Các mã số cổng ĐÃ TỪNG cấp cho đơn này.
+ *
+ * Mỗi lần mã QR hết hạn và xin mã mới, `gatewayOrderRef` bị ghi đè. Nếu chỉ tra
+ * theo mã hiện tại thì một webhook về muộn của mã cũ — tiền đã vào tài khoản
+ * thật — sẽ không tìm thấy đơn nào. Danh sách này khép lại đúng lỗ hổng đó.
+ */
+function readPreviousOrderRefs(meta: Prisma.JsonValue | null): number[] {
+  if (typeof meta !== 'object' || meta === null || Array.isArray(meta)) return [];
+  const list = (meta as Record<string, unknown>).previousOrderRefs;
+  if (!Array.isArray(list)) return [];
+  return list.filter((value): value is number => typeof value === 'number' && Number.isInteger(value));
+}
+
+/** `gatewayMeta` lưu dạng Json tự do — đọc lại phải kiểm kiểu, không tin cột JSON. */
+function readQrMeta(meta: Prisma.JsonValue | null): PaymentQrPayload | null {
+  if (typeof meta !== 'object' || meta === null || Array.isArray(meta)) return null;
+  const source = meta as Record<string, unknown>;
+  const qr = source.qr;
+  if (typeof qr !== 'object' || qr === null || Array.isArray(qr)) return null;
+
+  const payload = qr as Record<string, unknown>;
+  if (typeof payload.raw !== 'string' || payload.raw.length === 0) return null;
+
+  const str = (key: string): string | null =>
+    typeof payload[key] === 'string' && (payload[key] as string).length > 0 ? (payload[key] as string) : null;
+
+  return {
+    raw: payload.raw,
+    bin: str('bin'),
+    accountNumber: str('accountNumber'),
+    accountName: str('accountName'),
+    transferContent: str('transferContent'),
+    amount: typeof payload.amount === 'number' ? payload.amount : 0,
+    expiresAt: str('expiresAt'),
+    checkoutUrl: str('checkoutUrl'),
+    paymentLinkId: str('paymentLinkId'),
+  };
+}
+
 /** Mùa thi đang mở gần nhất của chương trình — gắn vào enrollment nếu có. */
 async function findCurrentCohortId(programId: string): Promise<string | null> {
   const now = new Date();
@@ -516,11 +614,14 @@ export async function createCheckout(input: CreateCheckoutInput): Promise<Create
     ip: input.ip ?? null,
   });
 
+  const resultUrl = `${appBaseUrl()}${checkoutResultPath(payment.orderCode)}`;
+
   if (total === 0) {
     const settled = await settlePayment({
       gatewayCode: 'MANUAL',
       parsed: {
         orderCode: payment.orderCode,
+        numericOrderRef: null,
         status: 'PAID',
         gatewayTxnId: `FREE-${payment.orderCode}`,
         amount: 0,
@@ -537,41 +638,133 @@ export async function createCheckout(input: CreateCheckoutInput): Promise<Create
       currency: pricing.currency,
       activatedImmediately: true,
       enrollmentId: settled.enrollmentId,
+      gateway: 'MANUAL',
+      session: null,
+      resultUrl,
     };
   }
 
   const gateway = getGateway(gatewayCode);
-  let redirectUrl: string | null = null;
-  try {
-    const created = await gateway.createPayment({
-      orderCode: payment.orderCode,
-      amount: total,
-      currency: pricing.currency,
-      description: `${course.program.code} - ${course.name}`,
-      customerRef: userId,
-      returnUrl: `${appBaseUrl()}/checkout/${payment.orderCode}`,
-    });
-    redirectUrl = created.redirectUrl;
-    if (created.gatewayTxnId) {
-      await prisma.payment.update({ where: { id: payment.id }, data: { gatewayTxnId: created.gatewayTxnId } });
-    }
-  } catch (error) {
-    if (error instanceof ApiError) throw error;
-    console.error('[commerce] cổng thanh toán lỗi khi tạo đơn', error);
-    throw new ApiError(502, 'PAYMENT_GATEWAY_ERROR', 'Không kết nối được cổng thanh toán, vui lòng thử lại sau.');
-  }
+  const created = await openGatewayPayment({
+    gateway,
+    paymentId: payment.id,
+    orderCode: payment.orderCode,
+    numericOrderRef: payment.gatewayOrderRef,
+    amount: total,
+    currency: pricing.currency,
+    description: buildGatewayDescription(payment.orderCode),
+    customerRef: userId,
+    resultUrl,
+  });
 
   return {
     paymentId: payment.id,
     orderCode: payment.orderCode,
-    redirectUrl,
+    redirectUrl: created.redirectUrl,
     total,
     currency: pricing.currency,
     activatedImmediately: false,
+    gateway: gateway.code,
+    // Đơn vừa mở xong nên không cần hỏi lại cổng — tiết kiệm một vòng gọi mạng
+    // ngay ở khoảnh khắc người dùng đang chờ mã QR hiện ra.
+    session: created.qr ? await getPaymentSession(userId, payment.orderCode, { reconcile: false }) : null,
+    resultUrl,
   };
 }
 
-/** Tạo Payment với orderCode duy nhất; thử lại khi trùng mã ngẫu nhiên. */
+/** Trùng `routes.checkoutResult`; giữ bản sao ở server để tầng dịch vụ không import UI. */
+function checkoutResultPath(orderCode: string): string {
+  return `/thanh-toan/ket-qua/${orderCode}`;
+}
+
+/**
+ * Mở đơn ở phía cổng rồi ghi QR/mã giao dịch vào Payment.
+ *
+ * Tách riêng vì có hai chỗ gọi: lúc tạo đơn, và lúc người dùng quay lại trang chờ
+ * khi mã QR cũ đã hết hạn. PayOS báo trùng `orderCode` (mã 231) khi số đó đã tồn
+ * tại phía họ — hay gặp khi dev và production dùng chung khóa merchant — nên gặp
+ * mã đó thì cấp số mới rồi thử lại, thay vì bắt khách chịu lỗi.
+ */
+async function openGatewayPayment(input: {
+  gateway: PaymentGateway;
+  paymentId: string;
+  orderCode: string;
+  numericOrderRef: number | null;
+  amount: number;
+  currency: string;
+  description: string;
+  customerRef: string;
+  resultUrl: string;
+  /** Mã số đã dùng ở những lần mở trước — giữ lại để webhook về muộn vẫn khớp đơn. */
+  previousOrderRefs?: number[];
+}): Promise<CreatePaymentResult> {
+  const now = new Date();
+  const expiresAt = qrExpiryFrom(now);
+  let numericOrderRef = input.numericOrderRef ?? generateNumericOrderRef();
+
+  // Giới hạn 20 mã: đủ cho mọi lần gia hạn thực tế mà cột JSON không phình vô hạn.
+  const history = [...new Set(input.previousOrderRefs ?? [])].slice(-20);
+
+  for (let attempt = 0; attempt < 4; attempt += 1) {
+    try {
+      const created = await input.gateway.createPayment({
+        orderCode: input.orderCode,
+        numericOrderRef,
+        amount: input.amount,
+        currency: input.currency,
+        description: input.description,
+        customerRef: input.customerRef,
+        returnUrl: input.resultUrl,
+        cancelUrl: `${input.resultUrl}?huy=1`,
+        expiresAt: input.gateway.rendersQrInline ? expiresAt : null,
+      });
+
+      await prisma.payment.update({
+        where: { id: input.paymentId },
+        data: {
+          gatewayOrderRef: numericOrderRef,
+          ...(created.gatewayTxnId ? { gatewayTxnId: created.gatewayTxnId } : {}),
+          ...(created.qr
+            ? {
+                gatewayMeta: {
+                  qr: { ...created.qr, expiresAt: created.qr.expiresAt ?? expiresAt.toISOString() },
+                  openedAt: now.toISOString(),
+                  previousOrderRefs: history,
+                } as unknown as Prisma.InputJsonValue,
+              }
+            : {}),
+        },
+      });
+
+      return created;
+    } catch (error) {
+      const duplicated =
+        (error instanceof PayosApiError && error.code === PAYOS_DUPLICATE_ORDER_CODE) ||
+        (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002');
+
+      if (duplicated && attempt < 3) {
+        numericOrderRef = generateNumericOrderRef();
+        continue;
+      }
+
+      if (error instanceof ApiError) throw error;
+      if (error instanceof PayosApiError) {
+        console.error('[commerce] PayOS từ chối tạo đơn', { code: error.code, message: error.message });
+        throw new ApiError(502, 'PAYMENT_GATEWAY_ERROR', `Cổng thanh toán từ chối tạo đơn: ${error.message}`);
+      }
+      console.error('[commerce] cổng thanh toán lỗi khi tạo đơn', error);
+      throw new ApiError(502, 'PAYMENT_GATEWAY_ERROR', 'Không kết nối được cổng thanh toán, vui lòng thử lại sau.');
+    }
+  }
+
+  throw new ApiError(502, 'PAYMENT_GATEWAY_ERROR', 'Không tạo được mã thanh toán, vui lòng thử lại.');
+}
+
+/**
+ * Tạo Payment với orderCode duy nhất; thử lại khi trùng mã ngẫu nhiên.
+ * Cấp luôn `gatewayOrderRef` ngay từ đầu để đối soát theo mã số làm được kể cả
+ * khi lời gọi sang cổng thất bại giữa chừng.
+ */
 async function createPaymentRow(data: {
   userId: string;
   courseId: string;
@@ -581,13 +774,13 @@ async function createPaymentRow(data: {
   currency: string;
   gateway: string;
   couponId: string | null;
-}): Promise<{ id: string; orderCode: string }> {
+}): Promise<{ id: string; orderCode: string; gatewayOrderRef: number | null }> {
   for (let attempt = 0; attempt < 5; attempt += 1) {
     const orderCode = generateOrderCode();
     try {
       const payment = await prisma.payment.create({
-        data: { ...data, orderCode, status: 'PENDING' },
-        select: { id: true, orderCode: true },
+        data: { ...data, orderCode, gatewayOrderRef: generateNumericOrderRef(), status: 'PENDING' },
+        select: { id: true, orderCode: true, gatewayOrderRef: true },
       });
       return payment;
     } catch (error) {
@@ -608,8 +801,32 @@ interface SettleInput {
   parsed: ParsedWebhook;
   rawPayload: unknown;
   actorId?: string | null;
-  via: 'WEBHOOK' | 'MANUAL_CONFIRM' | 'FREE_ORDER';
+  /** RECONCILE = mình chủ động hỏi cổng, không phải cổng gọi vào. */
+  via: 'WEBHOOK' | 'MANUAL_CONFIRM' | 'FREE_ORDER' | 'RECONCILE';
   ip?: string | null;
+}
+
+/**
+ * Tìm Payment từ dữ liệu webhook. Cổng kiểu PayOS chỉ biết mã số nên phải tra
+ * theo `gatewayOrderRef`; cổng gửi lại mã đơn nội bộ thì tra thẳng theo orderCode.
+ */
+async function findPaymentForWebhook(parsed: ParsedWebhook) {
+  if (parsed.orderCode) {
+    const byOrderCode = await prisma.payment.findUnique({ where: { orderCode: parsed.orderCode } });
+    if (byOrderCode) return byOrderCode;
+  }
+  if (parsed.numericOrderRef !== null) {
+    const byRef = await prisma.payment.findUnique({ where: { gatewayOrderRef: parsed.numericOrderRef } });
+    if (byRef) return byRef;
+
+    // Mã cũ của đơn đã được cấp lại QR: tiền vẫn là tiền thật, phải khớp được đơn.
+    return prisma.payment.findFirst({
+      where: {
+        gatewayMeta: { path: ['previousOrderRefs'], array_contains: parsed.numericOrderRef },
+      },
+    });
+  }
+  return null;
 }
 
 /** Enrollment gắn với payment; fallback theo (học sinh, khóa) khi đơn đã bị đơn mới ghi đè. */
@@ -649,8 +866,22 @@ async function settlePayment(input: SettleInput): Promise<WebhookResult> {
   const idempotencyKey = `${input.gatewayCode}:${parsed.gatewayTxnId}`;
   const config = await getConfig();
 
-  const payment = await prisma.payment.findUnique({ where: { orderCode: parsed.orderCode } });
-  if (!payment) throw ApiError.notFound(`Không tìm thấy đơn hàng ${parsed.orderCode}.`);
+  const payment = await findPaymentForWebhook(parsed);
+  if (!payment) {
+    const label = parsed.orderCode ?? parsed.numericOrderRef;
+    /**
+     * Webhook trỏ tới đơn không tồn tại. Đúng một tình huống bình thường gây ra
+     * chuyện này: PayOS bắn gói thử (orderCode 123) lúc đăng ký URL và chỉ chấp
+     * nhận URL nào trả HTTP 200. Còn lại là webhook lạc từ môi trường khác dùng
+     * chung khóa merchant — cũng không có gì để làm. Cả hai đều phải trả 200,
+     * vì trả lỗi chỉ khiến cổng bắn lại mãi mãi.
+     */
+    if (input.via === 'WEBHOOK') {
+      console.warn('[commerce] webhook trỏ tới đơn không tồn tại', { orderCode: label });
+      return { handled: false, alreadyProcessed: false, reason: 'ORDER_NOT_FOUND' };
+    }
+    throw ApiError.notFound(`Không tìm thấy đơn hàng ${label}.`);
+  }
 
   // (a) Đơn đã được xử lý trước đó — trả về kết quả cũ, tuyệt đối không cấp lại quyền.
   if (payment.idempotencyKey !== null || payment.status === 'PAID' || payment.status === 'REFUNDED') {
@@ -882,6 +1113,229 @@ export async function handlePaymentWebhook(input: {
   });
 }
 
+// ---------------------------------------------------------------------------
+// 2b. Trang chờ thanh toán: đọc QR, hỏi cổng, hủy đơn
+// ---------------------------------------------------------------------------
+
+const paymentSessionInclude = {
+  course: { select: { id: true, name: true, program: { select: { name: true } } } },
+  enrollment: { select: { id: true } },
+} as const;
+
+type PaymentForSession = Prisma.PaymentGetPayload<{ include: typeof paymentSessionInclude }>;
+
+/** Chủ đơn mới được xem. Không dùng ApiError.notFound riêng cho hai trường hợp
+ *  "không có đơn" và "đơn của người khác" — làm vậy là để lộ mã đơn nào có thật. */
+async function loadOwnPayment(userId: string, orderCode: string): Promise<PaymentForSession> {
+  const payment = await prisma.payment.findUnique({
+    where: { orderCode: orderCodeSchema.parse(orderCode) },
+    include: paymentSessionInclude,
+  });
+  if (!payment || payment.userId !== userId) {
+    throw ApiError.notFound('Không tìm thấy đơn hàng này.');
+  }
+  return payment;
+}
+
+function toPaymentSession(payment: PaymentForSession, qr: PaymentQrPayload | null): PaymentSession {
+  const expiresAt = qr?.expiresAt ? new Date(qr.expiresAt).getTime() : null;
+  const live = payment.status === 'PENDING' ? qr : null;
+  return {
+    qrArtwork: tryBuildQrArtwork(live?.raw),
+    orderCode: payment.orderCode,
+    status: payment.status,
+    statusLabel: PAYMENT_STATUS_LABEL[payment.status],
+    gateway: payment.gateway,
+    amount: payment.amount,
+    amountLabel: formatVnd(payment.amount),
+    currency: payment.currency,
+    createdAt: payment.createdAt.toISOString(),
+    qr: live,
+    enrollmentId: payment.enrollment?.id ?? null,
+    course: {
+      id: payment.course.id,
+      name: payment.course.name,
+      programName: payment.course.program.name,
+    },
+    expired: expiresAt !== null && expiresAt <= Date.now(),
+  };
+}
+
+/**
+ * Trạng thái đơn cho màn hình chờ + ĐỐI SOÁT CHỦ ĐỘNG với cổng.
+ *
+ * Đây là xương sống của luồng QR, không phải tối ưu phụ. Webhook không bao giờ
+ * tới được localhost, và trên production nó vẫn có thể trễ hoặc rớt. Trang chờ
+ * gọi hàm này vài giây một lần, nên tiền vào là quyền truy cập mở — webhook chỉ
+ * còn là đường nhanh hơn, không phải đường duy nhất.
+ *
+ * Kích hoạt vẫn đi qua đúng `settlePayment` nên chạy song song với webhook cũng
+ * chỉ cấp quyền một lần.
+ */
+export async function getPaymentSession(
+  userId: string,
+  orderCode: string,
+  options: { reconcile?: boolean } = {},
+): Promise<PaymentSession> {
+  let payment = await loadOwnPayment(userId, orderCode);
+
+  if (options.reconcile !== false && payment.status === 'PENDING') {
+    const settled = await reconcileWithGateway(payment);
+    if (settled) payment = await loadOwnPayment(userId, orderCode);
+  }
+
+  let qr = readQrMeta(payment.gatewayMeta);
+
+  // Mã QR hết hạn mà đơn còn treo: xin cổng mã mới thay vì bắt khách tạo lại đơn.
+  if (payment.status === 'PENDING' && qr && new Date(qr.expiresAt ?? 0).getTime() <= Date.now()) {
+    const gateway = getGateway(payment.gateway);
+    if (gateway.rendersQrInline) {
+      const created = await openGatewayPayment({
+        gateway,
+        paymentId: payment.id,
+        orderCode: payment.orderCode,
+        // Mã cũ đã gắn với link hết hạn phía cổng → phải cấp số mới.
+        numericOrderRef: null,
+        amount: payment.amount,
+        currency: payment.currency,
+        description: buildGatewayDescription(payment.orderCode),
+        customerRef: payment.userId,
+        resultUrl: `${appBaseUrl()}${checkoutResultPath(payment.orderCode)}`,
+        previousOrderRefs: [
+          ...readPreviousOrderRefs(payment.gatewayMeta),
+          ...(payment.gatewayOrderRef === null ? [] : [payment.gatewayOrderRef]),
+        ],
+      });
+      qr = created.qr;
+    }
+  }
+
+  return toPaymentSession(payment, qr);
+}
+
+/**
+ * Hỏi cổng xem đơn đã có tiền chưa; có thì đi qua `settlePayment`.
+ * Trả true khi trạng thái đơn vừa đổi. Lỗi mạng ở đây KHÔNG được ném ra ngoài —
+ * trang chờ vẫn phải hiện mã QR dù cổng đang chập chờn.
+ */
+async function reconcileWithGateway(payment: {
+  id: string;
+  orderCode: string;
+  gateway: string;
+  amount: number;
+  gatewayOrderRef: number | null;
+  gatewayMeta: Prisma.JsonValue | null;
+}): Promise<boolean> {
+  let gateway;
+  try {
+    gateway = getGateway(payment.gateway);
+  } catch {
+    return false;
+  }
+  if (!gateway.queryPayment) return false;
+
+  const qr = readQrMeta(payment.gatewayMeta);
+
+  try {
+    const snapshot = await gateway.queryPayment({
+      orderCode: payment.orderCode,
+      numericOrderRef: payment.gatewayOrderRef,
+      paymentLinkId: qr?.paymentLinkId ?? null,
+    });
+
+    if (snapshot.state === 'PAID') {
+      const result = await settlePayment({
+        gatewayCode: gateway.code,
+        parsed: {
+          orderCode: payment.orderCode,
+          numericOrderRef: payment.gatewayOrderRef,
+          status: 'PAID',
+          gatewayTxnId: snapshot.gatewayTxnId ?? `${gateway.code}-${payment.gatewayOrderRef ?? payment.orderCode}`,
+          // Dùng số tiền cổng ĐÃ NHẬN, không dùng số tiền mình mong đợi —
+          // trả thiếu phải rơi vào nhánh lệch tiền chứ không được kích hoạt.
+          amount: snapshot.amountPaid || payment.amount,
+        },
+        rawPayload: snapshot.raw,
+        via: 'RECONCILE',
+      });
+      return result.handled;
+    }
+
+    // CHỈ đóng đơn khi cổng báo đã HỦY. Link HẾT HẠN thì để nguyên trạng thái
+    // chờ: người dùng vẫn đang muốn mua, chỉ là mã QR quá hạn — luồng bên dưới
+    // sẽ xin cổng cấp mã mới cho chính đơn này, thay vì bắt họ đặt lại từ đầu.
+    if (snapshot.state === 'CANCELLED') {
+      await prisma.payment.updateMany({
+        where: { id: payment.id, status: 'PENDING' },
+        data: { status: 'CANCELLED' },
+      });
+      return true;
+    }
+
+    return false;
+  } catch (error) {
+    console.error('[commerce] không đối soát được với cổng thanh toán', {
+      orderCode: payment.orderCode,
+      error: error instanceof Error ? error.message : error,
+    });
+    return false;
+  }
+}
+
+/** Người dùng bỏ dở đơn: đóng cả phía mình lẫn phía cổng để không còn nhận tiền vào. */
+export async function cancelPendingPayment(
+  userId: string,
+  input: { orderCode: string; reason?: string },
+): Promise<PaymentSession> {
+  const data = cancelPaymentSchema.parse(input);
+  const payment = await loadOwnPayment(userId, data.orderCode);
+
+  if (payment.status === 'PAID' || payment.status === 'REFUNDED') {
+    throw ApiError.conflict('Đơn hàng đã thanh toán nên không thể hủy. Vui lòng liên hệ bộ phận hỗ trợ.');
+  }
+  if (payment.status !== 'PENDING') return toPaymentSession(payment, null);
+
+  const reason = data.reason?.trim() || 'Người dùng hủy trên trang thanh toán';
+  const gateway = getGateway(payment.gateway);
+
+  if (gateway.cancelPayment) {
+    try {
+      await gateway.cancelPayment({
+        orderCode: payment.orderCode,
+        numericOrderRef: payment.gatewayOrderRef,
+        paymentLinkId: readQrMeta(payment.gatewayMeta)?.paymentLinkId ?? null,
+        reason,
+      });
+    } catch (error) {
+      // Cổng có thể đã tự đóng link vì hết hạn. Đóng phía mình vẫn đúng.
+      console.warn('[commerce] cổng từ chối hủy link thanh toán', {
+        orderCode: payment.orderCode,
+        error: error instanceof Error ? error.message : error,
+      });
+    }
+  }
+
+  // updateMany + điều kiện PENDING: webhook báo thành công xen vào giữa thì
+  // câu này không ăn, tiền của khách không bị hủy oan.
+  const closed = await prisma.payment.updateMany({
+    where: { id: payment.id, status: 'PENDING' },
+    data: { status: 'CANCELLED', gatewayMeta: Prisma.DbNull },
+  });
+
+  if (closed.count > 0) {
+    await writeAudit({
+      actorId: userId,
+      action: AUDIT_ACTIONS.PAYMENT_WEBHOOK,
+      entityType: 'Payment',
+      entityId: payment.id,
+      before: { status: 'PENDING' },
+      after: { status: 'CANCELLED', via: 'USER_CANCEL', reason },
+    });
+  }
+
+  return getPaymentSession(userId, payment.orderCode, { reconcile: false });
+}
+
 /** Xác nhận tay (dev/admin) — đi qua ĐÚNG đường idempotent của webhook. */
 export async function confirmMockPayment(orderCode: string, actorId?: string): Promise<{ enrollmentId: string }> {
   const config = await getConfig();
@@ -900,6 +1354,7 @@ export async function confirmMockPayment(orderCode: string, actorId?: string): P
     gatewayCode: payment.gateway,
     parsed: {
       orderCode: payment.orderCode,
+      numericOrderRef: payment.gatewayOrderRef,
       status: 'PAID',
       gatewayTxnId: `MANUAL-${payment.orderCode}`,
       amount: payment.amount,

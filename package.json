@@ -21,7 +21,8 @@
     "setup": "npm install && prisma generate && prisma db push && npm run db:seed",
     "maintenance": "tsx scripts/maintenance.ts",
     "smoke": "tsx scripts/smoke-test.ts",
-    "bootstrap": "tsx scripts/bootstrap.ts"
+    "bootstrap": "tsx scripts/bootstrap.ts",
+    "payos:webhook": "tsx scripts/payos-webhook.ts"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
@@ -32,10 +33,12 @@
   "dependencies": {
     "@anthropic-ai/sdk": "^0.116.0",
     "@prisma/client": "^6.19.3",
+    "@types/qrcode": "^1.5.6",
     "bcryptjs": "^3.0.3",
     "jose": "^6.2.8",
     "next": "^15.5.23",
     "prisma": "^6.19.3",
+    "qrcode": "^1.5.4",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "tsx": "^4.23.12",

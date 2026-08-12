@@ -1,8 +1,12 @@
 import { requireAdmin } from '@/lib/auth';
 import { listPayments } from '@/server/commerce/service';
+import { getGateway, webhookUrlFor } from '@/server/commerce/gateway';
+import { isPayosConfigured } from '@/server/commerce/payos';
+import { getConfig } from '@/lib/config';
 import { formatVnd } from '@/lib/domain';
 import { formatDateTimeVN } from '@/lib/dates';
 import { Badge, EmptyState, PageHeader, StatTile, Table, Td, Tr } from '@/components/ui';
+import { GatewayStatus } from './gateway-status';
 
 export const dynamic = 'force-dynamic';
 
@@ -32,11 +36,31 @@ export default async function AdminPaymentsPage({
   await requireAdmin();
   const { page } = await searchParams;
 
-  const result = await listPayments({ page: page ? Number(page) : 1, pageSize: 30 });
+  const [result, config] = await Promise.all([
+    listPayments({ page: page ? Number(page) : 1, pageSize: 30 }),
+    getConfig(),
+  ]);
+
+  // Cổng cấu hình sai không được làm sập cả trang quản trị — vẫn phải xem được
+  // danh sách đơn để đối soát, thậm chí ĐẶC BIỆT cần xem lúc cổng đang hỏng.
+  let gateway: { code: string; label: string; rendersQrInline: boolean } | null = null;
+  try {
+    gateway = getGateway(config.commerce.gateway);
+  } catch {
+    gateway = null;
+  }
+  const gatewayCode = gateway?.code ?? config.commerce.gateway;
 
   return (
     <div>
       <PageHeader eyebrow="Quản trị" title="Thanh toán" subtitle="Giao dịch, đối soát và hoàn tiền." />
+
+      <GatewayStatus
+        active={gateway ? `${gateway.code} — ${gateway.label}` : `${gatewayCode} (chưa hỗ trợ)`}
+        configured={gateway !== null && (gatewayCode !== 'PAYOS' || isPayosConfigured())}
+        webhookUrl={webhookUrlFor(gatewayCode)}
+        rendersQrInline={gateway?.rendersQrInline ?? false}
+      />
 
       <div className="mb-6 grid gap-3 sm:grid-cols-3">
         <StatTile label="Tổng đơn" value={result.total.toLocaleString('vi-VN')} />

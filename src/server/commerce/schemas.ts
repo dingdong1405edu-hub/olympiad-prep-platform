@@ -41,6 +41,19 @@ export const confirmMockPaymentSchema = z.object({
   orderCode: z.string().trim().min(4, 'Mã đơn hàng không hợp lệ.'),
 });
 
+/** Mã đơn trên URL/param — chuẩn hóa hoa để tra cứu không phụ thuộc cách gõ. */
+export const orderCodeSchema = z
+  .string()
+  .trim()
+  .min(4, 'Mã đơn hàng không hợp lệ.')
+  .max(40, 'Mã đơn hàng không hợp lệ.')
+  .transform((value) => value.toUpperCase());
+
+export const cancelPaymentSchema = z.object({
+  orderCode: orderCodeSchema,
+  reason: z.string().trim().max(200, 'Lý do hủy tối đa 200 ký tự.').optional(),
+});
+
 /** Payload webhook của MockGateway — cổng thật có payload riêng, parse trong gateway.ts. */
 export const mockWebhookPayloadSchema = z.object({
   orderCode: z.string().trim().min(4, 'Mã đơn hàng không hợp lệ.'),
