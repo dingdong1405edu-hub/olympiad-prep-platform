@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation';
 import type { Role } from '@prisma/client';
 import { ADMIN_ROLES, CONTENT_ROLES, getSession, hasRole } from '@/lib/auth';
 import { routes } from '@/lib/routes';
-import { ADMIN_NAV, AppShell } from '@/components/shell';
+import { ADMIN_NAV, AppShell, navFor } from '@/components/shell';
 import { Alert } from '@/components/ui';
 
 export const dynamic = 'force-dynamic';
@@ -15,22 +15,20 @@ export const dynamic = 'force-dynamic';
  */
 const ADMIN_AREA_ROLES: Role[] = Array.from(new Set([...ADMIN_ROLES, ...CONTENT_ROLES]));
 
-/** Người chỉ làm học liệu không cần thấy menu người dùng / thanh toán. */
-const CONTENT_ONLY_NAV = ADMIN_NAV.filter((item) => item.href === routes.adminContent());
+// Thanh điều hướng nay tự lọc theo vai trò của từng người (xem `navFor`), nên
+// không cần danh sách riêng cho nhóm học liệu nữa — và quan trọng hơn, Admin vận
+// hành không còn thấy mục "Học liệu" mà bấm vào là gặp trang lỗi.
 
 export default async function AdminLayout({ children }: { children: ReactNode }) {
   const session = await getSession();
   if (!session) redirect(routes.login(routes.adminHome()));
 
-  const isAdmin = hasRole(session, ...ADMIN_ROLES);
+  const shellUser = { id: session.id, fullName: session.fullName, roles: session.roles };
   const canEnter = hasRole(session, ...ADMIN_AREA_ROLES);
 
   if (!canEnter) {
     return (
-      <AppShell
-        user={{ id: session.id, fullName: session.fullName, roles: session.roles }}
-        areaLabel="Quản trị"
-      >
+      <AppShell user={shellUser} area="admin" areaLabel="Quản trị">
         <Alert tone="warn" title="Bạn chưa có quyền vào khu quản trị">
           Tài khoản của bạn không thuộc nhóm quản trị hoặc nhóm học liệu. Nếu bạn cần quyền biên soạn
           hoặc thẩm định câu hỏi, hãy liên hệ Quản lý chương trình để được cấp vai trò.
@@ -41,8 +39,9 @@ export default async function AdminLayout({ children }: { children: ReactNode })
 
   return (
     <AppShell
-      user={{ id: session.id, fullName: session.fullName, roles: session.roles }}
-      nav={isAdmin ? ADMIN_NAV : CONTENT_ONLY_NAV}
+      user={shellUser}
+      nav={navFor(shellUser, ADMIN_NAV)}
+      area="admin"
       areaLabel="Quản trị"
       wide
     >

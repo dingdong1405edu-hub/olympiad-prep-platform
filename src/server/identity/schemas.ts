@@ -222,3 +222,39 @@ export const updateStudentProfileSchema = z.object({
 });
 
 export type UpdateStudentProfileInput = z.infer<typeof updateStudentProfileSchema>;
+
+/**
+ * Quản trị sửa thông tin liên lạc của một tài khoản.
+ *
+ * `null` KHÁC `undefined` ở đây và sự khác biệt đó là cả tính năng: `undefined`
+ * là "không đụng tới ô này", còn `null` là "xóa trắng ô này". Nếu gộp cả hai thì
+ * không có cách nào gỡ một email gõ nhầm ra khỏi tài khoản.
+ */
+export const updateUserAccountSchema = z
+  .object({
+    fullName: fullNameSchema.optional(),
+    email: z.preprocess(
+      (value) => (typeof value === 'string' && value.trim() === '' ? null : value),
+      z.string().trim().toLowerCase().email('Email không hợp lệ.').max(160).nullable().optional(),
+    ),
+    phone: z.preprocess(
+      (value) => {
+        if (typeof value !== 'string') return value;
+        const phone = normalizePhone(value);
+        return phone === '' ? null : phone;
+      },
+      z.string().regex(VN_PHONE_PATTERN, 'Số điện thoại không hợp lệ.').nullable().optional(),
+    ),
+  })
+  .refine((data) => Object.values(data).some((value) => value !== undefined), {
+    message: 'Chưa có thay đổi nào để lưu.',
+  });
+
+export type UpdateUserAccountInput = z.infer<typeof updateUserAccountSchema>;
+
+/** Quản trị đặt lại mật khẩu hộ người dùng — không cần biết mật khẩu cũ. */
+export const setUserPasswordSchema = z.object({
+  newPassword: passwordSchema,
+});
+
+export type SetUserPasswordInput = z.infer<typeof setUserPasswordSchema>;

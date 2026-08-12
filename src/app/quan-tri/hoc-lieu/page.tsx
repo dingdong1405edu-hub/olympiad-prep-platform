@@ -1,4 +1,4 @@
-import { requireContentStaff, hasRole, PUBLISH_ROLES } from '@/lib/auth';
+import { requireSession, hasRole, CONTENT_ROLES, PUBLISH_ROLES } from '@/lib/auth';
 import { routes } from '@/lib/routes';
 import { listChapters, listItems, listSkills } from '@/server/content/service';
 import { listPrograms } from '@/server/catalog/service';
@@ -17,6 +17,7 @@ import {
   SUBJECT_LABEL,
 } from '@/lib/domain';
 import {
+  Alert,
   Card,
   EmptyState,
   Input,
@@ -70,7 +71,22 @@ export default async function ContentItemsPage({
 }: {
   searchParams: Promise<SearchParams>;
 }) {
-  const session = await requireContentStaff();
+  // hasRole thay vì requireContentStaff: Admin vận hành KHÔNG nằm trong nhóm học
+  // liệu, và ném lỗi ở Server Component thì thành trang lỗi 500 không nói gì.
+  // Thiếu quyền là chuyện bình thường, phải nói thành lời.
+  const session = await requireSession();
+  if (!hasRole(session, ...CONTENT_ROLES)) {
+    return (
+      <div>
+        <PageHeader eyebrow="Quản trị" title="Kho câu hỏi" />
+        <Alert tone="warn" title="Bạn không có quyền vào kho câu hỏi">
+          Khu học liệu dành cho Biên soạn viên, Reviewer, Quản lý chương trình và Super Admin. Tài
+          khoản Admin vận hành quản lý tài khoản và thanh toán, không soạn câu hỏi.
+        </Alert>
+      </div>
+    );
+  }
+
   const params = await searchParams;
 
   // Chỉ giữ khóa hợp lệ và bỏ ô rỗng trước khi validate — form GET luôn gửi kèm ô trống.

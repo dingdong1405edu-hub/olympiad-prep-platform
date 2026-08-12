@@ -124,7 +124,16 @@ export function ProgramManager({
     }
   }
 
-  /** Bật/tắt nhanh một kỳ thi — gửi lại đúng bản ghi hiện có, chỉ đổi cờ hoạt động. */
+  /**
+   * Bật/tắt nhanh một kỳ thi.
+   *
+   * PHẢI GỬI LẠI ĐỦ MỌI TRƯỜNG, kể cả những trường nút này không đụng tới.
+   * `upsertProgram` là thao tác ghi đè toàn bộ bản ghi: trường nào vắng mặt
+   * trong payload sẽ được ghi thành null (xem `payload` trong
+   * src/server/catalog/service.ts). Bản trước bỏ qua câu chốt, bài giới thiệu và
+   * link video, nên chỉ cần bấm "Tạm ẩn" rồi "Mở lại" là toàn bộ nội dung bán
+   * hàng vừa soạn biến mất, không cảnh báo, không hoàn tác được.
+   */
   async function toggleProgram(program: ProgramSummary) {
     await submit(
       API.adminPrograms,
@@ -139,12 +148,20 @@ export function ProgramManager({
         highlights: program.highlights,
         season: program.season ?? undefined,
         order: program.order,
+        // Nội dung giới thiệu — giữ nguyên, đừng để nút bật/tắt xóa mất.
+        tagline: program.tagline ?? undefined,
+        longDescription: program.longDescription ?? undefined,
+        introVideoUrl: program.introVideoUrl ?? undefined,
+        introVideoPoster: program.introVideoPoster ?? undefined,
+        sections: program.sections,
+        faqs: program.faqs,
         active: !program.active,
       },
       program.active ? `Đã tạm ẩn kỳ thi ${program.code}.` : `Đã mở lại kỳ thi ${program.code}.`,
     );
   }
 
+  /** Cùng lý do như toggleProgram: thiếu trường nào là trường đó bị xóa trắng. */
   async function toggleCourse(course: CourseSummary) {
     await submit(
       API.adminCourses,
@@ -155,6 +172,11 @@ export function ProgramManager({
         subject: course.subject,
         name: course.name,
         description: course.description ?? undefined,
+        tagline: course.tagline ?? undefined,
+        longDescription: course.longDescription ?? undefined,
+        introVideoUrl: course.introVideoUrl ?? undefined,
+        outcomes: course.outcomes,
+        syllabus: course.syllabus,
         active: !course.active,
       },
       course.active ? 'Đã tạm ẩn khóa học.' : 'Đã mở lại khóa học.',
@@ -196,8 +218,15 @@ export function ProgramManager({
         title="Kỳ thi đang khai báo"
         description={`${programs.length} kỳ thi trong hệ thống. Bấm vào một kỳ thi để xem khóa học, mùa thi và bảng giá.`}
       >
+        {/* `key` là BẮT BUỘC, không phải để React đỡ cảnh báo.
+            Các ô nhập của ProgramForm là useState khởi tạo MỘT LẦN từ prop. Không
+            có key thì bấm "Sửa" sang kỳ thi khác chỉ đổi prop chứ không dựng lại
+            component: tiêu đề đổi sang kỳ thi mới nhưng nội dung các ô vẫn là của
+            kỳ thi cũ, và bấm Lưu sẽ gửi id kỳ thi mới kèm mã kỳ thi cũ → 409
+            "Mã kỳ thi đã tồn tại". Đổi key buộc React vứt state cũ đi. */}
         {panel?.kind === 'program' ? (
           <ProgramForm
+            key={panel.program?.id ?? 'tao-moi'}
             program={panel.program}
             saving={saving}
             error={formError}
@@ -265,7 +294,10 @@ export function ProgramManager({
 
                   <div className="mt-auto flex flex-wrap gap-2">
                     <Link
-                      href={`${routes.adminPrograms()}?kyThi=${program.code}`}
+                      // Trang đọc `searchParams.program` (xem page.tsx). Bản
+                      // trước gửi `?kyThi=` nên bấm "Xem chi tiết" không đổi
+                      // được kỳ thi đang xem — URL đổi mà nội dung đứng yên.
+                      href={`${routes.adminPrograms()}?program=${program.code}`}
                       className="press inline-flex items-center rounded-lg bg-brand-50 px-3 py-1.5 text-sm font-medium text-brand-700 transition-colors hover:bg-brand-100"
                     >
                       {isSelected ? 'Đang xem' : 'Xem chi tiết'}
@@ -327,8 +359,11 @@ export function ProgramManager({
               </Alert>
             ) : null}
 
+            {/* Cùng lý do như ProgramForm ở trên: thiếu key thì sửa khóa này lại
+                lưu đè nội dung của khóa vừa mở trước đó. */}
             {panel?.kind === 'course' ? (
               <CourseForm
+                key={panel.course?.id ?? 'tao-moi'}
                 course={panel.course}
                 programId={selected.id}
                 saving={saving}
@@ -346,6 +381,7 @@ export function ProgramManager({
 
             {panel?.kind === 'pricing' ? (
               <PricingForm
+                key={panel.course?.id ?? 'gia-chung'}
                 course={panel.course}
                 programId={selected.id}
                 programPricing={selected.pricing}
@@ -505,6 +541,7 @@ export function ProgramManager({
       >
         {panel?.kind === 'coupon' ? (
           <CouponForm
+            key={panel.coupon?.id ?? 'tao-moi'}
             coupon={panel.coupon}
             programs={programs}
             saving={saving}

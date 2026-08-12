@@ -255,16 +255,38 @@ export async function getChapterTree(subject: Subject, gradeBand: GradeBand): Pr
   });
 }
 
+/**
+ * Không có `id` = ĐANG TẠO MỚI, và trùng mã thì phải báo lỗi.
+ *
+ * Bản trước, khi không có `id`, hàm này tra theo mã rồi coi bản ghi tìm được là
+ * "bản ghi cần sửa". Nghĩa là biên soạn viên mở "Thêm chương", gõ nhầm một mã đã
+ * tồn tại, bấm Lưu — và thay vì thấy báo lỗi, họ ghi đè tên/thứ tự/tỷ trọng của
+ * chương đang có, không dấu vết, không hoàn tác. Sửa thì phải sửa qua đúng bản
+ * ghi (có `id`), còn tạo mới thì mã phải là mã chưa ai dùng.
+ */
 export async function upsertChapter(input: UpsertChapterInput, actorId: string): Promise<Chapter> {
-  const existing = input.id
-    ? await prisma.chapter.findUnique({ where: { id: input.id } })
-    : await prisma.chapter.findUnique({
-        where: {
-          subject_gradeBand_code: { subject: input.subject, gradeBand: input.gradeBand, code: input.code },
-        },
-      });
+  const existing = input.id ? await prisma.chapter.findUnique({ where: { id: input.id } }) : null;
 
   if (input.id && !existing) throw ApiError.notFound('Không tìm thấy chương cần sửa.');
+
+  if (!input.id) {
+    const taken = await prisma.chapter.findUnique({
+      where: {
+        subject_gradeBand_code: {
+          subject: input.subject,
+          gradeBand: input.gradeBand,
+          code: input.code,
+        },
+      },
+      select: { id: true, name: true },
+    });
+    if (taken) {
+      throw ApiError.conflict(
+        `Mã chương "${input.code}" đã được dùng cho chương "${taken.name}" trong môn/khối này. ` +
+          'Muốn sửa chương đó thì mở nó ra sửa, đừng tạo mới.',
+      );
+    }
+  }
 
   if (existing) {
     const clash = await prisma.chapter.findUnique({
@@ -397,11 +419,25 @@ export async function upsertSkill(input: UpsertSkillInput, actorId: string): Pro
   const chapter = await prisma.chapter.findUnique({ where: { id: input.chapterId } });
   if (!chapter) throw ApiError.badRequest('Chương được chọn không tồn tại.');
 
-  const existing = input.id
-    ? await prisma.skill.findUnique({ where: { id: input.id } })
-    : await prisma.skill.findUnique({ where: { code: input.code } });
+  // Cùng lý do như upsertChapter, nhưng hậu quả nặng hơn: nhánh cập nhật ghi cả
+  // `chapterId`, nên tạo mới trùng mã sẽ KÉO kỹ năng cũ cùng toàn bộ câu hỏi của
+  // nó sang một chương khác.
+  const existing = input.id ? await prisma.skill.findUnique({ where: { id: input.id } }) : null;
 
   if (input.id && !existing) throw ApiError.notFound('Không tìm thấy kỹ năng cần sửa.');
+
+  if (!input.id) {
+    const taken = await prisma.skill.findUnique({
+      where: { code: input.code },
+      select: { id: true, name: true },
+    });
+    if (taken) {
+      throw ApiError.conflict(
+        `Mã kỹ năng "${input.code}" đã được dùng cho kỹ năng "${taken.name}". ` +
+          'Muốn sửa kỹ năng đó thì mở nó ra sửa, đừng tạo mới.',
+      );
+    }
+  }
 
   if (existing) {
     const clash = await prisma.skill.findUnique({ where: { code: input.code }, select: { id: true } });

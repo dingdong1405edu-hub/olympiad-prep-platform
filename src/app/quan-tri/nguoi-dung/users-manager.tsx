@@ -82,6 +82,9 @@ export function UsersManager({
   const [draftRoles, setDraftRoles] = useState<Role[]>([]);
   const [busy, setBusy] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
+  const [accountEditing, setAccountEditing] = useState<string | null>(null);
+
+  const accountRow = rows.find((row) => row.id === accountEditing) ?? null;
 
   function startEdit(row: UserRow) {
     setEditing(row.id);
@@ -112,9 +115,22 @@ export function UsersManager({
     }
   }
 
+  /**
+   * Ba trạng thái chứ không phải hai.
+   *
+   * Bản trước chỉ có `SUSPENDED ? ACTIVE : SUSPENDED`, nên tài khoản đang CHỜ
+   * XÁC NHẬN hiện nút "Khóa" và bấm vào là bị treo luôn. Muốn kích hoạt một
+   * người mới đăng ký, quản trị viên phải khóa rồi mở khóa — không ai đoán ra
+   * điều đó. API vốn đã nhận cả ba giá trị, chỉ giao diện thiếu.
+   */
+  function nextStatusFor(status: UserStatus): { next: UserStatus; verb: string; label: string } {
+    if (status === 'ACTIVE') return { next: 'SUSPENDED', verb: 'khóa', label: 'Khóa' };
+    if (status === 'SUSPENDED') return { next: 'ACTIVE', verb: 'mở khóa', label: 'Mở khóa' };
+    return { next: 'ACTIVE', verb: 'kích hoạt', label: 'Kích hoạt' };
+  }
+
   async function toggleStatus(row: UserRow) {
-    const next: UserStatus = row.status === 'SUSPENDED' ? 'ACTIVE' : 'SUSPENDED';
-    const verb = next === 'SUSPENDED' ? 'khóa' : 'mở khóa';
+    const { next, verb } = nextStatusFor(row.status);
     if (!window.confirm(`Xác nhận ${verb} tài khoản ${row.fullName}?`)) return;
 
     setBusy(row.id);
@@ -149,6 +165,22 @@ export function UsersManager({
             router.refresh();
           }}
           onError={(message) => show(message, 'error')}
+        />
+      ) : null}
+
+      {/* Đặt trên bảng chứ không nhét vào trong hàng: các ô liên hệ cần chỗ rộng,
+          mà cột "Thao tác" thì đã sát mép phải của bảng cuộn ngang. */}
+      {accountRow ? (
+        <AccountForm
+          key={accountRow.id}
+          row={accountRow}
+          onDone={(message) => {
+            show(message, 'success');
+            setAccountEditing(null);
+            router.refresh();
+          }}
+          onError={(message) => show(message, 'error')}
+          onCancel={() => setAccountEditing(null)}
         />
       ) : null}
 
@@ -244,40 +276,193 @@ export function UsersManager({
               <Td className="whitespace-nowrap text-ink-500">{row.createdAt}</Td>
 
               <Td>
-                {isSelf ? (
-                  <span className="text-xs text-ink-400">Không tự đổi</span>
-                ) : (
-                  <span className="flex flex-wrap gap-1.5">
-                    {open ? null : (
-                      <button
-                        type="button"
-                        onClick={() => startEdit(row)}
-                        className="text-xs font-medium text-brand-700 underline underline-offset-2 hover:text-brand-800"
-                      >
-                        Đổi vai trò
-                      </button>
-                    )}
+                <span className="flex flex-wrap gap-x-2.5 gap-y-1">
+                  {/* Sửa liên hệ / mật khẩu KHÔNG bị chặn với chính mình — chỉ
+                      vai trò và trạng thái mới nguy hiểm. */}
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setAccountEditing((current) => (current === row.id ? null : row.id))
+                    }
+                    className="text-xs font-medium text-brand-700 underline underline-offset-2 hover:text-brand-800"
+                  >
+                    {accountEditing === row.id ? 'Đóng' : 'Sửa thông tin'}
+                  </button>
+
+                  {isSelf ? (
+                    <span className="text-xs text-ink-400">Không tự đổi quyền</span>
+                  ) : (
+                    <>
+                      {open ? null : (
+                        <button
+                          type="button"
+                          onClick={() => startEdit(row)}
+                          className="text-xs font-medium text-brand-700 underline underline-offset-2 hover:text-brand-800"
+                        >
+                          Đổi vai trò
+                        </button>
+                      )}
                     <button
                       type="button"
                       onClick={() => toggleStatus(row)}
                       disabled={locked}
                       className={cx(
                         'text-xs font-medium underline underline-offset-2 disabled:opacity-40',
-                        row.status === 'SUSPENDED'
-                          ? 'text-emerald-700 hover:text-emerald-800'
-                          : 'text-rose-600 hover:text-rose-700',
+                        row.status === 'ACTIVE'
+                          ? 'text-rose-600 hover:text-rose-700'
+                          : 'text-emerald-700 hover:text-emerald-800',
                       )}
-                    >
-                      {row.status === 'SUSPENDED' ? 'Mở khóa' : 'Khóa'}
-                    </button>
-                  </span>
-                )}
+                      >
+                        {nextStatusFor(row.status).label}
+                      </button>
+                    </>
+                  )}
+                </span>
               </Td>
             </Tr>
           );
         })}
       </Table>
     </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Sửa thông tin đăng nhập của một tài khoản
+// ---------------------------------------------------------------------------
+
+/**
+ * Email và số điện thoại là thứ người dùng ĐĂNG NHẬP BẰNG. Gõ nhầm một ký tự
+ * lúc tạo tài khoản là người đó không vào được, và trước đây cách duy nhất để
+ * sửa là mở thẳng database. Đặt lại mật khẩu cũng vậy: học sinh quên mật khẩu
+ * mà email không nhận được thư thì phải có người mở khóa hộ.
+ */
+function AccountForm({
+  row,
+  onDone,
+  onError,
+  onCancel,
+}: {
+  row: UserRow;
+  onDone: (message: string) => void;
+  onError: (message: string) => void;
+  onCancel: () => void;
+}) {
+  const [fullName, setFullName] = useState(row.fullName);
+  const [email, setEmail] = useState(row.email ?? '');
+  const [phone, setPhone] = useState(row.phone ?? '');
+  const [newPassword, setNewPassword] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function submit() {
+    const body: Record<string, unknown> = {};
+    if (fullName.trim() !== row.fullName) body.fullName = fullName.trim();
+    // Chuỗi rỗng gửi lên thành null = xóa trắng ô đó, khác hẳn với "không đụng tới".
+    if (email.trim() !== (row.email ?? '')) body.email = email.trim() || null;
+    if (phone.trim() !== (row.phone ?? '')) body.phone = phone.trim() || null;
+    if (newPassword) body.newPassword = newPassword;
+
+    if (Object.keys(body).length === 0) {
+      setError('Chưa có thay đổi nào để lưu.');
+      return;
+    }
+    if (!email.trim() && !phone.trim()) {
+      setError('Phải giữ lại ít nhất email hoặc số điện thoại để còn đăng nhập được.');
+      return;
+    }
+
+    setSaving(true);
+    setError(null);
+    try {
+      await apiPatch(`${API.adminUsers}/${row.id}`, body);
+      onDone(
+        body.newPassword
+          ? `Đã lưu thông tin và đặt lại mật khẩu cho ${fullName.trim()}.`
+          : `Đã lưu thông tin của ${fullName.trim()}.`,
+      );
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Chưa lưu được thông tin.';
+      setError(message);
+      onError(message);
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <Card>
+      <CardHeader
+        title={`Sửa thông tin: ${row.fullName}`}
+        subtitle="Họ tên, email, số điện thoại và mật khẩu. Vai trò và trạng thái sửa ở cột bên phải bảng."
+      />
+
+      {error ? (
+        <Alert tone="danger" className="mb-4">
+          {error}
+        </Alert>
+      ) : null}
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div>
+          <Label htmlFor={`name-${row.id}`}>Họ và tên</Label>
+          <Input
+            id={`name-${row.id}`}
+            value={fullName}
+            onChange={(event) => setFullName(event.target.value)}
+          />
+        </div>
+        <div>
+          <Label htmlFor={`email-${row.id}`} hint="để trống để xóa">
+            Email
+          </Label>
+          <Input
+            id={`email-${row.id}`}
+            type="email"
+            autoComplete="off"
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+          />
+        </div>
+        <div>
+          <Label htmlFor={`phone-${row.id}`} hint="dạng 0xxxxxxxxx">
+            Số điện thoại
+          </Label>
+          <Input
+            id={`phone-${row.id}`}
+            value={phone}
+            onChange={(event) => setPhone(event.target.value)}
+          />
+        </div>
+        <div>
+          <Label htmlFor={`pw-${row.id}`} hint="bỏ trống nếu không đổi">
+            Đặt lại mật khẩu
+          </Label>
+          <Input
+            id={`pw-${row.id}`}
+            type="text"
+            autoComplete="off"
+            placeholder="ít nhất 8 ký tự"
+            value={newPassword}
+            onChange={(event) => setNewPassword(event.target.value)}
+          />
+        </div>
+      </div>
+
+      <p className="mt-3 text-xs text-ink-500">
+        Mật khẩu hiển thị dạng chữ thường để bạn đọc lại cho người dùng. Sau khi đặt hộ, hãy nhắc họ
+        tự đổi trong trang Tài khoản.
+      </p>
+
+      <div className="mt-4 flex gap-2">
+        <Button type="button" onClick={submit} loading={saving}>
+          Lưu thông tin
+        </Button>
+        <Button type="button" variant="ghost" onClick={onCancel}>
+          Hủy
+        </Button>
+      </div>
+    </Card>
   );
 }
 

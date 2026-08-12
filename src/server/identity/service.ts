@@ -32,6 +32,9 @@ import {
   type RegisterStudentInput,
   type ResetPasswordInput,
   type UpdateStudentProfileInput,
+  setUserPasswordSchema,
+  updateUserAccountSchema,
+  type UpdateUserAccountInput,
 } from './schemas';
 
 // ---------------------------------------------------------------------------
@@ -54,6 +57,7 @@ const OTP_MESSAGE = 'Mã xác thực không đúng hoặc đã hết hạn.';
 const AUDIT_ENTITY_USER = 'User';
 const AUDIT_ACTION_STAFF_CREATE = 'user.create_staff';
 const AUDIT_ACTION_PROFILE_UPDATE = 'user.profile_update';
+const AUDIT_ACTION_PASSWORD_RESET = 'user.password_reset_by_admin';
 
 // ---------------------------------------------------------------------------
 // Kiểu dữ liệu trả về
@@ -562,4 +566,109 @@ export async function updateStudentProfile(userId: string, input: UpdateStudentP
   });
 
   return getUserDetail(userId);
+}
+
+/**
+ * Quản trị sửa họ tên / email / số điện thoại của một tài khoản.
+ *
+ * Vì sao cần: email và số điện thoại là thứ người dùng đăng nhập bằng. Gõ nhầm
+ * một ký tự lúc tạo tài khoản là người đó vĩnh viễn không vào được, và trước khi
+ * có hàm này thì cách duy nhất để sửa là vào thẳng database.
+ */
+export async function updateUserAccount(
+  userId: string,
+  input: UpdateUserAccountInput,
+  actorId: string,
+): Promise<UserDetail> {
+  const data = updateUserAccountSchema.parse(input);
+
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { id: true, fullName: true, email: true, phone: true },
+  });
+  if (!user) throw ApiError.notFound('Không tìm thấy người dùng.');
+
+  const nextEmail = data.email === undefined ? user.email : data.email;
+  const nextPhone = data.phone === undefined ? user.phone : data.phone;
+
+  // Xóa cả hai là biến tài khoản thành không đăng nhập được bằng cách nào.
+  if (!nextEmail && !nextPhone) {
+    throw ApiError.badRequest('Tài khoản phải giữ lại ít nhất email hoặc số điện thoại.');
+  }
+
+  // Chỉ kiểm tra trùng với giá trị THỰC SỰ đổi — nếu không, lưu lại chính email
+  // cũ của mình cũng bị báo "đã được đăng ký".
+  const changedEmail = nextEmail && nextEmail !== user.email ? nextEmail : undefined;
+  const changedPhone = nextPhone && nextPhone !== user.phone ? nextPhone : undefined;
+  if (changedEmail || changedPhone) {
+    const clash = await prisma.user.findFirst({
+      where: {
+        id: { not: userId },
+        OR: [
+          ...(changedEmail ? [{ email: changedEmail }] : []),
+          ...(changedPhone ? [{ phone: changedPhone }] : []),
+        ],
+      },
+      select: { email: true, phone: true },
+    });
+    if (clash) {
+      if (changedEmail && clash.email === changedEmail) {
+        throw ApiError.conflict('Email này đã được đăng ký cho tài khoản khác.');
+      }
+      throw ApiError.conflict('Số điện thoại này đã được đăng ký cho tài khoản khác.');
+    }
+  }
+
+  try {
+    await prisma.user.update({
+      where: { id: userId },
+      data: {
+        ...(data.fullName !== undefined ? { fullName: data.fullName } : {}),
+        ...(data.email !== undefined ? { email: nextEmail } : {}),
+        ...(data.phone !== undefined ? { phone: nextPhone } : {}),
+      },
+    });
+  } catch (error) {
+    translateUniqueViolation(error);
+  }
+
+  await writeAudit({
+    actorId,
+    action: AUDIT_ACTION_PROFILE_UPDATE,
+    entityType: AUDIT_ENTITY_USER,
+    entityId: userId,
+    before: { fullName: user.fullName, email: user.email, phone: user.phone },
+    after: { fullName: data.fullName ?? user.fullName, email: nextEmail, phone: nextPhone },
+  });
+
+  return getUserDetail(userId);
+}
+
+/**
+ * Quản trị đặt lại mật khẩu hộ, không cần mật khẩu cũ.
+ *
+ * KHÔNG ghi mật khẩu vào nhật ký — kể cả bản băm. Nhật ký chỉ ghi lại rằng việc
+ * này đã xảy ra, ai làm và cho ai, để sau này còn truy được.
+ */
+export async function setUserPassword(
+  userId: string,
+  newPassword: string,
+  actorId: string,
+): Promise<void> {
+  const { newPassword: password } = setUserPasswordSchema.parse({ newPassword });
+
+  const user = await prisma.user.findUnique({ where: { id: userId }, select: { id: true } });
+  if (!user) throw ApiError.notFound('Không tìm thấy người dùng.');
+
+  await prisma.user.update({
+    where: { id: userId },
+    data: { passwordHash: await hashPassword(password) },
+  });
+
+  await writeAudit({
+    actorId,
+    action: AUDIT_ACTION_PASSWORD_RESET,
+    entityType: AUDIT_ENTITY_USER,
+    entityId: userId,
+  });
 }

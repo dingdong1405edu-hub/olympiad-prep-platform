@@ -23,6 +23,7 @@ export default async function TeacherAreaLayout({ children }: { children: ReactN
   return (
     <AppShell
       wide
+      area="teacher"
       areaLabel="Giáo viên"
       nav={TEACHER_NAV}
       user={{ id: session.id, fullName: session.fullName, roles: session.roles }}

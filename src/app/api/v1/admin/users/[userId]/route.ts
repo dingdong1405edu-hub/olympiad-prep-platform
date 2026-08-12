@@ -1,7 +1,14 @@
 import { z } from 'zod';
 import { requireRole } from '@/lib/auth';
 import { ApiError, handle, ok, readJson } from '@/lib/http';
-import { assignRole, getUserDetail, removeRole, setUserStatus } from '@/server/identity/service';
+import {
+  assignRole,
+  getUserDetail,
+  removeRole,
+  setUserPassword,
+  setUserStatus,
+  updateUserAccount,
+} from '@/server/identity/service';
 import { roleSchema } from '@/server/identity/schemas';
 
 type Ctx = { params: Promise<{ userId: string }> };
@@ -12,11 +19,26 @@ export const GET = handle(async (_request: Request, context: Ctx) => {
   return ok(await getUserDetail(userId));
 });
 
-const patchSchema = z.object({
-  /** Danh sách vai trò MONG MUỐN sau khi lưu; hệ thống tự tính phần thêm/bớt. */
-  roles: z.array(roleSchema).max(8).optional(),
-  status: z.enum(['ACTIVE', 'SUSPENDED', 'PENDING']).optional(),
-});
+/**
+ * `.strict()` là chủ ý, không phải thói quen.
+ *
+ * Bản trước dùng z.object thường, nên gửi lên `{"email": "..."}` sẽ bị Zod lặng
+ * lẽ bỏ đi rồi trả về 200 kèm dữ liệu y nguyên — người dùng thấy "thành công"
+ * mà không có gì đổi. Thà báo lỗi rõ ràng còn hơn giả vờ đã lưu.
+ */
+const patchSchema = z
+  .object({
+    /** Danh sách vai trò MONG MUỐN sau khi lưu; hệ thống tự tính phần thêm/bớt. */
+    roles: z.array(roleSchema).max(8).optional(),
+    status: z.enum(['ACTIVE', 'SUSPENDED', 'PENDING']).optional(),
+    fullName: z.string().trim().min(2).max(120).optional(),
+    /** null = xóa trắng ô này; bỏ trống trường = giữ nguyên. */
+    email: z.string().trim().toLowerCase().email().max(160).nullable().optional(),
+    phone: z.string().trim().max(20).nullable().optional(),
+    /** Đặt lại mật khẩu hộ, không cần biết mật khẩu cũ. */
+    newPassword: z.string().min(8).max(72).optional(),
+  })
+  .strict();
 
 /**
  * Đổi vai trò và trạng thái một tài khoản.
@@ -32,7 +54,16 @@ export const PATCH = handle(async (request: Request, context: Ctx) => {
   const { userId } = await context.params;
   const input = await readJson(request, patchSchema);
 
-  if (userId === session.id) {
+  const touchesPrivileges = input.roles !== undefined || input.status !== undefined;
+  const touchesAccount =
+    input.fullName !== undefined ||
+    input.email !== undefined ||
+    input.phone !== undefined ||
+    input.newPassword !== undefined;
+
+  // Chốt cũ chặn MỌI thao tác lên chính mình. Nay chỉ chặn phần nguy hiểm là
+  // vai trò và trạng thái — sửa tên hay đổi mật khẩu của chính mình thì vô hại.
+  if (userId === session.id && touchesPrivileges) {
     throw ApiError.badRequest(
       'Không tự đổi quyền hay khóa tài khoản của chính mình. Nhờ một quản trị viên khác thực hiện.',
     );
@@ -41,6 +72,18 @@ export const PATCH = handle(async (request: Request, context: Ctx) => {
   const target = await getUserDetail(userId);
   const before = target.roles.map((entry) => entry.role);
   const isSuperAdmin = session.roles.includes('SUPER_ADMIN');
+
+  /**
+   * Đổi email hay mật khẩu của người khác là ĐOẠT được tài khoản đó: đặt mật
+   * khẩu rồi đăng nhập, hoặc đổi email sang hòm thư của mình rồi bấm quên mật
+   * khẩu. Nếu không chặn ở đây thì một OPS_ADMIN tự nâng mình lên SUPER_ADMIN
+   * chỉ bằng hai cú bấm, vòng qua đúng cái rào chặn vai trò bên dưới.
+   */
+  if (touchesAccount && !isSuperAdmin && before.includes('SUPER_ADMIN')) {
+    throw ApiError.forbidden(
+      'Chỉ quản trị cấp cao nhất mới sửa được thông tin đăng nhập của một SUPER_ADMIN.',
+    );
+  }
 
   if (input.roles) {
     const next = [...new Set(input.roles)];
@@ -63,6 +106,18 @@ export const PATCH = handle(async (request: Request, context: Ctx) => {
       await assertNotLastSuperAdmin(userId);
     }
     await setUserStatus(userId, input.status, session.id);
+  }
+
+  if (input.fullName !== undefined || input.email !== undefined || input.phone !== undefined) {
+    await updateUserAccount(
+      userId,
+      { fullName: input.fullName, email: input.email, phone: input.phone },
+      session.id,
+    );
+  }
+
+  if (input.newPassword !== undefined) {
+    await setUserPassword(userId, input.newPassword, session.id);
   }
 
   return ok(await getUserDetail(userId));

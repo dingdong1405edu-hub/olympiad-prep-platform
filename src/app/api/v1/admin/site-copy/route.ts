@@ -36,9 +36,17 @@ export const PUT = handle(async (request: Request) => {
   return ok(result);
 });
 
-/** Khôi phục TOÀN BỘ chữ về bản gốc trong mã nguồn. */
+/**
+ * Khôi phục TOÀN BỘ chữ về bản gốc trong mã nguồn.
+ *
+ * Cùng nhóm quyền với PUT và với trang. Trước đây chỗ này chỉ nhận SUPER_ADMIN,
+ * trong khi Quản lý chương trình vẫn thấy nút "Khôi phục tất cả" sáng bình
+ * thường — bấm vào là ăn 403 mà không hiểu vì sao. Thao tác này không xóa dữ
+ * liệu thật, nó chỉ gỡ các bản ghi đè để chữ quay về đúng bản trong mã nguồn,
+ * nên không có lý do gì thắt chặt hơn quyền sửa.
+ */
 export const DELETE = handle(async () => {
-  const session = await requireRole('SUPER_ADMIN');
+  const session = await requireRole('SUPER_ADMIN', 'PROGRAM_MANAGER');
   const removed = await resetAllCopy();
 
   await writeAudit({

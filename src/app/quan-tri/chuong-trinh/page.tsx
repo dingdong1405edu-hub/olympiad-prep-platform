@@ -29,9 +29,11 @@ export default async function AdminProgramsPage({
   ]);
 
   // Khóa đã tắt không nằm trong ProgramDetail.courses, nhưng quản trị vẫn cần thấy để bật lại.
-  const hiddenCourses = selected
-    ? (await listCourses({ programId: selected.id })).filter((course) => !course.active)
-    : [];
+  //
+  // `listCourses` mặc định `active: true` (xem catalog/service.ts), nên bản trước
+  // lọc `!course.active` trên một danh sách chỉ toàn khóa đang bật — kết quả luôn
+  // rỗng. Hệ quả: ẩn một khóa đi là mất hẳn, không còn nút nào để mở lại.
+  const hiddenCourses = selected ? await listCourses({ programId: selected.id, active: false }) : [];
 
   return (
     <div>

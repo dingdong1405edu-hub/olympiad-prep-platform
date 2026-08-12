@@ -14,7 +14,7 @@ import type { Role } from '@prisma/client';
 import { API, routes } from '@/lib/routes';
 import { cx } from '@/components/ui';
 import { Crest, Wordmark } from '@/components/brand';
-import { NavLink } from '@/components/nav-link';
+import { ShellNav } from '@/components/shell-nav';
 
 export interface ShellUser {
   id: string;
@@ -26,6 +26,25 @@ export interface NavItem {
   href: string;
   label: string;
   exact?: boolean;
+  /**
+   * Vai trò được phép mở mục này. Bỏ trống = ai vào được khu vực thì thấy.
+   *
+   * Mục nào hiện ra thì phải bấm vào được. Trước đây Admin vận hành thấy mục
+   * "Học liệu" nhưng `requireContentStaff()` không nhận vai trò đó, nên bấm vào
+   * là trang lỗi trắng không kèm lý do.
+   */
+  roles?: Role[];
+}
+
+/** Nhóm được vào khu học liệu — giữ khớp với CONTENT_ROLES trong src/lib/auth.ts. */
+const CONTENT_NAV_ROLES: Role[] = ['SUPER_ADMIN', 'PROGRAM_MANAGER', 'REVIEWER', 'CONTENT_EDITOR'];
+
+/** Nhóm quản trị thực thụ — khớp với ADMIN_ROLES. */
+const ADMIN_NAV_ROLES: Role[] = ['SUPER_ADMIN', 'OPS_ADMIN', 'PROGRAM_MANAGER'];
+
+/** Lọc thanh điều hướng theo vai trò thật của người đang đăng nhập. */
+export function navFor(user: ShellUser, items: NavItem[]): NavItem[] {
+  return items.filter((item) => !item.roles || item.roles.some((role) => user.roles.includes(role)));
 }
 
 export const STUDENT_NAV = (enrollmentId: string): NavItem[] => [
@@ -40,42 +59,113 @@ export const TEACHER_NAV: NavItem[] = [
 ];
 
 export const ADMIN_NAV: NavItem[] = [
-  { href: routes.adminHome(), label: 'Tổng quan', exact: true },
-  { href: routes.adminPrograms(), label: 'Chương trình' },
-  { href: routes.adminContent(), label: 'Học liệu' },
-  { href: routes.adminSiteCopy(), label: 'Giao diện' },
-  { href: routes.adminUsers(), label: 'Người dùng' },
-  { href: routes.adminPayments(), label: 'Thanh toán' },
-  { href: routes.adminTeachers(), label: 'Giáo viên' },
-  { href: routes.adminReports(), label: 'Báo cáo' },
-  { href: routes.adminConfig(), label: 'Cấu hình' },
-  { href: routes.adminAudit(), label: 'Nhật ký' },
+  { href: routes.adminHome(), label: 'Tổng quan', exact: true, roles: ADMIN_NAV_ROLES },
+  { href: routes.adminPrograms(), label: 'Chương trình', roles: ADMIN_NAV_ROLES },
+  { href: routes.adminContent(), label: 'Học liệu', roles: CONTENT_NAV_ROLES },
+  { href: routes.adminSiteCopy(), label: 'Giao diện', roles: ['SUPER_ADMIN', 'PROGRAM_MANAGER'] },
+  { href: routes.adminUsers(), label: 'Người dùng', roles: ['SUPER_ADMIN', 'OPS_ADMIN'] },
+  { href: routes.adminPayments(), label: 'Thanh toán', roles: ADMIN_NAV_ROLES },
+  { href: routes.adminTeachers(), label: 'Giáo viên', roles: ADMIN_NAV_ROLES },
+  { href: routes.adminReports(), label: 'Báo cáo', roles: ADMIN_NAV_ROLES },
+  { href: routes.adminConfig(), label: 'Cấu hình', roles: ADMIN_NAV_ROLES },
+  { href: routes.adminAudit(), label: 'Nhật ký', roles: ADMIN_NAV_ROLES },
 ];
+
+// ---------------------------------------------------------------------------
+// Chuyển khu vực
+// ---------------------------------------------------------------------------
+
+export type ShellArea = 'student' | 'teacher' | 'admin';
+
+/**
+ * Khu vực nào mở cho vai trò nào. Giữ khớp với các hàm canh cửa trong
+ * `src/lib/auth.ts` và `src/app/quan-tri/layout.tsx` — lệch nhau thì header sẽ
+ * mời người dùng đi vào một trang mà họ bị chặn ngay khi tới nơi.
+ */
+const AREA_ROLES: Record<ShellArea, Role[]> = {
+  student: ['STUDENT'],
+  teacher: ['TEACHER', 'SUPER_ADMIN', 'PROGRAM_MANAGER'],
+  admin: ['SUPER_ADMIN', 'OPS_ADMIN', 'PROGRAM_MANAGER', 'CONTENT_EDITOR', 'REVIEWER'],
+};
+
+const AREA_META: Record<ShellArea, { label: string; href: string }> = {
+  student: { label: 'Học tập', href: routes.myCourses() },
+  teacher: { label: 'Dạy học', href: routes.teacherHome() },
+  admin: { label: 'Quản trị', href: routes.adminHome() },
+};
+
+const AREA_ORDER: ShellArea[] = ['student', 'teacher', 'admin'];
+
+function areasFor(user: ShellUser): ShellArea[] {
+  return AREA_ORDER.filter((area) => user.roles.some((role) => AREA_ROLES[area].includes(role)));
+}
 
 // ---------------------------------------------------------------------------
 
 export function AppShell({
   user,
   nav,
+  area = 'student',
   areaLabel,
   children,
   wide = false,
 }: {
   user?: ShellUser | null;
   nav?: NavItem[];
+  /**
+   * Khu vực trang này thuộc về. Quyết định logo bấm vào đi đâu và mục nào đang
+   * sáng trong dải chuyển khu vực.
+   */
+  area?: ShellArea;
   areaLabel?: string;
   children: ReactNode;
   wide?: boolean;
 }) {
   const container = wide ? 'max-w-screen-2xl' : 'max-w-5xl';
+  const areas = user ? areasFor(user) : [];
+
+  /**
+   * Logo đưa về nhà của CHÍNH khu vực đang đứng.
+   *
+   * Trước đây nó luôn trỏ về `/hoc-tap`, nghĩa là quản trị viên bấm logo là bị
+   * ném sang màn hình "Bạn chưa ghi danh khóa nào" — nơi không có một liên kết
+   * nào quay lại khu quản trị. Người dùng thật đã mắc đúng bẫy này.
+   */
+  const homeHref = user ? AREA_META[area].href : routes.home();
 
   return (
     <div className="flex min-h-screen flex-col">
       <header className="sticky top-0 z-30 border-b border-navy-100 bg-white/88 backdrop-blur-md">
         <div className={cx('mx-auto flex items-center gap-3 px-4 py-2.5 sm:gap-4', container)}>
-          <Wordmark href={user ? routes.myCourses() : routes.home()} compact />
+          <Wordmark href={homeHref} compact />
 
-          {areaLabel ? (
+          {/* Dải chuyển khu vực — chỉ hiện khi tài khoản thật sự vào được nhiều
+              hơn một khu. Đây là ĐƯỜNG DUY NHẤT từ khu học tập sang khu quản trị
+              hay khu giáo viên: trước đây không có liên kết nào như vậy trong
+              toàn bộ giao diện, quản trị viên buộc phải tự gõ /quan-tri vào
+              thanh địa chỉ mới vào được. */}
+          {areas.length > 1 ? (
+            <nav
+              aria-label="Chuyển khu vực"
+              className="flex shrink-0 items-center gap-0.5 rounded-lg bg-navy-50 p-0.5 ring-1 ring-navy-100"
+            >
+              {areas.map((item) => (
+                <Link
+                  key={item}
+                  href={AREA_META[item].href}
+                  aria-current={item === area ? 'page' : undefined}
+                  className={cx(
+                    'rounded-md px-2 py-1.5 text-xs font-semibold whitespace-nowrap transition-colors sm:px-2.5 sm:text-sm',
+                    item === area
+                      ? 'bg-white text-navy-900 shadow-[0_1px_2px_rgb(13_27_49/0.12)]'
+                      : 'text-navy-500 hover:text-navy-900',
+                  )}
+                >
+                  {AREA_META[item].label}
+                </Link>
+              ))}
+            </nav>
+          ) : areaLabel ? (
             <span className="hidden rounded-md bg-navy-50 px-2 py-1 text-[11px] font-semibold tracking-[0.12em] text-navy-600 uppercase ring-1 ring-navy-100 sm:inline">
               {areaLabel}
             </span>
@@ -140,13 +230,7 @@ export function AppShell({
         </div>
 
         {nav && nav.length > 0 ? (
-          <nav className={cx('scroll-x mx-auto flex gap-1 px-4 pb-2', container)}>
-            {nav.map((item) => (
-              <NavLink key={item.href} href={item.href} exact={item.exact}>
-                {item.label}
-              </NavLink>
-            ))}
-          </nav>
+          <ShellNav items={nav} className={cx('mx-auto px-4 pb-2', container)} />
         ) : null}
       </header>
 
