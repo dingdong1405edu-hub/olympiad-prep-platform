@@ -33,6 +33,12 @@ export const RATE_LIMITS = {
   REGISTER: { limit: 5, windowSeconds: 600 },
   OTP: { limit: 5, windowSeconds: 600 },
   CHECKOUT: { limit: 20, windowSeconds: 300 },
+  /**
+   * Trang chờ thanh toán hỏi 3 giây một lần (20 lượt/phút) và mỗi lượt kéo theo
+   * một lời gọi sang cổng. Để 40 là gấp đôi nhịp thật — đủ chỗ cho việc mở vài
+   * tab, nhưng chặn được kiểu gọi dồn dập.
+   */
+  PAYMENT_STATUS: { limit: 40, windowSeconds: 60 },
   ANSWER: { limit: 240, windowSeconds: 60 },
   AI: { limit: 30, windowSeconds: 300 },
 } as const satisfies Record<string, RateLimitOptions>;

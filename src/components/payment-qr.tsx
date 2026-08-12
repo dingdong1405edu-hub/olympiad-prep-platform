@@ -253,13 +253,24 @@ export function PaymentQrPanel({
   //
   // Dừng hẳn khi tab bị ẩn: điện thoại khóa màn hình rồi mà vẫn gọi mạng là
   // đốt pin của người dùng chẳng để làm gì. Mở lại tab thì hỏi ngay lập tức.
+  //
+  // Hỏi hụt thì giãn nhịp theo cấp số nhân. Mạng 4G chập chờn hoặc mở nhiều tab
+  // cùng lúc có thể làm server trả 429; cứ đều đặn 3 giây một lần mà đâm vào là
+  // tự giữ mình ở trạng thái bị chặn.
+  const retryAfter = useRef(0);
+  const failures = useRef(0);
+
   const poll = useCallback(async () => {
+    if (Date.now() < retryAfter.current) return;
     try {
       const next = await apiGet<PaymentSession>(API.paymentStatus(initialSession.orderCode));
       setSession(next);
       setError(null);
+      failures.current = 0;
+      retryAfter.current = 0;
     } catch {
-      // Mạng chập chờn là chuyện thường trên 4G. Giữ nguyên màn hình, thử lại nhịp sau.
+      failures.current += 1;
+      retryAfter.current = Date.now() + Math.min(30_000, POLL_INTERVAL_MS * 2 ** failures.current);
     }
   }, [initialSession.orderCode]);
 

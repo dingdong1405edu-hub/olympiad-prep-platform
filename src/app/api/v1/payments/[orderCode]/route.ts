@@ -1,5 +1,6 @@
 import { handle, ok } from '@/lib/http';
 import { requireSession } from '@/lib/auth';
+import { RATE_LIMITS, enforceRateLimit } from '@/lib/rate-limit';
 import { getPaymentSession } from '@/server/commerce/service';
 
 /**
@@ -13,6 +14,9 @@ export const GET = handle(
   async (request: Request, context: { params: Promise<{ orderCode: string }> }) => {
     const session = await requireSession();
     const { orderCode } = await context.params;
+
+    // Chặn gọi dồn: mỗi lượt hỏi kéo theo một lời gọi sang cổng thanh toán.
+    enforceRateLimit(`payment-status:${session.id}`, RATE_LIMITS.PAYMENT_STATUS);
 
     const reconcile = new URL(request.url).searchParams.get('doi_soat') !== '0';
     const result = await getPaymentSession(session.id, orderCode, { reconcile });
