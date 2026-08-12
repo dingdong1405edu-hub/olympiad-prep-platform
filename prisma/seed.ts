@@ -11,6 +11,7 @@
  *  - Không hard-code con số nghiệp vụ: giá / thời hạn / số câu lấy từ
  *    `seed-data/catalog.ts` và `DEFAULT_CONFIG` (Phụ lục B specs).
  */
+import { pathToFileURL } from 'node:url';
 import bcrypt from 'bcryptjs';
 import {
   PrismaClient,
@@ -889,7 +890,11 @@ async function printSummary(startedAt: number): Promise<void> {
 // ĐIỂM VÀO
 // ===========================================================================
 
-async function main(): Promise<void> {
+/**
+ * Nạp toàn bộ dữ liệu mẫu. Được xuất ra để `scripts/bootstrap.ts` gọi lại khi
+ * môi trường triển khai lên lần đầu với database còn trống.
+ */
+export async function seedDatabase(): Promise<void> {
   const startedAt = Date.now();
   console.log('===========================================================');
   console.log('  NẠP DỮ LIỆU MẪU — NỀN TẢNG ÔN LUYỆN OLYMPIC');
@@ -974,12 +979,22 @@ async function main(): Promise<void> {
   await printSummary(startedAt);
 }
 
-main()
-  .catch((error: unknown) => {
-    console.error('\n✗ NẠP DỮ LIỆU THẤT BẠI:');
-    console.error(error instanceof Error ? error.stack ?? error.message : error);
-    process.exitCode = 1;
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
+/**
+ * Chỉ tự chạy khi file này LÀ điểm vào (`tsx prisma/seed.ts`). Khi được import
+ * từ nơi khác — như `scripts/bootstrap.ts` lúc triển khai — thì chỉ xuất hàm ra
+ * để phía gọi tự quyết định thời điểm chạy và tự CHỜ kết quả.
+ */
+const invokedDirectly =
+  process.argv[1] !== undefined && pathToFileURL(process.argv[1]).href === import.meta.url;
+
+if (invokedDirectly) {
+  seedDatabase()
+    .catch((error: unknown) => {
+      console.error('\n✗ NẠP DỮ LIỆU THẤT BẠI:');
+      console.error(error instanceof Error ? (error.stack ?? error.message) : error);
+      process.exitCode = 1;
+    })
+    .finally(async () => {
+      await prisma.$disconnect();
+    });
+}

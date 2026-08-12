@@ -299,10 +299,24 @@ git push origin main
 `railway.json` quy định vòng đời deploy:
 
 - **Build:** Nixpacks chạy `npm run build` (bao gồm `prisma generate`).
-- **Start:** `npx prisma migrate deploy && npm run start` — schema được cập nhật
-  trước khi container nhận traffic. Dùng `migrate deploy` chứ không `db push`:
-  production cần lịch sử migration để lăn tiến/lùi có kiểm soát.
+- **Start:** `npx prisma migrate deploy && npx tsx scripts/bootstrap.ts && npm run start`.
+  Ba bước, chạy tuần tự trước khi container nhận traffic:
+  1. `migrate deploy` cập nhật schema. Dùng `migrate deploy` chứ không `db push`:
+     production cần lịch sử migration để lăn tiến/lùi có kiểm soát.
+  2. `scripts/bootstrap.ts` nạp dữ liệu khởi tạo **chỉ khi database chưa có
+     chương trình nào**. Đây là bước vá đúng cái bẫy `migrate deploy` chỉ dựng
+     bảng chứ không nạp dữ liệu — database đúng schema nhưng rỗng làm cả trang
+     chủ lẫn khu quản trị hiện "chưa có kỳ thi nào" và không ai đăng nhập được.
+     Từ lần deploy thứ hai trở đi bước này tự bỏ qua, không bao giờ ghi đè dữ
+     liệu thật. Muốn tắt hẳn: đặt `SKIP_BOOTSTRAP_SEED=1`.
+  3. `npm run start` bật web server.
 - **Healthcheck:** `GET /api/v1/health`, trả `database: "up" | "down"`.
+
+> **Bắt buộc trước khi mở cho người dùng thật:** đặt biến `SEED_DEFAULT_PASSWORD`
+> ở service `web` **trước lần deploy đầu tiên**. Không đặt thì các tài khoản mẫu
+> — kể cả `admin@olympiad.vn` với quyền `SUPER_ADMIN` — sẽ mang đúng mật khẩu
+> ghi công khai trong tài liệu này. Sau khi đăng nhập lần đầu, hãy xóa các tài
+> khoản mẫu không dùng tới trong `/quan-tri/nguoi-dung`.
 
 ### Đổi schema
 
@@ -332,47 +346,52 @@ Cập nhật sau lần kiểm chứng gần nhất trên máy phát triển.
 |---|---|
 | Biên dịch | `npx tsc --noEmit` — **0 lỗi** |
 | Unit test | `npm test` — **150/150 xanh** (engine, chấm bài, nhập liệu CSV) |
-| Build production | `npm run build` — **thành công**, 35 trang |
-| Nạp dữ liệu | `npm run db:seed` — **1.222 câu hỏi**, 5 kỳ thi, 56 khóa, 186 kỹ năng, 112 bài kiểm tra |
+| Build production | `npm run build` — **thành công**, 39 trang |
+| Nạp dữ liệu | `npm run db:seed` — **1.634 câu hỏi**, 5 kỳ thi, 56 khóa, 186 kỹ năng, 112 bài kiểm tra |
 | Vòng lặp nghiệp vụ | `npx tsx scripts/smoke-test.ts` — **42/42 đạt** |
+| Khởi tạo môi trường triển khai | `scripts/bootstrap.ts` chạy trên database trống: nạp đủ 5 kỳ thi / 56 khóa / 1.634 câu; chạy lần hai thì tự bỏ qua |
 | Giao diện | 23 trang của cả ba khu vực trả HTTP 200 với tài khoản thật |
 
 Kiểm thử trọn vòng bao gồm cả tiêu chí nghiệm thu quan trọng nhất của đặc tả (§17):
 *hai học sinh sai ở kỹ năng khác nhau nhận bộ bài khác nhau*, và *hệ thống lưu lý do chọn từng câu*.
 
-### Ngân hàng câu hỏi — phần đã có và phần còn nợ
+### Ngân hàng câu hỏi
 
-Có **91 bộ sinh câu hỏi**, đủ cho 3 trong 14 taxonomy:
+**113 bộ sinh câu hỏi, phủ đủ cả 14 taxonomy** — không còn khóa nào chỉ có cây
+kiến thức mà rỗng câu hỏi.
 
-| Taxonomy | Trạng thái |
-|---|---|
-| **Toán khối 6–7** (`M67`) | Đủ — 82 kỹ năng, **1.160 câu**. Đây là khóa pilot theo specs §16.0 |
-| Toán khối 3–5 (`M345`) | Đủ — 30 câu |
-| Khoa học khối 6–7 (`K67`) | Đủ — 32 câu |
-| 11 taxonomy còn lại | Có cây kiến thức, **chưa có câu hỏi** |
+| Nhóm | Taxonomy | Câu hỏi |
+|---|---|---|
+| **Toán khối 6–7** (`M67`) | 82 kỹ năng | **1.218** — khóa pilot theo specs §16.0 |
+| Toán khối 3–5, 8–9, 10–12 | 3 taxonomy | 96 |
+| Khoa học khối 3–5, 6–7, 8–9 | 3 taxonomy | 96 |
+| Tin học khối 3–5 → 10–12 | 4 taxonomy | 128 |
+| Vật lý / Hóa học / Sinh học khối 10–12 | 3 taxonomy | 96 |
+| | **14 taxonomy** | **1.634 câu** |
 
-Seed **không còn bị chặn**: nó nạp những taxonomy đã đủ bộ sinh và in ra danh sách chính xác
-những khóa còn thiếu, thay vì dừng toàn bộ. Chạy `npm run db:seed` sẽ thấy báo cáo này.
+Mọi câu hỏi đều do bộ sinh tính ra đáp án và lời giải từ tham số vừa sinh —
+không có đáp án viết tay, nên không thể lệch giữa đề và lời giải. Nhiễu là lỗi
+sai có thật của từng môn: quên chia đôi khi tính tổng cấp số cộng, đọc số dư
+nhị phân xuôi thay vì ngược, lấy khối lượng nước làm mẫu số khi tính nồng độ,
+quên rằng gen có hai mạch khi đếm côđon.
 
-22 bộ sinh còn thiếu, đều thuộc nhóm dùng chung cho môn ngoài Toán 6–7:
+Thêm chương mới: viết bộ sinh vào một file trong `prisma/seed-data/` rồi khai
+báo ở `generators-all.ts`. Bộ khung không phải sửa.
 
-```
-gSystemEq  gArithSeq  gGeoSeq  gLog  gTrig  gDeriv          (Toán 8–12)
-gAverage   gKinematics  gOhm   gNewton                       (Khoa học, Lý)
-gMole  gConcentration  gMassPercent  gStoich                 (Hóa)
-gMendel  gDnaCount  gProtein  gHardyWeinberg                 (Sinh)
-gBinConv  gLogicEval  gLoopCount  gAlgoSteps                 (Tin học)
-```
+### Phần đã bổ sung gần nhất
 
-Viết thêm bộ sinh nào thì khai báo trong `prisma/seed-data/generators-all.ts` rồi chạy lại seed —
-bộ khung không phải sửa.
-
-### Màn hình chưa làm
-
-- Dashboard giáo viên đã có; **API giáo viên** (`/api/v1/teacher/*`) và `src/server/teacher/service.ts`
-  chưa viết. Trang giáo viên hiện truy vấn Prisma trực tiếp — chạy đúng nhưng nên gom về service
-  trước khi mở rộng.
-- Trang `/quan-tri/hoc-lieu/[itemId]` dùng trình soạn thảo đã có; luồng tạo câu mới đã chạy.
+- **Module giáo viên đầy đủ**: `src/server/teacher/service.ts` cùng sáu endpoint
+  `/api/v1/teacher/*` (danh sách học sinh kèm cảnh báo, hồ sơ, lịch tư vấn, chi
+  tiết buổi, ghi nhận xét, đóng buổi). Ghi nhận xét là một lời gọi làm bốn việc:
+  lưu nhận xét, chốt buổi, đẩy override vào engine cho chu kỳ sau và báo cho học
+  sinh — nhận xét lưu trước, override đẩy sau, để không bao giờ có chuyện lộ
+  trình đổi mà không ai biết vì sao.
+- **Trang danh mục công khai**: `/ky-thi` liệt kê mọi kỳ thi, `/khoa-hoc` là danh
+  mục khóa có bộ lọc theo kỳ thi / khối / môn. Bộ lọc đi qua query string nên
+  chia sẻ được đường dẫn và chạy đúng cả khi chưa tải xong JavaScript.
+- **API còn thiếu đã bù**: `/api/v1/programs`, `/api/v1/courses` (công khai),
+  `/api/v1/ai/teacher-brief/[sessionId]`, `/api/v1/admin/analytics`,
+  `/api/v1/admin/teachers/workload`.
 
 ### Quyết định nghiệp vụ cần chốt (specs §20)
 

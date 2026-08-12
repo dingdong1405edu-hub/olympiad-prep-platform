@@ -1362,8 +1362,9 @@ export async function suggestItemMetadata(input: SuggestItemMetadataInput): Prom
     // Câu hỏi mới chưa có id → khóa cache là vân tay nội dung.
     const fingerprint = createHash('sha256')
       // Dấu phân cách không thể xuất hiện trong nội dung câu hỏi, tránh hai đầu
-      // vào khác nhau vô tình ghép thành cùng một chuỗi băm.
-      .update([input.subject, input.gradeBand, input.stem, input.solution].join(' '))
+      // vào khác nhau vô tình ghép thành cùng một chuỗi băm. Viết dưới dạng dãy
+      // thoát để mã nguồn vẫn là văn bản thuần, không thành file nhị phân.
+      .update([input.subject, input.gradeBand, input.stem, input.solution].join('\u0000'))
       .digest('hex')
       .slice(0, 32);
     const catalogCodes = promptInput.skillCatalog.map((skill) => skill.code);

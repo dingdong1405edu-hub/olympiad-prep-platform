@@ -14,11 +14,20 @@ import Link from 'next/link';
 import { routes } from '@/lib/routes';
 import { cx } from '@/components/ui';
 
+/**
+ * Điều hướng của khu vực bán hàng.
+ *
+ * Hai mục đầu là TRANG THẬT chứ không phải neo trong trang: khách vào từ Google
+ * hay từ link chia sẻ có thể đang đứng ở /ky-thi, khi đó "#ky-thi" sẽ không nhảy
+ * đi đâu cả. Các mục còn lại vẫn là neo nhưng viết dạng "/#..." để bấm từ bất kỳ
+ * trang nào cũng quay về đúng khối trên trang chủ.
+ */
 const SECTIONS = [
-  { href: '#ky-thi', label: 'Kỳ thi' },
-  { href: '#cach-hoat-dong', label: 'Cách hoạt động' },
-  { href: '#phu-huynh', label: 'Cho phụ huynh' },
-  { href: '#cau-hoi', label: 'Câu hỏi' },
+  { href: '/ky-thi', label: 'Kỳ thi' },
+  { href: '/khoa-hoc', label: 'Khóa học' },
+  { href: '/#cach-hoat-dong', label: 'Cách hoạt động' },
+  { href: '/#phu-huynh', label: 'Cho phụ huynh' },
+  { href: '/#cau-hoi', label: 'Câu hỏi' },
 ];
 
 // ---------------------------------------------------------------------------
@@ -114,13 +123,13 @@ export function MarketingHeader({ signedIn }: { signedIn: boolean }) {
 
         <nav className="hidden flex-1 items-center gap-1 lg:flex">
           {SECTIONS.map((section) => (
-            <a
+            <Link
               key={section.href}
               href={section.href}
               className="rounded-lg px-3 py-2 text-sm font-medium text-navy-600 transition-colors hover:bg-navy-50 hover:text-navy-900"
             >
               {section.label}
-            </a>
+            </Link>
           ))}
         </nav>
 
@@ -181,14 +190,14 @@ export function MarketingHeader({ signedIn }: { signedIn: boolean }) {
         <div className="animate-fade-down border-t border-navy-100 bg-white px-5 pb-5 lg:hidden">
           <nav className="flex flex-col py-2">
             {SECTIONS.map((section) => (
-              <a
+              <Link
                 key={section.href}
                 href={section.href}
                 onClick={() => setMenuOpen(false)}
                 className="border-b border-navy-50 py-3.5 text-[15px] font-medium text-navy-800 last:border-0"
               >
                 {section.label}
-              </a>
+              </Link>
             ))}
           </nav>
           {signedIn ? null : (
@@ -230,9 +239,9 @@ export function MarketingFooter() {
             <ul className="mt-4 space-y-2.5 text-sm">
               {SECTIONS.map((section) => (
                 <li key={section.href}>
-                  <a href={section.href} className="transition-colors hover:text-white">
+                  <Link href={section.href} className="transition-colors hover:text-white">
                     {section.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
               <li>

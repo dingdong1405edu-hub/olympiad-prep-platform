@@ -8,7 +8,17 @@
 export const routes = {
   // --- Công khai ---
   home: () => '/',
+  programs: () => '/ky-thi',
   program: (code: string) => `/ky-thi/${code.toLowerCase()}`,
+  /** Danh mục khóa học; bộ lọc đi qua query string để chia sẻ được đường dẫn. */
+  courses: (filter?: { programCode?: string; gradeBand?: string; subject?: string }) => {
+    const query = new URLSearchParams();
+    if (filter?.programCode) query.set('ky_thi', filter.programCode.toUpperCase());
+    if (filter?.gradeBand) query.set('khoi', filter.gradeBand.toUpperCase());
+    if (filter?.subject) query.set('mon', filter.subject.toUpperCase());
+    const search = query.toString();
+    return search ? `/khoa-hoc?${search}` : '/khoa-hoc';
+  },
   register: (next?: string) => (next ? `/dang-ky?next=${encodeURIComponent(next)}` : '/dang-ky'),
   login: (next?: string) => (next ? `/dang-nhap?next=${encodeURIComponent(next)}` : '/dang-nhap'),
   forgotPassword: () => '/quen-mat-khau',

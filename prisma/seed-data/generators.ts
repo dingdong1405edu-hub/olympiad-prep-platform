@@ -513,6 +513,16 @@ export interface SkillItems {
 }
 
 /**
+ * Dấu vân tay của một câu hỏi, dùng để phát hiện trùng lặp trong cùng kỹ năng.
+ * Gồm đề bài và toàn bộ phần đáp án đúng — hai câu chỉ thật sự trùng nhau khi
+ * cả hỏi lẫn đáp đều giống hệt.
+ */
+function fingerprint(draft: Draft): string {
+  const multi = draft.correctTexts ? [...draft.correctTexts].sort().join('|') : '';
+  return `${draft.stem}⟂${draft.correct}⟂${multi}`;
+}
+
+/**
  * Registry được TIÊM TỪ NGOÀI thay vì cố định trong file này: bộ sinh câu được
  * tách thành nhiều file theo nhóm chương, `generators-all.ts` gom lại rồi truyền
  * vào đây. Nhờ vậy thêm chương mới không phải sửa bộ khung.
@@ -533,22 +543,25 @@ export function generateForTaxonomy(
       const count = itemCountFor(tax, skillIndex);
       const r = mulberry32(hashSeed(`${tax.prefix}:${skill.code}:v1`));
       const items: GeneratedItem[] = [];
-      const seenStems = new Set<string>();
+      const seen = new Set<string>();
 
       for (let slot = 0; slot < count; slot++) {
         const d = DIFFICULTIES[slot % 3];
         const ctx: GenCtx = { r, d, lvl: slot % 3, slot, params: skill.genParams ?? {} };
         let draft: Draft | null = null;
-        // Tránh sinh trùng đề trong cùng một kỹ năng (không gian tham số hữu hạn)
+        // Tránh sinh trùng đề trong cùng một kỹ năng (không gian tham số hữu hạn).
+        // Dấu vân tay là ĐỀ BÀI + ĐÁP ÁN chứ không chỉ đề bài: nhiều câu hỏi có
+        // phần dẫn cố định ("Số nào sau đây là số nguyên tố?") nhưng bộ số và
+        // đáp án khác hẳn nhau — với học sinh đó là những câu hoàn toàn khác.
         for (let attempt = 0; attempt < 25; attempt++) {
           const candidate = gen(ctx);
-          if (!seenStems.has(candidate.stem)) {
+          if (!seen.has(fingerprint(candidate))) {
             draft = candidate;
             break;
           }
         }
         if (!draft) continue; // hết biến thể → bỏ qua slot, không tạo câu trùng
-        seenStems.add(draft.stem);
+        seen.add(fingerprint(draft));
 
         const itemCode = `${tax.prefix}-${skill.code}-${String(slot + 1).padStart(5, '0')}`;
         const item = buildItem(draft, ctx, itemCode, chapter, skill, !tax.detailed, publishedAt);
