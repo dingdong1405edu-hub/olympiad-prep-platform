@@ -2,27 +2,37 @@
  * Gom toàn bộ registry sinh câu hỏi.
  *
  * Bộ sinh được tách theo nhóm chương để mỗi file ở kích thước đọc được:
- *   generators.ts            — số học nền tảng (41 bộ sinh) + bộ khung dựng câu
- *   generators-science.ts    — bộ sinh dùng chung cho Lý/Hóa/Sinh/Tin và các khối khác
- *
- * CHƯA VIẾT (taxonomy đã khai báo nhưng file bộ sinh chưa tồn tại):
- *   generators-algebra.ts    — biểu thức, phương trình, bất đẳng thức, dãy số
- *   generators-geometry.ts   — hình học phẳng, tam giác, chu vi–diện tích–thể tích
- *   generators-word.ts       — chuyển động, năng suất, thống kê, suy luận logic
- * Bỏ import ba file này để dự án build được; `findMissingGenerators` bên dưới sẽ
- * liệt kê chính xác các khoá còn thiếu và chặn seed trước khi ghi database.
- * Viết xong file nào thì thêm lại import + spread tương ứng vào ALL_GENERATORS.
+ *   generators.ts             — số học nền tảng (41 bộ sinh) + bộ khung dựng câu
+ *   generators-algebra.ts     — biểu thức, phương trình, bất đẳng thức, dãy số
+ *   generators-geometry.ts    — điểm/đường/góc và tam giác
+ *   generators-area.ts        — chu vi, diện tích, thể tích
+ *   generators-word.ts        — chuyển động, năng suất công việc
+ *   generators-stat-logic.ts  — thống kê, xác suất, suy luận logic
+ *   generators-natural.ts     — tốc độ, khối lượng riêng, nhiệt, công suất
+ *   generators-science.ts     — số học, đổi đơn vị, hằng đẳng thức, căn, Pythagore
  *
  * Thêm chương mới = thêm bộ sinh vào một file rồi khai báo ở đây; bộ khung
  * trong generators.ts không phải sửa.
  */
 import { BASE_GENERATORS, generateForTaxonomy, type Gen, type SkillItems } from './generators';
+import { ALGEBRA_GENERATORS } from './generators-algebra';
+import { GEOMETRY_GENERATORS } from './generators-geometry';
+import { AREA_GENERATORS } from './generators-area';
+import { WORD_GENERATORS } from './generators-word';
+import { STAT_LOGIC_GENERATORS } from './generators-stat-logic';
+import { NATURAL_GENERATORS } from './generators-natural';
 import { SCIENCE_GENERATORS } from './generators-science';
 import type { TaxonomySeed } from './taxonomy';
 import { flatSkills } from './taxonomy';
 
 export const ALL_GENERATORS: Record<string, Gen> = {
   ...BASE_GENERATORS,
+  ...ALGEBRA_GENERATORS,
+  ...GEOMETRY_GENERATORS,
+  ...AREA_GENERATORS,
+  ...WORD_GENERATORS,
+  ...STAT_LOGIC_GENERATORS,
+  ...NATURAL_GENERATORS,
   ...SCIENCE_GENERATORS,
 };
 
@@ -44,6 +54,33 @@ export function findMissingGenerators(taxonomies: TaxonomySeed[]): string[] {
     }
   }
   return [...missing].sort();
+}
+
+/**
+ * Các taxonomy đã đủ bộ sinh để seed được ngay.
+ * Đặc tả §16.0 yêu cầu chạy trọn vòng MỘT môn/khối trước rồi mới mở rộng, nên
+ * seed chỉ nạp những taxonomy sẵn sàng và báo rõ phần còn lại thay vì chặn hết.
+ */
+export function splitReadyTaxonomies(taxonomies: TaxonomySeed[]): {
+  ready: TaxonomySeed[];
+  pending: { tax: TaxonomySeed; missing: string[] }[];
+} {
+  const ready: TaxonomySeed[] = [];
+  const pending: { tax: TaxonomySeed; missing: string[] }[] = [];
+
+  for (const tax of taxonomies) {
+    const missing = [
+      ...new Set(
+        flatSkills(tax)
+          .map(({ skill }) => skill.gen ?? skill.code)
+          .filter((key) => !ALL_GENERATORS[key]),
+      ),
+    ].sort();
+    if (missing.length === 0) ready.push(tax);
+    else pending.push({ tax, missing });
+  }
+
+  return { ready, pending };
 }
 
 export type { SkillItems };

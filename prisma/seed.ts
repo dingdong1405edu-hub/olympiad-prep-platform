@@ -43,7 +43,7 @@ import {
   validateTaxonomy,
   type TaxonomySeed,
 } from './seed-data/taxonomy';
-import { findMissingGenerators, generateItems } from './seed-data/generators-all';
+import { generateItems, splitReadyTaxonomies } from './seed-data/generators-all';
 import { CONFIG_GROUP_META, DEFAULT_CONFIG } from '../src/lib/config/defaults';
 import type { BlueprintSpec } from '../src/engine/types';
 
@@ -130,10 +130,9 @@ function preflight(): string[] {
     }
   }
 
-  for (const missing of findMissingGenerators(TAXONOMIES)) {
-    errors.push(`Thiếu bộ sinh câu hỏi: ${missing}`);
-  }
-
+  // Thiếu bộ sinh KHÔNG còn là lỗi chặn: đặc tả §16.0 yêu cầu chạy trọn vòng một
+  // môn/khối trước rồi mới mở rộng. Seed nạp những taxonomy đã đủ bộ sinh và in
+  // rõ phần còn lại — thiếu sót được nhìn thấy chứ không bị nuốt im lặng.
   return errors;
 }
 
@@ -906,7 +905,21 @@ async function main(): Promise<void> {
     return;
   }
   const skillTotal = TAXONOMIES.reduce((sum, t) => sum + flatSkills(t).length, 0);
-  done(`${TAXONOMIES.length} taxonomy, ${skillTotal} kỹ năng — hợp lệ, đủ bộ sinh câu hỏi`);
+  done(`${TAXONOMIES.length} taxonomy, ${skillTotal} kỹ năng — cấu trúc hợp lệ`);
+
+  // Chỉ nạp câu hỏi cho taxonomy đã đủ bộ sinh; phần còn lại được nêu tên rõ ràng
+  // để đội nội dung biết chính xác còn nợ những gì (đặc tả §18: không cắt bớt im lặng).
+  const { ready, pending } = splitReadyTaxonomies(TAXONOMIES);
+  if (pending.length > 0) {
+    console.log(
+      `\n  ⚠ ${pending.length}/${TAXONOMIES.length} taxonomy CHƯA có đủ bộ sinh câu hỏi.`,
+    );
+    console.log('    Chương trình và cây kiến thức của chúng vẫn được tạo, nhưng KHÔNG có câu hỏi:');
+    for (const p of pending) {
+      console.log(`      - ${p.tax.subject}/${p.tax.gradeBand} (${p.tax.prefix}): thiếu ${p.missing.join(', ')}`);
+    }
+    console.log('    Bổ sung bộ sinh trong prisma/seed-data/ rồi chạy lại seed để nạp tiếp.\n');
+  }
 
   step(2, 'Chương trình, mùa thi, khóa học, bảng giá, mã giảm giá');
   const catalog = await seedCatalog();
@@ -922,9 +935,23 @@ async function main(): Promise<void> {
   const mapsByTaxKey = new Map<string, TaxonomyMaps>();
   let generatedTotal = 0;
   let insertedTotal = 0;
+  const readyKeys = new Set(ready.map((t) => `${t.subject}:${t.gradeBand}`));
   for (const tax of TAXONOMIES) {
+    // Cây kiến thức luôn được tạo cho MỌI taxonomy — đó là dữ liệu chuẩn hóa,
+    // độc lập với việc đã có bộ sinh câu hỏi hay chưa.
     const maps = await seedTaxonomy(tax);
-    mapsByTaxKey.set(`${tax.subject}:${tax.gradeBand}`, maps);
+    const key = `${tax.subject}:${tax.gradeBand}`;
+    mapsByTaxKey.set(key, maps);
+
+    if (!readyKeys.has(key)) {
+      console.log(
+        `    · ${tax.subject}/${tax.gradeBand} (${tax.prefix}): ` +
+          `${maps.chapterIdByCode.size} chương, ${maps.skillIdByCode.size} kỹ năng, ` +
+          `0 câu — CHƯA có bộ sinh`,
+      );
+      continue;
+    }
+
     const stats = await seedItems(tax, maps, { editorId, reviewerId });
     generatedTotal += stats.generated;
     insertedTotal += stats.inserted;

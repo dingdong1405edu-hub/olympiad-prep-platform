@@ -147,6 +147,49 @@ src/
 
 ---
 
+## 3b. Hệ thống thiết kế
+
+Giao diện ba khu vực (học sinh · giáo viên · quản trị) dùng chung một hệ thống thiết kế.
+**Không tự viết class Tailwind rời rạc cho nút, thẻ, ô nhập** — nếu thấy thiếu, hãy bổ sung vào
+`src/components/ui.tsx` để cả hệ thống cùng được hưởng.
+
+| File | Nội dung |
+|---|---|
+| `src/app/globals.css` | Token màu, bóng đổ, nhịp chuyển động, keyframes, tiện ích animation |
+| `src/components/ui.tsx` | Primitive **không dùng hook** → import được cả ở Server Component |
+| `src/components/motion.tsx` | Thành phần có trạng thái: `Reveal`, `Counter`, `ProgressRing`, `Skeleton`, `Toast`… |
+| `src/components/charts.tsx` | Biểu đồ mastery, bảng màu đã kiểm định cho người mù màu |
+| `src/components/shell.tsx` | `AppShell`, `FocusShell`, điều hướng ba khu vực |
+
+### Bảng màu
+
+- **brand** (indigo) — hành động chính, nhận diện thương hiệu
+- **accent** (xanh ngọc) — tiến bộ, thành tựu
+- **ink** (xám ngả xanh) — chữ và đường viền, dịu mắt khi đọc lâu
+- **4 mức mastery** — `#1c5cab` Mạnh · `#6da7ec` Ổn · `#eda100` Cần củng cố · `#d03b3b` Hổng
+
+Bốn màu mastery và cặp xanh/đỏ của biểu đồ đã chạy qua trình kiểm định: cặp gần nhau đạt
+ΔE ≥ 18 với người mù màu protan/deutan (ngưỡng an toàn là 8). **Đổi màu biểu đồ thì phải chạy
+lại kiểm định** — đừng chọn bằng mắt.
+
+### Quy tắc chuyển động
+
+Chuyển động ở đây phục vụ việc **hiểu**, không phải trang trí:
+
+1. Dẫn mắt tới thứ vừa thay đổi (mastery tăng, câu mới, cảnh báo xuất hiện).
+2. Cho phản hồi tức thì khi bấm — đặc biệt quan trọng trên điện thoại, nơi không có hover.
+3. Gợi ý thứ tự đọc bằng cách hiện lần lượt (`stagger`).
+
+Ràng buộc: hiệu ứng xuất hiện **chỉ chạy một lần**; thời lượng 200–450ms; không bao giờ chặn
+thao tác. `globals.css` tự tắt toàn bộ khi người dùng bật *giảm chuyển động* — đây là yêu cầu bắt
+buộc vì sản phẩm dành cho trẻ em và một số em nhạy cảm tiền đình.
+
+Tiện ích dùng trực tiếp làm `className`: `animate-fade-up` · `animate-fade-in` · `animate-scale-in`
+· `animate-pop` · `animate-float` · `delay-1…6` · `stagger` · `hover-lift` · `press` · `skeleton`
+· `bar-fill` · `hero-glow` · `rule-fade`.
+
+---
+
 ## 4. Vòng lặp nghiệp vụ
 
 ```
@@ -279,26 +322,71 @@ nên phần nhận xét chạy bằng template fallback; điền key vào là c�
 
 ---
 
-## 10. Việc còn lại trước khi bán thật
+## 10. Tình trạng hiện tại
 
-**Chặn ngay lúc này — `npm run db:seed` chưa chạy được.** `prisma/seed-data/taxonomy.ts`
-khai báo 113 khoá bộ sinh câu hỏi nhưng mới có 47 khoá được viết (41 trong
-`generators.ts`, 6 trong `generators-science.ts`). Ba file còn thiếu:
+Cập nhật sau lần kiểm chứng gần nhất trên máy phát triển.
 
-- `generators-algebra.ts` — `EXPR01–04`, `EQ01–04`, `INEQ01–03`, `SEQ01–04`
-- `generators-geometry.ts` — `GEO01–04`, `TRI01–04`, `AREA01–04`
-- `generators-word.ts` — `MOTION01–04`, `WORK01–03`, `STAT01–03`, `LOGIC01–03`
+### Đã chạy được và đã kiểm chứng
 
-cộng các bộ sinh dạng `g*` cho Lý/Hóa/Sinh/Tin (`gOhm`, `gMole`, `gMendel`,
-`gKinematics`, …). Tổng cộng 66 khoá thiếu, ảnh hưởng 118/186 kỹ năng.
-`findMissingGenerators` chặn seed trước khi ghi database nên **production hiện
-có schema nhưng chưa có dữ liệu danh mục/câu hỏi**. Viết xong file nào thì thêm
-lại import và spread tương ứng vào `ALL_GENERATORS` ở `generators-all.ts`.
+| Hạng mục | Bằng chứng |
+|---|---|
+| Biên dịch | `npx tsc --noEmit` — **0 lỗi** |
+| Unit test | `npm test` — **150/150 xanh** (engine, chấm bài, nhập liệu CSV) |
+| Build production | `npm run build` — **thành công**, 35 trang |
+| Nạp dữ liệu | `npm run db:seed` — **1.222 câu hỏi**, 5 kỳ thi, 56 khóa, 186 kỹ năng, 112 bài kiểm tra |
+| Vòng lặp nghiệp vụ | `npx tsx scripts/smoke-test.ts` — **42/42 đạt** |
+| Giao diện | 23 trang của cả ba khu vực trả HTTP 200 với tài khoản thật |
 
-Theo specs §20, các quyết định sau cần chốt với nghiệp vụ (code đã để sẵn chỗ cắm):
+Kiểm thử trọn vòng bao gồm cả tiêu chí nghiệm thu quan trọng nhất của đặc tả (§17):
+*hai học sinh sai ở kỹ năng khác nhau nhận bộ bài khác nhau*, và *hệ thống lưu lý do chọn từng câu*.
 
-- Cổng thanh toán thật (hiện có `MockGateway`; xem `src/server/commerce/gateway.ts`).
-- Gửi email/SMS thật (hiện ghi bản ghi và log ra console; xem `src/server/notification/service.ts`).
-- 700.000đ là cho một môn, một kỳ thi hay combo; thời hạn truy cập bao lâu.
-- Ngưỡng người dùng đồng thời cần cam kết, để chạy kiểm thử tải.
-- Kế hoạch chuyển kho câu hỏi hiện có sang hệ thống (định dạng nguồn quyết định công cụ nhập).
+### Ngân hàng câu hỏi — phần đã có và phần còn nợ
+
+Có **91 bộ sinh câu hỏi**, đủ cho 3 trong 14 taxonomy:
+
+| Taxonomy | Trạng thái |
+|---|---|
+| **Toán khối 6–7** (`M67`) | Đủ — 82 kỹ năng, **1.160 câu**. Đây là khóa pilot theo specs §16.0 |
+| Toán khối 3–5 (`M345`) | Đủ — 30 câu |
+| Khoa học khối 6–7 (`K67`) | Đủ — 32 câu |
+| 11 taxonomy còn lại | Có cây kiến thức, **chưa có câu hỏi** |
+
+Seed **không còn bị chặn**: nó nạp những taxonomy đã đủ bộ sinh và in ra danh sách chính xác
+những khóa còn thiếu, thay vì dừng toàn bộ. Chạy `npm run db:seed` sẽ thấy báo cáo này.
+
+22 bộ sinh còn thiếu, đều thuộc nhóm dùng chung cho môn ngoài Toán 6–7:
+
+```
+gSystemEq  gArithSeq  gGeoSeq  gLog  gTrig  gDeriv          (Toán 8–12)
+gAverage   gKinematics  gOhm   gNewton                       (Khoa học, Lý)
+gMole  gConcentration  gMassPercent  gStoich                 (Hóa)
+gMendel  gDnaCount  gProtein  gHardyWeinberg                 (Sinh)
+gBinConv  gLogicEval  gLoopCount  gAlgoSteps                 (Tin học)
+```
+
+Viết thêm bộ sinh nào thì khai báo trong `prisma/seed-data/generators-all.ts` rồi chạy lại seed —
+bộ khung không phải sửa.
+
+### Màn hình chưa làm
+
+- Dashboard giáo viên đã có; **API giáo viên** (`/api/v1/teacher/*`) và `src/server/teacher/service.ts`
+  chưa viết. Trang giáo viên hiện truy vấn Prisma trực tiếp — chạy đúng nhưng nên gom về service
+  trước khi mở rộng.
+- Trang `/quan-tri/hoc-lieu/[itemId]` dùng trình soạn thảo đã có; luồng tạo câu mới đã chạy.
+
+### Quyết định nghiệp vụ cần chốt (specs §20)
+
+Code đã để sẵn chỗ cắm cho từng mục:
+
+- **Cổng thanh toán thật** — hiện dùng `MockGateway`, xem `src/server/commerce/gateway.ts`.
+  Webhook đã idempotent bằng compare-and-swap trong transaction, sẵn sàng cho cổng thật.
+- **Email/SMS thật** — hiện ghi bản ghi và log ra console, xem `src/server/notification/service.ts`.
+- **700.000đ cho một môn, một kỳ thi hay combo**, và thời hạn truy cập bao lâu.
+- **Ngưỡng người dùng đồng thời** cần cam kết, để chạy kiểm thử tải trước mùa thi.
+- **Kế hoạch chuyển kho câu hỏi hiện có** — định dạng nguồn quyết định công cụ nhập liệu.
+
+### AI
+
+Hệ thống chạy đầy đủ khi `ANTHROPIC_API_KEY` để trống: mọi hàm trong `src/server/ai/` có bản
+fallback sinh nhận xét từ dữ liệu có cấu trúc. Điền khóa API để bật mô hình ngôn ngữ thật —
+văn phong nhận xét sẽ tự nhiên hơn, mọi thứ khác giữ nguyên.

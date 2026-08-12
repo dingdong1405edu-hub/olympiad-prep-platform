@@ -1,14 +1,18 @@
 @import 'tailwindcss';
 
 /* ==========================================================================
-   Design tokens — Mobile-first, chữ dễ đọc, một hành động chính mỗi màn hình
-   (specs §9.1). Bảng màu thân thiện với học sinh, đủ tương phản cho phụ huynh.
+   HỆ THỐNG THIẾT KẾ
+   Mobile-first, một hành động chính mỗi màn hình (specs §9.1).
+   Chuyển động phục vụ việc HIỂU chứ không phải trang trí: dẫn mắt tới thứ vừa
+   thay đổi, cho cảm giác phản hồi tức thì, và tuyệt đối không chặn thao tác.
    ========================================================================== */
 
 @theme {
   --font-sans:
-    'Inter', 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
+    'Inter', 'Be Vietnam Pro', 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial,
+    sans-serif;
 
+  /* --- Thương hiệu: xanh indigo, tin cậy, không trẻ con --- */
   --color-brand-50: #eef3ff;
   --color-brand-100: #dae4ff;
   --color-brand-200: #bccdff;
@@ -20,6 +24,15 @@
   --color-brand-800: #252f92;
   --color-brand-900: #232c74;
 
+  /* --- Điểm nhấn phụ: xanh ngọc, dùng cho tiến bộ và thành tựu --- */
+  --color-accent-50: #eafbf5;
+  --color-accent-100: #cdf5e7;
+  --color-accent-300: #6fdcb8;
+  --color-accent-500: #17b183;
+  --color-accent-600: #0f9d70;
+  --color-accent-700: #0c7d5b;
+
+  /* --- Mực: thang xám hơi ngả xanh, dịu mắt khi đọc lâu --- */
   --color-ink-50: #f7f8fa;
   --color-ink-100: #eef0f4;
   --color-ink-200: #dde1e9;
@@ -31,18 +44,37 @@
   --color-ink-800: #262c3c;
   --color-ink-900: #171b26;
 
-  /* 4 mức mastery: Mạnh – Ổn – Cần củng cố – Hổng */
-  --color-tier-strong: #0f9d70;
-  --color-tier-ok: #2b83d6;
-  --color-tier-warn: #d98416;
-  --color-tier-gap: #d64550;
+  /* --- 4 mức mastery: Mạnh – Ổn – Cần củng cố – Hổng (đã kiểm định mù màu) --- */
+  --color-tier-strong: #1c5cab;
+  --color-tier-ok: #6da7ec;
+  --color-tier-warn: #eda100;
+  --color-tier-gap: #d03b3b;
 
   --color-surface: #ffffff;
-  --color-canvas: #f5f7fb;
+  --color-canvas: #f6f8fc;
+
+  /* --- Bóng đổ nhiều lớp: nông và mềm, không viền đen cứng --- */
+  --shadow-xs: 0 1px 2px rgb(23 27 38 / 0.04);
+  --shadow-sm: 0 1px 3px rgb(23 27 38 / 0.05), 0 1px 2px rgb(23 27 38 / 0.03);
+  --shadow-md: 0 4px 12px rgb(23 27 38 / 0.06), 0 2px 4px rgb(23 27 38 / 0.04);
+  --shadow-lg: 0 12px 28px rgb(23 27 38 / 0.09), 0 4px 10px rgb(23 27 38 / 0.04);
+  --shadow-brand: 0 8px 24px rgb(47 66 224 / 0.22);
+
+  /* --- Nhịp chuyển động --- */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --dur-fast: 140ms;
+  --dur-base: 240ms;
+  --dur-slow: 420ms;
 }
+
+/* ==========================================================================
+   NỀN TẢNG
+   ========================================================================== */
 
 html {
   -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
 }
 
 body {
@@ -50,23 +82,343 @@ body {
   color: var(--color-ink-800);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Viền focus thống nhất — không bao giờ tắt outline, chỉ làm nó đẹp hơn */
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--color-brand-500);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+::selection {
+  background: var(--color-brand-100);
+  color: var(--color-brand-900);
+}
+
+/* Thanh cuộn mảnh, hòa vào nền */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-ink-300) transparent;
+}
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+*::-webkit-scrollbar-thumb {
+  background-color: var(--color-ink-300);
+  border-radius: 999px;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-ink-400);
 }
 
 /* Vùng cuộn ngang cho bảng rộng trên điện thoại */
 .scroll-x {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x proximity;
 }
 
-/* Nội dung câu hỏi: giữ xuống dòng của người biên soạn */
+/* Nội dung câu hỏi: giữ nguyên xuống dòng của người biên soạn */
 .stem-content {
   white-space: pre-wrap;
   word-break: break-word;
-  line-height: 1.7;
+  line-height: 1.75;
+}
+
+/* ==========================================================================
+   KEYFRAMES
+   ========================================================================== */
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes fade-down {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes slide-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes pop {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.06);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes shimmer {
+  from {
+    background-position: -200% 0;
+  }
+  to {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes pulse-ring {
+  0% {
+    box-shadow: 0 0 0 0 rgb(47 66 224 / 0.35);
+  }
+  70% {
+    box-shadow: 0 0 0 12px rgb(47 66 224 / 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgb(47 66 224 / 0);
+  }
+}
+
+@keyframes float-soft {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes bar-grow {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes check-draw {
+  from {
+    stroke-dashoffset: 32;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* ==========================================================================
+   TIỆN ÍCH CHUYỂN ĐỘNG
+   ========================================================================== */
+
+.animate-fade-in {
+  animation: fade-in var(--dur-base) var(--ease-out-expo) both;
+}
+.animate-fade-up {
+  animation: fade-up var(--dur-slow) var(--ease-out-expo) both;
+}
+.animate-fade-down {
+  animation: fade-down var(--dur-base) var(--ease-out-expo) both;
+}
+.animate-scale-in {
+  animation: scale-in var(--dur-base) var(--ease-out-expo) both;
+}
+.animate-slide-right {
+  animation: slide-in-right var(--dur-base) var(--ease-out-expo) both;
+}
+.animate-pop {
+  animation: pop 420ms var(--ease-spring) both;
+}
+.animate-float {
+  animation: float-soft 5s ease-in-out infinite;
+}
+.animate-pulse-ring {
+  animation: pulse-ring 2s var(--ease-out-expo) infinite;
+}
+.animate-spin-slow {
+  animation: spin 900ms linear infinite;
+}
+
+/* Trễ theo bậc — dùng cho danh sách xuất hiện lần lượt */
+.delay-1 { animation-delay: 60ms; }
+.delay-2 { animation-delay: 120ms; }
+.delay-3 { animation-delay: 180ms; }
+.delay-4 { animation-delay: 240ms; }
+.delay-5 { animation-delay: 300ms; }
+.delay-6 { animation-delay: 360ms; }
+
+/**
+ * Danh sách con tự xuất hiện lần lượt mà không cần gán class cho từng phần tử.
+ * Giới hạn 12 phần tử: quá số đó thì hiệu ứng thành lê thê, gây khó chịu.
+ */
+.stagger > * {
+  animation: fade-up var(--dur-slow) var(--ease-out-expo) both;
+}
+.stagger > *:nth-child(1) { animation-delay: 0ms; }
+.stagger > *:nth-child(2) { animation-delay: 50ms; }
+.stagger > *:nth-child(3) { animation-delay: 100ms; }
+.stagger > *:nth-child(4) { animation-delay: 150ms; }
+.stagger > *:nth-child(5) { animation-delay: 200ms; }
+.stagger > *:nth-child(6) { animation-delay: 250ms; }
+.stagger > *:nth-child(7) { animation-delay: 300ms; }
+.stagger > *:nth-child(8) { animation-delay: 350ms; }
+.stagger > *:nth-child(9) { animation-delay: 400ms; }
+.stagger > *:nth-child(10) { animation-delay: 450ms; }
+.stagger > *:nth-child(11) { animation-delay: 500ms; }
+.stagger > *:nth-child(n + 12) { animation-delay: 550ms; }
+
+/* ==========================================================================
+   VI TƯƠNG TÁC
+   ========================================================================== */
+
+/* Thẻ nhấc nhẹ khi rê chuột — chỉ trên thiết bị có con trỏ thật */
+@media (hover: hover) {
+  .hover-lift {
+    transition:
+      transform var(--dur-base) var(--ease-out-expo),
+      box-shadow var(--dur-base) var(--ease-out-expo),
+      border-color var(--dur-base) var(--ease-out-expo);
+  }
+  .hover-lift:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
+  }
+}
+
+/* Phản hồi khi bấm — quan trọng trên điện thoại, nơi không có trạng thái hover */
+.press {
+  transition: transform var(--dur-fast) var(--ease-out-expo);
+}
+.press:active {
+  transform: scale(0.975);
+}
+
+/* Gạch chân trượt cho liên kết trong đoạn văn */
+.link-underline {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0% 1.5px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size var(--dur-base) var(--ease-out-expo);
+}
+.link-underline:hover {
+  background-size: 100% 1.5px;
+}
+
+/* Khung xương khi đang tải — thay cho việc nhảy layout */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--color-ink-100) 25%,
+    var(--color-ink-50) 37%,
+    var(--color-ink-100) 63%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+  border-radius: 8px;
+}
+
+/* Thanh tiến độ mọc từ trái sang */
+.bar-fill {
+  transform-origin: left center;
+  animation: bar-grow 700ms var(--ease-out-expo) both;
+}
+
+/* Dấu tích được vẽ ra khi trả lời đúng */
+.check-draw {
+  stroke-dasharray: 32;
+  animation: check-draw 380ms var(--ease-out-expo) both;
+}
+
+/* Nền chuyển sắc dịu cho khối hero */
+.hero-glow {
+  background:
+    radial-gradient(60rem 30rem at 50% -10%, rgb(67 97 242 / 0.1), transparent 65%),
+    radial-gradient(40rem 24rem at 85% 8%, rgb(23 177 131 / 0.08), transparent 60%);
+}
+
+/* Đường kẻ mảnh dần về hai đầu — dùng để chia mục */
+.rule-fade {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--color-ink-200), transparent);
+}
+
+/* ==========================================================================
+   TÔN TRỌNG NGƯỜI DÙNG TẮT HIỆU ỨNG
+   Bắt buộc: một số học sinh nhạy cảm tiền đình, và đây là sản phẩm cho trẻ em.
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .hover-lift:hover {
+    transform: none;
+  }
 }
 
 @media print {
   .no-print {
     display: none !important;
+  }
+  body {
+    background: #fff;
   }
 }

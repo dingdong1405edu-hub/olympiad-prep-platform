@@ -311,15 +311,62 @@ function buildChoices(
     picked.push(c);
     if (picked.length === 3) break;
   }
-  // Đệm an toàn: chỉ chạy khi generator không cấp đủ 3 nhiễu khác nhau.
+  /** Thêm một nhiễu nếu chưa trùng đáp án và chưa có trong danh sách. */
+  const add = (text: string): void => {
+    if (text && text !== correct && !picked.includes(text)) picked.push(text);
+  };
+
+  // ---- Đệm an toàn, chỉ chạy khi generator không cấp đủ 3 nhiễu khác nhau ----
+  // Bộ sinh nào cũng nên tự cấp >= 4 ứng viên; phần dưới đây là lưới an toàn để
+  // một biến thể hiếm gặp không làm sập cả lượt nạp dữ liệu.
+
   if (picked.length < 3 && numericHint !== undefined) {
     for (const delta of [1, -1, 2, -2, 5, -5, 10, -10]) {
-      const v = numericHint + delta;
-      const t = fmt(v);
-      if (t !== correct && !picked.includes(t)) picked.push(t);
-      if (picked.length === 3) break;
+      if (picked.length >= 3) break;
+      add(fmt(numericHint + delta));
     }
   }
+
+  // Đáp án dạng phân số a/b: nhiễu là các sai lệch có thật khi làm bài —
+  // lệch tử, lệch mẫu, hoặc đảo ngược phân số.
+  if (picked.length < 3) {
+    const frac = /^(-?\d+)\/(\d+)$/.exec(correct.trim());
+    if (frac) {
+      const a = Number(frac[1]);
+      const b = Number(frac[2]);
+      for (const cand of [
+        `${a + 1}/${b}`,
+        `${a - 1}/${b}`,
+        `${b}/${a}`,
+        `${a}/${b + 1}`,
+        `${a}/${Math.max(1, b - 1)}`,
+        `${a * 2}/${b}`,
+      ]) {
+        if (picked.length >= 3) break;
+        add(cand);
+      }
+    }
+  }
+
+  // Đáp án dạng "số + đơn vị" (kể cả số thập phân kiểu Việt Nam dùng dấu phẩy):
+  // giữ nguyên đơn vị, chỉ xê dịch phần số.
+  if (picked.length < 3) {
+    const withUnit = /^(-?[\d.,]+)(\s*\D.*)?$/.exec(correct.trim());
+    if (withUnit) {
+      const raw = withUnit[1]!.replace(/\./g, '').replace(',', '.');
+      const base = Number(raw);
+      const unit = withUnit[2] ?? '';
+      if (Number.isFinite(base)) {
+        for (const factor of [1.1, 0.9, 2, 0.5, 10, 0.1]) {
+          if (picked.length >= 3) break;
+          const v = base * factor;
+          const rounded = Math.abs(v) < 1 ? Math.round(v * 1000) / 1000 : Math.round(v * 100) / 100;
+          add(`${fmt(rounded)}${unit}`);
+        }
+      }
+    }
+  }
+
   if (picked.length < 3) {
     throw new Error(`Không đủ phương án nhiễu cho đáp án "${correct}"`);
   }

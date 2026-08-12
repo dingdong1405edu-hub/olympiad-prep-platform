@@ -146,4 +146,5 @@ export const API = {
   // Khác
   events: '/api/v1/events',
   notifications: '/api/v1/notifications',
+  changePassword: '/api/v1/auth/change-password',
 } as const;
