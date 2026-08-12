@@ -29,15 +29,15 @@ export function NavLink({
       className={cx(
         'relative rounded-lg px-3 py-1.5 text-sm whitespace-nowrap transition-all duration-200',
         active
-          ? 'bg-brand-50 font-semibold text-brand-700'
-          : 'font-medium text-ink-600 hover:bg-ink-100 hover:text-ink-900',
+          ? 'bg-navy-50 font-semibold text-navy-900'
+          : 'font-medium text-navy-500 hover:bg-navy-50 hover:text-navy-800',
       )}
     >
       {children}
       <span
         aria-hidden
         className={cx(
-          'absolute inset-x-3 -bottom-[7px] h-0.5 rounded-full bg-brand-600 transition-all duration-300',
+          'absolute inset-x-3 -bottom-[7px] h-0.5 rounded-full bg-gold-400 transition-all duration-300',
           active ? 'opacity-100' : 'scale-x-0 opacity-0',
         )}
         style={{ transformOrigin: 'center' }}

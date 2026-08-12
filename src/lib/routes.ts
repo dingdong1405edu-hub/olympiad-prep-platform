@@ -24,6 +24,8 @@ export const routes = {
   register: (next?: string) => (next ? `/dang-ky?next=${encodeURIComponent(next)}` : '/dang-ky'),
   login: (next?: string) => (next ? `/dang-nhap?next=${encodeURIComponent(next)}` : '/dang-nhap'),
   forgotPassword: () => '/quen-mat-khau',
+  /** Trang xác nhận sau khi thoát — nơi API đăng xuất chuyển hướng tới. */
+  loggedOut: () => '/dang-xuat',
 
   // --- Thanh toán ---
   checkout: (courseId: string) => `/thanh-toan/${courseId}`,

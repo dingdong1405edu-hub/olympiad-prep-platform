@@ -13,6 +13,12 @@ import { useEffect, useState, type ReactNode } from 'react';
 import Link from 'next/link';
 import { routes } from '@/lib/routes';
 import { cx } from '@/components/ui';
+import { Crest, Wordmark } from '@/components/brand';
+
+// Khiên và chữ ký thương hiệu nay dùng chung với khung ứng dụng — xem
+// `src/components/brand.tsx`. Giữ lại lối export cũ để các trang đang import từ
+// đây không phải sửa.
+export { Crest, Wordmark };
 
 /**
  * Điều hướng của khu vực bán hàng.
@@ -56,72 +62,6 @@ export interface ShellCopy {
 
 function sections(copy: ShellCopy) {
   return SECTION_HREFS.map((item) => ({ href: item.href, label: copy.links[item.copyKey] }));
-}
-
-// ---------------------------------------------------------------------------
-
-/** Dấu hiệu thương hiệu: khiên huy chương với chữ lồng, vẽ bằng SVG cho sắc nét. */
-export function Crest({ className, tone = 'light' }: { className?: string; tone?: 'light' | 'dark' }) {
-  const plate = tone === 'light' ? 'var(--color-navy-900)' : '#ffffff';
-  const mark = tone === 'light' ? 'var(--color-gold-300)' : 'var(--color-navy-900)';
-
-  return (
-    <svg viewBox="0 0 40 40" className={className} aria-hidden fill="none">
-      <path
-        d="M20 2.5 34.5 7.2v13.4c0 8.1-5.7 15-14.5 17.9C11.2 35.6 5.5 28.7 5.5 20.6V7.2L20 2.5Z"
-        fill={plate}
-      />
-      <path
-        d="M20 2.5 34.5 7.2v13.4c0 8.1-5.7 15-14.5 17.9C11.2 35.6 5.5 28.7 5.5 20.6V7.2L20 2.5Z"
-        stroke={mark}
-        strokeOpacity="0.45"
-        strokeWidth="1.1"
-      />
-      {/* Đường gấp khúc đi lên — hình ảnh của tiến bộ, không phải chữ cái */}
-      <path
-        d="M12.5 25.5 17 20.5l3.6 3.4 6.4-8.4"
-        stroke={mark}
-        strokeWidth="2.6"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <circle cx="27" cy="15.5" r="2.1" fill={mark} />
-    </svg>
-  );
-}
-
-export function Wordmark({
-  tone = 'light',
-  name = 'Olympiad Prep',
-  tagline = 'Ôn luyện cá nhân hóa',
-}: {
-  tone?: 'light' | 'dark';
-  name?: string;
-  tagline?: string;
-}) {
-  return (
-    <Link href={routes.home()} className="group flex items-center gap-2.5">
-      <Crest className="h-9 w-9 transition-transform duration-300 group-hover:scale-105" tone={tone} />
-      <span className="leading-none">
-        <span
-          className={cx(
-            'font-display block text-[17px] font-bold tracking-tight',
-            tone === 'light' ? 'text-navy-900' : 'text-white',
-          )}
-        >
-          {name}
-        </span>
-        <span
-          className={cx(
-            'mt-0.5 block text-[10px] font-semibold tracking-[0.16em] uppercase',
-            tone === 'light' ? 'text-navy-400' : 'text-navy-300',
-          )}
-        >
-          {tagline}
-        </span>
-      </span>
-    </Link>
-  );
 }
 
 // ---------------------------------------------------------------------------

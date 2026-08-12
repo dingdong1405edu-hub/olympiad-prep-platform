@@ -226,6 +226,7 @@ export function ProgressRing({
   size = 88,
   stroke = 8,
   color = 'var(--color-brand-600)',
+  trackColor = 'var(--color-ink-100)',
   label,
 }: {
   value: number;
@@ -233,6 +234,8 @@ export function ProgressRing({
   size?: number;
   stroke?: number;
   color?: string;
+  /** Màu vòng nền. Đặt lại khi vòng nằm trên nền tối — xám nhạt mặc định sẽ chìm. */
+  trackColor?: string;
   label?: ReactNode;
 }) {
   const percent = max <= 0 ? 0 : Math.max(0, Math.min(100, (value / max) * 100));
@@ -260,7 +263,7 @@ export function ProgressRing({
           cy={size / 2}
           r={radius}
           fill="none"
-          stroke="var(--color-ink-100)"
+          stroke={trackColor}
           strokeWidth={stroke}
         />
         <circle
