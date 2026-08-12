@@ -1,0 +1,23 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: olympiad-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: olympiad
+      POSTGRES_PASSWORD: olympiad_dev_password
+      POSTGRES_DB: olympiad
+      TZ: Asia/Ho_Chi_Minh
+    # Dùng 5433 ở phía host để không đụng PostgreSQL có sẵn trên máy (cổng 5432).
+    ports:
+      - '5433:5432'
+    volumes:
+      - olympiad-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U olympiad -d olympiad']
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+volumes:
+  olympiad-pgdata:

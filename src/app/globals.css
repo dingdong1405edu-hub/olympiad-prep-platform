@@ -1,0 +1,72 @@
+@import 'tailwindcss';
+
+/* ==========================================================================
+   Design tokens — Mobile-first, chữ dễ đọc, một hành động chính mỗi màn hình
+   (specs §9.1). Bảng màu thân thiện với học sinh, đủ tương phản cho phụ huynh.
+   ========================================================================== */
+
+@theme {
+  --font-sans:
+    'Inter', 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
+
+  --color-brand-50: #eef3ff;
+  --color-brand-100: #dae4ff;
+  --color-brand-200: #bccdff;
+  --color-brand-300: #93aeff;
+  --color-brand-400: #6685fb;
+  --color-brand-500: #4361f2;
+  --color-brand-600: #2f42e0;
+  --color-brand-700: #2733b8;
+  --color-brand-800: #252f92;
+  --color-brand-900: #232c74;
+
+  --color-ink-50: #f7f8fa;
+  --color-ink-100: #eef0f4;
+  --color-ink-200: #dde1e9;
+  --color-ink-300: #c3cad7;
+  --color-ink-400: #94a0b5;
+  --color-ink-500: #6b7792;
+  --color-ink-600: #4e5871;
+  --color-ink-700: #3b4358;
+  --color-ink-800: #262c3c;
+  --color-ink-900: #171b26;
+
+  /* 4 mức mastery: Mạnh – Ổn – Cần củng cố – Hổng */
+  --color-tier-strong: #0f9d70;
+  --color-tier-ok: #2b83d6;
+  --color-tier-warn: #d98416;
+  --color-tier-gap: #d64550;
+
+  --color-surface: #ffffff;
+  --color-canvas: #f5f7fb;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background-color: var(--color-canvas);
+  color: var(--color-ink-800);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Vùng cuộn ngang cho bảng rộng trên điện thoại */
+.scroll-x {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Nội dung câu hỏi: giữ xuống dòng của người biên soạn */
+.stem-content {
+  white-space: pre-wrap;
+  word-break: break-word;
+  line-height: 1.7;
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}

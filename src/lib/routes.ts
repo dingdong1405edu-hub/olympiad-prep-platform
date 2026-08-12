@@ -1,0 +1,149 @@
+/**
+ * SƠ ĐỒ ĐƯỜNG DẪN CỦA TOÀN HỆ THỐNG.
+ *
+ * Mọi liên kết trong giao diện phải gọi hàm ở đây thay vì viết chuỗi tay —
+ * đổi cấu trúc URL chỉ cần sửa một chỗ.
+ */
+
+export const routes = {
+  // --- Công khai ---
+  home: () => '/',
+  program: (code: string) => `/ky-thi/${code.toLowerCase()}`,
+  register: (next?: string) => (next ? `/dang-ky?next=${encodeURIComponent(next)}` : '/dang-ky'),
+  login: (next?: string) => (next ? `/dang-nhap?next=${encodeURIComponent(next)}` : '/dang-nhap'),
+  forgotPassword: () => '/quen-mat-khau',
+
+  // --- Thanh toán ---
+  checkout: (courseId: string) => `/thanh-toan/${courseId}`,
+  checkoutResult: (orderCode: string) => `/thanh-toan/ket-qua/${orderCode}`,
+
+  // --- Học sinh ---
+  myCourses: () => '/hoc-tap',
+  studyDashboard: (enrollmentId: string) => `/hoc-tap/${enrollmentId}`,
+  onboarding: (enrollmentId: string) => `/hoc-tap/${enrollmentId}/khoi-dong`,
+  diagnostic: (enrollmentId: string) => `/hoc-tap/${enrollmentId}/kiem-tra-dau-vao`,
+  assessmentPlayer: (enrollmentId: string, attemptId: string) =>
+    `/hoc-tap/${enrollmentId}/bai-kiem-tra/${attemptId}`,
+  attemptResult: (enrollmentId: string, attemptId: string) =>
+    `/hoc-tap/${enrollmentId}/ket-qua/${attemptId}`,
+  goalBuilder: (enrollmentId: string) => `/hoc-tap/${enrollmentId}/muc-tieu`,
+  practice: (enrollmentId: string, planDayId: string) =>
+    `/hoc-tap/${enrollmentId}/luyen-tap/${planDayId}`,
+  skillMap: (enrollmentId: string) => `/hoc-tap/${enrollmentId}/ban-do-ky-nang`,
+  assessments: (enrollmentId: string) => `/hoc-tap/${enrollmentId}/danh-gia`,
+  teacherSessions: (enrollmentId: string) => `/hoc-tap/${enrollmentId}/buoi-tu-van`,
+  account: () => '/tai-khoan',
+
+  // --- Giáo viên ---
+  teacherHome: () => '/giao-vien',
+  teacherStudent: (enrollmentId: string) => `/giao-vien/hoc-sinh/${enrollmentId}`,
+  teacherSession: (sessionId: string) => `/giao-vien/buoi-tu-van/${sessionId}`,
+
+  // --- Quản trị ---
+  adminHome: () => '/quan-tri',
+  adminPrograms: () => '/quan-tri/chuong-trinh',
+  adminContent: () => '/quan-tri/hoc-lieu',
+  adminContentItem: (itemId: string) => `/quan-tri/hoc-lieu/${itemId}`,
+  adminContentNew: () => '/quan-tri/hoc-lieu/tao-moi',
+  adminContentImport: () => '/quan-tri/hoc-lieu/nhap-lieu',
+  adminContentCoverage: () => '/quan-tri/hoc-lieu/do-phu',
+  adminTaxonomy: () => '/quan-tri/hoc-lieu/cay-kien-thuc',
+  adminUsers: () => '/quan-tri/nguoi-dung',
+  adminPayments: () => '/quan-tri/thanh-toan',
+  adminTeachers: () => '/quan-tri/giao-vien',
+  adminReports: () => '/quan-tri/bao-cao',
+  adminConfig: () => '/quan-tri/cau-hinh',
+  adminAudit: () => '/quan-tri/nhat-ky',
+} as const;
+
+/** Tiền tố các khu vực cần đăng nhập — dùng bởi middleware. */
+export const PROTECTED_PREFIXES = {
+  student: ['/hoc-tap', '/tai-khoan', '/thanh-toan'],
+  teacher: ['/giao-vien'],
+  admin: ['/quan-tri'],
+} as const;
+
+export const API = {
+  base: '/api/v1',
+
+  // Auth
+  register: '/api/v1/auth/register',
+  login: '/api/v1/auth/login',
+  logout: '/api/v1/auth/logout',
+  me: '/api/v1/auth/me',
+  forgotPassword: '/api/v1/auth/forgot-password',
+  resetPassword: '/api/v1/auth/reset-password',
+
+  // Catalog & commerce
+  programs: '/api/v1/programs',
+  courses: '/api/v1/courses',
+  checkoutPreview: '/api/v1/checkout/preview',
+  checkout: '/api/v1/checkout',
+  confirmMockPayment: '/api/v1/checkout/confirm',
+
+  // Học tập
+  enrollments: '/api/v1/enrollments',
+  onboarding: (enrollmentId: string) => `/api/v1/enrollments/${enrollmentId}/onboarding`,
+  diagnosticStart: (enrollmentId: string) => `/api/v1/enrollments/${enrollmentId}/diagnostic`,
+  progressStart: (enrollmentId: string) => `/api/v1/enrollments/${enrollmentId}/progress-assessment`,
+  assessmentStatus: (enrollmentId: string) => `/api/v1/enrollments/${enrollmentId}/assessment-status`,
+  attempt: (attemptId: string) => `/api/v1/attempts/${attemptId}`,
+  attemptAutosave: (attemptId: string) => `/api/v1/attempts/${attemptId}/autosave`,
+  attemptSubmit: (attemptId: string) => `/api/v1/attempts/${attemptId}/submit`,
+  attemptReport: (attemptId: string) => `/api/v1/attempts/${attemptId}/report`,
+
+  goalOptions: (enrollmentId: string) => `/api/v1/enrollments/${enrollmentId}/goal-options`,
+  goals: (enrollmentId: string) => `/api/v1/enrollments/${enrollmentId}/goals`,
+  plan: (enrollmentId: string) => `/api/v1/enrollments/${enrollmentId}/plan`,
+  today: (enrollmentId: string) => `/api/v1/enrollments/${enrollmentId}/today`,
+  reschedule: (enrollmentId: string) => `/api/v1/enrollments/${enrollmentId}/plan/reschedule`,
+  masteryMap: (enrollmentId: string) => `/api/v1/enrollments/${enrollmentId}/mastery`,
+
+  planDayStart: (planDayId: string) => `/api/v1/plan-days/${planDayId}/start`,
+  planDayNext: (planDayId: string) => `/api/v1/plan-days/${planDayId}/next`,
+  answer: '/api/v1/practice/answer',
+  hint: (planDayItemId: string) => `/api/v1/practice/${planDayItemId}/hint`,
+  solution: (planDayItemId: string) => `/api/v1/practice/${planDayItemId}/solution`,
+  whyThisItem: (planDayItemId: string) => `/api/v1/practice/${planDayItemId}/why`,
+  reportItem: '/api/v1/practice/report',
+
+  // AI
+  aiDiagnosticComment: (attemptId: string) => `/api/v1/ai/diagnostic-comment/${attemptId}`,
+  aiProgressReport: (attemptId: string) => `/api/v1/ai/progress-report/${attemptId}`,
+  aiTeacherBrief: (sessionId: string) => `/api/v1/ai/teacher-brief/${sessionId}`,
+  aiExplain: (itemId: string) => `/api/v1/ai/explain/${itemId}`,
+
+  // Giáo viên
+  teacherStudents: '/api/v1/teacher/students',
+  teacherAlerts: '/api/v1/teacher/alerts',
+  teacherDossier: (enrollmentId: string) => `/api/v1/teacher/students/${enrollmentId}`,
+  teacherSessions: '/api/v1/teacher/sessions',
+  teacherSession: (sessionId: string) => `/api/v1/teacher/sessions/${sessionId}`,
+  teacherSessionNotes: (sessionId: string) => `/api/v1/teacher/sessions/${sessionId}/notes`,
+
+  // Quản trị
+  adminItems: '/api/v1/admin/items',
+  adminItem: (id: string) => `/api/v1/admin/items/${id}`,
+  adminItemStatus: (id: string) => `/api/v1/admin/items/${id}/status`,
+  adminItemsImport: '/api/v1/admin/items/import',
+  adminItemsTemplate: '/api/v1/admin/items/import/template',
+  adminCoverage: '/api/v1/admin/content/coverage',
+  adminChapters: '/api/v1/admin/chapters',
+  adminSkills: '/api/v1/admin/skills',
+  adminFlags: '/api/v1/admin/flags',
+  adminUsers: '/api/v1/admin/users',
+  adminEnrollments: '/api/v1/admin/enrollments',
+  adminPayments: '/api/v1/admin/payments',
+  adminTeacherWorkload: '/api/v1/admin/teachers/workload',
+  adminConfig: '/api/v1/admin/config',
+  adminAnalytics: '/api/v1/admin/analytics',
+  adminAudit: '/api/v1/admin/audit',
+  adminPrograms: '/api/v1/admin/programs',
+  adminCourses: '/api/v1/admin/courses',
+  adminPricing: '/api/v1/admin/pricing',
+  adminCoupons: '/api/v1/admin/coupons',
+
+  // Khác
+  events: '/api/v1/events',
+  notifications: '/api/v1/notifications',
+} as const;

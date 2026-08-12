@@ -1,0 +1,1004 @@
+// ============================================================================
+// Nền tảng ôn luyện Olympic cá nhân hóa bằng AI
+// Schema theo specs.md §5 — Mô hình dữ liệu
+//
+// Nguyên tắc:
+//  - Taxonomy (Chapter/Skill) dùng chung theo (subject, gradeBand) cho MỌI program.
+//    Item khoanh vùng program bằng `programScope` (rỗng = dùng chung).
+//  - Bảng log (AuditLog, AnalyticsEvent, AiGeneration) KHÔNG gắn FK tới User
+//    để log sống sót khi user bị xóa.
+//  - Entitlement gắn với Enrollment, KHÔNG gắn cứng vào Payment (specs §11).
+// ============================================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================================
+// ENUMS
+// ============================================================================
+
+/// 8 role theo specs §10.5
+enum Role {
+  STUDENT
+  PARENT
+  TEACHER
+  CONTENT_EDITOR
+  REVIEWER
+  PROGRAM_MANAGER
+  OPS_ADMIN
+  SUPER_ADMIN
+}
+
+enum UserStatus {
+  PENDING
+  ACTIVE
+  SUSPENDED
+}
+
+/// Khối lớp: A = 3–5, B = 6–7, C = 8–9, D = 10–12 (specs §3.2)
+enum GradeBand {
+  A
+  B
+  C
+  D
+}
+
+enum Subject {
+  MATH
+  SCIENCE
+  PHYSICS
+  CHEMISTRY
+  BIOLOGY
+  IT
+}
+
+/// 4 mức hiển thị: Kém / Trung bình / Khá / Giỏi — tên hiển thị đổi được trong admin
+enum StudentLevel {
+  WEAK
+  AVERAGE
+  GOOD
+  EXCELLENT
+}
+
+/// 3 kho độ khó mỗi chương: Trung bình / Khá / Giỏi (specs §3.4)
+enum Difficulty {
+  AVERAGE
+  GOOD
+  EXCELLENT
+}
+
+enum QuestionType {
+  SINGLE_CHOICE
+  MULTIPLE_CHOICE
+  NUMERIC
+  SHORT_ANSWER
+}
+
+/// Workflow biên soạn (specs §5.3)
+enum ItemStatus {
+  DRAFT
+  REVIEWED
+  PUBLISHED
+  FLAGGED
+  RETIRED
+}
+
+enum AssessmentType {
+  DIAGNOSTIC
+  PROGRESS
+  MOCK
+}
+
+enum AttemptStatus {
+  IN_PROGRESS
+  SUBMITTED
+  GRADED
+  ABANDONED
+}
+
+enum AttemptContext {
+  DIAGNOSTIC
+  PRACTICE
+  ASSESSMENT
+}
+
+/// specs §10.2 — không xóa ngày MISSED khỏi lịch sử
+enum PlanDayStatus {
+  PLANNED
+  IN_PROGRESS
+  COMPLETED
+  MISSED
+  RESCHEDULED
+}
+
+/// Block trong 1 ngày học (specs §7.6)
+enum BlockType {
+  WARMUP
+  REPAIR
+  CORE
+  CHALLENGE
+  REVIEW
+}
+
+enum EnrollmentSource {
+  PAID
+  MANUAL
+  SCHOLARSHIP
+}
+
+enum EnrollmentStatus {
+  ACTIVE
+  EXPIRED
+  SUSPENDED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+  CANCELLED
+}
+
+enum CouponType {
+  PERCENT
+  AMOUNT
+}
+
+enum SessionStatus {
+  SCHEDULED
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+}
+
+/// Action giáo viên chọn sau buổi tư vấn → engine nhận override (specs §9.3)
+enum TeacherAction {
+  KEEP_PLAN
+  REDUCE_LOAD
+  INCREASE_LOAD
+  CHANGE_PRIORITY
+}
+
+/// Loại lỗi (specs §7.2)
+enum ErrorPattern {
+  KNOWLEDGE
+  READING
+  CALCULATION
+  REASONING
+  CARELESS
+  TIMEOUT
+}
+
+enum NotificationChannel {
+  EMAIL
+  SMS
+  PUSH
+  IN_APP
+}
+
+enum NotificationStatus {
+  QUEUED
+  SENT
+  FAILED
+  READ
+}
+
+enum GoalFeasibility {
+  FEASIBLE
+  TIGHT
+  INFEASIBLE
+}
+
+enum FlagStatus {
+  OPEN
+  RESOLVED
+  REJECTED
+}
+
+enum MasteryTrigger {
+  DIAGNOSTIC
+  PRACTICE
+  BIWEEKLY
+  MANUAL
+}
+
+// ============================================================================
+// NHÓM 1 — NGƯỜI DÙNG & PHÂN QUYỀN
+// ============================================================================
+
+model User {
+  id            String     @id @default(cuid())
+  email         String?    @unique
+  phone         String?    @unique
+  passwordHash  String
+  fullName      String
+  status        UserStatus @default(ACTIVE)
+  emailVerified Boolean    @default(false)
+  lastLoginAt   DateTime?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  roles          UserRole[]
+  studentProfile StudentProfile?
+  teacherProfile TeacherProfile?
+  payments       Payment[]
+  notifications  Notification[]
+  otpCodes       OtpCode[]
+
+  @@index([status])
+}
+
+model UserRole {
+  id     String @id @default(cuid())
+  userId String
+  role   Role
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, role])
+  @@index([role])
+}
+
+model OtpCode {
+  id         String    @id @default(cuid())
+  userId     String
+  code       String
+  purpose    String // VERIFY_EMAIL | RESET_PASSWORD
+  expiresAt  DateTime
+  consumedAt DateTime?
+  createdAt  DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, purpose])
+}
+
+model StudentProfile {
+  id     String @id @default(cuid())
+  userId String @unique
+
+  /// LƯU Ý specs §3.2: luôn lưu lớp THỰC TẾ (3..12) dù nội dung gom theo khối
+  actualGrade Int
+  gradeBand   GradeBand
+  school      String?
+  parentName  String?
+  parentPhone String?
+  parentEmail String?
+  preferences Json      @default("{}")
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  enrollments Enrollment[]
+
+  @@index([gradeBand])
+}
+
+model TeacherProfile {
+  id               String    @id @default(cuid())
+  userId           String    @unique
+  bio              String?
+  subjects         Subject[]
+  /// Số học sinh tối đa mỗi chu kỳ 2 tuần (specs §19.5 — capacity planning)
+  capacityPerCycle Int       @default(30)
+  active           Boolean   @default(true)
+  createdAt        DateTime  @default(now())
+
+  user        User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  assignments TeacherAssignment[]
+  sessions    TeacherSession[]
+}
+
+// ============================================================================
+// NHÓM 2 — CATALOG & THƯƠNG MẠI
+// ============================================================================
+
+model Program {
+  id          String   @id @default(cuid())
+  /// ASMOPSS | NEO | STEM | FMC | PAS | ... — thêm kỳ thi mới = thêm bản ghi, KHÔNG sửa code
+  code        String   @unique
+  name        String
+  shortName   String?
+  logoEmoji   String   @default("🏆")
+  colorHex    String   @default("#2563eb")
+  description String
+  highlights  Json     @default("[]")
+  season      String?
+  active      Boolean  @default(true)
+  order       Int      @default(0)
+  config      Json     @default("{}")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  courses  Course[]
+  cohorts  Cohort[]
+  pricings Pricing[]
+  coupons  Coupon[]
+
+  @@index([active, order])
+}
+
+model Cohort {
+  id        String    @id @default(cuid())
+  programId String
+  year      Int
+  name      String
+  startDate DateTime
+  endDate   DateTime
+  /// Ngày thi — engine dùng để tính hệ số "độ gần kỳ thi" trong Gap Priority
+  examDate  DateTime
+  active    Boolean   @default(true)
+
+  program     Program      @relation(fields: [programId], references: [id], onDelete: Cascade)
+  enrollments Enrollment[]
+
+  @@unique([programId, year])
+}
+
+model Course {
+  id          String    @id @default(cuid())
+  programId   String
+  gradeBand   GradeBand
+  subject     Subject
+  name        String
+  description String?
+  active      Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  program     Program      @relation(fields: [programId], references: [id], onDelete: Cascade)
+  pricings    Pricing[]
+  coupons     Coupon[]
+  enrollments Enrollment[]
+  assessments Assessment[]
+  payments    Payment[]
+
+  @@unique([programId, gradeBand, subject])
+  @@index([active])
+}
+
+model Pricing {
+  id                 String    @id @default(cuid())
+  programId          String?
+  courseId           String?
+  label              String    @default("Giá tiêu chuẩn")
+  /// Đơn vị VND. Mặc định 700000 — CHỈ là cấu hình khởi tạo (specs §11)
+  price              Int
+  currency           String    @default("VND")
+  accessDurationDays Int       @default(180)
+  validFrom          DateTime?
+  validTo            DateTime?
+  active             Boolean   @default(true)
+  createdAt          DateTime  @default(now())
+
+  program Program? @relation(fields: [programId], references: [id], onDelete: Cascade)
+  course  Course?  @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@index([active, courseId])
+}
+
+model Coupon {
+  id        String     @id @default(cuid())
+  code      String     @unique
+  type      CouponType
+  value     Int
+  maxUses   Int?
+  usedCount Int        @default(0)
+  expiresAt DateTime?
+  programId String?
+  courseId  String?
+  active    Boolean    @default(true)
+  createdAt DateTime   @default(now())
+
+  program  Program?  @relation(fields: [programId], references: [id], onDelete: SetNull)
+  course   Course?   @relation(fields: [courseId], references: [id], onDelete: SetNull)
+  payments Payment[]
+}
+
+model Payment {
+  id       String @id @default(cuid())
+  userId   String
+  courseId String
+  /// Mã đơn hàng hiển thị cho khách + đối soát kế toán
+  orderCode String @unique
+
+  amountOriginal Int
+  discountAmount Int           @default(0)
+  amount         Int
+  currency       String        @default("VND")
+  gateway        String // VNPAY | MOMO | ZALOPAY | PAYOS | MANUAL
+  status         PaymentStatus @default(PENDING)
+  gatewayTxnId   String?
+  /// Khóa chống xử lý webhook trùng (specs §19.2 #8)
+  idempotencyKey String?       @unique
+  webhookPayload Json?
+  couponId       String?
+  refundNote     String?
+  paidAt         DateTime?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course     Course      @relation(fields: [courseId], references: [id])
+  coupon     Coupon?     @relation(fields: [couponId], references: [id], onDelete: SetNull)
+  enrollment Enrollment?
+
+  @@index([userId, status])
+  @@index([status, createdAt])
+}
+
+model Enrollment {
+  id        String  @id @default(cuid())
+  studentId String
+  courseId  String
+  cohortId  String?
+  /// Entitlement độc lập với payment → cấp học bổng / voucher 100% / tài khoản nội bộ
+  paymentId String? @unique
+
+  source            EnrollmentSource @default(PAID)
+  status            EnrollmentStatus @default(ACTIVE)
+  startsAt          DateTime         @default(now())
+  expiresAt         DateTime
+  selfDeclaredLevel StudentLevel?
+  estimatedLevel    StudentLevel?
+  onboardedAt       DateTime?
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+
+  student StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  course  Course         @relation(fields: [courseId], references: [id])
+  cohort  Cohort?        @relation(fields: [cohortId], references: [id], onDelete: SetNull)
+  payment Payment?       @relation(fields: [paymentId], references: [id], onDelete: SetNull)
+
+  goals             Goal[]
+  plans             StudyPlan[]
+  masteries         StudentSkillMastery[]
+  masterySnapshots  MasterySnapshot[]
+  assessmentAttempts AssessmentAttempt[]
+  itemAttempts      ItemAttempt[]
+  recommendations   Recommendation[]
+  teacherAssignment TeacherAssignment?
+  teacherSessions   TeacherSession[]
+
+  @@unique([studentId, courseId])
+  @@index([status, expiresAt])
+}
+
+// ============================================================================
+// NHÓM 3 — HỌC LIỆU (Taxonomy + Question Bank)
+// ============================================================================
+
+model Chapter {
+  id              String    @id @default(cuid())
+  subject         Subject
+  gradeBand       GradeBand
+  code            String
+  name            String
+  description     String?
+  order           Int       @default(0)
+  /// Tỷ trọng mặc định trong blueprint kỳ thi
+  blueprintWeight Float     @default(1)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  skills Skill[]
+  items  QuestionItem[]
+
+  @@unique([subject, gradeBand, code])
+  @@index([subject, gradeBand, order])
+}
+
+model Skill {
+  id              String   @id @default(cuid())
+  chapterId       String
+  code            String   @unique
+  name            String
+  description     String?
+  order           Int      @default(0)
+  blueprintWeight Float    @default(1)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  chapter         Chapter               @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  items           QuestionItem[]
+  masteries       StudentSkillMastery[]
+  snapshots       MasterySnapshot[]
+  recommendations Recommendation[]
+  prerequisites   SkillPrerequisite[]   @relation("SkillNeeds")
+  requiredBy      SkillPrerequisite[]   @relation("SkillUnlocks")
+
+  @@index([chapterId, order])
+}
+
+model SkillPrerequisite {
+  id                  String @id @default(cuid())
+  skillId             String
+  prerequisiteSkillId String
+
+  skill        Skill @relation("SkillNeeds", fields: [skillId], references: [id], onDelete: Cascade)
+  prerequisite Skill @relation("SkillUnlocks", fields: [prerequisiteSkillId], references: [id], onDelete: Cascade)
+
+  @@unique([skillId, prerequisiteSkillId])
+}
+
+model QuestionItem {
+  id String @id @default(cuid())
+  /// Mã duy nhất, KHÔNG đổi. VD: M67-RATIO-00127
+  itemCode String @unique
+
+  /// Rỗng = dùng chung mọi program; ["NEO"] = riêng NEO
+  programScope     String[]     @default([])
+  gradeBand        GradeBand
+  /// Rỗng = áp dụng cả khối; [7] = chỉ lớp 7
+  actualGradeScope Int[]        @default([])
+  subject          Subject
+  chapterId        String
+  skillId          String
+
+  difficulty        Difficulty
+  difficultyNumeric Int          @default(5) // 1..10
+  questionType      QuestionType @default(SINGLE_CHOICE)
+
+  stem         String
+  stemImageUrl String?
+  /// [{ key: "A", text: "...", imageUrl?: string }]
+  options      Json    @default("[]")
+  /// "A" | ["A","C"] | 12.5 | "chuỗi"
+  correctAnswer Json
+  answerTolerance Float?
+  /// Lời giải chuẩn ĐÃ KIỂM DUYỆT — nguồn grounding duy nhất cho AI (specs §8.2)
+  solution     String
+  solutionSteps Json   @default("[]")
+  hint         String?
+  /// Giây — engine dùng để xếp lịch theo quỹ thời gian
+  estimatedTime Int    @default(60)
+  tags         String[] @default([])
+
+  status      ItemStatus @default(DRAFT)
+  version     Int        @default(1)
+  sourceNote  String?
+  createdById String?
+  reviewedById String?
+  publishedAt DateTime?
+
+  // ---- quality_stats: tự tích lũy từ dữ liệu thật ----
+  timesServed    Int    @default(0)
+  timesCorrect   Int    @default(0)
+  totalTimeMs    BigInt @default(0)
+  discrimination Float?
+  reportCount    Int    @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  chapter         Chapter               @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  skill           Skill                 @relation(fields: [skillId], references: [id], onDelete: Cascade)
+  versions        QuestionItemVersion[]
+  flags           ItemFlag[]
+  attempts        ItemAttempt[]
+  planItems       PlanDayItem[]
+  recommendations Recommendation[]
+
+  @@index([skillId, status, difficulty])
+  @@index([chapterId, status])
+  @@index([subject, gradeBand, status])
+  @@index([status, updatedAt])
+}
+
+model QuestionItemVersion {
+  id          String   @id @default(cuid())
+  itemId      String
+  version     Int
+  snapshot    Json
+  changedById String?
+  reason      String?
+  createdAt   DateTime @default(now())
+
+  item QuestionItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  @@unique([itemId, version])
+}
+
+model ItemFlag {
+  id           String     @id @default(cuid())
+  itemId       String
+  reporterId   String?
+  reporterRole String     @default("STUDENT")
+  reason       String
+  detail       String?
+  status       FlagStatus @default(OPEN)
+  resolvedById String?
+  resolvedAt   DateTime?
+  createdAt    DateTime   @default(now())
+
+  item QuestionItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  @@index([status, createdAt])
+}
+
+// ============================================================================
+// NHÓM 4 — MỤC TIÊU, LỘ TRÌNH, HỌC TẬP, ĐÁNH GIÁ
+// ============================================================================
+
+model Goal {
+  id            String          @id @default(cuid())
+  enrollmentId  String
+  currentLevel  StudentLevel
+  targetLevel   StudentLevel
+  deadline      DateTime
+  daysPerWeek   Int
+  minutesPerDay Int
+  feasibility   GoalFeasibility @default(FEASIBLE)
+  /// Chi tiết tính ngược quỹ thời gian (specs §7.7) — hiển thị cảnh báo cho HS
+  feasibilityData Json          @default("{}")
+  active        Boolean         @default(true)
+  createdAt     DateTime        @default(now())
+
+  enrollment Enrollment  @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+  plans      StudyPlan[]
+
+  @@index([enrollmentId, active])
+}
+
+model StudyPlan {
+  id            String   @id @default(cuid())
+  enrollmentId  String
+  goalId        String
+  /// Chu kỳ 2 tuần thứ mấy
+  cycleNo       Int      @default(1)
+  startDate     DateTime
+  endDate       DateTime
+  focus         Json     @default("[]")
+  status        String   @default("ACTIVE") // ACTIVE | SUPERSEDED | COMPLETED
+  engineVersion String   @default("v1")
+  /// Snapshot lý do sinh plan — phục vụ audit (specs §7.8)
+  generatedReason Json   @default("{}")
+  createdAt     DateTime @default(now())
+
+  enrollment Enrollment     @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+  goal       Goal           @relation(fields: [goalId], references: [id], onDelete: Cascade)
+  days       StudyPlanDay[]
+
+  @@index([enrollmentId, status])
+}
+
+model StudyPlanDay {
+  id               String        @id @default(cuid())
+  planId           String
+  date             DateTime      @db.Date
+  dayIndex         Int
+  status           PlanDayStatus @default(PLANNED)
+  estimatedMinutes Int           @default(0)
+  actualMinutes    Int           @default(0)
+  startedAt        DateTime?
+  completedAt      DateTime?
+  /// Nếu ngày này là kết quả dàn lại lịch — ghi rõ nguyên nhân (specs §10.2)
+  rescheduledFrom  DateTime?
+  note             String?
+
+  plan            StudyPlan        @relation(fields: [planId], references: [id], onDelete: Cascade)
+  items           PlanDayItem[]
+  recommendations Recommendation[]
+
+  @@unique([planId, date])
+  @@index([planId, dayIndex])
+}
+
+model PlanDayItem {
+  id            String    @id @default(cuid())
+  planDayId     String
+  itemId        String
+  block         BlockType
+  order         Int       @default(0)
+  status        String    @default("PENDING") // PENDING | DONE | SKIPPED
+  itemAttemptId String?
+
+  planDay StudyPlanDay @relation(fields: [planDayId], references: [id], onDelete: Cascade)
+  item    QuestionItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  @@unique([planDayId, itemId])
+  @@index([planDayId, order])
+}
+
+model Assessment {
+  id               String         @id @default(cuid())
+  courseId         String
+  type             AssessmentType
+  name             String
+  itemCount        Int            @default(15)
+  timeLimitMinutes Int?
+  /// Blueprint: tỷ trọng chương / skill / độ khó theo mức tự khai (specs §7.9)
+  blueprint        Json           @default("{}")
+  active           Boolean        @default(true)
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  course   Course              @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  attempts AssessmentAttempt[]
+
+  @@unique([courseId, type])
+}
+
+model AssessmentAttempt {
+  id             String        @id @default(cuid())
+  enrollmentId   String
+  assessmentId   String
+  cycleNo        Int           @default(0)
+  status         AttemptStatus @default(IN_PROGRESS)
+  startedAt      DateTime      @default(now())
+  submittedAt    DateTime?
+  dueAt          DateTime?
+  rawScore       Int           @default(0)
+  maxScore       Int           @default(15)
+  /// Điểm có trọng số theo độ khó — KHÔNG dùng "đúng 10/15 = Khá" (specs §7.9)
+  weightedScore  Float         @default(0)
+  estimatedLevel StudentLevel?
+  totalTimeMs    Int           @default(0)
+  /// Autosave state để resume khi thoát giữa chừng (specs §19.2 #7)
+  autosaveState  Json          @default("{}")
+  resultSummary  Json?
+  /// So sánh với baseline: mastery delta, tốc độ, lỗi đã sửa (specs §7.10)
+  deltaSummary   Json?
+
+  enrollment   Enrollment    @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+  assessment   Assessment    @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  itemAttempts ItemAttempt[]
+
+  @@index([enrollmentId, status])
+  @@index([enrollmentId, cycleNo])
+}
+
+model ItemAttempt {
+  id           String         @id @default(cuid())
+  enrollmentId String
+  itemId       String
+  context      AttemptContext
+
+  assessmentAttemptId String?
+  planDayItemId       String?
+  orderIndex          Int     @default(0)
+
+  answer                     Json?
+  isCorrect                  Boolean?
+  timeMs                     Int           @default(0)
+  attemptNo                  Int           @default(1)
+  hintUsed                   Boolean       @default(false)
+  /// Xem lời giải TRƯỚC khi trả lời → không tính mastered (specs §9.2)
+  solutionViewedBeforeAnswer Boolean       @default(false)
+  solutionViewed             Boolean       @default(false)
+  errorPattern               ErrorPattern?
+  masteryBefore              Float?
+  masteryAfter               Float?
+  answeredAt                 DateTime?
+  createdAt                  DateTime      @default(now())
+
+  enrollment        Enrollment         @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+  item              QuestionItem       @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  assessmentAttempt AssessmentAttempt? @relation(fields: [assessmentAttemptId], references: [id], onDelete: Cascade)
+
+  @@index([enrollmentId, createdAt])
+  @@index([enrollmentId, itemId])
+  @@index([assessmentAttemptId, orderIndex])
+}
+
+model StudentSkillMastery {
+  id           String @id @default(cuid())
+  enrollmentId String
+  skillId      String
+
+  /// 0–100
+  masteryScore   Float  @default(0)
+  /// 0–1: thấp khi ít dữ liệu → không "nhảy level" sau 1 bài (specs §10.1)
+  confidence     Float  @default(0)
+  attemptCount   Int    @default(0)
+  correctCount   Int    @default(0)
+  recentAccuracy Float  @default(0)
+  /// Cửa sổ trượt kết quả gần đây: 1 = đúng, 0 = sai
+  recentResults  Int[]  @default([])
+  /// Thời gian thực tế / thời gian chuẩn
+  avgTimeRatio   Float  @default(1)
+  /// { KNOWLEDGE: 3, READING: 1, ... }
+  errorPattern   Json   @default("{}")
+  /// Độ khó cao nhất đã ổn định (0 = chưa có)
+  difficultyCeiling  Int @default(0)
+  consecutiveCorrect Int @default(0)
+  consecutiveWrong   Int @default(0)
+  lastPracticedAt    DateTime?
+  updatedAt          DateTime @updatedAt
+
+  enrollment Enrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+  skill      Skill      @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@unique([enrollmentId, skillId])
+  @@index([enrollmentId, masteryScore])
+}
+
+model MasterySnapshot {
+  id           String         @id @default(cuid())
+  enrollmentId String
+  skillId      String
+  masteryScore Float
+  confidence   Float
+  trigger      MasteryTrigger
+  capturedAt   DateTime       @default(now())
+
+  enrollment Enrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+  skill      Skill      @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@index([enrollmentId, capturedAt])
+  @@index([enrollmentId, skillId, capturedAt])
+}
+
+/// AUDIT "vì sao hệ thống giao bài này" — tiêu chí nghiệm thu MVP (specs §17)
+model Recommendation {
+  id           String  @id @default(cuid())
+  enrollmentId String
+  skillId      String?
+  itemId       String?
+  planDayId    String?
+
+  reasonCode    String
+  reasonData    Json     @default("{}")
+  gapPriority   Float?
+  engineVersion String   @default("v1")
+  createdAt     DateTime @default(now())
+
+  enrollment Enrollment    @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+  skill      Skill?        @relation(fields: [skillId], references: [id], onDelete: SetNull)
+  item       QuestionItem? @relation(fields: [itemId], references: [id], onDelete: SetNull)
+  planDay    StudyPlanDay? @relation(fields: [planDayId], references: [id], onDelete: Cascade)
+
+  @@index([enrollmentId, createdAt])
+  @@index([planDayId])
+}
+
+// ============================================================================
+// NHÓM 5 — GIÁO VIÊN
+// ============================================================================
+
+model TeacherAssignment {
+  id           String   @id @default(cuid())
+  teacherId    String
+  enrollmentId String   @unique
+  assignedAt   DateTime @default(now())
+  active       Boolean  @default(true)
+
+  teacher    TeacherProfile @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  enrollment Enrollment     @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+
+  @@index([teacherId, active])
+}
+
+model TeacherSession {
+  id           String  @id @default(cuid())
+  enrollmentId String
+  teacherId    String?
+  cycleNo      Int     @default(1)
+
+  scheduledAt     DateTime?
+  durationMinutes Int           @default(20)
+  meetingLink     String?
+  status          SessionStatus @default(SCHEDULED)
+
+  /// Pre-session brief do AI sinh (7 khối theo specs §9.3)
+  aiBrief         Json?
+  aiBriefApproved Boolean?
+  teacherNotes    String?
+  actionItems     Json           @default("[]")
+  /// Override gửi vào engine cho chu kỳ tiếp theo
+  actionCode      TeacherAction?
+  focusSkillIds   String[]       @default([])
+  followUpLevel   String? // NORMAL | WATCH | ESCALATE
+  completedAt     DateTime?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  enrollment Enrollment      @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+  teacher    TeacherProfile? @relation(fields: [teacherId], references: [id], onDelete: SetNull)
+
+  @@index([teacherId, status, scheduledAt])
+  @@index([enrollmentId, cycleNo])
+}
+
+// ============================================================================
+// NHÓM 6 — VẬN HÀNH: THÔNG BÁO, AUDIT, AI, ANALYTICS, CẤU HÌNH
+// ============================================================================
+
+model Notification {
+  id           String              @id @default(cuid())
+  userId       String
+  channel      NotificationChannel @default(IN_APP)
+  templateCode String
+  title        String
+  body         String
+  payload      Json                @default("{}")
+  status       NotificationStatus  @default(QUEUED)
+  scheduledFor DateTime?
+  sentAt       DateTime?
+  readAt       DateTime?
+  createdAt    DateTime            @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, status, createdAt])
+}
+
+/// Log tồn tại độc lập với User để không mất dấu vết khi xóa tài khoản
+model AuditLog {
+  id         String   @id @default(cuid())
+  actorId    String?
+  actorRole  String?
+  action     String
+  entityType String
+  entityId   String
+  before     Json?
+  after      Json?
+  ip         String?
+  createdAt  DateTime @default(now())
+
+  @@index([entityType, entityId, createdAt])
+  @@index([actorId, createdAt])
+}
+
+/// Cache + trace mọi output AI: model nào, prompt version nào sinh ra (specs §15 Auditability)
+model AiGeneration {
+  id      String @id @default(cuid())
+  useCase String
+  /// Khóa định danh đối tượng: "attempt:<id>", "session:<id>"…
+  subjectKey String
+
+  model         String
+  promptVersion String
+  input         Json     @default("{}")
+  output        Json     @default("{}")
+  tokensIn      Int      @default(0)
+  tokensOut     Int      @default(0)
+  latencyMs     Int      @default(0)
+  status        String   @default("OK") // OK | FAILED
+  error         String?
+  /// true = LLM lỗi/không cấu hình → dùng template tĩnh từ dữ liệu cấu trúc
+  fallbackUsed  Boolean  @default(false)
+  createdAt     DateTime @default(now())
+
+  @@unique([useCase, subjectKey])
+  @@index([useCase, createdAt])
+}
+
+model AnalyticsEvent {
+  id           String   @id @default(cuid())
+  userId       String?
+  enrollmentId String?
+  eventName    String
+  properties   Json     @default("{}")
+  sessionId    String?
+  createdAt    DateTime @default(now())
+
+  @@index([eventName, createdAt])
+  @@index([userId, createdAt])
+}
+
+/// Toàn bộ Phụ lục B specs — admin sửa được, KHÔNG hard-code
+model AppConfig {
+  key         String   @id
+  value       Json
+  scope       String   @default("GLOBAL") // GLOBAL | PROGRAM:<code> | COURSE:<id>
+  label       String?
+  description String?
+  updatedById String?
+  updatedAt   DateTime @updatedAt
+}
+
+model FeatureFlag {
+  key          String   @id
+  enabled      Boolean  @default(false)
+  programScope String[] @default([])
+  description  String?
+  updatedAt    DateTime @updatedAt
+}
