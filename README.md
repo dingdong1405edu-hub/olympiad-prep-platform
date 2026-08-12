@@ -303,14 +303,28 @@ git push origin main
   Ba bước, chạy tuần tự trước khi container nhận traffic:
   1. `migrate deploy` cập nhật schema. Dùng `migrate deploy` chứ không `db push`:
      production cần lịch sử migration để lăn tiến/lùi có kiểm soát.
-  2. `scripts/bootstrap.ts` nạp dữ liệu khởi tạo **chỉ khi database chưa có
-     chương trình nào**. Đây là bước vá đúng cái bẫy `migrate deploy` chỉ dựng
-     bảng chứ không nạp dữ liệu — database đúng schema nhưng rỗng làm cả trang
-     chủ lẫn khu quản trị hiện "chưa có kỳ thi nào" và không ai đăng nhập được.
-     Từ lần deploy thứ hai trở đi bước này tự bỏ qua, không bao giờ ghi đè dữ
-     liệu thật. Muốn tắt hẳn: đặt `SKIP_BOOTSTRAP_SEED=1`.
+  2. `scripts/bootstrap.ts` nạp dữ liệu mẫu khi cần. Đây là bước vá đúng cái bẫy
+     `migrate deploy` chỉ dựng bảng chứ không nạp dữ liệu — database đúng schema
+     nhưng rỗng làm cả trang chủ lẫn khu quản trị hiện "chưa có kỳ thi nào".
+     Quyết định dựa trên **cột mốc phiên bản** `seed.version` mà seed ghi vào
+     bảng `AppConfig` ở bước cuối cùng, so với `SEED_VERSION` trong
+     `prisma/seed-version.ts`:
+
+     | Tình huống | Cột mốc trong DB | Hành động |
+     |---|---|---|
+     | Database trống | chưa có | nạp toàn bộ |
+     | Nạp dở dang (chết giữa chừng) | chưa kịp ghi | nạp lại để bù |
+     | Dữ liệu mẫu trong mã nguồn đã đổi | phiên bản cũ | nạp bù phần mới |
+     | Đã đúng phiên bản | trùng | bỏ qua |
+
+     **Đổi bất cứ thứ gì trong `prisma/seed-data/` thì phải tăng `SEED_VERSION`.**
+     Không tăng thì môi trường đã seed từ trước sẽ đứng mãi ở dữ liệu cũ — mọi
+     bảng đều có dữ liệu nên không dấu hiệu nào cho thấy nó đang thiếu.
+     Muốn tắt hẳn bước này: đặt `SKIP_BOOTSTRAP_SEED=1`.
   3. `npm run start` bật web server.
-- **Healthcheck:** `GET /api/v1/health`, trả `database: "up" | "down"`.
+- **Healthcheck:** `GET /api/v1/health`, trả `database: "up" | "down"` kèm
+  `seed.state` = `empty | partial | ready` và số đếm bốn bảng cốt lõi — đủ để
+  biết từ xa database đang trống, nạp dở hay đã đầy đủ mà không cần vào DB.
 
 > **Bắt buộc trước khi mở cho người dùng thật:** đặt biến `SEED_DEFAULT_PASSWORD`
 > ở service `web` **trước lần deploy đầu tiên**. Không đặt thì các tài khoản mẫu
