@@ -9,8 +9,10 @@
 
 @theme {
   --font-sans:
-    'Inter', 'Be Vietnam Pro', 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial,
-    sans-serif;
+    var(--font-be-vietnam), 'Be Vietnam Pro', 'Segoe UI', system-ui, -apple-system, Arial, sans-serif;
+
+  /* Chữ chân — chỉ dùng cho tiêu đề lớn ở trang bán hàng, không dùng trong app */
+  --font-display: var(--font-lora), 'Lora', Georgia, 'Times New Roman', serif;
 
   /* --- Thương hiệu: xanh indigo, tin cậy, không trẻ con --- */
   --color-brand-50: #eef3ff;
@@ -43,6 +45,31 @@
   --color-ink-700: #3b4358;
   --color-ink-800: #262c3c;
   --color-ink-900: #171b26;
+
+  /* --- Navy: nền tối của trang bán hàng. Xanh mực đậm gợi sự lâu đời và
+         nghiêm túc, thứ phụ huynh tìm khi bỏ tiền cho việc học của con. --- */
+  --color-navy-50: #f2f5fa;
+  --color-navy-100: #e1e9f4;
+  --color-navy-200: #c4d2e8;
+  --color-navy-300: #94aed2;
+  --color-navy-400: #5d80af;
+  --color-navy-500: #3a5c8c;
+  --color-navy-600: #2a466e;
+  --color-navy-700: #1e3557;
+  --color-navy-800: #152744;
+  --color-navy-900: #0d1b31;
+  --color-navy-950: #070f1d;
+
+  /* --- Vàng huy chương: điểm nhấn duy nhất trên nền navy. Dùng rất tiết chế —
+         một gạch chân, một con số, một viền. Lạm dụng là thành rẻ tiền. --- */
+  --color-gold-50: #fdf9ee;
+  --color-gold-100: #f9edcd;
+  --color-gold-200: #f2d992;
+  --color-gold-300: #e8c25e;
+  --color-gold-400: #dda92c;
+  --color-gold-500: #c68d12;
+  --color-gold-600: #a06b0c;
+  --color-gold-700: #7a520e;
 
   /* --- 4 mức mastery: Mạnh – Ổn – Cần củng cố – Hổng (đã kiểm định mù màu) --- */
   --color-tier-strong: #1c5cab;
@@ -390,6 +417,104 @@ body {
 .rule-fade {
   height: 1px;
   background: linear-gradient(90deg, transparent, var(--color-ink-200), transparent);
+}
+
+/* ==========================================================================
+   TRANG BÁN HÀNG
+   Chỉ dùng ở landing page. Bên trong ứng dụng vẫn giữ nguyên hệ brand/ink —
+   khu học tập cần yên tĩnh, khu bán hàng cần thuyết phục, hai việc khác nhau.
+   ========================================================================== */
+
+/* Nền giấy ngà, ấm hơn canvas một chút — đỡ chói khi đọc trang dài */
+.paper {
+  background-color: #fbfaf7;
+}
+
+/**
+ * Lưới mờ sau khối hero. Gợi giấy kẻ ô của vở toán mà không kể lể, đồng thời
+ * cho mắt một điểm tựa về chiều sâu thay vì mặt phẳng trống trơn.
+ */
+.grid-faint {
+  background-image:
+    linear-gradient(to right, rgb(13 27 49 / 0.045) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(13 27 49 / 0.045) 1px, transparent 1px);
+  background-size: 68px 68px;
+  background-position: center top;
+  mask-image: radial-gradient(58rem 34rem at 50% 22%, #000 25%, transparent 78%);
+}
+
+/* Cùng lưới đó nhưng vẽ bằng ánh sáng, dùng trên dải navy */
+.grid-faint-dark {
+  background-image:
+    linear-gradient(to right, rgb(255 255 255 / 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(255 255 255 / 0.05) 1px, transparent 1px);
+  background-size: 68px 68px;
+  mask-image: radial-gradient(52rem 30rem at 50% 0%, #000 20%, transparent 76%);
+}
+
+/**
+ * Gạch chân vàng dưới cụm chữ quan trọng nhất của tiêu đề. Vẽ bằng nền chứ
+ * không phải border để nó nằm sau chữ, chừa chỗ cho phần đuôi chữ thả xuống
+ * (g, y, ạ) — viền dưới thật sẽ cắt ngang các dấu đó.
+ */
+.gold-underline {
+  background-image: linear-gradient(
+    to top,
+    var(--color-gold-200) 0,
+    var(--color-gold-200) 0.34em,
+    transparent 0.34em
+  );
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  padding-inline: 0.06em;
+}
+
+/* Đường kẻ vàng ngắn — dấu hiệu mở đầu một mục lớn */
+.gold-rule {
+  height: 3px;
+  width: 3.5rem;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--color-gold-400), var(--color-gold-200));
+}
+
+/**
+ * Khung ảnh sản phẩm: viền kép mảnh + bóng sâu, kiểu khung tranh.
+ * Làm ảnh minh họa trông như một hiện vật được trưng bày, không phải
+ * một cái div trôi nổi.
+ */
+.artifact-frame {
+  border-radius: 1rem;
+  background: #fff;
+  box-shadow:
+    0 0 0 1px rgb(13 27 49 / 0.08),
+    0 0 0 7px rgb(255 255 255 / 0.75),
+    0 0 0 8px rgb(13 27 49 / 0.06),
+    0 32px 64px -22px rgb(13 27 49 / 0.35),
+    0 12px 24px -12px rgb(13 27 49 / 0.18);
+}
+
+.artifact-frame-dark {
+  border-radius: 1rem;
+  background: var(--color-navy-800);
+  box-shadow:
+    0 0 0 1px rgb(255 255 255 / 0.1),
+    0 0 0 7px rgb(255 255 255 / 0.04),
+    0 32px 64px -22px rgb(0 0 0 / 0.6);
+}
+
+/* Số thứ tự cỡ lớn làm nền cho các bước — đọc được nhưng không giành chỗ */
+.step-numeral {
+  font-family: var(--font-display);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+/* Chữ không bị rơi một từ lẻ xuống dòng cuối */
+.text-balance {
+  text-wrap: balance;
+}
+.text-pretty {
+  text-wrap: pretty;
 }
 
 /* ==========================================================================
