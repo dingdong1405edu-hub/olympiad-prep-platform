@@ -8,9 +8,16 @@
  * có kỳ thi nào" — không ai đăng nhập được, không ai tạo được gì, hệ thống nhìn
  * như đang hỏng dù mọi thứ đều chạy.
  *
- * QUY TẮC AN TOÀN — chỉ nạp khi database THỰC SỰ TRỐNG:
- *  - Có từ một chương trình trở lên ⇒ bỏ qua, không đụng gì. Nhờ vậy script này
- *    chạy được ở mọi lần deploy sau mà không bao giờ ghi đè dữ liệu thật.
+ * QUY TẮC AN TOÀN:
+ *  - Bốn bảng cốt lõi (chương trình, khóa học, câu hỏi, người dùng) đều đã có
+ *    dữ liệu ⇒ bỏ qua, không đụng gì. Nhờ vậy script chạy được ở mọi lần deploy
+ *    sau mà không bao giờ ghi đè dữ liệu thật.
+ *  - Kiểm tra CẢ BỐN bảng chứ không chỉ bảng chương trình. Seed ghi chương trình
+ *    ở bước 2/6 và người dùng ở bước 3/6: nếu chỉ nhìn chương trình, một lần nạp
+ *    chết giữa chừng sẽ để lại database có kỳ thi nhưng KHÔNG có tài khoản nào —
+ *    và mọi lần deploy sau đều tưởng đã xong nên không bao giờ vá lại. Seed viết
+ *    hoàn toàn bằng `upsert` nên chạy lại trên dữ liệu dở dang là an toàn: phần
+ *    đã có được cập nhật, phần thiếu được bù.
  *  - `SKIP_BOOTSTRAP_SEED=1` ⇒ bỏ qua vô điều kiện, dành cho môi trường mà dữ
  *    liệu được nạp bằng đường khác.
  *  - Nạp hỏng KHÔNG được chặn web server khởi động: thà có trang trống còn hơn
@@ -30,13 +37,25 @@ async function main(): Promise<void> {
     return;
   }
 
-  const programCount = await prisma.program.count();
-  if (programCount > 0) {
-    console.log(`[bootstrap] Database đã có ${programCount} chương trình — không nạp lại.`);
+  const [programs, courses, questions, users] = await Promise.all([
+    prisma.program.count(),
+    prisma.course.count(),
+    prisma.questionItem.count(),
+    prisma.user.count(),
+  ]);
+  const summary = `chương trình=${programs}, khóa=${courses}, câu hỏi=${questions}, người dùng=${users}`;
+
+  if (programs > 0 && courses > 0 && questions > 0 && users > 0) {
+    console.log(`[bootstrap] Database đã đầy đủ (${summary}) — không nạp lại.`);
     return;
   }
 
-  console.log('[bootstrap] Database trống. Đang nạp dữ liệu khởi tạo…');
+  const partial = programs + courses + questions + users > 0;
+  console.log(
+    partial
+      ? `[bootstrap] Database nạp DỞ DANG (${summary}). Chạy lại seed để bù phần thiếu…`
+      : '[bootstrap] Database trống. Đang nạp dữ liệu khởi tạo…',
+  );
   if (!process.env.SEED_DEFAULT_PASSWORD) {
     console.warn(
       '[bootstrap] ⚠ Chưa đặt SEED_DEFAULT_PASSWORD — tài khoản mẫu sẽ dùng mật khẩu mặc định ' +
