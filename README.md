@@ -234,7 +234,66 @@ E2E trọn vòng (specs §16.6).
 
 ---
 
-## 9. Việc còn lại trước khi bán thật
+## 9. Triển khai trên Railway
+
+Bản chạy thật: **https://web-production-3f0b1.up.railway.app**
+
+Hạ tầng gồm hai service trong cùng một project Railway:
+
+| Service    | Vai trò                                                            |
+| ---------- | ------------------------------------------------------------------ |
+| `web`      | Ứng dụng Next.js, build từ nhánh `main` của repo GitHub             |
+| `Postgres` | Cơ sở dữ liệu; `web` trỏ tới qua biến `${{Postgres.DATABASE_URL}}` |
+
+### Quy trình deploy
+
+Đẩy commit lên `main` là Railway tự build lại — không cần thao tác tay:
+
+```bash
+git push origin main
+```
+
+`railway.json` quy định vòng đời deploy:
+
+- **Build:** Nixpacks chạy `npm run build` (bao gồm `prisma generate`).
+- **Start:** `npx prisma migrate deploy && npm run start` — schema được cập nhật
+  trước khi container nhận traffic. Dùng `migrate deploy` chứ không `db push`:
+  production cần lịch sử migration để lăn tiến/lùi có kiểm soát.
+- **Healthcheck:** `GET /api/v1/health`, trả `database: "up" | "down"`.
+
+### Đổi schema
+
+Sinh migration ở máy local rồi commit cùng code — đừng sửa schema trực tiếp trên production:
+
+```bash
+npx prisma migrate dev --name mo_ta_thay_doi
+git add prisma/migrations && git commit && git push
+```
+
+### Biến môi trường
+
+Đặt ở tab Variables của service `web` (xem `.env.example` cho danh sách đầy đủ).
+`AUTH_SECRET` và `PAYMENT_WEBHOOK_SECRET` đã được sinh ngẫu nhiên riêng cho
+production, khác giá trị trong `.env` local. `ANTHROPIC_API_KEY` đang để trống
+nên phần nhận xét chạy bằng template fallback; điền key vào là có văn phong AI.
+
+---
+
+## 10. Việc còn lại trước khi bán thật
+
+**Chặn ngay lúc này — `npm run db:seed` chưa chạy được.** `prisma/seed-data/taxonomy.ts`
+khai báo 113 khoá bộ sinh câu hỏi nhưng mới có 47 khoá được viết (41 trong
+`generators.ts`, 6 trong `generators-science.ts`). Ba file còn thiếu:
+
+- `generators-algebra.ts` — `EXPR01–04`, `EQ01–04`, `INEQ01–03`, `SEQ01–04`
+- `generators-geometry.ts` — `GEO01–04`, `TRI01–04`, `AREA01–04`
+- `generators-word.ts` — `MOTION01–04`, `WORK01–03`, `STAT01–03`, `LOGIC01–03`
+
+cộng các bộ sinh dạng `g*` cho Lý/Hóa/Sinh/Tin (`gOhm`, `gMole`, `gMendel`,
+`gKinematics`, …). Tổng cộng 66 khoá thiếu, ảnh hưởng 118/186 kỹ năng.
+`findMissingGenerators` chặn seed trước khi ghi database nên **production hiện
+có schema nhưng chưa có dữ liệu danh mục/câu hỏi**. Viết xong file nào thì thêm
+lại import và spread tương ứng vào `ALL_GENERATORS` ở `generators-all.ts`.
 
 Theo specs §20, các quyết định sau cần chốt với nghiệp vụ (code đã để sẵn chỗ cắm):
 
