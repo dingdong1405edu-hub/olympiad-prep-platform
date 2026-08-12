@@ -64,6 +64,31 @@ export interface ProgramSummary {
   courseCount: number;
   gradeBands: GradeBand[];
   subjects: Subject[];
+
+  // --- Nội dung giới thiệu, dùng ở trang bán hàng trước khi thanh toán ---
+  tagline: string | null;
+  longDescription: string | null;
+  introVideoUrl: string | null;
+  introVideoPoster: string | null;
+  sections: ContentSection[];
+  faqs: ContentFaq[];
+}
+
+/** Một khối nội dung tự do do admin soạn. */
+export interface ContentSection {
+  title: string;
+  body: string;
+}
+
+export interface ContentFaq {
+  question: string;
+  answer: string;
+}
+
+/** Một chặng trong nội dung khóa học. */
+export interface SyllabusStep {
+  title: string;
+  detail: string;
 }
 
 export interface CourseSummary {
@@ -76,6 +101,13 @@ export interface CourseSummary {
   name: string;
   description: string | null;
   active: boolean;
+
+  // --- Nội dung giới thiệu riêng của khóa ---
+  tagline: string | null;
+  longDescription: string | null;
+  introVideoUrl: string | null;
+  outcomes: string[];
+  syllabus: SyllabusStep[];
 }
 
 export interface EffectivePricing {
@@ -154,6 +186,32 @@ function toStringArray(value: Prisma.JsonValue): string[] {
   return value.filter((entry): entry is string => typeof entry === 'string');
 }
 
+/**
+ * Đọc mảng JSON dạng [{ a, b }] về đúng kiểu, bỏ qua phần tử hỏng.
+ *
+ * Cột JSON không có ràng buộc cấu trúc ở tầng database, nên dữ liệu cũ hoặc do
+ * nhập tay có thể lệch hình dạng. Lọc ở đây để mọi nơi dùng đều nhận đúng kiểu
+ * và một phần tử hỏng không làm sập cả trang.
+ */
+function toPairArray<A extends string, B extends string>(
+  value: Prisma.JsonValue,
+  first: A,
+  second: B,
+): { [K in A | B]: string }[] {
+  if (!Array.isArray(value)) return [];
+  const out: { [K in A | B]: string }[] = [];
+  for (const entry of value) {
+    if (!entry || typeof entry !== 'object' || Array.isArray(entry)) continue;
+    const row = entry as Record<string, unknown>;
+    const a = row[first];
+    const b = row[second];
+    if (typeof a !== 'string' || typeof b !== 'string') continue;
+    if (a.trim() === '' && b.trim() === '') continue;
+    out.push({ [first]: a, [second]: b } as { [K in A | B]: string });
+  }
+  return out;
+}
+
 function sortGradeBands(bands: Iterable<GradeBand>): GradeBand[] {
   const unique = new Set(bands);
   return GRADE_BANDS.filter((band) => unique.has(band));
@@ -182,6 +240,11 @@ function toCourseSummary(course: Course): CourseSummary {
     name: course.name,
     description: course.description,
     active: course.active,
+    tagline: course.tagline,
+    longDescription: course.longDescription,
+    introVideoUrl: course.introVideoUrl,
+    outcomes: toStringArray(course.outcomes),
+    syllabus: toPairArray(course.syllabus, 'title', 'detail'),
   };
 }
 
@@ -214,6 +277,12 @@ function toProgramSummary(program: Program, courses: Course[]): ProgramSummary {
     courseCount: courses.length,
     gradeBands: sortGradeBands(courses.map((course) => course.gradeBand)),
     subjects: sortSubjects(courses.map((course) => course.subject)),
+    tagline: program.tagline,
+    longDescription: program.longDescription,
+    introVideoUrl: program.introVideoUrl,
+    introVideoPoster: program.introVideoPoster,
+    sections: toPairArray(program.sections, 'title', 'body'),
+    faqs: toPairArray(program.faqs, 'question', 'answer'),
   };
 }
 
@@ -600,6 +669,12 @@ export async function upsertProgram(input: UpsertProgramInput, actorId: string):
     active: data.active,
     order: data.order,
     config: (data.config ?? undefined) as Prisma.InputJsonValue | undefined,
+    tagline: data.tagline ?? null,
+    longDescription: data.longDescription ?? null,
+    introVideoUrl: data.introVideoUrl ?? null,
+    introVideoPoster: data.introVideoPoster ?? null,
+    sections: (data.sections ?? undefined) as Prisma.InputJsonValue | undefined,
+    faqs: (data.faqs ?? undefined) as Prisma.InputJsonValue | undefined,
   };
 
   const saved = existing
@@ -651,6 +726,11 @@ export async function upsertCourse(input: UpsertCourseInput, actorId: string): P
     name: data.name,
     description: data.description ?? null,
     active: data.active,
+    tagline: data.tagline ?? null,
+    longDescription: data.longDescription ?? null,
+    introVideoUrl: data.introVideoUrl ?? null,
+    outcomes: (data.outcomes ?? undefined) as Prisma.InputJsonValue | undefined,
+    syllabus: (data.syllabus ?? undefined) as Prisma.InputJsonValue | undefined,
   };
 
   let saved: Course;

@@ -50,6 +50,52 @@ const idSchema = z.string().trim().min(1);
 // Program
 // ---------------------------------------------------------------------------
 
+/**
+ * Đường dẫn video giới thiệu. Chấp nhận link trống (chưa có video) và mọi link
+ * http/https — việc nhận diện YouTube / Vimeo / tệp mp4 do trình phát lo, ở đây
+ * chỉ chặn những thứ chắc chắn sai như `javascript:`.
+ */
+const videoUrlSchema = z.preprocess(
+  (value) => (typeof value === 'string' && value.trim() === '' ? undefined : value),
+  z
+    .string()
+    .trim()
+    .max(600)
+    .refine((value) => /^https?:\/\//i.test(value), 'Đường dẫn phải bắt đầu bằng http:// hoặc https://')
+    .optional(),
+);
+
+/** Danh sách khối nội dung [{ title, body }] do admin soạn. */
+const sectionListSchema = z
+  .array(
+    z.object({
+      title: z.string().trim().min(1, 'Tiêu đề khối không được để trống.').max(200),
+      body: z.string().trim().min(1, 'Nội dung khối không được để trống.').max(4000),
+    }),
+  )
+  .max(12)
+  .optional();
+
+const faqListSchema = z
+  .array(
+    z.object({
+      question: z.string().trim().min(1, 'Câu hỏi không được để trống.').max(300),
+      answer: z.string().trim().min(1, 'Câu trả lời không được để trống.').max(4000),
+    }),
+  )
+  .max(20)
+  .optional();
+
+const syllabusSchema = z
+  .array(
+    z.object({
+      title: z.string().trim().min(1, 'Tên chặng không được để trống.').max(200),
+      detail: z.string().trim().min(1, 'Mô tả chặng không được để trống.').max(2000),
+    }),
+  )
+  .max(30)
+  .optional();
+
 export const upsertProgramSchema = z.object({
   id: idSchema.optional(),
   code: programCodeSchema,
@@ -68,6 +114,14 @@ export const upsertProgramSchema = z.object({
   order: z.coerce.number().int().min(0).max(999).optional(),
   /** Tham số riêng của kỳ thi (blueprint override, quy tắc ra đề…). */
   config: z.record(z.unknown()).optional(),
+
+  // --- Nội dung giới thiệu hiển thị trước khi thanh toán ---
+  tagline: optionalText(240),
+  longDescription: optionalText(8000),
+  introVideoUrl: videoUrlSchema,
+  introVideoPoster: videoUrlSchema,
+  sections: sectionListSchema,
+  faqs: faqListSchema,
 });
 
 export type UpsertProgramInput = z.infer<typeof upsertProgramSchema>;
@@ -90,6 +144,13 @@ export const upsertCourseSchema = z.object({
   name: z.string().trim().min(2, 'Tên khóa quá ngắn.').max(160),
   description: optionalText(2000),
   active: optionalBoolean,
+
+  // --- Nội dung giới thiệu riêng của khóa ---
+  tagline: optionalText(240),
+  longDescription: optionalText(8000),
+  introVideoUrl: videoUrlSchema,
+  outcomes: z.array(z.string().trim().min(1).max(300)).max(20).optional(),
+  syllabus: syllabusSchema,
 });
 
 export type UpsertCourseInput = z.infer<typeof upsertCourseSchema>;

@@ -182,6 +182,13 @@ export const listUsersSchema = z.object({
 
 export type ListUsersFilter = z.input<typeof listUsersSchema>;
 
+/**
+ * Dữ liệu tạo tài khoản nhân sự.
+ *
+ * KHÔNG có `actorId`: người thực hiện được xác định từ phiên đăng nhập ở tầng
+ * route. Để trong body thì bất kỳ ai gọi API cũng ghi được nhật ký dưới tên
+ * người khác.
+ */
 export const createStaffUserSchema = z
   .object({
     fullName: fullNameSchema,
@@ -193,7 +200,6 @@ export const createStaffUserSchema = z
     subjects: z.array(subjectSchema).optional(),
     /** Bỏ trống → lấy config.teacher.defaultCapacityPerCycle. */
     capacityPerCycle: z.coerce.number().int().min(1).max(500).optional(),
-    actorId: z.string().min(1),
   })
   .refine((value) => Boolean(value.email ?? value.phone), {
     message: 'Cần ít nhất email hoặc số điện thoại để tạo tài khoản.',

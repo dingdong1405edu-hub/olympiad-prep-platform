@@ -3,7 +3,8 @@ import { getCatalogTree } from '@/server/catalog/service';
 import { getSession } from '@/lib/auth';
 import { routes } from '@/lib/routes';
 import { formatVnd } from '@/lib/domain';
-import { MarketingShell } from '@/components/marketing';
+import { getCopy } from '@/lib/copy';
+import { SiteShell } from '@/components/site-shell';
 import { Reveal } from '@/components/motion';
 import {
   DifficultyDialVisual,
@@ -25,73 +26,34 @@ export const dynamic = 'force-dynamic';
  */
 const SHELL = 'mx-auto w-full max-w-7xl px-5 lg:px-8';
 
-const STEPS = [
-  {
-    n: '01',
-    title: 'Làm bài kiểm tra đầu vào',
-    body: '15 câu chọn theo đúng cấu trúc đề của kỳ thi con bạn nhắm tới — không phải 15 câu ngẫu nhiên lấy từ kho chung.',
-  },
-  {
-    n: '02',
-    title: 'Hệ thống chỉ ra chỗ hổng',
-    body: 'Chấm theo độ khó, chủ đề và cả tốc độ làm bài. Hai học sinh cùng 10/15 nhưng sai khác nhau sẽ nhận hai lộ trình khác nhau.',
-  },
-  {
-    n: '03',
-    title: 'Gia đình tự chọn mục tiêu',
-    body: 'Khai thật con học được mấy ngày một tuần, mỗi ngày bao nhiêu phút. Hệ thống tính ngược xem mục tiêu đó có khả thi không và nói thẳng nếu không.',
-  },
-  {
-    n: '04',
-    title: 'Học đúng bài mình cần',
-    body: 'Mỗi ngày một danh sách ngắn: vá lỗ hổng, củng cố, thử thách vừa sức. Bài nào cũng kèm câu trả lời cho "vì sao con phải làm bài này".',
-  },
-  {
-    n: '05',
-    title: 'Đo lại sau mỗi 14 ngày',
-    body: 'Bài kiểm tra tiến bộ có câu neo để so với lần trước — đo mức tiến bộ thật, không phải đếm số bài đã làm.',
-  },
-  {
-    n: '06',
-    title: 'Giáo viên tư vấn 20 phút',
-    body: 'Thầy cô đọc báo cáo trước buổi, trao đổi đúng vấn đề đang vướng, rồi cùng gia đình chỉnh lộ trình cho 2 tuần kế tiếp.',
-  },
-];
-
-const FAQS = [
-  {
-    q: 'Khác gì so với các kho đề luyện thi khác?',
-    a: 'Kho đề bán cho bạn quyền tự chọn bài trong một kho chung — việc chọn đúng bài vẫn là của bạn. Ở đây, hệ thống giữ một hồ sơ năng lực riêng cho từng học sinh theo từng kỹ năng nhỏ, và tự quyết định hôm nay em nên làm bài nào, ở mức khó nào, bao nhiêu câu.',
-  },
-  {
-    q: 'AI có tự ra đề không?',
-    a: 'Không. Toàn bộ câu hỏi do đội chuyên môn biên soạn và qua kiểm duyệt trước khi vào kho. AI chỉ đọc dữ liệu làm bài của học sinh để chọn câu phù hợp và diễn giải lại lời giải đã được duyệt cho dễ hiểu hơn.',
-  },
-  {
-    q: 'Một bài 15 câu có đủ để đánh giá con tôi không?',
-    a: 'Không, và hệ thống cũng không coi đó là kết luận cuối cùng. Đó là mốc khởi đầu để có cái mà bắt đầu. Hồ sơ năng lực được cập nhật sau mỗi câu con làm, và được đo lại chính thức bằng câu neo sau mỗi 14 ngày.',
-  },
-  {
-    q: 'Nếu con học không kịp theo kế hoạch?',
-    a: 'Hệ thống tự dàn lại lịch và nói rõ phần nào bị lùi, thay vì để kế hoạch dồn thành một đống nợ khiến con nản. Gia đình cũng có thể đổi mục tiêu bất cứ lúc nào — hệ thống sẽ tính lại khối lượng cho phù hợp.',
-  },
-  {
-    q: 'Phụ huynh theo dõi được không?',
-    a: 'Được. Sau mỗi chu kỳ 14 ngày đều có báo cáo bằng số liệu cụ thể: mastery từng mảng kiến thức tăng bao nhiêu, tốc độ làm bài cải thiện thế nào, lỗi nào đã sửa được và lỗi nào còn lặp lại.',
-  },
-  {
-    q: 'Con tôi mất gốc, có theo được không?',
-    a: 'Đây chính là trường hợp hệ thống làm tốt nhất. Bài kiểm tra đầu vào sẽ tìm ra đúng tầng kiến thức bị hổng, kể cả khi nó nằm ở lớp dưới, rồi dựng lại từ đó lên. Độ khó sẽ hạ xuống mức con làm được trước khi nâng dần.',
-  },
-];
-
 export default async function HomePage() {
-  const [programs, session] = await Promise.all([getCatalogTree(), getSession()]);
+  const [programs, session, t] = await Promise.all([getCatalogTree(), getSession(), getCopy()]);
   const openPrograms = programs.filter((program) => program.active);
   const primaryCta = session ? routes.myCourses() : routes.register();
 
+  // Các khối lặp lại được dựng từ kho chữ theo chỉ số, nên admin thêm/bớt nội
+  // dung bằng cách sửa chữ chứ không phải sửa mã.
+  const stats = [1, 2, 3, 4].map((n) => ({
+    v: t(`home.stats.${n}.value`),
+    l: t(`home.stats.${n}.label`),
+    h: t(`home.stats.${n}.hint`),
+  }));
+  const steps = [1, 2, 3, 4, 5, 6].map((n) => ({
+    n: String(n).padStart(2, '0'),
+    title: t(`home.steps.${n}.title`),
+    body: t(`home.steps.${n}.body`),
+  }));
+  const faqs = [1, 2, 3, 4, 5, 6].map((n) => ({
+    q: t(`home.faq.${n}.question`),
+    a: t(`home.faq.${n}.answer`),
+  }));
+  const parentItems = [1, 2, 3, 4].map((n) => ({
+    t: t(`home.parents.item.${n}.title`),
+    d: t(`home.parents.item.${n}.detail`),
+  }));
+
   return (
-    <MarketingShell signedIn={Boolean(session)}>
+    <SiteShell signedIn={Boolean(session)}>
       {/* ================= Hero ================= */}
       <section className="paper relative overflow-hidden pt-28 pb-16 sm:pt-36 lg:pt-40 lg:pb-24">
         <div className="grid-faint pointer-events-none absolute inset-0" aria-hidden />
@@ -102,17 +64,17 @@ export default async function HomePage() {
             <div>
               <p className="animate-fade-down inline-flex items-center gap-2 rounded-full bg-white px-3.5 py-1.5 text-[11px] font-bold tracking-[0.14em] text-navy-700 uppercase ring-1 ring-navy-100">
                 <span className="h-1.5 w-1.5 rounded-full bg-gold-400" aria-hidden />
-                Ôn luyện vòng quốc gia
+                {t('home.hero.badge')}
               </p>
 
               <h1 className="animate-fade-up delay-1 font-display mt-6 max-w-2xl text-[38px] leading-[1.08] font-bold tracking-tight text-navy-900 text-balance sm:text-[54px] lg:text-[66px]">
-                Con bạn đang yếu <span className="gold-underline">chính xác</span> chỗ nào?
+                {t('home.hero.title.before')}{' '}
+                <span className="gold-underline">{t('home.hero.title.highlight')}</span>{' '}
+                {t('home.hero.title.after')}
               </h1>
 
               <p className="animate-fade-up delay-2 mt-6 max-w-xl text-[17px] leading-relaxed text-navy-600 text-pretty sm:text-lg">
-                Hầu hết học sinh ôn Olympic đều học chăm. Cái thiếu không phải thời gian, mà là biết
-                chắc nên dồn thời gian đó vào đâu. Hệ thống đo năng lực theo từng kỹ năng nhỏ, tìm ra
-                lỗ hổng thật và giao đúng bài cần học hôm nay.
+                {t('home.hero.subtitle')}
               </p>
 
               <div className="animate-fade-up delay-3 mt-9 flex flex-wrap items-center gap-3">
@@ -120,19 +82,19 @@ export default async function HomePage() {
                   href={primaryCta}
                   className="press inline-flex items-center gap-2.5 rounded-xl bg-navy-900 px-7 py-4 text-[15px] font-semibold text-white shadow-[0_12px_30px_-10px_rgb(13_27_49/0.55)] transition-all hover:bg-navy-800 hover:shadow-[0_18px_40px_-12px_rgb(13_27_49/0.6)]"
                 >
-                  {session ? 'Vào khu học tập' : 'Kiểm tra đầu vào miễn phí'}
+                  {session ? t('home.hero.cta.member') : t('home.hero.cta.guest')}
                   <span aria-hidden>→</span>
                 </Link>
                 <a
                   href="#cach-hoat-dong"
                   className="press inline-flex items-center gap-2 rounded-xl bg-white px-6 py-4 text-[15px] font-semibold text-navy-800 ring-1 ring-navy-200 transition-all hover:ring-navy-300"
                 >
-                  Xem cách hoạt động
+                  {t('home.hero.cta.secondary')}
                 </a>
               </div>
 
               <p className="animate-fade-up delay-4 mt-5 text-[13px] text-navy-500">
-                Không cần thẻ thanh toán · Xong bài là có ngay bản đồ kỹ năng
+                {t('home.hero.note')}
               </p>
             </div>
 
@@ -156,12 +118,7 @@ export default async function HomePage() {
         <div className="grid-faint-dark pointer-events-none absolute inset-0" aria-hidden />
         <div className={`${SHELL} relative`}>
           <dl className="grid grid-cols-2 divide-navy-700/60 py-10 sm:divide-x lg:grid-cols-4">
-            {[
-              { v: '186', l: 'kỹ năng được đo riêng', h: 'không phải 4 môn chung chung' },
-              { v: '15', l: 'câu ở bài đầu vào', h: 'bám cấu trúc đề thật' },
-              { v: '14', l: 'ngày một chu kỳ đo', h: 'có câu neo để so sánh' },
-              { v: '20', l: 'phút tư vấn cùng giáo viên', h: 'sau mỗi lần đo' },
-            ].map((stat, index) => (
+            {stats.map((stat, index) => (
               <div key={stat.l} className={index % 2 === 0 ? 'pr-4 sm:px-6' : 'pl-4 sm:px-6'}>
                 <dd className="font-display text-4xl font-bold text-gold-300 tabular-nums lg:text-5xl">
                   {stat.v}
@@ -181,31 +138,23 @@ export default async function HomePage() {
             <div>
               <span className="gold-rule block" aria-hidden />
               <h2 className="font-display mt-5 max-w-lg text-[30px] leading-[1.14] font-bold tracking-tight text-navy-900 text-balance sm:text-4xl lg:text-[44px]">
-                Học thêm 2 tiếng mỗi ngày không bằng học đúng 30 phút
+                {t('home.problem.title')}
               </h2>
               <p className="mt-5 max-w-lg text-[16.5px] leading-relaxed text-navy-600 text-pretty">
-                Một học sinh làm 200 bài phân số mà không ai chỉ ra em đang nhầm ở bước quy đồng thì
-                200 bài đó chỉ củng cố cái sai. Vấn đề của việc ôn thi không nằm ở khối lượng — nó
-                nằm ở chỗ không ai đủ thời gian ngồi soi từng em xem lỗ hổng thật nằm ở đâu.
+                {t('home.problem.body1')}
               </p>
               <p className="mt-4 max-w-lg text-[16.5px] leading-relaxed text-navy-600 text-pretty">
-                Đó chính xác là việc mà một hệ thống làm tốt hơn con người: nhớ từng câu, từng lỗi,
-                từng giây do dự của từng học sinh, rồi rút ra kết luận.
+                {t('home.problem.body2')}
               </p>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="rounded-2xl bg-white p-6 ring-1 ring-navy-100">
                 <p className="text-[11px] font-bold tracking-[0.14em] text-ink-400 uppercase">
-                  Kho đề thông thường
+                  {t('home.problem.old.title')}
                 </p>
                 <ul className="mt-4 space-y-3">
-                  {[
-                    'Mọi học sinh thấy cùng một danh sách bài.',
-                    'Gia đình tự đoán con yếu chỗ nào.',
-                    'Làm nhiều bài dễ vẫn thấy điểm cao, lỗ hổng còn nguyên.',
-                    'Không có cách nào biết con tiến bộ bao nhiêu.',
-                  ].map((line) => (
+                  {[1, 2, 3, 4].map((n) => t(`home.problem.old.${n}`)).map((line) => (
                     <li key={line} className="flex gap-2.5 text-[13.5px] leading-snug text-ink-500">
                       <span aria-hidden className="mt-px shrink-0 text-ink-300">
                         ✕
@@ -218,15 +167,10 @@ export default async function HomePage() {
 
               <div className="rounded-2xl bg-navy-900 p-6 shadow-[0_20px_44px_-20px_rgb(13_27_49/0.6)]">
                 <p className="text-[11px] font-bold tracking-[0.14em] text-gold-300 uppercase">
-                  Nền tảng này
+                  {t('home.problem.new.title')}
                 </p>
                 <ul className="mt-4 space-y-3">
-                  {[
-                    'Hồ sơ năng lực theo từng kỹ năng nhỏ, cập nhật sau mỗi câu.',
-                    'Bài được giao đúng chỗ yếu, kèm lý do cụ thể.',
-                    'Độ khó tự nâng khi con vững, tự hạ khi con đuối.',
-                    'Đo tiến bộ bằng câu neo mỗi 14 ngày, có giáo viên xác nhận.',
-                  ].map((line) => (
+                  {[1, 2, 3, 4].map((n) => t(`home.problem.new.${n}`)).map((line) => (
                     <li key={line} className="flex gap-2.5 text-[13.5px] leading-snug text-navy-100">
                       <span aria-hidden className="mt-px shrink-0 font-bold text-gold-300">
                         ✓
@@ -247,11 +191,10 @@ export default async function HomePage() {
           <Reveal>
             <span className="gold-rule block" aria-hidden />
             <h2 className="font-display mt-5 text-[30px] leading-tight font-bold tracking-tight text-navy-900 sm:text-4xl lg:text-[44px]">
-              Chọn kỳ thi của con
+              {t('home.programs.title')}
             </h2>
             <p className="mt-4 max-w-2xl text-[16.5px] leading-relaxed text-navy-600">
-              Mỗi kỳ thi có cấu trúc đề riêng, thang điểm riêng và kiểu tư duy riêng. Hệ thống ra bài
-              bám đúng cấu trúc đó chứ không dùng chung một kho cho tất cả.
+              {t('home.programs.subtitle')}
             </p>
           </Reveal>
 
@@ -338,10 +281,9 @@ export default async function HomePage() {
             </div>
           ) : (
             <div className="mt-12 rounded-2xl border border-dashed border-navy-200 bg-navy-50/50 px-6 py-14 text-center">
-              <p className="font-medium text-navy-700">Chưa có kỳ thi nào đang mở</p>
-              <p className="mx-auto mt-1 max-w-md text-sm text-navy-500">
-                Nếu bạn là quản trị viên, hãy nạp dữ liệu mẫu hoặc tạo chương trình trong khu vực
-                quản trị.
+              <p className="font-medium text-navy-700">{t('home.programs.empty.title')}</p>
+              <p className="mx-auto mt-1 max-w-md text-sm whitespace-pre-line text-navy-500">
+                {t('home.programs.empty.body')}
               </p>
             </div>
           )}
@@ -359,16 +301,15 @@ export default async function HomePage() {
           <Reveal>
             <span className="gold-rule block" aria-hidden />
             <h2 className="font-display mt-5 text-[30px] leading-tight font-bold tracking-tight text-white sm:text-4xl lg:text-[44px]">
-              Một chu trình khép kín, lặp tới ngày thi
+              {t('home.steps.title')}
             </h2>
             <p className="mt-4 max-w-2xl text-[16.5px] leading-relaxed text-navy-200">
-              Không có bước nào là hộp đen. Ở mỗi bước, gia đình đều thấy hệ thống đang kết luận gì
-              về con mình và dựa trên dữ liệu nào.
+              {t('home.steps.subtitle')}
             </p>
           </Reveal>
 
           <ol className="mt-14 grid gap-x-10 gap-y-11 sm:grid-cols-2 lg:grid-cols-3">
-            {STEPS.map((step, index) => (
+            {steps.map((step, index) => (
               <Reveal as="li" key={step.n} delay={index * 60}>
                 <div className="flex gap-5">
                   <span
@@ -394,7 +335,7 @@ export default async function HomePage() {
           <Reveal>
             <span className="gold-rule block" aria-hidden />
             <h2 className="font-display mt-5 max-w-2xl text-[30px] leading-[1.14] font-bold tracking-tight text-navy-900 text-balance sm:text-4xl lg:text-[44px]">
-              Đây là những gì con bạn thật sự nhìn thấy
+              {t('home.features.title')}
             </h2>
           </Reveal>
 
@@ -404,19 +345,16 @@ export default async function HomePage() {
               <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
                 <div className="lg:order-2">
                   <p className="text-[11px] font-bold tracking-[0.16em] text-gold-600 uppercase">
-                    Mỗi ngày
+                    {t('home.features.1.eyebrow')}
                   </p>
                   <h3 className="font-display mt-3 text-[26px] leading-snug font-bold text-navy-900 sm:text-[32px]">
-                    Một danh sách ngắn, và lý do cho từng bài
+                    {t('home.features.1.title')}
                   </h3>
                   <p className="mt-4 text-[16px] leading-relaxed text-navy-600 text-pretty">
-                    Không phải một kho bài để con tự bơi. Mỗi ngày là ba tới năm việc, xếp theo thứ
-                    tự: vá chỗ hổng nặng nhất trước, rồi củng cố, rồi mới tới thử thách.
+                    {t('home.features.1.body1')}
                   </p>
                   <p className="mt-4 text-[16px] leading-relaxed text-navy-600 text-pretty">
-                    Bài nào cũng bấm được nút <em className="text-navy-800">“vì sao bài này”</em> để
-                    xem hệ thống đang dựa vào dữ liệu nào mà giao. Con hiểu mình đang sửa cái gì thì
-                    mới chịu ngồi làm.
+                    {t('home.features.1.body2')}
                   </p>
                 </div>
                 <div className="lg:order-1">
@@ -430,18 +368,16 @@ export default async function HomePage() {
               <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
                 <div>
                   <p className="text-[11px] font-bold tracking-[0.16em] text-gold-600 uppercase">
-                    Theo thời gian thực
+                    {t('home.features.2.eyebrow')}
                   </p>
                   <h3 className="font-display mt-3 text-[26px] leading-snug font-bold text-navy-900 sm:text-[32px]">
-                    Độ khó bám sát con, không bám sát giáo án
+                    {t('home.features.2.title')}
                   </h3>
                   <p className="mt-4 text-[16px] leading-relaxed text-navy-600 text-pretty">
-                    Ba câu đúng liên tiếp là nâng một bậc. Hai câu sai liên tiếp là hạ xuống và quay
-                    lại nền. Con luôn ở vùng vừa đủ khó để phải nghĩ, nhưng chưa đủ khó để bỏ cuộc.
+                    {t('home.features.2.body1')}
                   </p>
                   <p className="mt-4 text-[16px] leading-relaxed text-navy-600 text-pretty">
-                    Đây là chỗ lớp học đông không làm được: một giáo viên không thể chỉnh độ khó
-                    riêng cho ba mươi em cùng lúc, sau từng câu.
+                    {t('home.features.2.body2')}
                   </p>
                 </div>
                 <DifficultyDialVisual className="artifact-frame" />
@@ -453,19 +389,16 @@ export default async function HomePage() {
               <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
                 <div className="lg:order-2">
                   <p className="text-[11px] font-bold tracking-[0.16em] text-gold-600 uppercase">
-                    Mỗi 14 ngày
+                    {t('home.features.3.eyebrow')}
                   </p>
                   <h3 className="font-display mt-3 text-[26px] leading-snug font-bold text-navy-900 sm:text-[32px]">
-                    Tiến bộ đo bằng câu neo, không đếm số bài
+                    {t('home.features.3.title')}
                   </h3>
                   <p className="mt-4 text-[16px] leading-relaxed text-navy-600 text-pretty">
-                    “Con làm được 300 bài rồi” không nói lên điều gì. Bài kiểm tra tiến bộ dùng câu
-                    neo — những câu có cùng độ khó với lần đo trước — nên con số tăng lên là tăng
-                    thật, không phải do đề lần này dễ hơn.
+                    {t('home.features.3.body1')}
                   </p>
                   <p className="mt-4 text-[16px] leading-relaxed text-navy-600 text-pretty">
-                    Đường tiến bộ có lúc chững lại, và hệ thống không giấu điều đó. Một biểu đồ chỉ
-                    biết đi lên là một biểu đồ không đáng tin.
+                    {t('home.features.3.body2')}
                   </p>
                 </div>
                 <div className="lg:order-1">
@@ -484,33 +417,14 @@ export default async function HomePage() {
             <Reveal>
               <span className="gold-rule block" aria-hidden />
               <h2 className="font-display mt-5 text-[30px] leading-[1.14] font-bold tracking-tight text-navy-900 text-balance sm:text-4xl lg:text-[44px]">
-                Phụ huynh biết chính xác mình đang trả tiền cho cái gì
+                {t('home.parents.title')}
               </h2>
               <p className="mt-5 text-[16.5px] leading-relaxed text-navy-600 text-pretty">
-                Nỗi khổ lớn nhất khi đầu tư cho con học thêm là không có cách nào biết nó có tác dụng
-                hay không, cho tới lúc thi xong thì đã muộn. Ở đây, sau mỗi 14 ngày gia đình nhận một
-                báo cáo bằng số, kèm phần diễn giải bằng lời cho người không chuyên môn.
+                {t('home.parents.body')}
               </p>
 
               <ul className="mt-8 space-y-4">
-                {[
-                  {
-                    t: 'Mastery từng mảng tăng bao nhiêu',
-                    d: 'So với chính con 14 ngày trước, không so với bạn cùng lớp.',
-                  },
-                  {
-                    t: 'Lỗi nào đã sửa được, lỗi nào còn lặp',
-                    d: 'Gọi tên cụ thể chứ không phải “cần cố gắng thêm”.',
-                  },
-                  {
-                    t: 'Thời gian học thật so với cam kết',
-                    d: 'Biết con có ngồi vào bàn thật hay không.',
-                  },
-                  {
-                    t: 'Mục tiêu còn khả thi không',
-                    d: 'Nếu không kịp, hệ thống nói sớm để còn điều chỉnh.',
-                  },
-                ].map((row) => (
+                {parentItems.map((row) => (
                   <li key={row.t} className="flex gap-3.5">
                     <span
                       aria-hidden
@@ -532,12 +446,10 @@ export default async function HomePage() {
                 <ProgressChartVisual className="artifact-frame" />
                 <div className="rounded-2xl bg-navy-900 p-6 shadow-[0_20px_44px_-20px_rgb(13_27_49/0.6)]">
                   <p className="text-[11px] font-bold tracking-[0.14em] text-gold-300 uppercase">
-                    Buổi tư vấn 20 phút
+                    {t('home.parents.session.title')}
                   </p>
                   <p className="mt-3 text-[15px] leading-relaxed text-navy-100 text-pretty">
-                    Sau mỗi lần đo, giáo viên đọc trước toàn bộ hồ sơ rồi mới vào buổi. Không mất
-                    mười phút đầu để hỏi lại “dạo này cháu học thế nào” — đi thẳng vào chỗ đang vướng
-                    và chốt điều chỉnh cho hai tuần tới.
+                    {t('home.parents.session.body')}
                   </p>
                 </div>
               </div>
@@ -553,17 +465,16 @@ export default async function HomePage() {
             <Reveal>
               <span className="gold-rule block" aria-hidden />
               <h2 className="font-display mt-5 text-[30px] leading-tight font-bold tracking-tight text-navy-900 sm:text-4xl lg:text-[44px]">
-                Câu hỏi thường gặp
+                {t('home.faq.title')}
               </h2>
               <p className="mt-4 text-[15.5px] leading-relaxed text-navy-600">
-                Còn thắc mắc khác? Tạo tài khoản và làm thử bài đầu vào — mất khoảng 20 phút và không
-                cần thanh toán.
+                {t('home.faq.subtitle')}
               </p>
             </Reveal>
 
             <Reveal delay={100}>
               <div className="divide-y divide-navy-100 border-y border-navy-100">
-                {FAQS.map((faq) => (
+                {faqs.map((faq) => (
                   <details key={faq.q} className="group py-5">
                     <summary className="flex cursor-pointer list-none items-start justify-between gap-5 text-[16px] font-semibold text-navy-900 marker:content-['']">
                       {faq.q}
@@ -599,11 +510,10 @@ export default async function HomePage() {
               <div className="relative mx-auto max-w-2xl">
                 <span className="gold-rule mx-auto block" aria-hidden />
                 <h2 className="font-display mt-6 text-[30px] leading-[1.14] font-bold tracking-tight text-white text-balance sm:text-[42px]">
-                  Bắt đầu bằng bài kiểm tra đầu vào 15 câu
+                  {t('home.cta.title')}
                 </h2>
                 <p className="mx-auto mt-5 max-w-xl text-[16.5px] leading-relaxed text-navy-200 text-pretty">
-                  Mất khoảng 20 phút. Xong bài, bạn thấy ngay bản đồ kỹ năng của con: mạnh ở đâu,
-                  hổng ở đâu, và nên sửa theo thứ tự nào.
+                  {t('home.cta.body')}
                 </p>
 
                 <div className="mt-9 flex flex-wrap justify-center gap-3">
@@ -611,7 +521,7 @@ export default async function HomePage() {
                     href={primaryCta}
                     className="press inline-flex items-center gap-2.5 rounded-xl bg-gold-300 px-8 py-4 text-[15px] font-bold text-navy-900 shadow-[0_14px_34px_-12px_rgb(221_169_44/0.7)] transition-all hover:bg-gold-200"
                   >
-                    {session ? 'Tiếp tục học' : 'Làm bài kiểm tra miễn phí'}
+                    {session ? t('home.cta.primary.member') : t('home.cta.primary.guest')}
                     <span aria-hidden>→</span>
                   </Link>
                   {session ? null : (
@@ -619,19 +529,19 @@ export default async function HomePage() {
                       href={routes.login()}
                       className="press inline-flex items-center rounded-xl px-6 py-4 text-[15px] font-semibold text-navy-100 ring-1 ring-navy-600 transition-colors hover:bg-navy-800"
                     >
-                      Đã có tài khoản
+                      {t('home.cta.secondary')}
                     </Link>
                   )}
                 </div>
 
                 <p className="mt-6 text-[13px] text-navy-400">
-                  Không cần thẻ thanh toán · Dữ liệu học tập của con thuộc về gia đình
+                  {t('home.cta.note')}
                 </p>
               </div>
             </div>
           </Reveal>
         </div>
       </section>
-    </MarketingShell>
+    </SiteShell>
   );
 }

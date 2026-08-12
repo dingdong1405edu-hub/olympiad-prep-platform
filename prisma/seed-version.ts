@@ -12,7 +12,7 @@
  * Không tăng thì môi trường đã seed từ trước sẽ đứng mãi ở dữ liệu cũ — mọi bảng
  * đều có dữ liệu nên không dấu hiệu nào cho thấy nó đang thiếu.
  */
-export const SEED_VERSION = '2026.08.12-generators-113';
+export const SEED_VERSION = '2026.08.12-noi-dung-gioi-thieu';
 
 /** Khóa trong bảng AppConfig lưu cột mốc phiên bản đã nạp xong. */
 export const SEED_MARKER_KEY = 'seed.version';

@@ -81,6 +81,67 @@ Mật khẩu chung: giá trị của `SEED_DEFAULT_PASSWORD` trong `.env` (mặc
 | `npm run db:reset` | **Xóa sạch** rồi tạo lại toàn bộ bảng |
 | `npm run db:seed` | Nạp dữ liệu mẫu |
 | `npm run db:studio` | Mở Prisma Studio để xem dữ liệu |
+| `npm run payos:webhook` | Đăng ký URL webhook với PayOS (chạy sau khi deploy) |
+
+---
+
+## 2b. Thanh toán qua PayOS (quét mã QR tại chỗ)
+
+### Người mua thấy gì
+
+Bấm **Thanh toán bằng mã QR** → mã QR hiện lên ngay trên trang, **không** bị
+chuyển sang tên miền của cổng. Chuyển khoản xong thì màn hình tự đổi sang trạng
+thái thành công và đi tiếp vào bài kiểm tra đầu vào — không phải bấm "tôi đã
+thanh toán" rồi ngồi đợi.
+
+Kèm theo mã QR là số tài khoản, số tiền và nội dung chuyển khoản, mỗi thứ một
+nút chép, cùng nút **Lưu ảnh mã QR** cho người đang dùng chính chiếc điện thoại
+đó (không ai quét được mã hiện trên màn hình mình đang cầm).
+
+### Bật lên
+
+```bash
+# .env
+PAYMENT_GATEWAY="PAYOS"
+APP_URL="https://ten-mien-that.vn"        # dùng để dựng returnUrl và URL webhook
+
+PAYOS_CLIENT_ID="..."                      # my.payos.vn → Kênh thanh toán
+PAYOS_API_KEY="..."
+PAYOS_CHECKSUM_KEY="..."
+```
+
+Thiếu bất kỳ khóa nào thì cổng báo lỗi cấu hình chứ **không** âm thầm rơi về
+cổng giả lập — tránh chuyện tưởng đã thu tiền mà thật ra chưa. Trạng thái này
+hiện ngay trên **Quản trị → Thanh toán**, kèm URL webhook có nút chép.
+
+### Webhook
+
+```
+<APP_URL>/api/v1/webhooks/payment/payos
+```
+
+Dán vào my.payos.vn → Kênh thanh toán → Webhook, hoặc chạy `npm run payos:webhook`.
+PayOS **gọi thử chính URL đó lúc đăng ký** và chỉ chấp nhận khi nhận HTTP 200, nên
+ứng dụng phải đang chạy và truy cập được từ Internet. Muốn thử ở máy local thì mở
+tunnel rồi truyền URL vào: `npm run payos:webhook -- https://abc.ngrok.io`.
+
+**Không đăng ký được webhook vẫn bán hàng bình thường.** Trang chờ thanh toán tự
+hỏi PayOS 3 giây một lần (`GET /api/v1/payments/:orderCode`), tiền vào là quyền
+truy cập mở. Webhook chỉ làm việc đó nhanh hơn và đỡ tốn lượt gọi. Nhờ vậy luồng
+QR chạy đúng cả ở localhost, nơi cổng không thể gọi ngược vào máy.
+
+### Những chỗ dễ làm sai, đã xử lý sẵn
+
+| Cạm bẫy | Cách xử lý |
+|---|---|
+| PayOS bắt `orderCode` là **số nguyên**, mã đơn nội bộ lại là chuỗi | Cột `Payment.gatewayOrderRef` giữ mã số song song, tra ngược hai chiều |
+| `description` chính là **nội dung chuyển khoản**, giới hạn 25 ký tự (9 với tài khoản chưa liên kết payOS) | `buildGatewayDescription` gói vào đúng 9 ký tự: `OLP` + 6 ký tự đuôi mã đơn |
+| Chữ ký lúc **tạo đơn** ký 5 trường theo thứ tự cố định, chữ ký **webhook** lại sort toàn bộ khóa | Hai hàm riêng trong `payos.ts`, có test khóa chặt từng chuỗi nguồn |
+| PayOS gửi **gói thử** `orderCode: 123` khi đăng ký và chỉ nhận URL trả 200 | Webhook trả 200 kèm `reason: ORDER_NOT_FOUND` thay vì 404 |
+| Chữ ký nằm **trong body**, không phải header | `verifyPayosWebhookBody` đọc thẳng raw body |
+| Mã QR hết hạn giữa chừng | Xin cổng cấp mã mới cho **cùng đơn**; mã cũ lưu vào `previousOrderRefs` để webhook về muộn vẫn khớp được đơn |
+| Webhook bắn trùng | Đi chung `settlePayment` — giành `idempotencyKey` trong transaction, quyền truy cập chỉ cấp một lần |
+| Khách trả thiếu tiền | Đối soát dùng số tiền **cổng đã nhận**, lệch thì đánh dấu `AMOUNT_MISMATCH` và **không** kích hoạt |
 
 ---
 
@@ -348,6 +409,10 @@ git add prisma/migrations && git commit && git push
 production, khác giá trị trong `.env` local. `ANTHROPIC_API_KEY` đang để trống
 nên phần nhận xét chạy bằng template fallback; điền key vào là có văn phong AI.
 
+Để bật thanh toán thật, thêm `PAYMENT_GATEWAY=PAYOS` cùng ba khóa `PAYOS_*`
+(xem §2b). `APP_URL` có thể bỏ trống — hệ thống tự lấy `RAILWAY_PUBLIC_DOMAIN`
+mà Railway cấp sẵn, nên URL webhook luôn đúng tên miền production.
+
 ---
 
 ## 10. Tình trạng hiện tại
@@ -406,6 +471,36 @@ báo ở `generators-all.ts`. Bộ khung không phải sửa.
 - **API còn thiếu đã bù**: `/api/v1/programs`, `/api/v1/courses` (công khai),
   `/api/v1/ai/teacher-brief/[sessionId]`, `/api/v1/admin/analytics`,
   `/api/v1/admin/teachers/workload`.
+
+### Nội dung bán hàng và khu quản trị
+
+**Chữ trên trang công khai sửa được trong `/quan-tri/giao-dien`.** Nội dung gốc
+nằm trong `src/lib/copy/defaults.ts` (khoảng 150 ô, chia 13 nhóm theo vị trí trên
+trang); bảng `SiteCopy` chỉ lưu phần admin đã ghi đè. Hai điều luôn đúng nhờ cách
+này: dựng môi trường mới là có ngay bản chữ đầy đủ, và "khôi phục bản gốc" chỉ là
+xóa dòng ghi đè chứ không cần ai nhớ câu cũ viết thế nào.
+
+**Giới thiệu và video của từng kỳ thi / khóa học nhập trong `/quan-tri/chuong-trinh`.**
+Mỗi kỳ thi có câu chốt, bài giới thiệu dài, video, các khối nội dung tự do và
+câu hỏi thường gặp riêng. Mỗi khóa có câu chốt, bài giới thiệu, video, danh sách
+"học xong làm được gì" và nội dung theo chặng. Khối nào để trống thì tự ẩn trên
+trang chứ không để lại tiêu đề rỗng.
+
+Trình phát video nhận link YouTube, Vimeo hoặc tệp `.mp4`. Trang chỉ hiện ảnh nền
+và nút phát; iframe chỉ được tạo sau cú bấm đầu tiên — khách không bấm thì không
+tải vài trăm KB script và không bị theo dõi.
+
+**Phễu bán hàng có thêm một bước.** Trước đây bấm vào một khóa là nhảy thẳng sang
+trang thanh toán. Giờ có `/khoa-hoc/<mã khóa>`: video, mô tả, kết quả đạt được,
+nội dung theo chặng, rồi mới tới nút đăng ký.
+
+**Người dùng và phân quyền: `/quan-tri/nguoi-dung`.** Cấp/thu vai trò, tạo tài
+khoản nhân sự, khóa và mở lại tài khoản. Ba chốt an toàn ở tầng API, tất cả nhắm
+vào cùng một tai nạn — khóa mất người quản trị cuối cùng rồi không ai vào được:
+
+1. Chỉ SUPER_ADMIN mới cấp hoặc thu hồi được quyền SUPER_ADMIN.
+2. Không ai tự đổi vai trò hay tự khóa tài khoản của chính mình.
+3. Không gỡ quyền hay khóa SUPER_ADMIN đang hoạt động cuối cùng.
 
 ### Quyết định nghiệp vụ cần chốt (specs §20)
 

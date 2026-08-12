@@ -52,4 +52,8 @@ export const AUDIT_ACTIONS = {
   TEACHER_ASSIGN: 'teacher.assign',
   PLAN_REGENERATE: 'plan.regenerate',
   USER_ROLE_CHANGE: 'user.role_change',
+  USER_STATUS_CHANGE: 'user.status_change',
+  USER_CREATE: 'user.create',
+  SITE_COPY_UPDATE: 'site_copy.update',
+  SITE_COPY_RESET: 'site_copy.reset',
 } as const;

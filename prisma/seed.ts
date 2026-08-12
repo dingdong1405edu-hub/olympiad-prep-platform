@@ -170,6 +170,11 @@ async function seedCatalog(): Promise<CatalogResult> {
         season: p.season,
         active: p.active,
         order: p.order,
+        tagline: p.tagline ?? null,
+        longDescription: p.longDescription ?? null,
+        introVideoUrl: p.introVideoUrl ?? null,
+        sections: (p.sections ?? []) as Prisma.InputJsonValue,
+        faqs: (p.faqs ?? []) as Prisma.InputJsonValue,
       },
       update: {
         name: p.name,
@@ -181,6 +186,11 @@ async function seedCatalog(): Promise<CatalogResult> {
         season: p.season,
         active: p.active,
         order: p.order,
+        tagline: p.tagline ?? null,
+        longDescription: p.longDescription ?? null,
+        introVideoUrl: p.introVideoUrl ?? null,
+        sections: (p.sections ?? []) as Prisma.InputJsonValue,
+        faqs: (p.faqs ?? []) as Prisma.InputJsonValue,
       },
     });
     programIdByCode.set(p.code, row.id);
@@ -236,8 +246,20 @@ async function seedCatalog(): Promise<CatalogResult> {
         name: c.name,
         description: c.description,
         active: true,
+        tagline: c.tagline,
+        longDescription: c.longDescription,
+        outcomes: c.outcomes as Prisma.InputJsonValue,
+        syllabus: c.syllabus as Prisma.InputJsonValue,
       },
-      update: { name: c.name, description: c.description, active: true },
+      update: {
+        name: c.name,
+        description: c.description,
+        active: true,
+        tagline: c.tagline,
+        longDescription: c.longDescription,
+        outcomes: c.outcomes as Prisma.InputJsonValue,
+        syllabus: c.syllabus as Prisma.InputJsonValue,
+      },
     });
     courseIdByKey.set(courseKey(c.programCode, c.gradeBand, c.subject), row.id);
   });

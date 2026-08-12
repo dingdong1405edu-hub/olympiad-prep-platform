@@ -19,6 +19,8 @@ export const routes = {
     const search = query.toString();
     return search ? `/khoa-hoc?${search}` : '/khoa-hoc';
   },
+  /** Trang giới thiệu một khóa — khách xem nội dung và video TRƯỚC khi trả tiền. */
+  course: (courseId: string) => `/khoa-hoc/${courseId}`,
   register: (next?: string) => (next ? `/dang-ky?next=${encodeURIComponent(next)}` : '/dang-ky'),
   login: (next?: string) => (next ? `/dang-nhap?next=${encodeURIComponent(next)}` : '/dang-nhap'),
   forgotPassword: () => '/quen-mat-khau',
@@ -58,6 +60,7 @@ export const routes = {
   adminContentImport: () => '/quan-tri/hoc-lieu/nhap-lieu',
   adminContentCoverage: () => '/quan-tri/hoc-lieu/do-phu',
   adminTaxonomy: () => '/quan-tri/hoc-lieu/cay-kien-thuc',
+  adminSiteCopy: () => '/quan-tri/giao-dien',
   adminUsers: () => '/quan-tri/nguoi-dung',
   adminPayments: () => '/quan-tri/thanh-toan',
   adminTeachers: () => '/quan-tri/giao-vien',
@@ -90,6 +93,10 @@ export const API = {
   checkoutPreview: '/api/v1/checkout/preview',
   checkout: '/api/v1/checkout',
   confirmMockPayment: '/api/v1/checkout/confirm',
+  /** Trạng thái đơn + đối soát với cổng; `doi_soat=0` để chỉ đọc dữ liệu nội bộ. */
+  paymentStatus: (orderCode: string, reconcile = true) =>
+    `/api/v1/payments/${encodeURIComponent(orderCode)}${reconcile ? '' : '?doi_soat=0'}`,
+  cancelPayment: (orderCode: string) => `/api/v1/payments/${encodeURIComponent(orderCode)}/cancel`,
 
   // Học tập
   enrollments: '/api/v1/enrollments',
@@ -146,6 +153,7 @@ export const API = {
   adminPayments: '/api/v1/admin/payments',
   adminTeacherWorkload: '/api/v1/admin/teachers/workload',
   adminConfig: '/api/v1/admin/config',
+  adminSiteCopy: '/api/v1/admin/site-copy',
   adminAnalytics: '/api/v1/admin/analytics',
   adminAudit: '/api/v1/admin/audit',
   adminPrograms: '/api/v1/admin/programs',

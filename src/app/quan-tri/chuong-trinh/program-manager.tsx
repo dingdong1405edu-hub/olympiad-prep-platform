@@ -8,6 +8,7 @@
  * phải hợp lệ với khối, bảng giá gắn đúng một phạm vi…) do máy chủ quyết định.
  */
 import { useState, type ReactNode } from 'react';
+import { PairListEditor, cleanPairs, type PairItem } from '@/components/pair-list-editor';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import type { GradeBand, Subject } from '@prisma/client';
@@ -649,6 +650,19 @@ function FormField({
   );
 }
 
+/** Vạch ngăn có tiêu đề, chia biểu mẫu dài thành các phần đọc được. */
+function SectionDivider({ title, description }: { title: string; description?: string }) {
+  return (
+    <div className="sm:col-span-2 lg:col-span-3">
+      <div className="mt-2 flex items-center gap-3 border-t border-ink-100 pt-5">
+        <span className="text-sm font-semibold text-ink-800">{title}</span>
+        <span className="h-px flex-1 bg-ink-100" aria-hidden />
+      </div>
+      {description ? <p className="mt-1 text-xs text-ink-500">{description}</p> : null}
+    </div>
+  );
+}
+
 function CheckboxRow({
   checked,
   onChange,
@@ -703,6 +717,16 @@ function ProgramForm({
   const [order, setOrder] = useState(String(program?.order ?? 0));
   const [active, setActive] = useState(program?.active ?? true);
   const [highlights, setHighlights] = useState((program?.highlights ?? []).join('\n'));
+  const [tagline, setTagline] = useState(program?.tagline ?? '');
+  const [longDescription, setLongDescription] = useState(program?.longDescription ?? '');
+  const [introVideoUrl, setIntroVideoUrl] = useState(program?.introVideoUrl ?? '');
+  const [introVideoPoster, setIntroVideoPoster] = useState(program?.introVideoPoster ?? '');
+  const [sections, setSections] = useState<PairItem[]>(
+    (program?.sections ?? []).map((row) => ({ title: row.title, body: row.body })),
+  );
+  const [faqs, setFaqs] = useState<PairItem[]>(
+    (program?.faqs ?? []).map((row) => ({ title: row.question, body: row.answer })),
+  );
 
   return (
     <FormShell
@@ -728,6 +752,12 @@ function ProgramForm({
             .split('\n')
             .map((line) => line.trim())
             .filter((line) => line.length > 0),
+          tagline: tagline.trim() || undefined,
+          longDescription: longDescription.trim() || undefined,
+          introVideoUrl: introVideoUrl.trim() || undefined,
+          introVideoPoster: introVideoPoster.trim() || undefined,
+          sections: cleanPairs(sections),
+          faqs: cleanPairs(faqs).map((row) => ({ question: row.title, answer: row.body })),
         })
       }
     >
@@ -780,6 +810,65 @@ function ProgramForm({
           hint="Tắt khi hết mùa thi: kỳ thi biến mất khỏi trang bán, học sinh cũ vẫn học bình thường."
         />
       </div>
+
+      <SectionDivider
+        title="Nội dung giới thiệu"
+        description="Phần khách đọc TRƯỚC khi trả tiền. Để trống thì khối tương ứng tự ẩn trên trang."
+      />
+
+      <FormField label="Câu chốt" hint="một dòng, hiện ngay dưới tên kỳ thi" wide>
+        <Input
+          value={tagline}
+          onChange={(event) => setTagline(event.target.value)}
+          placeholder="Luyện đúng cấu trúc đề ASMOPSS, đo tiến bộ mỗi 14 ngày"
+        />
+      </FormField>
+
+      <FormField label="Video giới thiệu" hint="link YouTube, Vimeo hoặc tệp .mp4">
+        <Input
+          value={introVideoUrl}
+          onChange={(event) => setIntroVideoUrl(event.target.value)}
+          placeholder="https://www.youtube.com/watch?v=..."
+        />
+      </FormField>
+      <FormField label="Ảnh nền video" hint="bỏ trống thì tự lấy ảnh của YouTube">
+        <Input
+          value={introVideoPoster}
+          onChange={(event) => setIntroVideoPoster(event.target.value)}
+          placeholder="https://..."
+        />
+      </FormField>
+
+      <FormField label="Bài giới thiệu dài" hint="cách một dòng trống để sang đoạn mới" wide>
+        <Textarea
+          rows={6}
+          value={longDescription}
+          onChange={(event) => setLongDescription(event.target.value)}
+        />
+      </FormField>
+
+      <FormField label="Các khối nội dung" hint="mỗi khối một tiêu đề và một đoạn" wide>
+        <PairListEditor
+          items={sections}
+          onChange={setSections}
+          titleLabel="Tiêu đề khối"
+          bodyLabel="Nội dung"
+          addLabel="Thêm khối nội dung"
+          titlePlaceholder="Cấu trúc đề thi"
+          max={12}
+        />
+      </FormField>
+
+      <FormField label="Câu hỏi thường gặp riêng của kỳ thi" wide>
+        <PairListEditor
+          items={faqs}
+          onChange={setFaqs}
+          titleLabel="Câu hỏi"
+          bodyLabel="Câu trả lời"
+          addLabel="Thêm câu hỏi"
+          titlePlaceholder="Thi vào tháng mấy?"
+        />
+      </FormField>
     </FormShell>
   );
 }
@@ -808,6 +897,13 @@ function CourseForm({
   const [name, setName] = useState(course?.name ?? '');
   const [description, setDescription] = useState(course?.description ?? '');
   const [active, setActive] = useState(course?.active ?? true);
+  const [tagline, setTagline] = useState(course?.tagline ?? '');
+  const [longDescription, setLongDescription] = useState(course?.longDescription ?? '');
+  const [introVideoUrl, setIntroVideoUrl] = useState(course?.introVideoUrl ?? '');
+  const [outcomes, setOutcomes] = useState((course?.outcomes ?? []).join('\n'));
+  const [syllabus, setSyllabus] = useState<PairItem[]>(
+    (course?.syllabus ?? []).map((row) => ({ title: row.title, body: row.detail })),
+  );
 
   const subjects = SUBJECTS_BY_BAND[gradeBand];
 
@@ -834,6 +930,14 @@ function CourseForm({
           name: name.trim(),
           description: description.trim() || undefined,
           active,
+          tagline: tagline.trim() || undefined,
+          longDescription: longDescription.trim() || undefined,
+          introVideoUrl: introVideoUrl.trim() || undefined,
+          outcomes: outcomes
+            .split('\n')
+            .map((line) => line.trim())
+            .filter((line) => line.length > 0),
+          syllabus: cleanPairs(syllabus).map((row) => ({ title: row.title, detail: row.body })),
         })
       }
     >
@@ -864,6 +968,56 @@ function CourseForm({
       <div className="sm:col-span-2">
         <CheckboxRow checked={active} onChange={setActive} label="Đang mở bán" />
       </div>
+
+      <SectionDivider
+        title="Trang giới thiệu khóa học"
+        description="Hiển thị ở /khoa-hoc/<mã khóa> — khách xem trước khi bấm thanh toán."
+      />
+
+      <FormField label="Câu chốt" hint="một dòng, hiện dưới tên khóa" wide>
+        <Input
+          value={tagline}
+          onChange={(event) => setTagline(event.target.value)}
+          placeholder="Vá lỗ hổng số học trước khi bước vào hình học"
+        />
+      </FormField>
+
+      <FormField label="Video giới thiệu" hint="link YouTube, Vimeo hoặc tệp .mp4" wide>
+        <Input
+          value={introVideoUrl}
+          onChange={(event) => setIntroVideoUrl(event.target.value)}
+          placeholder="https://www.youtube.com/watch?v=..."
+        />
+      </FormField>
+
+      <FormField label="Bài giới thiệu dài" hint="cách một dòng trống để sang đoạn mới" wide>
+        <Textarea
+          rows={6}
+          value={longDescription}
+          onChange={(event) => setLongDescription(event.target.value)}
+        />
+      </FormField>
+
+      <FormField label="Học xong con làm được gì" hint="mỗi dòng một ý" wide>
+        <Textarea
+          rows={4}
+          value={outcomes}
+          onChange={(event) => setOutcomes(event.target.value)}
+          placeholder={'Quy đồng và so sánh phân số thành thạo\nGiải được bài toán chuyển động hai vật'}
+        />
+      </FormField>
+
+      <FormField label="Nội dung khóa học theo chặng" wide>
+        <PairListEditor
+          items={syllabus}
+          onChange={setSyllabus}
+          titleLabel="Tên chặng"
+          bodyLabel="Nội dung chặng"
+          addLabel="Thêm chặng"
+          titlePlaceholder="Chặng 1 — Đo năng lực và vá lỗ hổng"
+          max={30}
+        />
+      </FormField>
     </FormShell>
   );
 }

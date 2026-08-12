@@ -4,7 +4,8 @@ import { getCatalogTree } from '@/server/catalog/service';
 import { getSession } from '@/lib/auth';
 import { routes } from '@/lib/routes';
 import { formatVnd, GRADE_BAND_LABEL, SUBJECT_LABEL } from '@/lib/domain';
-import { MarketingShell } from '@/components/marketing';
+import { getCopy } from '@/lib/copy';
+import { SiteShell } from '@/components/site-shell';
 import { Reveal } from '@/components/motion';
 
 export const dynamic = 'force-dynamic';
@@ -42,10 +43,11 @@ export default async function CourseCatalogPage({
 }: {
   searchParams: Promise<{ ky_thi?: string; khoi?: string; mon?: string }>;
 }) {
-  const [params, programs, session] = await Promise.all([
+  const [params, programs, session, t] = await Promise.all([
     searchParams,
     getCatalogTree(),
     getSession(),
+    getCopy(),
   ]);
 
   // Làm phẳng cây danh mục thành danh sách khóa — cây tiện cho trang kỳ thi,
@@ -103,19 +105,18 @@ export default async function CourseCatalogPage({
   const chipOn = `${chip} bg-navy-900 text-white ring-1 ring-navy-900`;
 
   return (
-    <MarketingShell signedIn={Boolean(session)}>
+    <SiteShell signedIn={Boolean(session)}>
       <section className="relative overflow-hidden bg-navy-900 pt-28 pb-14 sm:pt-36 lg:pt-40 lg:pb-16">
         <div className="grid-faint-dark pointer-events-none absolute inset-0" aria-hidden />
         <div className={`${SHELL} relative`}>
           <p className="text-[11px] font-bold tracking-[0.18em] text-gold-400 uppercase">
-            Danh mục khóa học
+            {t('courses.eyebrow')}
           </p>
           <h1 className="font-display mt-3 max-w-3xl text-[34px] leading-[1.1] font-bold tracking-tight text-white text-balance sm:text-5xl lg:text-[52px]">
-            Tất cả khóa đang mở
+            {t('courses.title')}
           </h1>
           <p className="mt-5 max-w-2xl text-[16.5px] leading-relaxed text-navy-200 text-pretty">
-            Mỗi khóa gắn với một kỳ thi, một khối lớp và một môn. Chọn đúng ba thứ đó là hệ thống có
-            đủ dữ liệu để đo năng lực và ra bài cho con.
+            {t('courses.subtitle')}
           </p>
         </div>
       </section>
@@ -125,7 +126,7 @@ export default async function CourseCatalogPage({
         <div className={`${SHELL} space-y-4`}>
           {[
             {
-              label: 'Kỳ thi',
+              label: t('courses.filter.program'),
               key: 'ky_thi' as const,
               items: programOptions.map((row) => ({
                 value: row.programCode,
@@ -134,7 +135,7 @@ export default async function CourseCatalogPage({
               })),
             },
             {
-              label: 'Khối lớp',
+              label: t('courses.filter.band'),
               key: 'khoi' as const,
               items: bandOptions.map((band) => ({
                 value: band,
@@ -143,7 +144,7 @@ export default async function CourseCatalogPage({
               })),
             },
             {
-              label: 'Môn học',
+              label: t('courses.filter.subject'),
               key: 'mon' as const,
               items: subjectOptions.map((subject) => ({
                 value: subject,
@@ -184,7 +185,7 @@ export default async function CourseCatalogPage({
               <>
                 {' · '}
                 <Link href={routes.courses()} className="font-medium text-navy-700 underline underline-offset-4">
-                  Bỏ lọc
+                  {t('courses.filter.clear')}
                 </Link>
               </>
             ) : null}
@@ -193,12 +194,10 @@ export default async function CourseCatalogPage({
           {rows.length === 0 ? (
             <div className="mt-8 rounded-2xl border border-dashed border-navy-200 bg-navy-50/50 px-6 py-16 text-center">
               <p className="font-display text-xl font-bold text-navy-800">
-                {all.length === 0 ? 'Chưa có khóa học nào đang mở' : 'Không có khóa nào khớp bộ lọc'}
+                {all.length === 0 ? t('courses.empty.title') : t('courses.empty.filtered')}
               </p>
-              <p className="mx-auto mt-2 max-w-md text-[15px] leading-relaxed text-navy-500">
-                {all.length === 0
-                  ? 'Danh mục được nạp từ khu vực quản trị. Nếu bạn là quản trị viên, hãy nạp dữ liệu mẫu rồi quay lại.'
-                  : 'Thử bỏ bớt một tiêu chí — không phải kỳ thi nào cũng mở đủ mọi môn ở mọi khối.'}
+              <p className="mx-auto mt-2 max-w-md text-[15px] leading-relaxed whitespace-pre-line text-navy-500">
+                {all.length === 0 ? t('courses.empty.body') : t('courses.empty.filteredBody')}
               </p>
             </div>
           ) : (
@@ -221,7 +220,9 @@ export default async function CourseCatalogPage({
                       </Link>
 
                       <h2 className="font-display mt-1.5 text-[18px] leading-snug font-bold text-navy-900">
-                        {row.name}
+                        <Link href={routes.course(row.id)} className="transition-colors hover:text-navy-700">
+                          {row.name}
+                        </Link>
                       </h2>
 
                       <p className="mt-2 text-[13px] text-navy-500">
@@ -237,17 +238,17 @@ export default async function CourseCatalogPage({
                       <div className="mt-auto flex items-end justify-between gap-3 border-t border-navy-100 pt-4">
                         <span>
                           <span className="block text-[10.5px] tracking-wide text-navy-400 uppercase">
-                            Học phí
+                            {t('courses.card.price')}
                           </span>
                           <span className="font-display block text-[18px] font-bold text-navy-900">
                             {formatVnd(row.price)}
                           </span>
                         </span>
                         <Link
-                          href={routes.checkout(row.id)}
+                          href={routes.course(row.id)}
                           className="press rounded-lg bg-navy-900 px-3.5 py-2 text-[13.5px] font-semibold text-white transition-colors hover:bg-navy-800"
                         >
-                          Đăng ký
+                          {t('courses.card.cta')}
                         </Link>
                       </div>
                     </div>
@@ -258,6 +259,6 @@ export default async function CourseCatalogPage({
           )}
         </div>
       </section>
-    </MarketingShell>
+    </SiteShell>
   );
 }

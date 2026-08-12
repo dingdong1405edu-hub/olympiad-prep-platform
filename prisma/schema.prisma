@@ -317,6 +317,20 @@ model Program {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
+  // --- Nội dung giới thiệu, hiển thị TRƯỚC khi thanh toán (specs §11.1) ---
+  /// Một câu chốt hiển thị dưới tên kỳ thi
+  tagline          String?
+  /// Bài giới thiệu dài, xuống dòng bằng ký tự newline
+  longDescription  String?
+  /// Video giới thiệu: YouTube, Vimeo hoặc link mp4 trực tiếp
+  introVideoUrl    String?
+  /// Ảnh nền của video khi chưa bấm phát
+  introVideoPoster String?
+  /// Các khối nội dung tự do: [{ title, body }]
+  sections         Json    @default("[]")
+  /// Câu hỏi thường gặp riêng của kỳ thi: [{ question, answer }]
+  faqs             Json    @default("[]")
+
   courses  Course[]
   cohorts  Cohort[]
   pricings Pricing[]
@@ -326,7 +340,7 @@ model Program {
 }
 
 model Cohort {
-  id        String    @id @default(cuid())
+  id        String   @id @default(cuid())
   programId String
   year      Int
   name      String
@@ -334,7 +348,7 @@ model Cohort {
   endDate   DateTime
   /// Ngày thi — engine dùng để tính hệ số "độ gần kỳ thi" trong Gap Priority
   examDate  DateTime
-  active    Boolean   @default(true)
+  active    Boolean  @default(true)
 
   program     Program      @relation(fields: [programId], references: [id], onDelete: Cascade)
   enrollments Enrollment[]
@@ -352,6 +366,15 @@ model Course {
   active      Boolean   @default(true)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+
+  // --- Nội dung giới thiệu, hiển thị TRƯỚC khi thanh toán (specs §11.1) ---
+  tagline         String?
+  longDescription String?
+  introVideoUrl   String?
+  /// Học xong đạt được gì: mảng chuỗi
+  outcomes        Json    @default("[]")
+  /// Nội dung khóa học theo chặng: [{ title, detail }]
+  syllabus        Json    @default("[]")
 
   program     Program      @relation(fields: [programId], references: [id], onDelete: Cascade)
   pricings    Pricing[]
@@ -403,27 +426,33 @@ model Coupon {
 }
 
 model Payment {
-  id       String @id @default(cuid())
-  userId   String
-  courseId String
+  id        String @id @default(cuid())
+  userId    String
+  courseId  String
   /// Mã đơn hàng hiển thị cho khách + đối soát kế toán
   orderCode String @unique
 
-  amountOriginal Int
-  discountAmount Int           @default(0)
-  amount         Int
-  currency       String        @default("VND")
-  gateway        String // VNPAY | MOMO | ZALOPAY | PAYOS | MANUAL
-  status         PaymentStatus @default(PENDING)
-  gatewayTxnId   String?
+  amountOriginal  Int
+  discountAmount  Int           @default(0)
+  amount          Int
+  currency        String        @default("VND")
+  gateway         String // VNPAY | MOMO | ZALOPAY | PAYOS | MANUAL
+  status          PaymentStatus @default(PENDING)
+  gatewayTxnId    String?
+  /// Mã đơn dạng SỐ NGUYÊN mà một số cổng bắt buộc (PayOS: orderCode là number).
+  /// Giữ trong Int32 để không phải dùng BigInt — sinh ngẫu nhiên 9 chữ số + unique.
+  gatewayOrderRef Int?          @unique
+  /// Dữ liệu cổng trả về cần dùng lại ở giao diện: chuỗi VietQR, số tài khoản,
+  /// hạn hiệu lực… Nhờ đó tải lại trang vẫn hiện đúng mã QR cũ, không tạo đơn mới.
+  gatewayMeta     Json?
   /// Khóa chống xử lý webhook trùng (specs §19.2 #8)
-  idempotencyKey String?       @unique
-  webhookPayload Json?
-  couponId       String?
-  refundNote     String?
-  paidAt         DateTime?
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
+  idempotencyKey  String?       @unique
+  webhookPayload  Json?
+  couponId        String?
+  refundNote      String?
+  paidAt          DateTime?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
 
   user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   course     Course      @relation(fields: [courseId], references: [id])
@@ -457,15 +486,15 @@ model Enrollment {
   cohort  Cohort?        @relation(fields: [cohortId], references: [id], onDelete: SetNull)
   payment Payment?       @relation(fields: [paymentId], references: [id], onDelete: SetNull)
 
-  goals             Goal[]
-  plans             StudyPlan[]
-  masteries         StudentSkillMastery[]
-  masterySnapshots  MasterySnapshot[]
+  goals              Goal[]
+  plans              StudyPlan[]
+  masteries          StudentSkillMastery[]
+  masterySnapshots   MasterySnapshot[]
   assessmentAttempts AssessmentAttempt[]
-  itemAttempts      ItemAttempt[]
-  recommendations   Recommendation[]
-  teacherAssignment TeacherAssignment?
-  teacherSessions   TeacherSession[]
+  itemAttempts       ItemAttempt[]
+  recommendations    Recommendation[]
+  teacherAssignment  TeacherAssignment?
+  teacherSessions    TeacherSession[]
 
   @@unique([studentId, courseId])
   @@index([status, expiresAt])
@@ -529,15 +558,15 @@ model SkillPrerequisite {
 }
 
 model QuestionItem {
-  id String @id @default(cuid())
+  id       String @id @default(cuid())
   /// Mã duy nhất, KHÔNG đổi. VD: M67-RATIO-00127
   itemCode String @unique
 
   /// Rỗng = dùng chung mọi program; ["NEO"] = riêng NEO
-  programScope     String[]     @default([])
+  programScope     String[]  @default([])
   gradeBand        GradeBand
   /// Rỗng = áp dụng cả khối; [7] = chỉ lớp 7
-  actualGradeScope Int[]        @default([])
+  actualGradeScope Int[]     @default([])
   subject          Subject
   chapterId        String
   skillId          String
@@ -546,27 +575,27 @@ model QuestionItem {
   difficultyNumeric Int          @default(5) // 1..10
   questionType      QuestionType @default(SINGLE_CHOICE)
 
-  stem         String
-  stemImageUrl String?
+  stem            String
+  stemImageUrl    String?
   /// [{ key: "A", text: "...", imageUrl?: string }]
-  options      Json    @default("[]")
+  options         Json     @default("[]")
   /// "A" | ["A","C"] | 12.5 | "chuỗi"
-  correctAnswer Json
+  correctAnswer   Json
   answerTolerance Float?
   /// Lời giải chuẩn ĐÃ KIỂM DUYỆT — nguồn grounding duy nhất cho AI (specs §8.2)
-  solution     String
-  solutionSteps Json   @default("[]")
-  hint         String?
+  solution        String
+  solutionSteps   Json     @default("[]")
+  hint            String?
   /// Giây — engine dùng để xếp lịch theo quỹ thời gian
-  estimatedTime Int    @default(60)
-  tags         String[] @default([])
+  estimatedTime   Int      @default(60)
+  tags            String[] @default([])
 
-  status      ItemStatus @default(DRAFT)
-  version     Int        @default(1)
-  sourceNote  String?
-  createdById String?
+  status       ItemStatus @default(DRAFT)
+  version      Int        @default(1)
+  sourceNote   String?
+  createdById  String?
   reviewedById String?
-  publishedAt DateTime?
+  publishedAt  DateTime?
 
   // ---- quality_stats: tự tích lũy từ dữ liệu thật ----
   timesServed    Int    @default(0)
@@ -628,18 +657,18 @@ model ItemFlag {
 // ============================================================================
 
 model Goal {
-  id            String          @id @default(cuid())
-  enrollmentId  String
-  currentLevel  StudentLevel
-  targetLevel   StudentLevel
-  deadline      DateTime
-  daysPerWeek   Int
-  minutesPerDay Int
-  feasibility   GoalFeasibility @default(FEASIBLE)
+  id              String          @id @default(cuid())
+  enrollmentId    String
+  currentLevel    StudentLevel
+  targetLevel     StudentLevel
+  deadline        DateTime
+  daysPerWeek     Int
+  minutesPerDay   Int
+  feasibility     GoalFeasibility @default(FEASIBLE)
   /// Chi tiết tính ngược quỹ thời gian (specs §7.7) — hiển thị cảnh báo cho HS
-  feasibilityData Json          @default("{}")
-  active        Boolean         @default(true)
-  createdAt     DateTime        @default(now())
+  feasibilityData Json            @default("{}")
+  active          Boolean         @default(true)
+  createdAt       DateTime        @default(now())
 
   enrollment Enrollment  @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
   plans      StudyPlan[]
@@ -648,19 +677,19 @@ model Goal {
 }
 
 model StudyPlan {
-  id            String   @id @default(cuid())
-  enrollmentId  String
-  goalId        String
+  id              String   @id @default(cuid())
+  enrollmentId    String
+  goalId          String
   /// Chu kỳ 2 tuần thứ mấy
-  cycleNo       Int      @default(1)
-  startDate     DateTime
-  endDate       DateTime
-  focus         Json     @default("[]")
-  status        String   @default("ACTIVE") // ACTIVE | SUPERSEDED | COMPLETED
-  engineVersion String   @default("v1")
+  cycleNo         Int      @default(1)
+  startDate       DateTime
+  endDate         DateTime
+  focus           Json     @default("[]")
+  status          String   @default("ACTIVE") // ACTIVE | SUPERSEDED | COMPLETED
+  engineVersion   String   @default("v1")
   /// Snapshot lý do sinh plan — phục vụ audit (specs §7.8)
-  generatedReason Json   @default("{}")
-  createdAt     DateTime @default(now())
+  generatedReason Json     @default("{}")
+  createdAt       DateTime @default(now())
 
   enrollment Enrollment     @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
   goal       Goal           @relation(fields: [goalId], references: [id], onDelete: Cascade)
@@ -794,24 +823,24 @@ model StudentSkillMastery {
   skillId      String
 
   /// 0–100
-  masteryScore   Float  @default(0)
+  masteryScore       Float     @default(0)
   /// 0–1: thấp khi ít dữ liệu → không "nhảy level" sau 1 bài (specs §10.1)
-  confidence     Float  @default(0)
-  attemptCount   Int    @default(0)
-  correctCount   Int    @default(0)
-  recentAccuracy Float  @default(0)
+  confidence         Float     @default(0)
+  attemptCount       Int       @default(0)
+  correctCount       Int       @default(0)
+  recentAccuracy     Float     @default(0)
   /// Cửa sổ trượt kết quả gần đây: 1 = đúng, 0 = sai
-  recentResults  Int[]  @default([])
+  recentResults      Int[]     @default([])
   /// Thời gian thực tế / thời gian chuẩn
-  avgTimeRatio   Float  @default(1)
+  avgTimeRatio       Float     @default(1)
   /// { KNOWLEDGE: 3, READING: 1, ... }
-  errorPattern   Json   @default("{}")
+  errorPattern       Json      @default("{}")
   /// Độ khó cao nhất đã ổn định (0 = chưa có)
-  difficultyCeiling  Int @default(0)
-  consecutiveCorrect Int @default(0)
-  consecutiveWrong   Int @default(0)
+  difficultyCeiling  Int       @default(0)
+  consecutiveCorrect Int       @default(0)
+  consecutiveWrong   Int       @default(0)
   lastPracticedAt    DateTime?
-  updatedAt          DateTime @updatedAt
+  updatedAt          DateTime  @updatedAt
 
   enrollment Enrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
   skill      Skill      @relation(fields: [skillId], references: [id], onDelete: Cascade)
@@ -949,8 +978,8 @@ model AuditLog {
 
 /// Cache + trace mọi output AI: model nào, prompt version nào sinh ra (specs §15 Auditability)
 model AiGeneration {
-  id      String @id @default(cuid())
-  useCase String
+  id         String @id @default(cuid())
+  useCase    String
   /// Khóa định danh đối tượng: "attempt:<id>", "session:<id>"…
   subjectKey String
 
@@ -1001,4 +1030,14 @@ model FeatureFlag {
   programScope String[] @default([])
   description  String?
   updatedAt    DateTime @updatedAt
+}
+
+/// Chữ hiển thị trên các trang công khai — admin sửa được, KHÔNG deploy lại.
+/// Giá trị mặc định nằm trong `src/lib/copy/defaults.ts`; bảng này chỉ chứa
+/// những khóa admin đã ghi đè, nên xóa một dòng ở đây là quay về bản gốc.
+model SiteCopy {
+  key         String   @id
+  value       String
+  updatedById String?
+  updatedAt   DateTime @updatedAt
 }

@@ -59,6 +59,10 @@ export function apiPatch<T>(url: string, body?: unknown): Promise<T> {
   return request<T>(url, { method: 'PATCH', body: JSON.stringify(body ?? {}) });
 }
 
+export function apiPut<T>(url: string, body?: unknown): Promise<T> {
+  return request<T>(url, { method: 'PUT', body: JSON.stringify(body ?? {}) });
+}
+
 export function apiDelete<T>(url: string): Promise<T> {
   return request<T>(url, { method: 'DELETE' });
 }

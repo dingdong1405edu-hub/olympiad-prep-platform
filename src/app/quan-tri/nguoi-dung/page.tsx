@@ -1,88 +1,115 @@
-import { requireAdmin } from '@/lib/auth';
+import { requireAdmin, hasRole } from '@/lib/auth';
 import { listUsers } from '@/server/identity/service';
-import { ROLE_LABEL, GRADE_BAND_LABEL } from '@/lib/domain';
+import { GRADE_BAND_LABEL } from '@/lib/domain';
 import { formatDateVN } from '@/lib/dates';
-import { Badge, EmptyState, FilterBar, Input, PageHeader, Table, Td, Tr } from '@/components/ui';
+import { EmptyState, FilterBar, Input, PageHeader, Select } from '@/components/ui';
+import { UsersManager, type UserRow } from './users-manager';
 
 export const dynamic = 'force-dynamic';
 
 export const metadata = { title: 'Người dùng' };
 
+/**
+ * Danh sách tài khoản, cấp quyền và khóa/mở tài khoản.
+ *
+ * Lọc chạy bằng form GET chứ không phải JavaScript: mỗi bộ lọc là một URL riêng
+ * nên gửi được cho đồng nghiệp ("xem giúp danh sách giáo viên đang bị khóa"),
+ * và trang danh sách vẫn dùng được khi phần tương tác chưa tải xong.
+ */
 export default async function AdminUsersPage({
   searchParams,
 }: {
-  searchParams: Promise<{ search?: string; page?: string }>;
+  searchParams: Promise<{ search?: string; role?: string; status?: string; page?: string }>;
 }) {
-  await requireAdmin();
-  const { search, page } = await searchParams;
+  const session = await requireAdmin();
+  const { search, role, status, page } = await searchParams;
 
   const result = await listUsers({
     search: search || undefined,
+    role: (role || undefined) as never,
+    status: (status || undefined) as never,
     page: page ? Number(page) : 1,
-    pageSize: 30,
+    pageSize: 40,
   });
+
+  const rows: UserRow[] = result.rows.map((user) => ({
+    id: user.id,
+    fullName: user.fullName,
+    email: user.email,
+    phone: user.phone,
+    status: user.status,
+    roles: user.roles.map((entry) => entry.role),
+    profile: user.studentProfile
+      ? `Lớp ${user.studentProfile.actualGrade} · ${GRADE_BAND_LABEL[user.studentProfile.gradeBand]}`
+      : user.teacherProfile
+        ? `Giáo viên · sức chứa ${user.teacherProfile.capacityPerCycle}`
+        : '—',
+    createdAt: formatDateVN(user.createdAt),
+  }));
 
   return (
     <div>
       <PageHeader
         eyebrow="Quản trị"
-        title="Người dùng"
-        subtitle={`${result.total} tài khoản trong hệ thống.`}
+        title="Người dùng & phân quyền"
+        subtitle="Cấp quyền, thêm tài khoản nhân sự, khóa hoặc mở lại tài khoản."
       />
 
       <FilterBar>
-        <form className="flex flex-1 items-end gap-2" method="get">
-          <div className="flex-1">
+        <form className="flex flex-1 flex-wrap items-end gap-2" method="get">
+          <div className="min-w-52 flex-1">
             <label htmlFor="search" className="mb-1.5 block text-sm font-medium text-ink-700">
               Tìm theo tên, email hoặc số điện thoại
             </label>
             <Input id="search" name="search" defaultValue={search ?? ''} placeholder="Nhập từ khóa…" />
           </div>
+
+          <div>
+            <label htmlFor="role" className="mb-1.5 block text-sm font-medium text-ink-700">
+              Vai trò
+            </label>
+            <Select id="role" name="role" defaultValue={role ?? ''}>
+              <option value="">Tất cả</option>
+              <option value="STUDENT">Học sinh</option>
+              <option value="TEACHER">Giáo viên</option>
+              <option value="CONTENT_EDITOR">Biên soạn viên</option>
+              <option value="REVIEWER">Reviewer chuyên môn</option>
+              <option value="PROGRAM_MANAGER">Quản lý chương trình</option>
+              <option value="OPS_ADMIN">Admin vận hành</option>
+              <option value="SUPER_ADMIN">Super Admin</option>
+            </Select>
+          </div>
+
+          <div>
+            <label htmlFor="status" className="mb-1.5 block text-sm font-medium text-ink-700">
+              Trạng thái
+            </label>
+            <Select id="status" name="status" defaultValue={status ?? ''}>
+              <option value="">Tất cả</option>
+              <option value="ACTIVE">Hoạt động</option>
+              <option value="SUSPENDED">Bị khóa</option>
+              <option value="PENDING">Chờ xác nhận</option>
+            </Select>
+          </div>
+
           <button
             type="submit"
             className="press rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-700"
           >
-            Tìm
+            Lọc
           </button>
         </form>
       </FilterBar>
 
-      {result.rows.length === 0 ? (
+      {rows.length === 0 ? (
         <EmptyState icon="🔍" title="Không tìm thấy tài khoản nào" />
       ) : (
-        <Table head={['Họ tên', 'Liên hệ', 'Vai trò', 'Hồ sơ', 'Trạng thái', 'Tạo lúc']}>
-          {result.rows.map((user) => (
-            <Tr key={user.id}>
-              <Td className="font-medium text-ink-800">{user.fullName}</Td>
-              <Td className="text-ink-600">
-                {user.email ?? '—'}
-                {user.phone ? <><br /><span className="text-xs text-ink-400">{user.phone}</span></> : null}
-              </Td>
-              <Td>
-                <span className="flex flex-wrap gap-1">
-                  {user.roles.map((r) => (
-                    <Badge key={r.role} tone="brand">
-                      {ROLE_LABEL[r.role]}
-                    </Badge>
-                  ))}
-                </span>
-              </Td>
-              <Td className="text-ink-600">
-                {user.studentProfile
-                  ? `Lớp ${user.studentProfile.actualGrade} · ${GRADE_BAND_LABEL[user.studentProfile.gradeBand]}`
-                  : user.teacherProfile
-                    ? `Giáo viên · sức chứa ${user.teacherProfile.capacityPerCycle}`
-                    : '—'}
-              </Td>
-              <Td>
-                <Badge tone={user.status === 'ACTIVE' ? 'success' : 'warn'}>
-                  {user.status === 'ACTIVE' ? 'Hoạt động' : user.status === 'SUSPENDED' ? 'Bị khóa' : 'Chờ xác nhận'}
-                </Badge>
-              </Td>
-              <Td className="whitespace-nowrap text-ink-500">{formatDateVN(user.createdAt)}</Td>
-            </Tr>
-          ))}
-        </Table>
+        <UsersManager
+          rows={rows}
+          total={result.total}
+          currentUserId={session.id}
+          canManageSuperAdmin={hasRole(session, 'SUPER_ADMIN')}
+        />
       )}
     </div>
   );

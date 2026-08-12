@@ -461,7 +461,10 @@ export async function listUsers(filter: ListUsersFilter = {}): Promise<UserListR
   return { rows, total, page, pageSize };
 }
 
-export async function createStaffUser(input: CreateStaffUserInput): Promise<string> {
+export async function createStaffUser(
+  input: CreateStaffUserInput,
+  actorId: string,
+): Promise<string> {
   const data = createStaffUserSchema.parse(input);
 
   await assertContactAvailable(data.email, data.phone);
@@ -496,7 +499,7 @@ export async function createStaffUser(input: CreateStaffUserInput): Promise<stri
     });
 
     await writeAudit({
-      actorId: data.actorId,
+      actorId,
       action: AUDIT_ACTION_STAFF_CREATE,
       entityType: AUDIT_ENTITY_USER,
       entityId: user.id,

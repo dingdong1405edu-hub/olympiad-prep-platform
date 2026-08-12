@@ -72,6 +72,16 @@ export interface ProgramSeed {
   season: string;
   active: boolean;
   order: number;
+
+  /**
+   * Nội dung giới thiệu hiển thị TRƯỚC khi thanh toán. Để trống được — khối
+   * tương ứng tự ẩn trên trang, và admin nhập sau trong khu quản trị.
+   */
+  tagline?: string;
+  longDescription?: string;
+  introVideoUrl?: string;
+  sections?: { title: string; body: string }[];
+  faqs?: { question: string; answer: string }[];
 }
 
 export const PROGRAMS: ProgramSeed[] = [
@@ -92,6 +102,19 @@ export const PROGRAMS: ProgramSeed[] = [
     season: '2026',
     active: true,
     order: 1,
+    tagline: 'Đấu trường quốc tế đầu tiên, luyện bằng đề song ngữ sát chuẩn châu Á',
+    longDescription: [
+      'ASMOPSS đo hai thứ cùng lúc: nền kiến thức Toán – Khoa học và khả năng đọc hiểu đề bằng tiếng Anh. Nhiều học sinh giỏi ở lớp vẫn mất điểm oan chỉ vì chưa quen cách diễn đạt của đề quốc tế.',
+      'Nền tảng ra bài bám đúng đặc trưng đó: tỷ trọng chương, kiểu câu hỏi và thang độ khó đều lấy từ đề các mùa trước, kèm phần luyện đọc hiểu đề riêng.',
+    ].join('\n\n'),
+    sections: [
+      { title: 'Cấu trúc kỳ thi', body: 'Vòng loại quốc gia thi trực tuyến, vòng chung kết thi tập trung. Đề song ngữ Anh – Việt, nhấn mạnh suy luận và vận dụng thực tế hơn là học thuộc công thức.' },
+      { title: 'Ai nên thi', body: 'Học sinh tiểu học và trung học cơ sở muốn thử sức đấu trường quốc tế lần đầu. Không cần đã có giải trước đó — bài kiểm tra đầu vào sẽ tìm đúng tầng kiến thức hiện tại của con.' },
+    ],
+    faqs: [
+      { question: 'Con chưa giỏi tiếng Anh có thi được không?', answer: 'Được. Đề song ngữ nên con vẫn đọc được phần tiếng Việt. Phần luyện tập có riêng nhóm câu giúp làm quen cách diễn đạt của đề quốc tế.' },
+      { question: 'Nên bắt đầu ôn trước kỳ thi bao lâu?', answer: 'Tối thiểu 8 tuần để đủ bốn chu kỳ đo. Đặt mục tiêu xong, hệ thống sẽ tính ngược và nói thẳng nếu quỹ thời gian không đủ.' },
+    ],
   },
   {
     code: 'NEO',
@@ -110,6 +133,19 @@ export const PROGRAMS: ProgramSeed[] = [
     season: '2026',
     active: true,
     order: 2,
+    tagline: 'Cấu trúc đề phân tầng rõ ba mức, hợp nhất với lộ trình cá nhân hóa',
+    longDescription: [
+      'NEO chia đề theo ba mức Trung bình – Khá – Giỏi rất rõ ràng. Đây là lý do NEO khối 6–7 môn Toán được chọn làm chương trình chạy thử của nền tảng: mức độ phân tầng của đề khớp đúng với cách hệ thống đo mastery và nâng hạ độ khó.',
+      'Kho câu hỏi của khóa này đầy đủ nhất trên nền tảng, phủ toàn bộ 82 kỹ năng của Toán khối 6–7.',
+    ].join('\n\n'),
+    sections: [
+      { title: 'Cấu trúc kỳ thi', body: 'Thi trực tuyến. Đề chia ba mức độ khó rõ rệt, kết quả trả về kèm phân tích theo từng kỹ năng chứ không chỉ một điểm tổng.' },
+      { title: 'Vì sao đo tiến bộ được', body: 'Bài kiểm tra tiến bộ mỗi 14 ngày dùng câu neo — những câu cùng độ khó với lần đo trước — nên con số tăng lên là tăng thật, không phải do đề lần này dễ hơn.' },
+    ],
+    faqs: [
+      { question: 'Khác gì so với luyện đề thông thường?', answer: 'Luyện đề cho con làm cùng một bộ đề như mọi người. Ở đây mỗi học sinh có hồ sơ năng lực riêng theo từng kỹ năng nhỏ, và hệ thống quyết định hôm nay con làm bài nào, mức khó nào.' },
+      { question: 'Con mất gốc có theo được không?', answer: 'Đây là trường hợp hệ thống làm tốt nhất. Bài đầu vào tìm đúng tầng kiến thức bị hổng, kể cả khi nó nằm ở lớp dưới, rồi dựng lại từ đó lên.' },
+    ],
   },
   {
     code: 'STEM',
@@ -128,6 +164,18 @@ export const PROGRAMS: ProgramSeed[] = [
     season: '2026',
     active: true,
     order: 3,
+    tagline: 'Thi liên môn Khoa học – Công nghệ, mạnh về vận dụng thực tế',
+    longDescription: [
+      'STEM không kiểm tra từng môn tách rời mà đặt học sinh vào tình huống cần phối hợp Toán, Khoa học tự nhiên và tư duy công nghệ để giải quyết. Học tủ theo môn gần như không có tác dụng.',
+      'Vì vậy lộ trình ở đây luôn xen kẽ nhiều nhóm kỹ năng trong cùng một ngày, thay vì học dứt điểm từng chương rồi mới sang chương khác.',
+    ].join('\n\n'),
+    sections: [
+      { title: 'Cấu trúc kỳ thi', body: 'Đề gồm cả câu trắc nghiệm và câu vận dụng nhiều bước, thường gắn với bối cảnh đời sống hoặc thí nghiệm.' },
+      { title: 'Ai nên thi', body: 'Học sinh thích tìm hiểu cách mọi thứ vận hành và không ngại bài dài nhiều bước.' },
+    ],
+    faqs: [
+      { question: 'Cần chuẩn bị dụng cụ thí nghiệm không?', answer: 'Không. Phần thực hành trong đề là các câu suy luận về thí nghiệm, làm hoàn toàn trên giấy hoặc trên máy.' },
+    ],
   },
   {
     code: 'FMC',
@@ -146,6 +194,18 @@ export const PROGRAMS: ProgramSeed[] = [
     season: '2026',
     active: true,
     order: 4,
+    tagline: 'Toán tư duy thuần túy — đo cách nghĩ, không đo trí nhớ công thức',
+    longDescription: [
+      'FMC tập trung vào tư duy toán học: quy luật, suy luận, đếm và tối ưu. Rất ít câu áp dụng công thức trực tiếp, nên học sinh quen học thuộc thường lúng túng ngay ở những câu tưởng dễ.',
+      'Lộ trình ở đây dành nhiều thời gian cho khối thử thách hơn các kỳ thi khác, và luôn kèm lời giải trình bày rõ hướng nghĩ chứ không chỉ đáp số.',
+    ].join('\n\n'),
+    sections: [
+      { title: 'Cấu trúc kỳ thi', body: 'Toàn bộ là bài toán tư duy, chia theo độ khó tăng dần. Điểm số có trọng số theo độ khó.' },
+      { title: 'Ai nên thi', body: 'Học sinh có nền Toán vững và muốn rèn cách nghĩ, không chỉ luyện tốc độ tính.' },
+    ],
+    faqs: [
+      { question: 'Con học Toán ở trường tốt là thi được chứ?', answer: 'Chưa chắc. FMC hỏi kiểu khác hẳn đề trên lớp. Bài kiểm tra đầu vào sẽ cho biết con đang ở đâu so với yêu cầu của kỳ thi này.' },
+    ],
   },
   {
     // active = false để minh họa việc bật/tắt kỳ thi theo mùa mà KHÔNG xóa dữ liệu.
@@ -222,6 +282,10 @@ export interface CourseSeed {
   subject: Subject;
   name: string;
   description: string;
+  tagline: string;
+  longDescription: string;
+  outcomes: string[];
+  syllabus: { title: string; detail: string }[];
 }
 
 /** Tên khóa dạng "NEO – Khối 6–7 – Toán". */
@@ -236,12 +300,48 @@ export function buildCourses(programs: ProgramSeed[] = PROGRAMS): CourseSeed[] {
     if (!program.active) continue; // program tắt thì không mở khóa học
     for (const band of GRADE_BANDS) {
       for (const subject of SUBJECTS_BY_BAND[band]) {
+        const subjectName = SUBJECT_LABEL[subject];
+        const bandName = GRADE_BAND_LABEL[band].toLowerCase();
         out.push({
           programCode: program.code,
           gradeBand: band,
           subject,
           name: courseName(program.code, band, subject),
-          description: `Lộ trình ôn luyện ${SUBJECT_LABEL[subject]} cho ${GRADE_BAND_LABEL[band].toLowerCase()} theo cấu trúc đề ${program.code} mùa ${program.season}.`,
+          description: `Lộ trình ôn luyện ${subjectName} cho ${bandName} theo cấu trúc đề ${program.code} mùa ${program.season}.`,
+          tagline: `Đo năng lực theo từng kỹ năng ${subjectName.toLowerCase()}, rồi giao đúng bài con cần hôm nay.`,
+          longDescription: [
+            `Khóa ${subjectName} ${bandName} bám theo cấu trúc đề ${program.code}: tỷ trọng từng chương, thang độ khó và kiểu câu hỏi đều lấy từ đề các mùa trước chứ không dùng chung một kho cho mọi kỳ thi.`,
+            'Con bắt đầu bằng bài kiểm tra đầu vào 15 câu. Xong bài là có ngay bản đồ kỹ năng: mạnh ở đâu, hổng ở đâu, nên sửa theo thứ tự nào. Từ đó hệ thống dựng lộ trình theo ngày vừa với quỹ thời gian gia đình khai báo.',
+            'Mỗi 14 ngày có một bài kiểm tra tiến bộ dùng câu neo để đo mức tiến bộ thật, kèm buổi tư vấn 20 phút với giáo viên đã đọc trước toàn bộ hồ sơ của con.',
+          ].join('\n\n'),
+          outcomes: [
+            `Biết chính xác con đang hổng kỹ năng ${subjectName.toLowerCase()} nào và ở mức nào`,
+            'Có lộ trình theo ngày vừa sức, tự dàn lại lịch khi học không kịp',
+            'Đo được mức tiến bộ thật sau mỗi 14 ngày bằng câu neo',
+            'Được giáo viên tư vấn 20 phút sau mỗi lần đo',
+          ],
+          syllabus: [
+            {
+              title: 'Chặng 1 — Đo năng lực đầu vào',
+              detail:
+                'Bài kiểm tra 15 câu theo đúng cấu trúc đề. Kết quả dựng thành bản đồ kỹ năng chi tiết, không phải một điểm số chung chung.',
+            },
+            {
+              title: 'Chặng 2 — Vá lỗ hổng nặng nhất',
+              detail:
+                'Ưu tiên những kỹ năng dưới ngưỡng, có tính tới thứ tự tiên quyết: chưa vững phần nền thì chưa học phần trên.',
+            },
+            {
+              title: 'Chặng 3 — Củng cố và nâng độ khó',
+              detail:
+                'Ba câu đúng liên tiếp là nâng một bậc, hai câu sai liên tiếp là hạ xuống. Con luôn ở vùng vừa đủ khó để phải nghĩ.',
+            },
+            {
+              title: 'Chặng 4 — Luyện theo cấu trúc đề thật',
+              detail:
+                'Khi mốc thi tới gần, hệ thống dồn trọng tâm vào các chương có tỷ trọng cao trong đề và luyện tốc độ làm bài.',
+            },
+          ],
         });
       }
     }

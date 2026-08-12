@@ -4,7 +4,9 @@ import { getProgramByCode } from '@/server/catalog/service';
 import { getSession } from '@/lib/auth';
 import { routes } from '@/lib/routes';
 import { formatVnd, GRADE_BAND_LABEL, SUBJECT_LABEL } from '@/lib/domain';
-import { MarketingShell } from '@/components/marketing';
+import { getCopy } from '@/lib/copy';
+import { SiteShell } from '@/components/site-shell';
+import { IntroVideo } from '@/components/video';
 import { Reveal } from '@/components/motion';
 
 export const dynamic = 'force-dynamic';
@@ -18,32 +20,9 @@ export const dynamic = 'force-dynamic';
  */
 const SHELL = 'mx-auto w-full max-w-6xl px-5 lg:px-8';
 
-const DELIVERABLES = [
-  {
-    t: 'Bài kiểm tra đầu vào 15 câu',
-    d: 'Chọn theo cấu trúc đề của chính kỳ thi này, không phải câu ngẫu nhiên lấy từ kho chung.',
-  },
-  {
-    t: 'Bản đồ năng lực theo từng kỹ năng',
-    d: 'Biết chính xác con hổng chỗ nào, ở mức nào, thay vì một điểm số chung chung.',
-  },
-  {
-    t: 'Lộ trình theo ngày',
-    d: 'Vừa với quỹ thời gian gia đình khai báo. Học không kịp thì hệ thống tự dàn lại lịch.',
-  },
-  {
-    t: 'Bài kiểm tra tiến bộ mỗi 14 ngày',
-    d: 'Đo mức tiến bộ thật bằng câu neo, so với chính con ở chu kỳ trước.',
-  },
-  {
-    t: 'Buổi tư vấn 20 phút với giáo viên',
-    d: 'Sau mỗi lần đo. Thầy cô đọc hồ sơ trước, vào buổi là đi thẳng vào chỗ đang vướng.',
-  },
-];
-
 export default async function ProgramPage({ params }: { params: Promise<{ code: string }> }) {
   const { code } = await params;
-  const session = await getSession();
+  const [session, t] = await Promise.all([getSession(), getCopy()]);
 
   let program;
   try {
@@ -56,8 +35,13 @@ export default async function ProgramPage({ params }: { params: Promise<{ code: 
     ? Math.min(...program.courses.map((course) => course.pricing.price))
     : 0;
 
+  const deliverables = [1, 2, 3, 4, 5].map((n) => ({
+    t: t(`program.deliverables.${n}.title`),
+    d: t(`program.deliverables.${n}.detail`),
+  }));
+
   return (
-    <MarketingShell signedIn={Boolean(session)}>
+    <SiteShell signedIn={Boolean(session)}>
       {/* ================= Đầu trang ================= */}
       <section className="relative overflow-hidden bg-navy-900 pt-28 pb-16 sm:pt-36 lg:pt-40 lg:pb-20">
         <div className="grid-faint-dark pointer-events-none absolute inset-0" aria-hidden />
@@ -72,7 +56,7 @@ export default async function ProgramPage({ params }: { params: Promise<{ code: 
             href={routes.home()}
             className="text-[13px] font-medium text-navy-300 transition-colors hover:text-white"
           >
-            ← Tất cả kỳ thi
+            ← {t('program.back')}
           </Link>
 
           <div className="mt-6 grid gap-10 lg:grid-cols-[1.35fr_1fr] lg:items-end">
@@ -88,6 +72,12 @@ export default async function ProgramPage({ params }: { params: Promise<{ code: 
               <h1 className="font-display mt-3 max-w-2xl text-[34px] leading-[1.1] font-bold tracking-tight text-white text-balance sm:text-5xl lg:text-[56px]">
                 {program.name}
               </h1>
+
+              {program.tagline ? (
+                <p className="mt-4 max-w-xl text-[17px] leading-snug font-medium text-gold-300 text-pretty">
+                  {program.tagline}
+                </p>
+              ) : null}
 
               <p className="mt-5 max-w-xl text-[16.5px] leading-relaxed text-navy-200 text-pretty">
                 {program.description}
@@ -110,7 +100,7 @@ export default async function ProgramPage({ params }: { params: Promise<{ code: 
               {lowestPrice > 0 ? (
                 <div className="rounded-2xl bg-white/8 px-6 py-5 ring-1 ring-white/12 backdrop-blur-sm">
                   <p className="text-[11px] font-semibold tracking-[0.14em] text-navy-300 uppercase">
-                    Học phí từ
+                    {t('program.price.label')}
                   </p>
                   <p className="font-display mt-1 text-3xl font-bold text-gold-300">
                     {formatVnd(lowestPrice)}
@@ -152,17 +142,78 @@ export default async function ProgramPage({ params }: { params: Promise<{ code: 
         </div>
       </section>
 
+      {/* ================= Giới thiệu + video ================= */}
+      {program.introVideoUrl || program.longDescription || program.sections.length > 0 ? (
+        <section className="bg-white py-18 lg:py-24">
+          <div className={SHELL}>
+            <div className="grid gap-12 lg:grid-cols-[1.05fr_1fr] lg:items-start lg:gap-16">
+              <Reveal>
+                <span className="gold-rule block" aria-hidden />
+                <h2 className="font-display mt-5 text-[28px] leading-[1.15] font-bold tracking-tight text-navy-900 text-balance sm:text-[36px]">
+                  {program.introVideoUrl ? t('program.video.title') : t('program.courses.title')}
+                </h2>
+
+                {program.longDescription ? (
+                  <div className="mt-5 space-y-4">
+                    {program.longDescription
+                      .split(/\n{2,}/)
+                      .map((paragraph) => paragraph.trim())
+                      .filter(Boolean)
+                      .map((paragraph) => (
+                        <p
+                          key={paragraph.slice(0, 40)}
+                          className="text-[16px] leading-relaxed whitespace-pre-line text-navy-600 text-pretty"
+                        >
+                          {paragraph}
+                        </p>
+                      ))}
+                  </div>
+                ) : null}
+
+                {program.sections.length > 0 ? (
+                  <div className="mt-8 space-y-6 border-t border-navy-100 pt-8">
+                    {program.sections.map((section) => (
+                      <div key={section.title}>
+                        <h3 className="font-display text-[19px] font-bold text-navy-900">
+                          {section.title}
+                        </h3>
+                        <p className="mt-2 text-[15.5px] leading-relaxed whitespace-pre-line text-navy-600">
+                          {section.body}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                ) : null}
+              </Reveal>
+
+              {program.introVideoUrl ? (
+                <Reveal delay={110}>
+                  <IntroVideo
+                    url={program.introVideoUrl}
+                    poster={program.introVideoPoster}
+                    title={`${program.name} — video giới thiệu`}
+                    className="shadow-[0_24px_60px_-30px_rgb(13_27_49/0.6)]"
+                  />
+                  <p className="mt-3 text-[13.5px] leading-relaxed text-navy-500">
+                    {t('program.video.subtitle')}
+                  </p>
+                </Reveal>
+              ) : null}
+            </div>
+          </div>
+        </section>
+      ) : null}
+
       {/* ================= Khối lớp và môn ================= */}
       <section className="paper py-18 lg:py-24">
         <div className={SHELL}>
           <Reveal>
             <span className="gold-rule block" aria-hidden />
             <h2 className="font-display mt-5 text-[28px] leading-tight font-bold tracking-tight text-navy-900 sm:text-[38px]">
-              Khối lớp và môn đang mở
+              {t('program.courses.title')}
             </h2>
-            <p className="mt-3 max-w-2xl text-[16px] leading-relaxed text-navy-600">
-              Chọn đúng khối và môn con dự thi — nội dung ôn luyện bám theo cấu trúc đề của kỳ thi
-              này, không dùng chung một kho cho mọi kỳ.
+            <p className="mt-3 max-w-2xl text-[16px] leading-relaxed whitespace-pre-line text-navy-600">
+              {t('program.courses.subtitle')}
             </p>
           </Reveal>
 
@@ -207,10 +258,10 @@ export default async function ProgramPage({ params }: { params: Promise<{ code: 
                             </p>
 
                             <Link
-                              href={routes.checkout(course.id)}
+                              href={routes.course(course.id)}
                               className="press mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-navy-900 px-5 py-3 text-[14.5px] font-semibold text-white transition-all hover:bg-navy-800 hover:shadow-[0_10px_24px_-10px_rgb(13_27_49/0.55)]"
                             >
-                              Đăng ký học
+                              {t('courses.card.cta')}
                               <span aria-hidden>→</span>
                             </Link>
                           </div>
@@ -239,7 +290,7 @@ export default async function ProgramPage({ params }: { params: Promise<{ code: 
             <Reveal>
               <span className="gold-rule block" aria-hidden />
               <h2 className="font-display mt-5 text-[28px] leading-[1.15] font-bold tracking-tight text-navy-900 text-balance sm:text-[38px]">
-                Gia đình nhận được gì sau khi đăng ký
+                {t('program.deliverables.title')}
               </h2>
               <p className="mt-4 text-[15.5px] leading-relaxed text-navy-600">
                 Học phí trả một lần cho trọn thời gian truy cập. Không có gói nâng cấp ẩn, không tính
@@ -250,14 +301,14 @@ export default async function ProgramPage({ params }: { params: Promise<{ code: 
                 href={session ? routes.myCourses() : routes.register(routes.program(code))}
                 className="press mt-8 inline-flex items-center gap-2.5 rounded-xl bg-navy-900 px-7 py-4 text-[15px] font-semibold text-white shadow-[0_12px_30px_-10px_rgb(13_27_49/0.5)] transition-all hover:bg-navy-800"
               >
-                {session ? 'Tới khu học tập' : 'Tạo tài khoản để bắt đầu'}
+                {session ? t('program.cta.member') : t('program.cta.guest')}
                 <span aria-hidden>→</span>
               </Link>
             </Reveal>
 
             <Reveal delay={100}>
               <ol className="divide-y divide-navy-100 border-y border-navy-100">
-                {DELIVERABLES.map((row, index) => (
+                {deliverables.map((row, index) => (
                   <li key={row.t} className="flex gap-5 py-5">
                     <span
                       aria-hidden
@@ -276,6 +327,42 @@ export default async function ProgramPage({ params }: { params: Promise<{ code: 
           </div>
         </div>
       </section>
-    </MarketingShell>
+      {/* ================= Hỏi đáp riêng của kỳ thi ================= */}
+      {program.faqs.length > 0 ? (
+        <section className="paper py-18 lg:py-24">
+          <div className={SHELL}>
+            <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
+              <Reveal>
+                <span className="gold-rule block" aria-hidden />
+                <h2 className="font-display mt-5 text-[28px] leading-tight font-bold tracking-tight text-navy-900 sm:text-[36px]">
+                  {t('program.faq.title')}
+                </h2>
+              </Reveal>
+
+              <Reveal delay={100}>
+                <div className="divide-y divide-navy-100 border-y border-navy-100">
+                  {program.faqs.map((faq) => (
+                    <details key={faq.question} className="group py-5">
+                      <summary className="flex cursor-pointer list-none items-start justify-between gap-5 text-[16px] font-semibold text-navy-900 marker:content-['']">
+                        {faq.question}
+                        <span
+                          aria-hidden
+                          className="mt-0.5 shrink-0 text-xl leading-none font-light text-navy-400 transition-transform duration-300 group-open:rotate-45"
+                        >
+                          +
+                        </span>
+                      </summary>
+                      <p className="mt-3 max-w-2xl text-[15px] leading-relaxed whitespace-pre-line text-navy-600 text-pretty">
+                        {faq.answer}
+                      </p>
+                    </details>
+                  ))}
+                </div>
+              </Reveal>
+            </div>
+          </div>
+        </section>
+      ) : null}
+    </SiteShell>
   );
 }

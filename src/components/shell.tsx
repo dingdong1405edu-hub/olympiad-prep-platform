@@ -36,6 +36,7 @@ export const ADMIN_NAV: NavItem[] = [
   { href: routes.adminHome(), label: 'Tổng quan', exact: true },
   { href: routes.adminPrograms(), label: 'Chương trình' },
   { href: routes.adminContent(), label: 'Học liệu' },
+  { href: routes.adminSiteCopy(), label: 'Giao diện' },
   { href: routes.adminUsers(), label: 'Người dùng' },
   { href: routes.adminPayments(), label: 'Thanh toán' },
   { href: routes.adminTeachers(), label: 'Giáo viên' },

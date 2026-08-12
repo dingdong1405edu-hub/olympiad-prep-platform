@@ -21,14 +21,42 @@ import { cx } from '@/components/ui';
  * hay từ link chia sẻ có thể đang đứng ở /ky-thi, khi đó "#ky-thi" sẽ không nhảy
  * đi đâu cả. Các mục còn lại vẫn là neo nhưng viết dạng "/#..." để bấm từ bất kỳ
  * trang nào cũng quay về đúng khối trên trang chủ.
+ *
+ * Nhãn KHÔNG viết cứng ở đây mà nhận từ `ShellCopy` — admin sửa được trong
+ * `/quan-tri/giao-dien` mà không cần deploy lại.
  */
-const SECTIONS = [
-  { href: '/ky-thi', label: 'Kỳ thi' },
-  { href: '/khoa-hoc', label: 'Khóa học' },
-  { href: '/#cach-hoat-dong', label: 'Cách hoạt động' },
-  { href: '/#phu-huynh', label: 'Cho phụ huynh' },
-  { href: '/#cau-hoi', label: 'Câu hỏi' },
+const SECTION_HREFS = [
+  { href: '/ky-thi', copyKey: 'programs' as const },
+  { href: '/khoa-hoc', copyKey: 'courses' as const },
+  { href: '/#cach-hoat-dong', copyKey: 'how' as const },
+  { href: '/#phu-huynh', copyKey: 'parents' as const },
+  { href: '/#cau-hoi', copyKey: 'faq' as const },
 ];
+
+/**
+ * Chữ của khung bán hàng. Là dữ liệu THUẦN chứ không phải hàm tra cứu, vì các
+ * thành phần dưới đây chạy ở trình duyệt còn kho chữ nằm dưới database — dữ
+ * liệu thuần đi qua ranh giới server/client được, hàm thì không.
+ */
+export interface ShellCopy {
+  brandName: string;
+  brandTagline: string;
+  links: { programs: string; courses: string; how: string; parents: string; faq: string };
+  ctaSignedIn: string;
+  ctaLogin: string;
+  ctaRegister: string;
+  footerTagline: string;
+  footerExplore: string;
+  footerRegister: string;
+  footerPromiseTitle: string;
+  footerPromises: string[];
+  footerCopyright: string;
+  footerSeason: string;
+}
+
+function sections(copy: ShellCopy) {
+  return SECTION_HREFS.map((item) => ({ href: item.href, label: copy.links[item.copyKey] }));
+}
 
 // ---------------------------------------------------------------------------
 
@@ -62,7 +90,15 @@ export function Crest({ className, tone = 'light' }: { className?: string; tone?
   );
 }
 
-export function Wordmark({ tone = 'light' }: { tone?: 'light' | 'dark' }) {
+export function Wordmark({
+  tone = 'light',
+  name = 'Olympiad Prep',
+  tagline = 'Ôn luyện cá nhân hóa',
+}: {
+  tone?: 'light' | 'dark';
+  name?: string;
+  tagline?: string;
+}) {
   return (
     <Link href={routes.home()} className="group flex items-center gap-2.5">
       <Crest className="h-9 w-9 transition-transform duration-300 group-hover:scale-105" tone={tone} />
@@ -73,7 +109,7 @@ export function Wordmark({ tone = 'light' }: { tone?: 'light' | 'dark' }) {
             tone === 'light' ? 'text-navy-900' : 'text-white',
           )}
         >
-          Olympiad Prep
+          {name}
         </span>
         <span
           className={cx(
@@ -81,7 +117,7 @@ export function Wordmark({ tone = 'light' }: { tone?: 'light' | 'dark' }) {
             tone === 'light' ? 'text-navy-400' : 'text-navy-300',
           )}
         >
-          Ôn luyện cá nhân hóa
+          {tagline}
         </span>
       </span>
     </Link>
@@ -90,7 +126,7 @@ export function Wordmark({ tone = 'light' }: { tone?: 'light' | 'dark' }) {
 
 // ---------------------------------------------------------------------------
 
-export function MarketingHeader({ signedIn }: { signedIn: boolean }) {
+export function MarketingHeader({ signedIn, copy }: { signedIn: boolean; copy: ShellCopy }) {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -119,10 +155,10 @@ export function MarketingHeader({ signedIn }: { signedIn: boolean }) {
       )}
     >
       <div className="mx-auto flex max-w-7xl items-center gap-8 px-5 py-3.5 lg:px-8">
-        <Wordmark />
+        <Wordmark name={copy.brandName} tagline={copy.brandTagline} />
 
         <nav className="hidden flex-1 items-center gap-1 lg:flex">
-          {SECTIONS.map((section) => (
+          {sections(copy).map((section) => (
             <Link
               key={section.href}
               href={section.href}
@@ -139,7 +175,7 @@ export function MarketingHeader({ signedIn }: { signedIn: boolean }) {
               href={routes.myCourses()}
               className="press rounded-lg bg-navy-900 px-5 py-2.5 text-sm font-semibold text-white transition-all hover:bg-navy-800"
             >
-              Vào khu học tập
+              {copy.ctaSignedIn}
             </Link>
           ) : (
             <>
@@ -147,13 +183,13 @@ export function MarketingHeader({ signedIn }: { signedIn: boolean }) {
                 href={routes.login()}
                 className="hidden rounded-lg px-3.5 py-2.5 text-sm font-medium text-navy-700 transition-colors hover:bg-navy-50 sm:block"
               >
-                Đăng nhập
+                {copy.ctaLogin}
               </Link>
               <Link
                 href={routes.register()}
                 className="press rounded-lg bg-navy-900 px-4 py-2.5 text-sm font-semibold text-white transition-all hover:bg-navy-800 hover:shadow-[0_8px_20px_rgb(13_27_49/0.24)] sm:px-5"
               >
-                Kiểm tra miễn phí
+                {copy.ctaRegister}
               </Link>
             </>
           )}
@@ -189,7 +225,7 @@ export function MarketingHeader({ signedIn }: { signedIn: boolean }) {
       {menuOpen ? (
         <div className="animate-fade-down border-t border-navy-100 bg-white px-5 pb-5 lg:hidden">
           <nav className="flex flex-col py-2">
-            {SECTIONS.map((section) => (
+            {sections(copy).map((section) => (
               <Link
                 key={section.href}
                 href={section.href}
@@ -217,7 +253,7 @@ export function MarketingHeader({ signedIn }: { signedIn: boolean }) {
 
 // ---------------------------------------------------------------------------
 
-export function MarketingFooter() {
+export function MarketingFooter({ copy }: { copy: ShellCopy }) {
   const year = new Date().getFullYear();
 
   return (
@@ -225,19 +261,18 @@ export function MarketingFooter() {
       <div className="mx-auto max-w-7xl px-5 py-14 lg:px-8">
         <div className="grid gap-10 md:grid-cols-[1.4fr_1fr_1fr]">
           <div className="max-w-sm">
-            <Wordmark tone="dark" />
-            <p className="mt-4 text-sm leading-relaxed text-navy-300">
-              Ôn luyện cá nhân hóa cho ASMOPSS, NEO, STEM và FMC. Mỗi học sinh một lộ trình, tính
-              lại sau mỗi bài làm.
+            <Wordmark tone="dark" name={copy.brandName} tagline={copy.brandTagline} />
+            <p className="mt-4 text-sm leading-relaxed whitespace-pre-line text-navy-300">
+              {copy.footerTagline}
             </p>
           </div>
 
           <div>
             <p className="text-xs font-semibold tracking-[0.14em] text-navy-400 uppercase">
-              Khám phá
+              {copy.footerExplore}
             </p>
             <ul className="mt-4 space-y-2.5 text-sm">
-              {SECTIONS.map((section) => (
+              {sections(copy).map((section) => (
                 <li key={section.href}>
                   <Link href={section.href} className="transition-colors hover:text-white">
                     {section.label}
@@ -246,7 +281,7 @@ export function MarketingFooter() {
               ))}
               <li>
                 <Link href={routes.register()} className="transition-colors hover:text-white">
-                  Tạo tài khoản
+                  {copy.footerRegister}
                 </Link>
               </li>
             </ul>
@@ -254,22 +289,23 @@ export function MarketingFooter() {
 
           <div>
             <p className="text-xs font-semibold tracking-[0.14em] text-navy-400 uppercase">
-              Cam kết với phụ huynh
+              {copy.footerPromiseTitle}
             </p>
             <ul className="mt-4 space-y-2.5 text-sm leading-relaxed">
-              <li>Chỉ thu thập dữ liệu cần cho việc học.</li>
-              <li>Không dùng dữ liệu học sinh cho mục đích khác.</li>
-              <li>Câu hỏi do đội chuyên môn biên soạn và kiểm duyệt.</li>
-              <li>AI không tự ra đề, chỉ chọn bài và giải thích.</li>
+              {copy.footerPromises.map((line) => (
+                <li key={line}>{line}</li>
+              ))}
             </ul>
           </div>
         </div>
 
         <div className="mt-12 flex flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-6 text-xs text-navy-400">
-          <p>© {year} Olympiad Prep. Nền tảng ôn luyện Olympic cá nhân hóa.</p>
+          <p>
+            © {year} {copy.footerCopyright}
+          </p>
           <p className="flex items-center gap-2">
             <span className="h-1.5 w-1.5 rounded-full bg-accent-500" aria-hidden />
-            Đang nhận học sinh cho mùa thi {year + 1}
+            {copy.footerSeason} {year + 1}
           </p>
         </div>
       </div>
@@ -281,16 +317,18 @@ export function MarketingFooter() {
 
 export function MarketingShell({
   signedIn,
+  copy,
   children,
 }: {
   signedIn: boolean;
+  copy: ShellCopy;
   children: ReactNode;
 }) {
   return (
     <div className="flex min-h-screen flex-col overflow-x-clip">
-      <MarketingHeader signedIn={signedIn} />
+      <MarketingHeader signedIn={signedIn} copy={copy} />
       <main className="flex-1">{children}</main>
-      <MarketingFooter />
+      <MarketingFooter copy={copy} />
     </div>
   );
 }
