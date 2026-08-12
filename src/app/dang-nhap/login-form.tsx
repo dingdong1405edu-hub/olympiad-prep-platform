@@ -3,9 +3,16 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import type { Role } from '@prisma/client';
 import { apiPost } from '@/lib/client';
 import { API, routes } from '@/lib/routes';
+import { landingRoute } from '@/lib/areas';
 import { Alert, Button, Field, Input } from '@/components/ui';
+
+/** Phần dữ liệu của `POST /api/v1/auth/login` mà biểu mẫu này cần. */
+interface LoginResponse {
+  user: { id: string; fullName: string; roles: Role[] };
+}
 
 export function LoginForm({ next }: { next?: string }) {
   const router = useRouter();
@@ -19,8 +26,15 @@ export function LoginForm({ next }: { next?: string }) {
     setError(null);
     setSubmitting(true);
     try {
-      await apiPost(API.login, { identifier: identifier.trim(), password });
-      router.push(next ?? routes.myCourses());
+      // Đưa người dùng về ĐÚNG khu của họ chứ không mặc định "Khóa học của tôi".
+      // Tài khoản quản trị, biên soạn viên hay giáo viên không ghi danh khóa nào,
+      // nên màn hình đó với họ là một trang trống báo "Bạn chưa ghi danh khóa
+      // nào" — ấn tượng đầu tiên sau khi đăng nhập không nên là một ngõ cụt.
+      const result = await apiPost<LoginResponse>(API.login, {
+        identifier: identifier.trim(),
+        password,
+      });
+      router.push(next ?? landingRoute(result?.user?.roles ?? []));
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Không đăng nhập được.');

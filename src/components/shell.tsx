@@ -12,6 +12,7 @@ import type { ReactNode } from 'react';
 import Link from 'next/link';
 import type { Role } from '@prisma/client';
 import { API, routes } from '@/lib/routes';
+import { AREA_META, areasFor, type ShellArea } from '@/lib/areas';
 import { cx } from '@/components/ui';
 import { Crest, Wordmark } from '@/components/brand';
 import { ShellNav } from '@/components/shell-nav';
@@ -72,35 +73,6 @@ export const ADMIN_NAV: NavItem[] = [
 ];
 
 // ---------------------------------------------------------------------------
-// Chuyển khu vực
-// ---------------------------------------------------------------------------
-
-export type ShellArea = 'student' | 'teacher' | 'admin';
-
-/**
- * Khu vực nào mở cho vai trò nào. Giữ khớp với các hàm canh cửa trong
- * `src/lib/auth.ts` và `src/app/quan-tri/layout.tsx` — lệch nhau thì header sẽ
- * mời người dùng đi vào một trang mà họ bị chặn ngay khi tới nơi.
- */
-const AREA_ROLES: Record<ShellArea, Role[]> = {
-  student: ['STUDENT'],
-  teacher: ['TEACHER', 'SUPER_ADMIN', 'PROGRAM_MANAGER'],
-  admin: ['SUPER_ADMIN', 'OPS_ADMIN', 'PROGRAM_MANAGER', 'CONTENT_EDITOR', 'REVIEWER'],
-};
-
-const AREA_META: Record<ShellArea, { label: string; href: string }> = {
-  student: { label: 'Học tập', href: routes.myCourses() },
-  teacher: { label: 'Dạy học', href: routes.teacherHome() },
-  admin: { label: 'Quản trị', href: routes.adminHome() },
-};
-
-const AREA_ORDER: ShellArea[] = ['student', 'teacher', 'admin'];
-
-function areasFor(user: ShellUser): ShellArea[] {
-  return AREA_ORDER.filter((area) => user.roles.some((role) => AREA_ROLES[area].includes(role)));
-}
-
-// ---------------------------------------------------------------------------
 
 export function AppShell({
   user,
@@ -122,7 +94,18 @@ export function AppShell({
   wide?: boolean;
 }) {
   const container = wide ? 'max-w-screen-2xl' : 'max-w-5xl';
-  const areas = user ? areasFor(user) : [];
+  const areas = user ? areasFor(user.roles) : [];
+
+  /**
+   * Hiện dải chuyển khu vực khi có nhiều hơn một khu, HOẶC khi người dùng đang
+   * đứng ngoài khu của mình.
+   *
+   * Vế thứ hai mới là vế quan trọng: Admin vận hành, Biên soạn viên, Reviewer và
+   * Giáo viên chỉ thuộc ĐÚNG MỘT khu, nên nếu chỉ xét `length > 1` thì họ đứng ở
+   * `/hoc-tap` mà không có một liên kết nào dẫn về khu của mình — đúng cái ngõ
+   * cụt mà dải này sinh ra để phá.
+   */
+  const showAreaSwitcher = areas.length > 1 || (areas.length > 0 && !areas.includes(area));
 
   /**
    * Logo đưa về nhà của CHÍNH khu vực đang đứng.
@@ -144,7 +127,7 @@ export function AppShell({
               hay khu giáo viên: trước đây không có liên kết nào như vậy trong
               toàn bộ giao diện, quản trị viên buộc phải tự gõ /quan-tri vào
               thanh địa chỉ mới vào được. */}
-          {areas.length > 1 ? (
+          {showAreaSwitcher ? (
             <nav
               aria-label="Chuyển khu vực"
               className="flex shrink-0 items-center gap-0.5 rounded-lg bg-navy-50 p-0.5 ring-1 ring-navy-100"
