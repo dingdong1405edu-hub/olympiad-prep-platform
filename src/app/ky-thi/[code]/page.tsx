@@ -4,10 +4,42 @@ import { getProgramByCode } from '@/server/catalog/service';
 import { getSession } from '@/lib/auth';
 import { routes } from '@/lib/routes';
 import { formatVnd, GRADE_BAND_LABEL, SUBJECT_LABEL } from '@/lib/domain';
-import { AppShell } from '@/components/shell';
-import { Alert, Badge, Card, LinkButton, PageHeader } from '@/components/ui';
+import { MarketingShell } from '@/components/marketing';
+import { Reveal } from '@/components/motion';
 
 export const dynamic = 'force-dynamic';
+
+/**
+ * Trang kỳ thi — nơi khách chốt đơn.
+ *
+ * Dùng chung khung bán hàng với trang chủ chứ không phải AppShell: khách vừa
+ * xem một trang được chăm chút rồi bấm vào đây, nếu rơi vào giao diện phần mềm
+ * nội bộ thì niềm tin vừa dựng lên sẽ rơi đúng ở bước sắp trả tiền.
+ */
+const SHELL = 'mx-auto w-full max-w-6xl px-5 lg:px-8';
+
+const DELIVERABLES = [
+  {
+    t: 'Bài kiểm tra đầu vào 15 câu',
+    d: 'Chọn theo cấu trúc đề của chính kỳ thi này, không phải câu ngẫu nhiên lấy từ kho chung.',
+  },
+  {
+    t: 'Bản đồ năng lực theo từng kỹ năng',
+    d: 'Biết chính xác con hổng chỗ nào, ở mức nào, thay vì một điểm số chung chung.',
+  },
+  {
+    t: 'Lộ trình theo ngày',
+    d: 'Vừa với quỹ thời gian gia đình khai báo. Học không kịp thì hệ thống tự dàn lại lịch.',
+  },
+  {
+    t: 'Bài kiểm tra tiến bộ mỗi 14 ngày',
+    d: 'Đo mức tiến bộ thật bằng câu neo, so với chính con ở chu kỳ trước.',
+  },
+  {
+    t: 'Buổi tư vấn 20 phút với giáo viên',
+    d: 'Sau mỗi lần đo. Thầy cô đọc hồ sơ trước, vào buổi là đi thẳng vào chỗ đang vướng.',
+  },
+];
 
 export default async function ProgramPage({ params }: { params: Promise<{ code: string }> }) {
   const { code } = await params;
@@ -20,136 +52,230 @@ export default async function ProgramPage({ params }: { params: Promise<{ code: 
     notFound();
   }
 
+  const lowestPrice = program.courses.length
+    ? Math.min(...program.courses.map((course) => course.pricing.price))
+    : 0;
+
   return (
-    <AppShell user={session ? { id: session.id, fullName: session.fullName, roles: session.roles } : null}>
-      <PageHeader
-        title={
-          <span className="flex items-center gap-3">
-            <span aria-hidden>{program.logoEmoji}</span>
-            {program.name}
-          </span>
-        }
-        subtitle={program.description}
-      />
+    <MarketingShell signedIn={Boolean(session)}>
+      {/* ================= Đầu trang ================= */}
+      <section className="relative overflow-hidden bg-navy-900 pt-28 pb-16 sm:pt-36 lg:pt-40 lg:pb-20">
+        <div className="grid-faint-dark pointer-events-none absolute inset-0" aria-hidden />
+        <span
+          aria-hidden
+          className="absolute inset-x-0 top-0 h-1"
+          style={{ backgroundColor: program.colorHex }}
+        />
 
-      {!program.active ? (
-        <Alert tone="warn" className="mb-6" title="Kỳ thi này đang tạm đóng">
-          Chương trình chưa mở bán cho mùa hiện tại. Bạn có thể chọn kỳ thi khác ở trang chủ.
-        </Alert>
-      ) : null}
+        <div className={`${SHELL} relative`}>
+          <Link
+            href={routes.home()}
+            className="text-[13px] font-medium text-navy-300 transition-colors hover:text-white"
+          >
+            ← Tất cả kỳ thi
+          </Link>
 
-      {program.highlights.length > 0 ? (
-        <Card className="mb-6">
-          <ul className="grid gap-2 sm:grid-cols-2">
-            {program.highlights.map((highlight) => (
-              <li key={highlight} className="flex gap-2 text-sm text-ink-700">
-                <span aria-hidden className="text-brand-600">
-                  •
-                </span>
-                {highlight}
-              </li>
-            ))}
-          </ul>
-        </Card>
-      ) : null}
+          <div className="mt-6 grid gap-10 lg:grid-cols-[1.35fr_1fr] lg:items-end">
+            <div>
+              <p
+                className="text-[11px] font-bold tracking-[0.18em] uppercase"
+                style={{ color: program.colorHex }}
+              >
+                {program.shortName ?? program.code}
+                {program.season ? ` · Mùa ${program.season}` : ''}
+              </p>
 
-      <section className="mb-8">
-        <h2 className="mb-1 text-lg font-bold text-ink-900">Khối lớp và môn đang mở</h2>
-        <p className="mb-4 text-sm text-ink-500">
-          Chọn đúng khối và môn bạn dự thi — nội dung ôn luyện bám theo cấu trúc đề của kỳ thi này.
-        </p>
+              <h1 className="font-display mt-3 max-w-2xl text-[34px] leading-[1.1] font-bold tracking-tight text-white text-balance sm:text-5xl lg:text-[56px]">
+                {program.name}
+              </h1>
 
-        <div className="space-y-5">
-          {program.availability.map((band) => {
-            const courses = program.courses.filter((course) => course.gradeBand === band.gradeBand);
-            return (
-              <div key={band.gradeBand}>
-                <h3 className="mb-2 text-sm font-semibold tracking-wide text-ink-500 uppercase">
-                  {GRADE_BAND_LABEL[band.gradeBand]}
-                </h3>
-                <div className="grid gap-3 sm:grid-cols-2">
-                  {courses.map((course) => (
-                    <Card key={course.id} className="flex flex-col justify-between">
-                      <div>
-                        <h4 className="font-semibold text-ink-900">
-                          {SUBJECT_LABEL[course.subject]}
-                        </h4>
-                        {course.description ? (
-                          <p className="mt-1 text-sm text-ink-600">{course.description}</p>
-                        ) : null}
-                      </div>
-                      <div className="mt-4 flex items-center justify-between gap-3">
-                        <div>
-                          <p className="text-lg font-bold text-ink-900">
-                            {formatVnd(course.pricing.price)}
-                          </p>
-                          <p className="text-xs text-ink-500">
-                            Truy cập {course.pricing.accessDurationDays} ngày
-                          </p>
-                        </div>
-                        <LinkButton href={routes.checkout(course.id)} size="sm">
-                          Đăng ký học
-                        </LinkButton>
-                      </div>
-                    </Card>
-                  ))}
+              <p className="mt-5 max-w-xl text-[16.5px] leading-relaxed text-navy-200 text-pretty">
+                {program.description}
+              </p>
+
+              {!program.active ? (
+                <p className="mt-6 inline-flex items-start gap-2.5 rounded-xl bg-amber-400/12 px-4 py-3 text-[14px] text-amber-200 ring-1 ring-amber-300/25">
+                  <span aria-hidden className="font-bold">
+                    !
+                  </span>
+                  <span>
+                    <strong className="font-semibold">Kỳ thi này đang tạm đóng.</strong> Chương trình
+                    chưa mở bán cho mùa hiện tại — bạn có thể chọn kỳ thi khác ở trang chủ.
+                  </span>
+                </p>
+              ) : null}
+            </div>
+
+            <div className="flex flex-col gap-4 sm:flex-row lg:flex-col lg:items-end">
+              {lowestPrice > 0 ? (
+                <div className="rounded-2xl bg-white/8 px-6 py-5 ring-1 ring-white/12 backdrop-blur-sm">
+                  <p className="text-[11px] font-semibold tracking-[0.14em] text-navy-300 uppercase">
+                    Học phí từ
+                  </p>
+                  <p className="font-display mt-1 text-3xl font-bold text-gold-300">
+                    {formatVnd(lowestPrice)}
+                  </p>
+                  <p className="mt-1 text-[12.5px] text-navy-300">
+                    {program.courses.length} khóa đang mở · {program.availability.length} khối lớp
+                  </p>
                 </div>
-              </div>
-            );
-          })}
-        </div>
+              ) : null}
 
-        {program.courses.length === 0 ? (
-          <Card>
-            <p className="text-sm text-ink-500">Chưa có khóa nào được mở cho kỳ thi này.</p>
-          </Card>
-        ) : null}
-      </section>
+              {program.activeCohort ? (
+                <div className="rounded-2xl bg-white/8 px-6 py-5 ring-1 ring-white/12 backdrop-blur-sm">
+                  <p className="text-[11px] font-semibold tracking-[0.14em] text-navy-300 uppercase">
+                    Ngày thi dự kiến
+                  </p>
+                  <p className="font-display mt-1 text-2xl font-bold text-white tabular-nums">
+                    {program.activeCohort.examDate.toLocaleDateString('vi-VN')}
+                  </p>
+                  <p className="mt-1 text-[12.5px] text-navy-300">
+                    Hệ thống dồn trọng tâm ôn luyện khi mốc này tới gần
+                  </p>
+                </div>
+              ) : null}
+            </div>
+          </div>
 
-      {program.activeCohort ? (
-        <Card className="mb-8">
-          <h2 className="font-semibold text-ink-900">Mùa thi {program.activeCohort.year}</h2>
-          <p className="mt-1 text-sm text-ink-600">
-            Ngày thi dự kiến:{' '}
-            <strong>{program.activeCohort.examDate.toLocaleDateString('vi-VN')}</strong>. Hệ thống
-            dùng mốc này để dồn trọng tâm ôn luyện khi kỳ thi tới gần.
-          </p>
-        </Card>
-      ) : null}
-
-      <section className="rounded-xl bg-white p-6 ring-1 ring-ink-100">
-        <h2 className="text-lg font-bold text-ink-900">Bạn nhận được gì sau khi đăng ký</h2>
-        <ol className="mt-4 space-y-3 text-sm text-ink-700">
-          <li>
-            <strong>Bài kiểm tra đầu vào 15 câu</strong> — chọn theo cấu trúc đề của kỳ thi, không
-            phải câu ngẫu nhiên.
-          </li>
-          <li>
-            <strong>Bản đồ năng lực theo từng kỹ năng</strong> — biết chính xác mình hổng chỗ nào.
-          </li>
-          <li>
-            <strong>Lộ trình theo ngày</strong> — vừa với quỹ thời gian bạn khai báo.
-          </li>
-          <li>
-            <strong>Bài kiểm tra tiến bộ mỗi 2 tuần</strong> — đo mức tiến bộ thật bằng câu neo.
-          </li>
-          <li>
-            <strong>Buổi tư vấn 20 phút với giáo viên</strong> — sau mỗi lần kiểm tra tiến bộ.
-          </li>
-        </ol>
-
-        <div className="mt-6">
-          <LinkButton href={session ? routes.myCourses() : routes.register(routes.program(code))}>
-            {session ? 'Tới khu vực học tập' : 'Tạo tài khoản để bắt đầu'}
-          </LinkButton>
+          {program.highlights.length > 0 ? (
+            <ul className="mt-12 grid gap-x-8 gap-y-3 border-t border-white/10 pt-8 sm:grid-cols-2 lg:grid-cols-3">
+              {program.highlights.map((highlight) => (
+                <li key={highlight} className="flex gap-2.5 text-[14px] leading-snug text-navy-100">
+                  <span aria-hidden className="mt-px shrink-0 text-gold-300">
+                    ◆
+                  </span>
+                  {highlight}
+                </li>
+              ))}
+            </ul>
+          ) : null}
         </div>
       </section>
 
-      <p className="mt-6 text-sm text-ink-500">
-        <Link href={routes.home()} className="hover:text-brand-700">
-          ← Xem các kỳ thi khác
-        </Link>
-      </p>
-    </AppShell>
+      {/* ================= Khối lớp và môn ================= */}
+      <section className="paper py-18 lg:py-24">
+        <div className={SHELL}>
+          <Reveal>
+            <span className="gold-rule block" aria-hidden />
+            <h2 className="font-display mt-5 text-[28px] leading-tight font-bold tracking-tight text-navy-900 sm:text-[38px]">
+              Khối lớp và môn đang mở
+            </h2>
+            <p className="mt-3 max-w-2xl text-[16px] leading-relaxed text-navy-600">
+              Chọn đúng khối và môn con dự thi — nội dung ôn luyện bám theo cấu trúc đề của kỳ thi
+              này, không dùng chung một kho cho mọi kỳ.
+            </p>
+          </Reveal>
+
+          {program.courses.length > 0 ? (
+            <div className="mt-12 space-y-12">
+              {program.availability.map((band, bandIndex) => {
+                const courses = program.courses.filter(
+                  (course) => course.gradeBand === band.gradeBand,
+                );
+
+                return (
+                  <Reveal key={band.gradeBand} delay={bandIndex * 70}>
+                    <div className="flex items-center gap-4">
+                      <h3 className="text-[12px] font-bold tracking-[0.16em] text-navy-500 uppercase">
+                        {GRADE_BAND_LABEL[band.gradeBand]}
+                      </h3>
+                      <span className="h-px flex-1 bg-navy-200" aria-hidden />
+                      <span className="text-[12.5px] text-navy-400">{courses.length} khóa</span>
+                    </div>
+
+                    <div className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                      {courses.map((course) => (
+                        <div
+                          key={course.id}
+                          className="hover-lift flex flex-col rounded-2xl bg-white p-6 ring-1 ring-navy-100 shadow-[0_2px_10px_-4px_rgb(13_27_49/0.1)]"
+                        >
+                          <h4 className="font-display text-[20px] font-bold text-navy-900">
+                            {SUBJECT_LABEL[course.subject]}
+                          </h4>
+                          {course.description ? (
+                            <p className="mt-2 text-[14px] leading-relaxed text-navy-600">
+                              {course.description}
+                            </p>
+                          ) : null}
+
+                          <div className="mt-6 border-t border-navy-100 pt-4">
+                            <p className="font-display text-[26px] leading-none font-bold text-navy-900">
+                              {formatVnd(course.pricing.price)}
+                            </p>
+                            <p className="mt-1.5 text-[12.5px] text-navy-500">
+                              Truy cập {course.pricing.accessDurationDays} ngày
+                            </p>
+
+                            <Link
+                              href={routes.checkout(course.id)}
+                              className="press mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-navy-900 px-5 py-3 text-[14.5px] font-semibold text-white transition-all hover:bg-navy-800 hover:shadow-[0_10px_24px_-10px_rgb(13_27_49/0.55)]"
+                            >
+                              Đăng ký học
+                              <span aria-hidden>→</span>
+                            </Link>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </Reveal>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="mt-10 rounded-2xl border border-dashed border-navy-200 bg-white/60 px-6 py-14 text-center">
+              <p className="font-medium text-navy-700">Chưa có khóa nào được mở cho kỳ thi này</p>
+              <p className="mx-auto mt-1 max-w-md text-sm text-navy-500">
+                Bạn có thể xem các kỳ thi khác ở trang chủ.
+              </p>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* ================= Nhận được gì ================= */}
+      <section className="bg-white py-18 lg:py-24">
+        <div className={SHELL}>
+          <div className="grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20">
+            <Reveal>
+              <span className="gold-rule block" aria-hidden />
+              <h2 className="font-display mt-5 text-[28px] leading-[1.15] font-bold tracking-tight text-navy-900 text-balance sm:text-[38px]">
+                Gia đình nhận được gì sau khi đăng ký
+              </h2>
+              <p className="mt-4 text-[15.5px] leading-relaxed text-navy-600">
+                Học phí trả một lần cho trọn thời gian truy cập. Không có gói nâng cấp ẩn, không tính
+                thêm theo số bài con làm.
+              </p>
+
+              <Link
+                href={session ? routes.myCourses() : routes.register(routes.program(code))}
+                className="press mt-8 inline-flex items-center gap-2.5 rounded-xl bg-navy-900 px-7 py-4 text-[15px] font-semibold text-white shadow-[0_12px_30px_-10px_rgb(13_27_49/0.5)] transition-all hover:bg-navy-800"
+              >
+                {session ? 'Tới khu học tập' : 'Tạo tài khoản để bắt đầu'}
+                <span aria-hidden>→</span>
+              </Link>
+            </Reveal>
+
+            <Reveal delay={100}>
+              <ol className="divide-y divide-navy-100 border-y border-navy-100">
+                {DELIVERABLES.map((row, index) => (
+                  <li key={row.t} className="flex gap-5 py-5">
+                    <span
+                      aria-hidden
+                      className="step-numeral shrink-0 text-[26px] font-bold text-navy-200"
+                    >
+                      {String(index + 1).padStart(2, '0')}
+                    </span>
+                    <div>
+                      <p className="text-[15.5px] font-semibold text-navy-900">{row.t}</p>
+                      <p className="mt-1 text-[14px] leading-relaxed text-navy-600">{row.d}</p>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            </Reveal>
+          </div>
+        </div>
+      </section>
+    </MarketingShell>
   );
 }
