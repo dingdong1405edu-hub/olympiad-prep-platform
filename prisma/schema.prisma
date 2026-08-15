@@ -1041,3 +1041,192 @@ model SiteCopy {
   updatedById String?
   updatedAt   DateTime @updatedAt
 }
+
+// ============================================================================
+// THI THỬ + CHẤM ĐIỂM BẰNG AI  (AI_GRADING_SPEC.md §4)
+//
+// Vì sao là bộ bảng RIÊNG chứ không dùng lại Assessment/QuestionItem:
+//  - QuestionItem là kho câu hỏi có taxonomy (chapter/skill) để engine cá nhân
+//    hóa chọn bài. Đề thi thử là một VĂN BẢN ĐỀ nguyên khối, đánh số 1..20, có
+//    barem chấm tay — nhét vào kho sẽ làm bẩn taxonomy và làm engine chọn nhầm.
+//  - Bài làm ở đây có ẢNH chụp tay + transcript AI đọc được + điểm từng tiêu
+//    chí. ItemAttempt không có chỗ cho ba thứ đó.
+//
+// Tên bảng khác spec (spec ghi `exams`, `questions`…): những tên đó đã bị
+// QuestionItem/Assessment/AssessmentAttempt chiếm nghĩa trong hệ thống này.
+// Đổi tên đã ghi vào IMPLEMENTATION_NOTES.md đúng quy tắc §0.3 của spec.
+// ============================================================================
+
+/// Phần của đề — quyết định cách hiển thị, KHÔNG quyết định cách chấm
+enum MockPart {
+  MCQ
+  SHORT
+  ESSAY
+}
+
+/// Cách chấm (spec §3). Chỉ ESSAY mới gọi AI; bốn cách còn lại code tự chấm.
+enum MockGradingMode {
+  EXACT
+  NUMERIC
+  EXPRESSION
+  GRID
+  ESSAY
+}
+
+enum MockAttemptStatus {
+  GRADING
+  DONE
+  PARTIAL_FAILED
+}
+
+enum MockAnswerStatus {
+  PENDING
+  GRADED
+  FAILED
+}
+
+model MockExam {
+  id           String  @id @default(cuid())
+  slug         String  @unique
+  title        String
+  subject      String?
+  gradeLevel   String?
+  durationMin  Int     @default(180)
+  totalPoints  Float
+  instructions String?
+  isPublished  Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  questions MockExamQuestion[]
+  attempts  MockExamAttempt[]
+
+  @@index([isPublished, createdAt])
+}
+
+model MockExamQuestion {
+  id     String @id @default(cuid())
+  examId String
+  /// 1..20 — số câu in trên đề, dùng làm khóa đối chiếu khi seed lại
+  number Int
+
+  part        MockPart
+  gradingMode MockGradingMode
+  maxPoints   Float
+
+  /// Đề bài: markdown + LaTeX ($...$). Không lộ ra ngoài thì vô nghĩa nên KHÔNG lọc.
+  promptMd String
+  imageUrl String?
+  /// ['4','26','29','31','56'] cho trắc nghiệm
+  options  Json    @default("[]")
+
+  // ---- BA TRƯỜNG BÍ MẬT: tuyệt đối không trả về khi HS chưa nộp bài ----
+  answerKey  Json
+  solutionMd String?
+  /// Tham số cho verifier: { digits, target } cho expression, { rows, cols } cho grid
+  config     Json    @default("{}")
+
+  exam   MockExam           @relation(fields: [examId], references: [id], onDelete: Cascade)
+  rubric MockExamRubric[]
+  answers MockExamAnswer[]
+
+  @@unique([examId, number])
+}
+
+/// Barem chấm tự luận. Chỉ có ý nghĩa với gradingMode = ESSAY.
+model MockExamRubric {
+  id          String @id @default(cuid())
+  questionId  String
+  /// 'c1','c2'… — mã AI phải trả về, code dùng để đối chiếu và chặn mã lạ
+  code        String
+  points      Float
+  description String
+  orderIndex  Int    @default(0)
+
+  question MockExamQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@unique([questionId, code])
+}
+
+model MockExamAttempt {
+  id     String  @id @default(cuid())
+  examId String
+  /// NULL = khách chưa đăng nhập vẫn thi được (spec §4). Link kết quả là "chìa khóa".
+  userId String?
+
+  status      MockAttemptStatus @default(GRADING)
+  startedAt   DateTime          @default(now())
+  submittedAt DateTime?
+
+  /// Điểm máy chấm (verifier + AI). Không đổi khi giáo viên sửa tay.
+  autoScore   Float  @default(0)
+  /// Điểm cuối sau khi giáo viên sửa. NULL = chưa ai sửa, lấy autoScore.
+  finalScore  Float?
+  totalPoints Float
+
+  exam    MockExam         @relation(fields: [examId], references: [id])
+  answers MockExamAnswer[]
+
+  @@index([userId, submittedAt])
+  @@index([examId, submittedAt])
+}
+
+model MockExamAnswer {
+  id         String @id @default(cuid())
+  attemptId  String
+  questionId String
+
+  /// Trắc nghiệm / trả lời ngắn / biểu thức
+  answerText String?
+  /// Lưới câu 15: [["/","\\",…], …]
+  answerJson Json?
+  /// Ảnh bài làm tự luận (1..3) — đường dẫn /api/v1/uploads/<id>
+  imageUrls  String[] @default([])
+
+  /// AI chép lại được gì từ ảnh. Lưu để chấm lại không cần gọi vision lần nữa
+  /// và để học sinh khiếu nại "AI đọc sai chữ tôi" có căn cứ (spec §7).
+  transcriptMd String?
+
+  status MockAnswerStatus @default(PENDING)
+  /// Chụp lại điểm tối đa tại thời điểm nộp — sửa đề sau này không làm sai lệch bài cũ.
+  maxPoints   Float
+  awarded     Float?
+  confidence  Float?
+  needsReview Boolean @default(false)
+  feedbackVi  String?
+  /// [{ code, points, awarded, evidence, reason }]
+  criteriaJson Json   @default("[]")
+  /// Vì sao verifier chấm đúng/sai: { correct, expected, reason }
+  gradeDetail  Json?
+  errorMsg     String?
+  gradedAt     DateTime?
+
+  /// Giáo viên sửa tay — giữ cả người sửa lẫn thời điểm để đối chất được.
+  overriddenById String?
+  overriddenAt   DateTime?
+
+  attempt  MockExamAttempt  @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  question MockExamQuestion @relation(fields: [questionId], references: [id])
+
+  @@unique([attemptId, questionId])
+  @@index([attemptId])
+  @@index([status, needsReview])
+}
+
+/// Ảnh bài làm nằm ngay trong Postgres.
+///
+/// Vì sao không dùng S3/Supabase: dự án chưa có storage nào, và đĩa của Railway
+/// bị xóa mỗi lần deploy — ảnh lưu ra file là mất bài của học sinh. Một bài thi
+/// tối đa 30 ảnh đã nén (~250KB/ảnh) nên bảng này không phải chỗ nghẽn.
+model MockExamUpload {
+  id        String   @id @default(cuid())
+  mimeType  String
+  sizeBytes Int
+  data      Bytes
+  /// Gắn sau khi nộp bài; NULL = ảnh mồ côi (chụp rồi bỏ), dọn định kỳ được.
+  attemptId String?
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+}

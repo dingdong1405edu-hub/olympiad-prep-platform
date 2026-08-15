@@ -57,12 +57,14 @@ export const STUDENT_NAV = (enrollmentId: string): NavItem[] => [
 
 export const TEACHER_NAV: NavItem[] = [
   { href: routes.teacherHome(), label: 'Học sinh của tôi', exact: true },
+  { href: routes.teacherMockExams(), label: 'Chấm bài thi thử' },
 ];
 
 export const ADMIN_NAV: NavItem[] = [
   { href: routes.adminHome(), label: 'Tổng quan', exact: true, roles: ADMIN_NAV_ROLES },
   { href: routes.adminPrograms(), label: 'Chương trình', roles: ADMIN_NAV_ROLES },
   { href: routes.adminContent(), label: 'Học liệu', roles: CONTENT_NAV_ROLES },
+  { href: routes.adminMockExams(), label: 'Thi thử', roles: [...ADMIN_NAV_ROLES, 'REVIEWER'] },
   { href: routes.adminSiteCopy(), label: 'Giao diện', roles: ['SUPER_ADMIN', 'PROGRAM_MANAGER'] },
   { href: routes.adminUsers(), label: 'Người dùng', roles: ['SUPER_ADMIN', 'OPS_ADMIN'] },
   { href: routes.adminPayments(), label: 'Thanh toán', roles: ADMIN_NAV_ROLES },

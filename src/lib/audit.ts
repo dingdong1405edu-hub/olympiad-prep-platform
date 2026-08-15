@@ -56,4 +56,6 @@ export const AUDIT_ACTIONS = {
   USER_CREATE: 'user.create',
   SITE_COPY_UPDATE: 'site_copy.update',
   SITE_COPY_RESET: 'site_copy.reset',
+  /** Giáo viên sửa điểm một câu trong bài thi thử chấm bằng AI. */
+  MOCK_ANSWER_OVERRIDE: 'mock_exam.answer_override',
 } as const;

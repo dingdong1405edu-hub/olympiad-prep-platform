@@ -14,6 +14,7 @@
 import { pathToFileURL } from 'node:url';
 import bcrypt from 'bcryptjs';
 import { SEED_MARKER_KEY, SEED_VERSION } from './seed-version';
+import { seedMockExams } from './seed-mock-exam';
 import {
   PrismaClient,
   type Difficulty,
@@ -998,6 +999,12 @@ export async function seedDatabase(): Promise<void> {
   step(6, 'Feature flag và cấu hình hệ thống');
   const ops = await seedOperations(users.userIdByEmail.get('admin@olympiad.vn'));
   done(`${ops.flags} feature flag (tắt), ${ops.configs} nhóm cấu hình ghi đè`);
+
+  // Đề thi thử nằm ở module riêng vì dữ liệu của nó là FILE JSON chép tay từ đề
+  // gốc, không phải bộ sinh câu hỏi. Xem prisma/seed-mock-exam.ts.
+  step(7, 'Đề thi thử chấm bằng AI');
+  const mockExams = await seedMockExams(prisma);
+  for (const line of mockExams) done(line);
 
   // Cột mốc được ghi CUỐI CÙNG, sau khi mọi bước đều xong. Nhờ vậy nó vừa là
   // dấu "đã nạp xong phiên bản này", vừa là bằng chứng lần nạp không chết giữa

@@ -1,0 +1,282 @@
+{
+  "exam": {
+    "slug": "asmopss-12-math-primary",
+    "title": "ASMOPSS 12 — Mathematics Primary (Theoretical Round)",
+    "subject": "math",
+    "grade_level": "primary",
+    "duration_min": 180,
+    "total_points": 100,
+    "instructions": "Đề gồm 3 phần: 5 câu trắc nghiệm (2đ/câu), 5 câu trả lời ngắn (4đ/câu), 10 câu tự luận (7đ/câu). Không trừ điểm câu sai. Với câu tự luận, chụp ảnh bài làm — mỗi câu một ảnh, giấy phẳng, đủ sáng."
+  },
+
+  "_notes": {
+    "corrections": [
+      "Câu 6: đáp án gốc in nhầm. Giá trị đúng đã kiểm chứng: 1/6+25/12+61/20+121/30+211/42+337/56+505/72 = 493/18 = 27 7/18.",
+      "Câu 20b: đáp án gốc thiếu trường hợp 1×3×5. Với A=46 => pq+pr+qr=23, có đúng 3 nghiệm: (1,1,11), (1,2,7), (1,3,5)."
+    ],
+    "q15_scope": "MVP chỉ so khớp HƯỚNG của vạch (/ hoặc \\). Vị trí góc của vạch trong ô là backlog — nếu cần chấm chặt hơn, chuyển câu 15 sang grading_mode='essay'."
+  },
+
+  "questions": [
+    {
+      "number": 1,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 2,
+      "prompt_md": "Một bảng phi tiêu được chia thành năm vùng, mỗi vùng có điểm số là 1, 3, 5, 7 hoặc 9 (xem hình). Tara ném 6 phi tiêu và **tất cả đều trúng bảng**.\n\nTổng điểm nào sau đây có thể là tổng điểm của Tara?",
+      "options": ["4", "26", "29", "31", "56"],
+      "answer_key": { "value": "B" },
+      "solution_md": "Mỗi phi tiêu được điểm lẻ. Tổng của 6 số lẻ luôn là số **chẵn** → loại C (29) và D (31). Tổng nhỏ nhất = 6×1 = 6 → loại A (4). Tổng lớn nhất = 6×9 = 54 → loại E (56). Còn lại 26, và 26 đạt được, ví dụ 9+9+3+3+1+1 = 26."
+    },
+    {
+      "number": 2,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 2,
+      "prompt_md": "Xét quy luật sắp xếp số theo hình tam giác:\n\n```\n1\n2   3\n4   5   6\n7   8   9   10\n11  12  13  14  15\n16  ...\n```\n\nSố 13 nằm ngay bên dưới số 9. Số nào nằm ngay bên dưới số 2022?",
+      "options": ["1769", "1870", "1956", "1959", "Không có đáp án nào đúng"],
+      "answer_key": { "value": "E" },
+      "solution_md": "Hàng thứ n kết thúc tại số n(n+1)/2. Xác định 2022 nằm ở hàng nào và vị trí thứ mấy, rồi cộng thêm số phần tử tương ứng của hàng kế tiếp. Kết quả không nằm trong các phương án A–D."
+    },
+    {
+      "number": 3,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 2,
+      "prompt_md": "Tính giá trị biểu thức:\n\n$$71.2 \\times 8.1 + 11 \\times 9.25 + 0.19 \\times 837$$",
+      "options": ["836.5", "837.5", "838.5", "827.7", "Không có đáp án nào đúng"],
+      "answer_key": { "value": "B" },
+      "solution_md": "71.2 × 8.1 = 576.72; 11 × 9.25 = 101.75; 0.19 × 837 = 159.03. Tổng = 576.72 + 101.75 + 159.03 = **837.5**."
+    },
+    {
+      "number": 4,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 2,
+      "prompt_md": "Có 6 hoán vị khác nhau tạo từ ba chữ số 1 và hai chữ số 0, sao cho **không có hai số 0 nào đứng cạnh nhau**:\n\n01011, 01101, 01110, 10101, 10110, 11010\n\nHỏi có bao nhiêu hoán vị khác nhau tạo từ **chín** chữ số 1 và **bốn** chữ số 0, sao cho không có hai số 0 nào đứng cạnh nhau?",
+      "options": ["160", "170", "180", "190", "Không có đáp án nào đúng"],
+      "answer_key": { "value": "E" },
+      "solution_md": "Xếp 9 số 1 tạo ra 10 khoảng trống (kể cả hai đầu). Chọn 4 khoảng trống để đặt số 0: C(10,4) = 210. Vì 210 không có trong các phương án → đáp án E."
+    },
+    {
+      "number": 5,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 2,
+      "prompt_md": "Có thể tạo bao nhiêu mã khác nhau từ 4 ký hiệu: `*`, `#`, `@`, `%` ?\n\nMột mã là một dãy gồm **ít nhất 1** và **nhiều nhất 4** ký hiệu. Mỗi ký hiệu chỉ được dùng **tối đa một lần**.",
+      "options": ["40", "48", "60", "64", "Không có đáp án nào đúng"],
+      "answer_key": { "value": "D" },
+      "solution_md": "Độ dài 1: 4 cách. Độ dài 2: 4×3 = 12. Độ dài 3: 4×3×2 = 24. Độ dài 4: 4×3×2×1 = 24. Tổng = 4 + 12 + 24 + 24 = **64**."
+    },
+
+    {
+      "number": 6,
+      "part": "short",
+      "grading_mode": "numeric",
+      "max_points": 4,
+      "prompt_md": "Tính giá trị biểu thức:\n\n$$\\frac{1}{6} + \\frac{25}{12} + \\frac{61}{20} + \\frac{121}{30} + \\frac{211}{42} + \\frac{337}{56} + \\frac{505}{72}$$",
+      "answer_key": { "value": "493/18", "display": "27 7/18", "tolerance": 1e-6 },
+      "solution_md": "Cộng dồn từng bước:\n1/6 + 25/12 = 9/4\n9/4 + 61/20 = 53/10\n53/10 + 121/30 = 28/3\n28/3 + 211/42 = 201/14\n201/14 + 337/56 = 163/8\n163/8 + 505/72 = **493/18 = 27 7/18 ≈ 27.3889**"
+    },
+    {
+      "number": 7,
+      "part": "short",
+      "grading_mode": "numeric",
+      "max_points": 4,
+      "prompt_md": "Trong hình vuông $ABCD$, hai điểm $F$ và $E$ nằm trên cạnh $DC$ sao cho $DF = FE = EC$. Điểm $G$ là trung điểm của $AD$.\n\nSố đo của góc $EBG$ bằng bao nhiêu?",
+      "answer_key": { "value": "45", "display": "45°", "tolerance": 1e-6 },
+      "solution_md": "Đặt cạnh hình vuông bằng 6, dùng tọa độ: B(6,6), G(0,3), E(4,0)... Tính được góc EBG = **45°**."
+    },
+    {
+      "number": 8,
+      "part": "short",
+      "grading_mode": "numeric",
+      "max_points": 4,
+      "prompt_md": "Nối hai điểm bất kỳ trong 6 điểm cho trước bằng một đoạn thẳng.\n\nHỏi có thể vẽ được **nhiều nhất** bao nhiêu đoạn thẳng mà **không tạo thành tam giác** nào có 3 đỉnh là 3 trong các điểm đó?",
+      "answer_key": { "value": "9", "display": "9", "tolerance": 1e-6 },
+      "solution_md": "Đây là bài toán đồ thị không chứa tam giác trên 6 đỉnh. Theo định lý Turán, số cạnh tối đa là ⌊6²/4⌋ = **9** (đồ thị hai phía đầy đủ K₃,₃)."
+    },
+    {
+      "number": 9,
+      "part": "short",
+      "grading_mode": "essay",
+      "max_points": 4,
+      "prompt_md": "Dưới đây là hai đẳng thức **sai**. Hãy sửa lại cho đúng bằng cách **di chuyển vị trí của đúng một chữ số** trong mỗi đẳng thức.\n\n$$\\frac{21}{3} = \\frac{21}{9} \\qquad\\qquad \\frac{21}{3} = \\frac{1}{9}$$",
+      "answer_key": { "final": "2 1/3 = 21/9  và  1/3² = 1/9" },
+      "solution_md": "**Đẳng thức 1:** chuyển chữ số 1 để vế trái thành hỗn số: $2\\frac{1}{3} = \\frac{7}{3} = \\frac{21}{9}$ ✔\n\n**Đẳng thức 2:** chuyển chữ số 2 lên làm số mũ: $\\frac{1}{3^2} = \\frac{1}{9}$ ✔",
+      "rubric": [
+        { "code": "c1", "points": 2, "description": "Sửa đúng đẳng thức thứ nhất bằng cách chỉ di chuyển MỘT chữ số, kết quả là một đẳng thức đúng (đáp án chuẩn: 2 1/3 = 21/9). Chấp nhận cách sửa khác nếu vẫn chỉ di chuyển một chữ số và đẳng thức đúng." },
+        { "code": "c2", "points": 2, "description": "Sửa đúng đẳng thức thứ hai bằng cách chỉ di chuyển MỘT chữ số (đáp án chuẩn: 1/3² = 1/9, đưa số 2 lên làm số mũ). Chấp nhận cách sửa khác nếu hợp lệ." }
+      ]
+    },
+    {
+      "number": 10,
+      "part": "short",
+      "grading_mode": "expression",
+      "max_points": 4,
+      "prompt_md": "Dùng các chữ số 2, 5 và 7 cùng các phép toán thông thường (cộng, trừ, nhân, chia), lũy thừa hoặc căn bậc hai, dấu thập phân, hoặc dấu âm, ta có thể tạo ra số 32 như sau:\n\n$$32 = 5^2 + 7 = 25 + 7 = (5 \\div 0.2) + 7 = (0.5)^{2-7} = (0.7 - 0.2)^{-5}$$\n\nNhiệm vụ của em: tạo ra số **2** bằng cách dùng các chữ số **2, 4 và 8** (mỗi chữ số dùng đúng một lần).",
+      "config": { "digits": [2, 4, 8], "target": 2, "tolerance": 1e-9, "max_length": 200 },
+      "answer_key": {
+        "examples": ["8-4-2", "(8-4)/2", "2^4/8", "4^2/8", "(2-0.4)/0.8", "0.2*8+0.4", "(4*8)^0.2"]
+      },
+      "solution_md": "Có nhiều đáp án đúng, ví dụ: 8 − 4 − 2 = 2; (8 − 4) ÷ 2 = 2; 2⁴ ÷ 8 = 2; 4² ÷ 8 = 2; (2 − 0.4) ÷ 0.8 = 2; 0.2 × 8 + 0.4 = 2; (4 × 8)^0.2 = 2."
+    },
+
+    {
+      "number": 11,
+      "part": "essay",
+      "grading_mode": "essay",
+      "max_points": 7,
+      "prompt_md": "Xét tập $\\{1,2,3\\}$. Các tập con của nó là:\n\n| Tập con | Mô tả |\n|---|---|\n| { } | tập rỗng |\n| {1}, {2}, {3} | tập có 1 phần tử |\n| {1,2}, {1,3}, {2,3} | tập có 2 phần tử |\n| {1,2,3} | tập có 3 phần tử |\n\nHỏi tập $\\{1,2,3,4,5,6\\}$ có bao nhiêu tập con **chứa ít nhất một số lẻ**?",
+      "answer_key": { "final": "56" },
+      "solution_md": "Tổng số tập con của tập 6 phần tử: 2⁶ = 64.\nTập con **không chứa số lẻ nào** = tập con của {2,4,6}: 2³ = 8.\nSố tập con chứa ít nhất một số lẻ = 64 − 8 = **56**.",
+      "rubric": [
+        { "code": "c1", "points": 2, "description": "Tính đúng tổng số tập con của tập 6 phần tử: 2^6 = 64. Phải thấy được con số 64 hoặc phép tính 2^6 trong bài làm." },
+        { "code": "c2", "points": 3, "description": "Dùng phương pháp phần bù: nhận ra cần đếm số tập con KHÔNG chứa số lẻ nào, tức tập con của {2,4,6}, bằng 2^3 = 8. Cho đủ điểm nếu học sinh dùng cách đếm khác nhưng đúng về mặt toán học (ví dụ cộng C(3,k) theo từng trường hợp)." },
+        { "code": "c3", "points": 2, "description": "Thực hiện phép trừ và kết luận đúng: 64 − 8 = 56." }
+      ]
+    },
+    {
+      "number": 12,
+      "part": "essay",
+      "grading_mode": "essay",
+      "max_points": 7,
+      "prompt_md": "Trong các hình dưới đây, **tất cả các tam giác đều có cạnh đáy bằng nhau và bằng 6**. Diện tích của ba tam giác đầu lần lượt là 4.5, 5.5 và 12.5.\n\nTính diện tích của tam giác cuối cùng.",
+      "answer_key": { "final": "13.5" },
+      "solution_md": "Cách 1 — từ lưới ô vuông: tam giác cuối có chiều cao 4.5 đơn vị, nên diện tích = ½ × 6 × 4.5 = **13.5**.\n\nCách 2 — theo đáp án chính thức: tổng diện tích bốn tam giác bằng 36, nên diện tích tam giác cuối = 36 − 4.5 − 5.5 − 12.5 = **13.5**.",
+      "rubric": [
+        { "code": "c1", "points": 3, "description": "Nêu và sử dụng đúng công thức diện tích tam giác S = ½ × đáy × chiều cao, hoặc nêu được quan hệ tổng diện tích bốn tam giác. Phải thấy công thức hoặc quan hệ này được viết ra trong bài." },
+        { "code": "c2", "points": 2, "description": "Xác định đúng chiều cao của tam giác cuối từ lưới ô vuông (4.5 đơn vị), HOẶC lập luận đúng để suy ra phần diện tích còn lại." },
+        { "code": "c3", "points": 2, "description": "Kết luận đúng: diện tích = 13.5. Chấp nhận viết dưới dạng 27/2." }
+      ]
+    },
+    {
+      "number": 13,
+      "part": "essay",
+      "grading_mode": "essay",
+      "max_points": 7,
+      "prompt_md": "Fibo và Aci chơi một trò chơi. Họ muốn xếp 15 quả bi-a đánh số vào một giá **hai tầng**. Bi phải được đặt theo thứ tự số tăng dần, từ trái sang phải.\n\nHơn nữa, **cấm ba quả bóng cùng nằm trên một tầng nếu số của một quả bằng tổng số của hai quả kia**. (Ví dụ: bóng số 4, số 6 và số 10 không được cùng nằm trên một tầng.)\n\nAci đi trước và bắt buộc lấy bóng số 1. Sau đó Fibo lấy bóng số 2 và đặt vào cùng tầng với bóng 1 hoặc tầng còn lại. Trò chơi kết thúc khi một người **không thể** đặt bóng theo đúng luật — khi đó đối thủ của người đó thắng.\n\nHãy nêu chiến thuật để **Fibo luôn thắng**.",
+      "answer_key": { "final": "Fibo đặt bóng 2 cùng tầng với bóng 1, sau đó chơi theo cây trò chơi ép buộc" },
+      "solution_md": "Ký hiệu hai tầng là A và B. Không mất tính tổng quát, giả sử Aci đặt bóng 1 vào tầng A.\n\n**Chiến thuật của Fibo:** đặt bóng 2 vào **cùng tầng A** với bóng 1. Khi đó bóng 3 bị ép phải xuống tầng B (vì 1+2=3). Tiếp theo Fibo đặt bóng 4 vào tầng B.\n\nPhân tích cây trò chơi cho thấy mọi nhánh đều dẫn tới Aci không đặt được bóng trước:\n- Nếu Aci chọn 5A → Fibo bị ép đặt 6B → Fibo thắng.\n- Nếu Aci chọn 5B → Fibo chọn 6A → 7 bị ép → ... → Aci không đặt được bóng 9.\n\nVới mọi lựa chọn của Aci, Fibo luôn có nước đi dẫn tới thế thắng.",
+      "rubric": [
+        { "code": "c1", "points": 2, "description": "Nêu rõ nước đi đầu tiên của Fibo: đặt bóng số 2 CÙNG TẦNG với bóng số 1." },
+        { "code": "c2", "points": 2, "description": "Chỉ ra được khái niệm nước đi 'bị ép buộc' — tức có những bóng chỉ còn đúng một tầng hợp lệ do luật cấm a+b=c. Phải nêu được ít nhất một ví dụ cụ thể (ví dụ: sau khi 1 và 2 cùng tầng thì bóng 3 buộc phải sang tầng kia)." },
+        { "code": "c3", "points": 2, "description": "Phân tích các trường hợp lựa chọn của Aci (ít nhất 2 nhánh khác nhau) và chỉ ra nước đáp trả thắng của Fibo trong từng nhánh." },
+        { "code": "c4", "points": 1, "description": "Kết luận rõ ràng rằng chiến thuật này đảm bảo Fibo thắng trong mọi trường hợp." }
+      ]
+    },
+    {
+      "number": 14,
+      "part": "essay",
+      "grading_mode": "essay",
+      "max_points": 7,
+      "prompt_md": "Yosu nói: *\"Tuổi của tôi và tuổi của mỗi người trong ba người anh em họ của tôi đều là số nguyên tố. Hơn nữa, tổng số tuổi của bốn chúng tôi là 50.\"*\n\nGasing, người biết tuổi của Yosu, nói: *\"Tôi có thể nói cho bạn biết tuổi của ba người anh em họ của bạn.\"*\n\nHỏi Yosu bao nhiêu tuổi?",
+      "answer_key": { "final": "43 (ba người anh em họ: 2, 2 và 3 tuổi)" },
+      "solution_md": "Gọi tuổi Yosu là p (số nguyên tố). Tổng tuổi ba người anh em họ = 50 − p, cũng phải là tổng của ba số nguyên tố.\n\nĐiều kiện then chốt: Gasing **xác định được duy nhất** ba tuổi kia → phép phân tích 50 − p thành tổng ba số nguyên tố phải là **duy nhất**.\n\n- p = 47 → 3 không viết được thành tổng ba số nguyên tố → loại.\n- p = 43 → 7 = 2 + 2 + 3, **duy nhất** ✔\n- p = 41 → 9 = 2+2+5 = 3+3+3 → không duy nhất → loại.\n- p = 37 → 13 có nhiều cách → loại.\n- Các giá trị nhỏ hơn đều có nhiều cách phân tích → loại.\n\nVậy Yosu **43 tuổi**, ba người anh em họ 2, 2 và 3 tuổi.",
+      "rubric": [
+        { "code": "c1", "points": 2, "description": "Thiết lập đúng bài toán: gọi tuổi Yosu là số nguyên tố p, tổng tuổi ba anh em họ = 50 − p và cũng phải là tổng của ba số nguyên tố." },
+        { "code": "c2", "points": 2, "description": "Nêu được ý then chốt: vì Gasing xác định được DUY NHẤT ba tuổi kia, nên cách phân tích 50 − p thành tổng ba số nguyên tố phải là duy nhất. Đây là điểm mấu chốt của bài." },
+        { "code": "c3", "points": 2, "description": "Kiểm tra loại trừ các giá trị p khác bằng cách chỉ ra chúng có nhiều hơn một cách phân tích (cần ít nhất 3 trường hợp được kiểm tra cụ thể, ví dụ p = 47, 41, 37)." },
+        { "code": "c4", "points": 1, "description": "Kết luận đúng: Yosu 43 tuổi, và nêu được ba anh em họ 2, 2, 3 tuổi." }
+      ]
+    },
+    {
+      "number": 15,
+      "part": "essay",
+      "grading_mode": "grid",
+      "max_points": 7,
+      "prompt_md": "Aci gấp một tờ giấy. Đầu tiên bạn ấy gấp đôi theo đường $l$, rồi lại gấp đôi theo đường $m$. Bạn ấy tiếp tục gấp theo quy luật tương tự thêm hai lần nữa — tổng cộng gấp **4 lần**.\n\nSau đó Aci **bấm ghim** qua tờ giấy đã gấp, rồi rút ghim ra và mở tờ giấy. Các nếp gấp tạo thành 16 hình chữ nhật, mỗi hình có một dấu ghim. Dấu ghim ở ô **P** đã được vẽ sẵn.\n\nHãy vẽ dấu ghim ở tất cả các ô còn lại và **giải thích cách em suy ra**. Em được 0 điểm nếu lý do dựa trên việc làm thí nghiệm thật.",
+      "config": {
+        "rows": 4,
+        "cols": 4,
+        "cell_states": ["/", "\\"],
+        "labels": [["A","B","C","D"],["E","F","G","H"],["I","J","K","L"],["M","N","O","P"]],
+        "prefilled": { "P": "/" },
+        "note": "MVP chỉ so khớp hướng vạch. Vị trí góc trong ô là backlog."
+      },
+      "answer_key": {
+        "grid": [
+          ["/", "\\", "/", "\\"],
+          ["\\", "/", "\\", "/"],
+          ["/", "\\", "/", "\\"],
+          ["\\", "/", "\\", "/"]
+        ]
+      },
+      "solution_md": "Mỗi nếp gấp là một phép **đối xứng trục**. Khi mở giấy ra, dấu ghim ở hai ô kề nhau qua một nếp gấp là ảnh đối xứng của nhau qua nếp gấp đó.\n\n- Đối xứng qua đường thẳng đứng đổi `/` thành `\\` và ngược lại.\n- Đối xứng qua đường nằm ngang cũng đổi `/` thành `\\`.\n\nVì vậy hướng vạch **đổi luân phiên** như bàn cờ: ô kề nhau (ngang hoặc dọc) luôn có hướng ngược nhau. Xuất phát từ P = `/`, ta suy ra toàn bộ lưới."
+    },
+    {
+      "number": 16,
+      "part": "essay",
+      "grading_mode": "essay",
+      "max_points": 7,
+      "prompt_md": "Trong bát giác đều $ABCDEFGH$, vẽ các đường chéo $AD$, $BG$ và $CH$. Đường chéo $AD$ cắt $CH$ tại $Q$. Đường chéo $BG$ cắt $CH$ tại $P$. Diện tích bát giác bằng 1.\n\nTính diện tích hình thang $PQEF$.",
+      "answer_key": { "final": "1/4" },
+      "solution_md": "Đặt $[XYZ]$ là diện tích đa giác $XYZ$.\n\n1. Vì $FECQ$ là hình bình hành nên $[FQC] = [FQE]$, suy ra $[FEQP] = [FPC]$.\n2. Vì $FGPC$ là hình thang (có $GP \\parallel FC$) nên $[FPC] = [FGC]$.\n3. Gọi $T$ là giao điểm hai đường chéo $CG$ và $BF$ của hình chữ nhật $FCBG$, khi đó $GT = TC$. Ta có $[GTF] = \\frac{1}{8}$ diện tích bát giác, nên $[GFC] = \\frac{1}{4}$.\n\nVậy $[PQEF] = \\frac{1}{4}$.",
+      "rubric": [
+        { "code": "c1", "points": 2, "description": "Nhận ra và sử dụng được một tính chất hình học then chốt của bát giác đều để biến đổi diện tích — ví dụ FECQ là hình bình hành, hoặc FCBG là hình chữ nhật, hoặc các đường chéo song song với các cạnh." },
+        { "code": "c2", "points": 3, "description": "Thực hiện chuỗi biến đổi diện tích tương đương một cách hợp lệ (dùng tam giác cùng đáy cùng chiều cao, hình bình hành, hình thang) để chuyển [PQEF] về một hình dễ tính hơn. Chấp nhận mọi chuỗi biến đổi đúng, không bắt buộc giống lời giải mẫu." },
+        { "code": "c3", "points": 2, "description": "Tính đúng tỉ lệ so với diện tích bát giác và kết luận [PQEF] = 1/4. Chấp nhận 0.25." }
+      ]
+    },
+    {
+      "number": 17,
+      "part": "essay",
+      "grading_mode": "essay",
+      "max_points": 7,
+      "prompt_md": "Tipu nói dối vào Chủ nhật, thứ Hai, thứ Ba; các ngày còn lại trong tuần thì nói thật.\nCepu nói dối vào thứ Tư, thứ Năm, thứ Sáu; các ngày còn lại thì nói thật.\n\n**a)** Hôm nay hai bạn nói:\n- Tipu: *\"Hôm qua là ngày nói dối của tôi.\"*\n- Cepu: *\"Hôm qua cũng là ngày nói dối của tôi.\"*\n\nHôm nay là thứ mấy?\n\n**b)** Một ngày nọ, cả hai đều hóa trang và đổi giọng nên không ai nhận ra họ. Người mặc **đồ đỏ** nói: *\"Tôi là Tipu.\"* Người mặc **đồ xanh** nói: *\"Tôi là Cepu.\"*\n\nAi là người mặc đồ đỏ? Hôm đó là thứ mấy?",
+      "answer_key": { "final": "a) Thứ Tư.  b) Người đồ đỏ là Tipu, hôm đó là thứ Bảy." },
+      "solution_md": "**a)** Tipu chỉ có thể nói câu \"hôm qua là ngày nói dối của tôi\" vào **thứ Tư** hoặc **Chủ nhật**. Cepu chỉ có thể nói câu đó vào **thứ Tư** hoặc **thứ Bảy**. Ngày duy nhất cả hai cùng nói được là **thứ Tư**.\n\n**b)** Xét hai khả năng:\n- Nếu người đồ đỏ là Tipu và đang nói thật → người đồ xanh (Cepu) cũng nói thật. Cả hai cùng nói thật chỉ xảy ra vào **thứ Bảy**. ✔\n- Nếu người đồ đỏ nói dối → người đó thực ra là Cepu, và người đồ xanh cũng nói dối. Nhưng **không có ngày nào cả hai cùng nói dối** → trường hợp này không xảy ra.\n\nVậy người đồ đỏ là **Tipu**, hôm đó là **thứ Bảy**.",
+      "rubric": [
+        { "code": "c1", "points": 2, "description": "Ý a: liệt kê đúng các ngày mà Tipu có thể nói câu đó (thứ Tư và Chủ nhật) VÀ các ngày Cepu có thể nói câu đó (thứ Tư và thứ Bảy). Cần thấy cả hai danh sách trong bài làm." },
+        { "code": "c2", "points": 1, "description": "Ý a: kết luận đúng — hôm nay là thứ Tư (ngày chung duy nhất)." },
+        { "code": "c3", "points": 3, "description": "Ý b: xét cả HAI trường hợp (người đồ đỏ nói thật / nói dối) và loại được trường hợp cả hai cùng nói dối vì không có ngày nào như vậy trong tuần." },
+        { "code": "c4", "points": 1, "description": "Ý b: kết luận đúng — người đồ đỏ là Tipu, hôm đó là thứ Bảy. Phải nêu đủ cả hai." }
+      ]
+    },
+    {
+      "number": 18,
+      "part": "essay",
+      "grading_mode": "essay",
+      "max_points": 7,
+      "prompt_md": "Có một số vòi nước dùng để bơm đầy bể. Mỗi vòi khi mở sẽ chảy với cùng một tốc độ không đổi.\n\nTara được giao nhiệm vụ bơm đầy bể trong $n$ phút. Tara mở $x$ vòi. Sau đó bạn ấy nhận ra với tốc độ này sẽ không hoàn thành kịp. Vì vậy, sau $\\frac{n}{4}$ phút, bạn ấy mở thêm $2x$ vòi nữa, nhờ đó cuối cùng bể đầy **đúng hạn**.\n\nTính toán thêm, Tara kết luận rằng nếu ngay từ đầu mở **20 vòi** thì sẽ bơm đầy bể đúng trong $n$ phút mà không cần mở thêm vòi nào.\n\nTìm giá trị của $x$.",
+      "answer_key": { "final": "8" },
+      "solution_md": "Thời gian còn lại sau khi mở thêm vòi: $n - \\frac{n}{4} = \\frac{3}{4}n$.\n\nSố vòi tăng gấp 3 (từ $x$ lên $3x$). Trong $\\frac{3}{4}n$ phút với $3x$ vòi, lượng nước bơm được gấp $3 \\times 3 = 9$ lần so với lượng bơm trong $\\frac{n}{4}$ phút với $x$ vòi.\n\nCoi dung tích bể bằng 1. Sau $\\frac{n}{4}$ phút, bể đầy $\\frac{1}{1+9} = \\frac{1}{10}$.\n\nNếu mở 20 vòi từ đầu thì đầy bể sau $n$ phút → mỗi vòi bơm được $\\frac{1}{20n}$ bể mỗi phút. Trong $\\frac{n}{4}$ phút, mỗi vòi bơm được $\\frac{1}{80}$ bể.\n\nĐể bơm được $\\frac{1}{10}$ bể cần: $\\frac{1/10}{1/80} = 8$ vòi.\n\nVậy $x = 8$.",
+      "rubric": [
+        { "code": "c1", "points": 2, "description": "Nhận ra tổng số vòi sau khi mở thêm là 3x (gấp 3 lần) và thời gian còn lại là (3/4)n. Cần thấy cả hai đại lượng này trong bài." },
+        { "code": "c2", "points": 3, "description": "Lập được quan hệ giữa lượng nước bơm trong giai đoạn 1 và giai đoạn 2 (tỉ lệ 1 : 9), từ đó suy ra sau n/4 phút bể đầy 1/10. Chấp nhận cách lập phương trình khác nếu tương đương về mặt toán học." },
+        { "code": "c3", "points": 1, "description": "Dùng dữ kiện '20 vòi bơm đầy trong n phút' để tính năng suất một vòi: mỗi vòi bơm 1/80 bể trong n/4 phút." },
+        { "code": "c4", "points": 1, "description": "Kết luận đúng: x = 8." }
+      ]
+    },
+    {
+      "number": 19,
+      "part": "essay",
+      "grading_mode": "essay",
+      "max_points": 7,
+      "prompt_md": "Trong tủ quần áo, Fibo chỉ có tất màu **đỏ** và **trắng** giống hệt nhau. Tổng số tất **ít hơn 50** chiếc. Nếu rút ngẫu nhiên hai chiếc tất, xác suất để được **một đôi cùng màu** là $\\frac{1}{2}$.\n\nHỏi số tất **đỏ nhiều nhất** mà Fibo có thể có trong tủ là bao nhiêu?\n\n**Gợi ý:**\n- Nếu có 3 tất đỏ và 4 tất trắng thì xác suất rút được hai tất đỏ là $\\frac{1}{7}$.\n- Hãy để ý quy luật của các **số tam giác**.",
+      "answer_key": { "final": "28" },
+      "solution_md": "Gọi $r$ là số tất đỏ, $w$ là số tất trắng.\n\n$$\\frac{r}{r+w}\\cdot\\frac{r-1}{r+w-1} + \\frac{w}{r+w}\\cdot\\frac{w-1}{r+w-1} = \\frac{1}{2}$$\n\nRút gọn được: $r + w = (r-w)^2$.\n\nCác nghiệm là các cặp **số tam giác liên tiếp**. Với $r + w < 50$, nghiệm lớn nhất là $r = 28$, $w = 21$ (kiểm tra: $28 + 21 = 49 = 7^2 = (28-21)^2$ ✔).\n\nVậy số tất đỏ nhiều nhất là **28**.",
+      "rubric": [
+        { "code": "c1", "points": 2, "description": "Lập đúng biểu thức xác suất rút được hai tất cùng màu, có tính đến việc rút KHÔNG hoàn lại (mẫu số giảm từ r+w xuống r+w−1). Chấp nhận trình bày bằng sơ đồ cây." },
+        { "code": "c2", "points": 3, "description": "Biến đổi và rút gọn phương trình về dạng r + w = (r − w)^2 hoặc dạng tương đương." },
+        { "code": "c3", "points": 1, "description": "Dùng ràng buộc r + w < 50 để giới hạn nghiệm, tìm được cặp (r, w) = (28, 21) và kiểm tra lại thỏa mãn." },
+        { "code": "c4", "points": 1, "description": "Kết luận đúng: số tất đỏ nhiều nhất là 28." }
+      ]
+    },
+    {
+      "number": 20,
+      "part": "essay",
+      "grading_mode": "essay",
+      "max_points": 7,
+      "prompt_md": "Một hình hộp chữ nhật có các kích thước $p$, $q$, $r$ cm, trong đó $p$, $q$, $r$ là các **số tự nhiên**. Diện tích toàn phần của hình hộp là $A$ cm².\n\n**a)** $A$ là số chẵn hay số lẻ? Giải thích!\n\n**b)** Tìm kích thước của **tất cả** các hình hộp chữ nhật có $A = 46$ cm².",
+      "answer_key": { "final": "a) A luôn chẵn.  b) 1×1×11, 1×2×7, 1×3×5" },
+      "solution_md": "**a)** Diện tích toàn phần $A = 2(pq + pr + qr)$. Vì mỗi mặt có một mặt đối diện bằng nó, tổng diện tích mỗi cặp mặt đối diện là số chẵn. Có 3 cặp → $A$ luôn là **số chẵn**.\n\n**b)** $A = 46 \\Rightarrow pq + pr + qr = 23$. Xét $p \\le q \\le r$, ta được **ba** nghiệm:\n- $1 \\times 1 \\times 11$: $1 + 11 + 11 = 23$ ✔\n- $1 \\times 2 \\times 7$: $2 + 7 + 14 = 23$ ✔\n- $1 \\times 3 \\times 5$: $3 + 5 + 15 = 23$ ✔\n\n*(Lưu ý: đáp án chính thức của kỳ thi chỉ liệt kê hai trường hợp đầu và bỏ sót $1\\times3\\times5$. Ba trường hợp trên đã được kiểm chứng bằng vét cạn.)*",
+      "rubric": [
+        { "code": "c1", "points": 1, "description": "Ý a: viết đúng công thức diện tích toàn phần A = 2(pq + pr + qr)." },
+        { "code": "c2", "points": 2, "description": "Ý a: giải thích đúng vì sao A luôn chẵn — do có thừa số 2, hoặc do các mặt đối diện bằng nhau nên tổng mỗi cặp là số chẵn. Kết luận A là số chẵn." },
+        { "code": "c3", "points": 2, "description": "Ý b: quy về đúng phương trình pq + pr + qr = 23 từ A = 46." },
+        { "code": "c4", "points": 2, "description": "Ý b: tìm được các bộ kích thước. Cho 2 điểm nếu nêu đủ ba bộ 1×1×11, 1×2×7, 1×3×5. Cho 1 điểm nếu chỉ nêu được hai bộ. Cho thêm ghi nhận nếu học sinh trình bày cách vét cạn có hệ thống (cố định p rồi xét q) để chứng minh đã liệt kê đủ." }
+      ]
+    }
+  ]
+}

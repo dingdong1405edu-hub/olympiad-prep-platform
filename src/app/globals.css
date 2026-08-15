@@ -547,3 +547,63 @@ body {
     background: #fff;
   }
 }
+
+/* ==========================================================================
+   CÔNG THỨC TOÁN TRONG ĐỀ THI
+   Dựng bằng HTML thuần thay cho KaTeX — lý do ở src/components/rich-text.tsx.
+   ========================================================================== */
+
+.rich-text > *:first-child {
+  margin-top: 0;
+}
+.rich-text > *:last-child {
+  margin-bottom: 0;
+}
+
+.tex-inline,
+.tex-display {
+  font-family: 'Cambria Math', 'Latin Modern Math', 'Times New Roman', serif;
+  font-size: 1.06em;
+  white-space: nowrap;
+}
+
+.tex-display {
+  display: inline-block;
+  font-size: 1.15em;
+}
+
+/* Phân số: tử trên mẫu, có gạch ngang — đọc đúng như viết trên giấy */
+.tex-frac {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  vertical-align: -0.55em;
+  margin: 0 0.18em;
+  line-height: 1.15;
+}
+.tex-frac > span:first-child {
+  border-bottom: 1px solid currentColor;
+  padding: 0 0.28em 0.05em;
+}
+.tex-frac > span:last-child {
+  padding: 0.05em 0.28em 0;
+}
+
+/* Căn bậc hai: dấu √ đã in ở trước, phần này là vạch ngang phủ lên biểu thức */
+.tex-sqrt {
+  border-top: 1px solid currentColor;
+  padding: 0 0.15em;
+}
+
+.tex-inline sup,
+.tex-display sup {
+  font-size: 0.72em;
+  vertical-align: super;
+  line-height: 0;
+}
+.tex-inline sub,
+.tex-display sub {
+  font-size: 0.72em;
+  vertical-align: sub;
+  line-height: 0;
+}

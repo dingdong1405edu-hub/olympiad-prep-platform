@@ -141,6 +141,25 @@ export interface AiConfig {
   anonymizeStudent: boolean;
 }
 
+/**
+ * Thi thử chấm bằng AI. KHÔNG chứa khóa API hay tên model — hai thứ đó là hạ
+ * tầng, đặt ở biến môi trường (xem `src/server/mock-exam/ai-provider.ts`).
+ * Ở đây chỉ có ngưỡng nghiệp vụ mà admin cần chỉnh được khi vận hành.
+ */
+export interface MockExamConfig {
+  /** Dưới ngưỡng tin cậy này thì bài được gắn cờ nhờ giáo viên xem lại. */
+  confidenceReviewThreshold: number;
+  /** Hết giờ chờ một lượt gọi AI → đánh dấu câu đó chấm hỏng, cho chấm lại. */
+  gradingTimeoutMs: number;
+  gradingMaxRetries: number;
+  /** Số ảnh tối đa cho một câu tự luận. */
+  maxImagesPerQuestion: number;
+  /** Ảnh nặng hơn ngần này bị từ chối — client đã nén trước khi gửi. */
+  maxImageBytes: number;
+  /** Số câu tự luận chấm song song từ trình duyệt. */
+  parallelGradeLimit: number;
+}
+
 export interface PlatformConfig {
   assessment: AssessmentConfig;
   levels: LevelConfig;
@@ -149,6 +168,7 @@ export interface PlatformConfig {
   commerce: CommerceConfig;
   notification: NotificationConfig;
   ai: AiConfig;
+  mockExam: MockExamConfig;
 }
 
 // ---------------------------------------------------------------------------
@@ -256,6 +276,15 @@ export const DEFAULT_CONFIG: PlatformConfig = {
     timeoutMs: 30_000,
     anonymizeStudent: true,
   },
+
+  mockExam: {
+    confidenceReviewThreshold: Number(process.env.CONFIDENCE_REVIEW_THRESHOLD ?? 0.7),
+    gradingTimeoutMs: Number(process.env.GRADING_TIMEOUT_MS ?? 90_000),
+    gradingMaxRetries: Number(process.env.GRADING_MAX_RETRIES ?? 2),
+    maxImagesPerQuestion: 3,
+    maxImageBytes: 6 * 1024 * 1024,
+    parallelGradeLimit: 4,
+  },
 };
 
 export type ConfigGroup = keyof PlatformConfig;
@@ -289,5 +318,10 @@ export const CONFIG_GROUP_META: Record<ConfigGroup, { label: string; description
   ai: {
     label: 'AI',
     description: 'Model, phiên bản prompt, giới hạn token, ẩn danh học sinh.',
+  },
+  mockExam: {
+    label: 'Thi thử chấm AI',
+    description:
+      'Ngưỡng tin cậy để nhờ giáo viên xem lại, thời gian chờ chấm, số ảnh và dung lượng ảnh tối đa.',
   },
 };

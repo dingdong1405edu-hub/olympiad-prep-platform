@@ -25,6 +25,12 @@ import {
 } from '../src/server/assessment/service';
 import { getMasteryMap } from '../src/server/student-model/service';
 import { createGoal, getGoalOptions, getTodayPlan } from '../src/server/plan/service';
+import {
+  getAttemptResult,
+  getExamForPlayer,
+  listPublishedExams,
+  submitMockAttempt,
+} from '../src/server/mock-exam/service';
 import { getConfig } from '../src/lib/config';
 import { addDays } from '../src/lib/dates';
 
@@ -42,6 +48,16 @@ function check(label: string, condition: boolean, detail?: string): void {
     failed += 1;
     failures.push(label + (detail ? ` — ${detail}` : ''));
     console.log(`  ✗ ${label}${detail ? ` — ${detail}` : ''}`);
+  }
+}
+
+/** Chạy một lời gọi và cho biết nó CÓ bị chặn hay không (dùng cho test phân quyền). */
+async function isBlocked(run: () => Promise<unknown>): Promise<boolean> {
+  try {
+    await run();
+    return false;
+  } catch {
+    return true;
   }
 }
 
@@ -399,6 +415,89 @@ async function main(): Promise<void> {
     blocked = true;
   }
   check('Học sinh khác KHÔNG xem được bài của người này', blocked);
+
+  // --- 9. Thi thử chấm bằng AI ----------------------------------------------
+  // Kịch bản nghiệm thu của AI_GRADING_SPEC.md §13: vào thẳng đề, làm bài, nộp,
+  // và phần máy chấm phải đúng TUYỆT ĐỐI.
+  section('Thi thử chấm bằng AI');
+
+  const exams = await listPublishedExams();
+  check('Có ít nhất một đề thi thử đã phát hành', exams.length > 0);
+
+  if (exams.length > 0) {
+    const slug = exams[0]!.slug;
+    const paper = await getExamForPlayer(slug);
+
+    check(
+      `Đề "${paper.title}" đủ câu và đủ điểm`,
+      paper.questions.length === exams[0]!.questionCount &&
+        Math.abs(paper.questions.reduce((sum, q) => sum + q.maxPoints, 0) - paper.totalPoints) <
+          1e-6,
+    );
+
+    // Đề gửi cho người đang làm bài KHÔNG được chứa đáp án dưới bất kỳ dạng nào.
+    const paperJson = JSON.stringify(paper);
+    check(
+      'Đề gửi ra không kèm đáp án, lời giải hay barem',
+      !paperJson.includes('answerKey') &&
+        !paperJson.includes('solutionMd') &&
+        !paperJson.includes('rubric'),
+    );
+
+    const submitted = await submitMockAttempt({
+      slug,
+      userId: registered.userId,
+      answers: [
+        { number: 1, text: 'B', imageUrls: [] },
+        { number: 2, text: 'E', imageUrls: [] },
+        { number: 3, text: 'b.', imageUrls: [] },
+        { number: 4, text: 'E', imageUrls: [] },
+        { number: 5, text: 'D', imageUrls: [] },
+        { number: 6, text: '27 7/18', imageUrls: [] },
+        { number: 7, text: '45 độ', imageUrls: [] },
+        { number: 8, text: '9', imageUrls: [] },
+        { number: 10, text: '(8-4)/2', imageUrls: [] },
+      ],
+    });
+
+    // 5 câu trắc nghiệm (2đ) + 3 câu đáp số (4đ) + 1 câu biểu thức (4đ) = 26đ.
+    check(
+      'Phần máy chấm ra đúng 26 điểm, không sai một điểm nào',
+      Math.abs(submitted.autoScore - 26) < 1e-6,
+      `được ${submitted.autoScore}`,
+    );
+
+    const marked = await getAttemptResult(submitted.attemptId, {
+      id: registered.userId,
+      fullName: 'smoke',
+      email: null,
+      roles: ['STUDENT'],
+    });
+
+    check(
+      'Câu tự luận bỏ trắng được chấm 0 ngay, không phải chờ AI',
+      marked.answers
+        .filter((a) => a.gradingMode === 'ESSAY')
+        .every((a) => a.status === 'GRADED' && a.awarded === 0),
+    );
+    check(
+      'Trang kết quả có đáp án và lời giải mẫu (vì đã nộp bài)',
+      marked.answers.some((a) => a.solutionMd !== null && a.answerKeyDisplay !== null),
+    );
+    check(
+      'Học sinh khác KHÔNG xem được bài thi thử của người này',
+      await isBlocked(() =>
+        getAttemptResult(submitted.attemptId, {
+          id: second.userId,
+          fullName: 'khac',
+          email: null,
+          roles: ['STUDENT'],
+        }),
+      ),
+    );
+
+    console.log(`  · Bộ chấm AI đang dùng: ${marked.ai.label}`);
+  }
 
   // --- Tổng kết -------------------------------------------------------------
   console.log('\n' + '='.repeat(60));

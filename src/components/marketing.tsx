@@ -34,6 +34,7 @@ export { Crest, Wordmark };
 const SECTION_HREFS = [
   { href: '/ky-thi', copyKey: 'programs' as const },
   { href: '/khoa-hoc', copyKey: 'courses' as const },
+  { href: '/thi-thu', copyKey: 'mock' as const },
   { href: '/#cach-hoat-dong', copyKey: 'how' as const },
   { href: '/#phu-huynh', copyKey: 'parents' as const },
   { href: '/#cau-hoi', copyKey: 'faq' as const },
@@ -47,7 +48,14 @@ const SECTION_HREFS = [
 export interface ShellCopy {
   brandName: string;
   brandTagline: string;
-  links: { programs: string; courses: string; how: string; parents: string; faq: string };
+  links: {
+    programs: string;
+    courses: string;
+    mock: string;
+    how: string;
+    parents: string;
+    faq: string;
+  };
   ctaSignedIn: string;
   ctaLogin: string;
   ctaRegister: string;

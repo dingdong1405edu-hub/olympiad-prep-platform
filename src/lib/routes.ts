@@ -27,6 +27,11 @@ export const routes = {
   /** Trang xác nhận sau khi thoát — nơi API đăng xuất chuyển hướng tới. */
   loggedOut: () => '/dang-xuat',
 
+  // --- Thi thử chấm bằng AI (công khai, không cần đăng nhập) ---
+  mockExams: () => '/thi-thu',
+  mockExam: (slug: string) => `/thi-thu/${slug}`,
+  mockExamResult: (slug: string, attemptId: string) => `/thi-thu/${slug}/ket-qua/${attemptId}`,
+
   // --- Thanh toán ---
   checkout: (courseId: string) => `/thanh-toan/${courseId}`,
   checkoutResult: (orderCode: string) => `/thanh-toan/ket-qua/${orderCode}`,
@@ -52,6 +57,8 @@ export const routes = {
   teacherHome: () => '/giao-vien',
   teacherStudent: (enrollmentId: string) => `/giao-vien/hoc-sinh/${enrollmentId}`,
   teacherSession: (sessionId: string) => `/giao-vien/buoi-tu-van/${sessionId}`,
+  teacherMockExams: () => '/giao-vien/thi-thu',
+  teacherMockAttempt: (attemptId: string) => `/giao-vien/thi-thu/${attemptId}`,
 
   // --- Quản trị ---
   adminHome: () => '/quan-tri',
@@ -69,6 +76,8 @@ export const routes = {
   adminReports: () => '/quan-tri/bao-cao',
   adminConfig: () => '/quan-tri/cau-hinh',
   adminAudit: () => '/quan-tri/nhat-ky',
+  adminMockExams: () => '/quan-tri/thi-thu',
+  adminMockAttempt: (attemptId: string) => `/quan-tri/thi-thu/${attemptId}`,
 } as const;
 
 /** Tiền tố các khu vực cần đăng nhập — dùng bởi middleware. */
@@ -125,6 +134,18 @@ export const API = {
   solution: (planDayItemId: string) => `/api/v1/practice/${planDayItemId}/solution`,
   whyThisItem: (planDayItemId: string) => `/api/v1/practice/${planDayItemId}/why`,
   reportItem: '/api/v1/practice/report',
+
+  // Thi thử chấm bằng AI
+  exams: '/api/v1/exams',
+  exam: (slug: string) => `/api/v1/exams/${encodeURIComponent(slug)}`,
+  uploads: '/api/v1/uploads',
+  mockSubmit: '/api/v1/exam-attempts',
+  mockAttempt: (attemptId: string) => `/api/v1/exam-attempts/${attemptId}`,
+  /** `docLai = true` khi học sinh báo AI đọc sai chữ: bỏ transcript cũ, đọc ảnh lại. */
+  mockGrade: (attemptId: string, docLai = false) =>
+    `/api/v1/exam-attempts/${attemptId}/grade${docLai ? '?doc_lai=1' : ''}`,
+  mockAnswer: (attemptId: string, answerId: string) =>
+    `/api/v1/exam-attempts/${attemptId}/answers/${answerId}`,
 
   // AI
   aiDiagnosticComment: (attemptId: string) => `/api/v1/ai/diagnostic-comment/${attemptId}`,

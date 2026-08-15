@@ -41,6 +41,14 @@ export const RATE_LIMITS = {
   PAYMENT_STATUS: { limit: 40, windowSeconds: 60 },
   ANSWER: { limit: 240, windowSeconds: 60 },
   AI: { limit: 30, windowSeconds: 300 },
+  /** Một bài thi thử có tối đa 30 ảnh; để 60 là đủ chỗ chụp lại vài lần. */
+  UPLOAD: { limit: 60, windowSeconds: 300 },
+  /**
+   * Chấm tự luận: trình duyệt bắn 10 câu SONG SONG ngay khi nộp bài, cộng nút
+   * "Chấm lại câu này". Ngưỡng 30/phút của spec §6 vừa đủ cho một người nhưng
+   * chặn được kiểu gọi dồn — mỗi lời gọi tốn một lượt vision.
+   */
+  MOCK_GRADE: { limit: 30, windowSeconds: 60 },
 } as const satisfies Record<string, RateLimitOptions>;
 
 /** Tăng bộ đếm; ném 429 khi vượt ngưỡng. */

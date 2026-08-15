@@ -27,6 +27,7 @@ export async function SiteShell({
     links: {
       programs: t('nav.link.programs'),
       courses: t('nav.link.courses'),
+      mock: t('nav.link.mock'),
       how: t('nav.link.how'),
       parents: t('nav.link.parents'),
       faq: t('nav.link.faq'),

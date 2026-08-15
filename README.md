@@ -80,6 +80,8 @@ Mật khẩu chung: giá trị của `SEED_DEFAULT_PASSWORD` trong `.env` (mặc
 | `npm run db:push` | Đồng bộ schema vào DB (dev) |
 | `npm run db:reset` | **Xóa sạch** rồi tạo lại toàn bộ bảng |
 | `npm run db:seed` | Nạp dữ liệu mẫu |
+| `npm run db:seed:exam` | Nạp riêng đề thi thử (`prisma/seed-data/*.json`) |
+| `npm run smoke` | Kiểm thử trọn vòng nghiệp vụ trên DB phát triển |
 | `npm run db:studio` | Mở Prisma Studio để xem dữ liệu |
 | `npm run payos:webhook` | Đăng ký URL webhook với PayOS (chạy sau khi deploy) |
 
@@ -142,6 +144,54 @@ QR chạy đúng cả ở localhost, nơi cổng không thể gọi ngược và
 | Mã QR hết hạn giữa chừng | Xin cổng cấp mã mới cho **cùng đơn**; mã cũ lưu vào `previousOrderRefs` để webhook về muộn vẫn khớp được đơn |
 | Webhook bắn trùng | Đi chung `settlePayment` — giành `idempotencyKey` trong transaction, quyền truy cập chỉ cấp một lần |
 | Khách trả thiếu tiền | Đối soát dùng số tiền **cổng đã nhận**, lệch thì đánh dấu `AMOUNT_MISMATCH` và **không** kích hoạt |
+
+---
+
+## 2c. Thi thử chấm điểm bằng AI (`/thi-thu`)
+
+Vào thẳng `/thi-thu` là có đề thật để làm — **không cần đăng nhập, không cần mua
+khóa**. Làm bài có đồng hồ đếm ngược, câu tự luận thì **chụp ảnh bài giải viết
+tay**, nộp xong nhận điểm từng câu kèm nhận xét tiếng Việt.
+
+### Chấm hai tầng
+
+| Kiểu câu | Ai chấm | Kết quả |
+|---|---|---|
+| Trắc nghiệm, đáp số, biểu thức, lưới | **Code**, ngay lúc nộp | Đúng tuyệt đối, không tốn tiền, không chờ mạng |
+| Tự luận | **AI**, theo barem có sẵn | Điểm từng tiêu chí + trích dẫn bằng chứng từ bài làm |
+
+Đáp số so **tương đương toán học**: `27 7/18`, `493/18`, `27,388889` và `45 độ`
+đều được chấp nhận. Câu "tạo số 2 từ ba chữ số 2, 4, 8" có verifier riêng vì có
+vô số đáp án đúng — và có ô xem trước ngay khi học sinh đang gõ.
+
+### Gắn khóa AI (làm sau cũng được)
+
+Chỉ cần **một** trong ba khóa, không phải sửa dòng mã nào:
+
+```bash
+# .env — chọn một
+GROQ_API_KEY="gsk_..."          # rẻ và nhanh nhất
+OPENAI_API_KEY="sk-..."
+ANTHROPIC_API_KEY="sk-ant-..."
+```
+
+Hệ thống tự dò theo thứ tự `groq → openai → anthropic`. Ép đích danh bằng
+`MOCK_AI_PROVIDER=groq|openai|anthropic`. Tên model đổi được bằng
+`GROQ_MODEL_VISION` / `OPENAI_MODEL_GRADE`… — **model đọc ảnh phải là model có
+thị giác**.
+
+**Chưa gắn khóa thì sao:** phần trắc nghiệm/đáp số vẫn chấm đầy đủ; câu tự luận
+ghi rõ "chưa chấm được" kèm nút *Chấm lại câu này*. Hệ thống **không bịa điểm**.
+Muốn xem trọn luồng bằng điểm mẫu thì đặt `MOCK_AI_PROVIDER=mock` — mọi chỗ hiển
+thị đều dán nhãn "chế độ thử".
+
+### Chấm tay
+
+Giáo viên vào `/giao-vien/thi-thu`, quản trị vào `/quan-tri/thi-thu`. Cột **cần
+xem lại** gom đúng những câu AI tự khai là không chắc. Sửa điểm câu nào thì tổng
+điểm cập nhật ngay và ghi vào nhật ký.
+
+Chi tiết kỹ thuật và những chỗ làm khác spec: [IMPLEMENTATION_NOTES.md](IMPLEMENTATION_NOTES.md).
 
 ---
 

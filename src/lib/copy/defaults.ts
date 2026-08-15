@@ -78,6 +78,7 @@ const NAV_GROUP: CopyGroup = {
     f('nav.brand.tagline', 'Dòng phụ dưới tên thương hiệu', 'Ôn luyện cá nhân hóa'),
     f('nav.link.programs', 'Menu — Kỳ thi', 'Kỳ thi'),
     f('nav.link.courses', 'Menu — Khóa học', 'Khóa học'),
+    f('nav.link.mock', 'Menu — Thi thử', 'Thi thử'),
     f('nav.link.how', 'Menu — Cách hoạt động', 'Cách hoạt động'),
     f('nav.link.parents', 'Menu — Cho phụ huynh', 'Cho phụ huynh'),
     f('nav.link.faq', 'Menu — Câu hỏi', 'Câu hỏi'),
