@@ -69,10 +69,29 @@ export function enforceRateLimit(key: string, options: RateLimitOptions): void {
   }
 }
 
-/** Lấy IP client từ header proxy (fallback 'unknown'). */
+/**
+ * Lấy IP client từ header proxy (fallback 'unknown').
+ *
+ * Lấy phần tử CUỐI của `X-Forwarded-For`, không phải phần tử đầu.
+ *
+ * Mỗi proxy nối thêm IP nó nhìn thấy vào cuối chuỗi, nên phần tử cuối do proxy
+ * gần ta nhất ghi và là phần tử duy nhất không giả được. Phần tử đầu thì client
+ * tự đặt: chỉ cần gửi kèm `X-Forwarded-For: 1.2.3.4` là mỗi request mang một
+ * "IP" khác nhau, và toàn bộ giới hạn tần suất — kể cả chốt chặn đăng nhập sai
+ * mật khẩu — trở thành vô hiệu.
+ *
+ * Đúng với kiến trúc hiện tại: một lớp proxy của Railway đứng trước ứng dụng.
+ * Thêm tầng proxy nữa (CDN chẳng hạn) thì phải đếm lùi thêm bấy nhiêu bậc.
+ */
 export function clientIp(request: Request): string {
   const forwarded = request.headers.get('x-forwarded-for');
-  if (forwarded) return forwarded.split(',')[0]!.trim();
+  if (forwarded) {
+    const hops = forwarded
+      .split(',')
+      .map((part) => part.trim())
+      .filter((part) => part !== '');
+    if (hops.length > 0) return hops[hops.length - 1]!;
+  }
   return request.headers.get('x-real-ip') ?? 'unknown';
 }
 

@@ -102,7 +102,20 @@ QUY TẮC CHẤM:
 
 Không được cho điểm vượt quá max_points của tiêu chí. Không được cho điểm âm.
 
-Trả lời DUY NHẤT bằng một object JSON theo đúng cấu trúc được yêu cầu, không kèm lời dẫn.`;
+Trả lời DUY NHẤT bằng một object JSON, không kèm lời dẫn, dùng ĐÚNG bốn khóa
+tiếng Anh sau — không dịch, không đổi tên, không thêm khóa bao ngoài:
+
+{
+  "criteria": [
+    { "code": "c1", "awarded": 2, "evidence": "trích nguyên văn bài làm", "reason": "vì sao" }
+  ],
+  "confidence": 0.8,
+  "needs_human_review": false,
+  "feedback_vi": "nhận xét cho học sinh"
+}
+
+"code" phải trùng đúng mã tiêu chí in trong BAREM. Thiếu bất kỳ khóa nào trong bốn
+khóa trên thì kết quả bị loại và phải chấm lại.`;
 
 function buildGradeUser(question: EssayQuestionInput, transcript: string): string {
   const rubricText = question.rubric
@@ -152,6 +165,23 @@ const GRADE_JSON_SHAPE = {
   },
 } as const;
 
+/**
+ * Cấu trúc BẮT BUỘC của lượt chấm.
+ *
+ * Bốn khóa này phải khớp đúng `required` của `GRADE_JSON_SHAPE` ở trên — và phải
+ * là BẮT BUỘC thật.
+ *
+ * Trước đây mọi trường đều có `.default()`, nghĩa là không còn trường nào bắt
+ * buộc: `safeParse({})` cũng thành công. Model trả về `{"tieu_chi": [...]}` hay
+ * `{"scores": [...]}` — chuyện thường gặp với model không hỗ trợ structured
+ * output — vẫn được coi là "chấm xong", `criteria` rỗng, và học sinh nhận 0 điểm
+ * mang nhãn GRADED. Sai cấu trúc thì phải TRƯỢT để vòng lặp ở dưới nhắc lại một
+ * lần, rồi mới chuyển FAILED (đúng spec §11). Chấm hỏng còn sửa được; chấm sai
+ * mà không ai biết thì không.
+ *
+ * `evidence` và `reason` vẫn được phép thiếu: chúng chỉ là lời giải thích, thiếu
+ * thì bài vẫn chấm được, không đáng để đánh hỏng cả lượt.
+ */
 const gradeReplySchema = z.object({
   criteria: z
     .array(
@@ -162,10 +192,10 @@ const gradeReplySchema = z.object({
         reason: z.string().optional().default(''),
       }),
     )
-    .default([]),
-  confidence: z.coerce.number().optional().default(0.5),
-  needs_human_review: z.coerce.boolean().optional().default(false),
-  feedback_vi: z.string().optional().default(''),
+    .min(1, 'Lượt chấm phải nêu ít nhất một tiêu chí.'),
+  confidence: z.coerce.number(),
+  needs_human_review: z.coerce.boolean(),
+  feedback_vi: z.string(),
 });
 
 // ---------------------------------------------------------------------------

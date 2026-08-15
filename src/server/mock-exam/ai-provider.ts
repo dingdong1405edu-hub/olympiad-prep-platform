@@ -277,9 +277,39 @@ function adjustOpenAiBody(
     delete next.temperature;
     return next;
   }
+  // Hạ dần: json_schema → json_object → bỏ hẳn. Groq và các cổng trung gian hỗ
+  // trợ tới đâu thì dừng ở đó, thay vì hỏng ngay từ lượt đầu.
   if (/response_format|json_object|json_schema/i.test(message) && 'response_format' in next) {
+    const current = next.response_format as { type?: string } | undefined;
+    if (current?.type === 'json_schema') {
+      next.response_format = { type: 'json_object' };
+      return next;
+    }
     delete next.response_format;
     return next;
+  }
+  return null;
+}
+
+/**
+ * Bỏ bớt tham số mà model Claude từ chối.
+ *
+ * Mỗi đời model lại rút đi một thứ: `temperature`/`top_p`/`top_k` biến mất từ
+ * Opus 4.7, `thinking: {type:'disabled'}` không còn hợp lệ trên Fable 5. Vì tên
+ * model nằm trong biến môi trường nên không thể khóa cứng danh sách tham số theo
+ * model — cứ nghe máy chủ nói thiếu gì thì bỏ đúng thứ đó rồi thử lại.
+ */
+function adjustAnthropicBody(
+  body: Record<string, unknown>,
+  message: string,
+): Record<string, unknown> | null {
+  const next = { ...body };
+
+  for (const key of ['temperature', 'top_p', 'top_k', 'thinking'] as const) {
+    if (key in next && new RegExp(key, 'i').test(message)) {
+      delete next[key];
+      return next;
+    }
   }
   return null;
 }
@@ -306,6 +336,16 @@ async function callOpenAiCompatible(
     });
   }
 
+  /**
+   * Gửi HẲN lược đồ chứ không chỉ xin "một object JSON nào đó".
+   *
+   * `{type:'json_object'}` chỉ bắt model trả JSON hợp lệ — nó vẫn được tự đặt tên
+   * khóa. Model trả `{"tieu_chi": […]}` thay vì `{"criteria": […]}` là JSON hợp lệ
+   * nhưng sai hợp đồng, và hậu quả rơi đúng vào chỗ tệ nhất: bài của học sinh bị
+   * ghi 0 điểm dưới danh nghĩa "AI đã chấm". Model nào chưa hỗ trợ `json_schema`
+   * thì `adjustOpenAiBody` sẽ hạ dần xuống `json_object` rồi bỏ hẳn — nên phần
+   * nhắc tên khóa trong prompt vẫn là chốt chặn cuối.
+   */
   let body: Record<string, unknown> = {
     model,
     temperature: 0,
@@ -314,7 +354,14 @@ async function callOpenAiCompatible(
       { role: 'system', content: call.system },
       { role: 'user', content },
     ],
-    ...(json ? { response_format: { type: 'json_object' } } : {}),
+    ...(json
+      ? {
+          response_format: {
+            type: 'json_schema',
+            json_schema: { name: json.name, schema: json.schema, strict: false },
+          },
+        }
+      : {}),
   };
 
   const startedAt = Date.now();
@@ -390,10 +437,19 @@ async function callAnthropic(
   }
   content.push({ type: 'text', text: call.user });
 
-  const body: Record<string, unknown> = {
+  /**
+   * KHÔNG gửi `temperature`.
+   *
+   * Các model Claude đời hiện tại (Sonnet 5, Opus 5, Fable 5, Opus 4.7/4.8) đã BỎ
+   * hẳn `temperature`/`top_p`/`top_k`: gửi giá trị khác mặc định là 400, tức là
+   * cắm khóa Anthropic vào thì MỌI lượt chấm đều hỏng. Trước đây file này gửi
+   * `temperature: 0` để chấm cho tất định — thứ vốn dĩ chưa bao giờ được bảo đảm,
+   * kể cả trên model cũ. Tính tất định bây giờ đến từ barem và bước hậu kiểm bằng
+   * mã nguồn, không đến từ tham số lấy mẫu.
+   */
+  let body: Record<string, unknown> = {
     model,
     max_tokens: call.maxTokens ?? DEFAULT_MAX_TOKENS,
-    temperature: 0,
     system: call.system,
     messages: [{ role: 'user', content }],
     ...(json
@@ -405,12 +461,30 @@ async function callAnthropic(
   };
 
   const startedAt = Date.now();
-  const payload = await postJson(
-    `${baseUrl}/messages`,
-    { 'x-api-key': apiKey, 'anthropic-version': '2023-06-01' },
-    body,
-    timeoutMs,
-  );
+  let payload: Record<string, unknown> | null = null;
+
+  // Dò tham số như phía OpenAI: tên model do người dùng đặt trong biến môi
+  // trường, mà mỗi đời model lại bỏ bớt một tham số khác nhau. Thà thử lại vài
+  // lượt còn hơn bắt chủ hệ thống đọc log để đoán tham số nào không được nhận.
+  for (let attempt = 0; attempt < 3 && payload === null; attempt += 1) {
+    try {
+      payload = await postJson(
+        `${baseUrl}/messages`,
+        { 'x-api-key': apiKey, 'anthropic-version': '2023-06-01' },
+        body,
+        timeoutMs,
+      );
+    } catch (error) {
+      if (!(error instanceof AiProviderError) || error.status !== 400) throw error;
+      const adjusted = adjustAnthropicBody(body, error.message);
+      if (!adjusted) throw error;
+      body = adjusted;
+    }
+  }
+
+  if (payload === null) {
+    throw new AiProviderError('Không thỏa được tham số mà model Claude chấp nhận.', 400, false);
+  }
 
   const blocks = (payload.content ?? []) as Record<string, unknown>[];
   let text = '';

@@ -531,6 +531,24 @@ export async function gradeMockEssay(input: {
     throw ApiError.badRequest('Câu này không chấm bằng AI.');
   }
 
+  /**
+   * Giáo viên đã sửa tay thì học sinh KHÔNG được chấm lại.
+   *
+   * Nút "Chấm lại câu này" nằm ngay trên trang kết quả của học sinh, và đường
+   * ghi ở dưới xóa sạch `overriddenById`/`overriddenAt` rồi ghi đè điểm bằng
+   * điểm máy. Nghĩa là một em bị giáo viên hạ điểm chỉ cần bấm một nút là quyết
+   * định chấm tay biến mất — không cảnh báo, không dấu vết trên màn hình.
+   *
+   * Nhân sự vẫn chấm lại được: đó là thao tác có chủ đích của người có thẩm
+   * quyền, và có nhật ký.
+   */
+  if (answer.overriddenById !== null && !isStaff(input.viewer)) {
+    throw ApiError.forbidden(
+      'Câu này đã được giáo viên chấm tay nên không chấm lại bằng AI được. ' +
+        'Nếu em thấy điểm chưa đúng, hãy báo lại với giáo viên.',
+    );
+  }
+
   const images = await loadImages(answer.imageUrls);
 
   // Học sinh gõ thẳng lời giải (câu 9 là dạng này) → chính chữ đó là transcript,

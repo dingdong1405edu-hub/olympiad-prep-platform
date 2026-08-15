@@ -158,12 +158,33 @@ describe('phương ngữ OpenAI (dùng chung cho Groq)', () => {
     });
   });
 
-  it('bật chế độ JSON khi cần cấu trúc', async () => {
+  it('gửi HẲN lược đồ chứ không chỉ xin một object JSON bất kỳ', async () => {
     useOpenAi();
     replies = [openAiReply('{"criteria":[],"confidence":1,"needs_human_review":false,"feedback_vi":"ok"}')];
 
+    const schema = { type: 'object', properties: { criteria: { type: 'array' } } };
+    await callAiJson({ system: 's', user: 'u' }, { name: 'g', description: 'd', schema });
+
+    // Chỉ xin "JSON hợp lệ" thì model được tự đặt tên khóa, và một object đúng
+    // cú pháp nhưng sai tên khóa sẽ lọt qua thành 0 điểm oan cho học sinh.
+    expect(received[0]!.body.response_format).toEqual({
+      type: 'json_schema',
+      json_schema: { name: 'g', schema, strict: false },
+    });
+  });
+
+  it('model chưa hỗ trợ json_schema thì hạ xuống json_object rồi mới bỏ hẳn', async () => {
+    useOpenAi();
+    replies = [
+      { status: 400, body: { error: { message: 'response_format json_schema is not supported' } } },
+      openAiReply('{"criteria":[],"confidence":1,"needs_human_review":false,"feedback_vi":"ok"}'),
+    ];
+
     await callAiJson({ system: 's', user: 'u' }, { name: 'g', description: 'd', schema: {} });
-    expect(received[0]!.body.response_format).toEqual({ type: 'json_object' });
+
+    expect(received).toHaveLength(2);
+    expect(received[0]!.body.response_format).toMatchObject({ type: 'json_schema' });
+    expect(received[1]!.body.response_format).toEqual({ type: 'json_object' });
   });
 
   it('model chê max_tokens thì đổi sang max_completion_tokens rồi gọi lại', async () => {
@@ -233,6 +254,13 @@ describe('phương ngữ Anthropic', () => {
     expect(call.headers['x-api-key']).toBe('test-key');
     expect(call.headers['anthropic-version']).toBe('2023-06-01');
     expect(call.body.tool_choice).toEqual({ type: 'tool', name: 'submit_grade' });
+
+    // Các model Claude đời hiện tại (Sonnet 5, Opus 5, Fable 5) đã BỎ tham số
+    // lấy mẫu: gửi kèm là 400, tức là cắm khóa Anthropic vào thì mọi lượt chấm
+    // đều hỏng ngay từ câu đầu tiên.
+    expect(call.body).not.toHaveProperty('temperature');
+    expect(call.body).not.toHaveProperty('top_p');
+    expect(call.body).not.toHaveProperty('top_k');
 
     const content = (call.body.messages as { content: Record<string, unknown>[] }[])[0]!.content;
     expect(content[0]).toMatchObject({
@@ -369,7 +397,7 @@ describe('gradeEssayAnswer — hai lượt gọi và hậu kiểm', () => {
     });
 
     expect(received).toHaveLength(1);
-    expect(received[0]!.body.response_format).toEqual({ type: 'json_object' });
+    expect(received[0]!.body.response_format).toMatchObject({ type: 'json_schema' });
   });
 
   it('transcript có chỗ không đọc được → tự gắn cờ nhờ người xem lại', async () => {
@@ -403,6 +431,51 @@ describe('gradeEssayAnswer — hai lượt gọi và hậu kiểm', () => {
   it('model trả sai cấu trúc hai lần thì báo hỏng, không bịa điểm', async () => {
     useOpenAi();
     replies = [openAiReply('bài làm'), openAiReply('xin lỗi tôi không chấm được')];
+
+    await expect(
+      gradeEssayAnswer({
+        question: QUESTION,
+        images: [{ mediaType: 'image/jpeg', base64: 'QUJD' }],
+      }),
+    ).rejects.toThrow(/sai cấu trúc/);
+  });
+
+  /**
+   * Bảo vệ đúng cái lỗi tệ nhất mà tính năng này có thể mắc: JSON đúng cú pháp
+   * nhưng SAI TÊN KHÓA từng lọt qua hậu kiểm, cho ra 0 điểm mang nhãn "AI đã
+   * chấm". Chấm hỏng thì học sinh bấm chấm lại; chấm sai mà không ai biết thì
+   * không.
+   */
+  it('JSON hợp lệ nhưng sai tên khóa KHÔNG được tính là chấm xong', async () => {
+    useOpenAi();
+    const wrongKeys = JSON.stringify({
+      tieu_chi: [{ ma: 'c1', diem: 2 }],
+      tong: 7,
+      nhan_xet: 'Em làm đúng hết',
+    });
+    // Lượt đọc ảnh, rồi hai lượt chấm đều trả sai cấu trúc.
+    replies = [openAiReply('2^6 = 64'), openAiReply(wrongKeys), openAiReply(wrongKeys)];
+
+    await expect(
+      gradeEssayAnswer({
+        question: QUESTION,
+        images: [{ mediaType: 'image/jpeg', base64: 'QUJD' }],
+      }),
+    ).rejects.toThrow(/sai cấu trúc/);
+
+    // Có nhắc lại cấu trúc ở lượt hai chứ không bỏ cuộc ngay.
+    expect(received).toHaveLength(3);
+    expect(String(received[2]!.body.messages)).not.toBe('');
+  });
+
+  it('thiếu criteria thì cũng bị loại, không âm thầm cho 0 điểm', async () => {
+    useOpenAi();
+    const noCriteria = JSON.stringify({
+      confidence: 0.9,
+      needs_human_review: false,
+      feedback_vi: 'Tốt',
+    });
+    replies = [openAiReply('2^6 = 64'), openAiReply(noCriteria), openAiReply(noCriteria)];
 
     await expect(
       gradeEssayAnswer({

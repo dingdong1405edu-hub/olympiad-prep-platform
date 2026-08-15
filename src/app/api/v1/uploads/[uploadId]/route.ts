@@ -1,4 +1,6 @@
-import { readUpload } from '@/server/mock-exam/uploads';
+import { getSession } from '@/lib/auth';
+import { ApiError } from '@/lib/http';
+import { readUploadForViewer } from '@/server/mock-exam/uploads';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -11,13 +13,24 @@ type Ctx = { params: Promise<{ uploadId: string }> };
  * KHÔNG dùng `ok()` như các route khác: đây là ảnh nhị phân, phải trả thẳng
  * bytes để thẻ <img> và model vision đọc được.
  *
- * Ai có link thì xem được — link chứa cuid ngẫu nhiên. Đánh đổi này ghi trong
- * IMPLEMENTATION_NOTES.md cùng lý do: bài làm của khách chưa đăng nhập cũng
- * phải xem lại được.
+ * Quyền xem do `readUploadForViewer` quyết định: ảnh của bài đã gắn vào một tài
+ * khoản có danh tính thì chỉ chủ nhân hoặc nhân sự đọc được; ảnh của khách chưa
+ * đăng nhập thì link là chìa khóa (đánh đổi ghi trong IMPLEMENTATION_NOTES §8).
  */
 export async function GET(_request: Request, context: Ctx) {
   const { uploadId } = await context.params;
-  const upload = await readUpload(uploadId);
+  const viewer = await getSession();
+
+  let upload: Awaited<ReturnType<typeof readUploadForViewer>>;
+  try {
+    upload = await readUploadForViewer(uploadId, viewer);
+  } catch (error) {
+    // Route này trả bytes chứ không trả JSON nên phải tự dịch lỗi sang HTTP.
+    if (error instanceof ApiError) {
+      return new Response(error.message, { status: error.status });
+    }
+    throw error;
+  }
 
   if (!upload) {
     return new Response('Không tìm thấy ảnh.', { status: 404 });
