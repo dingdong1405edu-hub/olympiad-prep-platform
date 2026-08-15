@@ -173,6 +173,33 @@ export interface PlatformConfig {
 
 // ---------------------------------------------------------------------------
 
+/**
+ * Đọc biến môi trường dạng chuỗi — biến ĐỂ TRỐNG coi như chưa đặt.
+ *
+ * `process.env.X ?? 'mặc định'` chỉ chặn được trường hợp KHÔNG có biến. Dán một
+ * khối biến vào bảng điều khiển Railway thì các dòng bỏ trống vẫn tồn tại với
+ * giá trị `''`, và `''` lọt qua `??` để trở thành tên model rỗng.
+ */
+function textEnv(name: string, fallback: string): string {
+  const raw = (process.env[name] ?? '').trim();
+  return raw === '' ? fallback : raw;
+}
+
+/**
+ * Đọc biến môi trường dạng số — trống, sai kiểu hoặc ngoài khoảng thì bỏ qua.
+ *
+ * `Number('')` bằng 0 chứ không phải NaN. Một dòng `GRADING_TIMEOUT_MS=` bỏ
+ * trống vì thế hóa thành thời hạn 0ms: mọi lượt chấm bị hủy trước cả khi kịp
+ * gửi đi, mà thông báo lại là "AI không phản hồi" — người vận hành đi tìm lỗi ở
+ * nhà cung cấp trong khi lỗi nằm ở một ô nhập liệu để trống.
+ */
+function numberEnv(name: string, fallback: number, min: number): number {
+  const raw = (process.env[name] ?? '').trim();
+  if (raw === '') return fallback;
+  const value = Number(raw);
+  return Number.isFinite(value) && value >= min ? value : fallback;
+}
+
 export const DEFAULT_CONFIG: PlatformConfig = {
   assessment: {
     diagnosticItemCount: 15,
@@ -248,7 +275,7 @@ export const DEFAULT_CONFIG: PlatformConfig = {
     currency: 'VND',
     accessDurationDays: 180,
     allowManualActivation: true,
-    gateway: process.env.PAYMENT_GATEWAY ?? 'MANUAL',
+    gateway: textEnv('PAYMENT_GATEWAY', 'MANUAL'),
   },
 
   notification: {
@@ -269,8 +296,8 @@ export const DEFAULT_CONFIG: PlatformConfig = {
 
   ai: {
     enabled: process.env.AI_ENABLED !== 'false',
-    model: process.env.AI_MODEL ?? 'claude-sonnet-5',
-    cheapModel: process.env.AI_MODEL_CHEAP ?? 'claude-haiku-4-5-20251001',
+    model: textEnv('AI_MODEL', 'claude-sonnet-5'),
+    cheapModel: textEnv('AI_MODEL_CHEAP', 'claude-haiku-4-5-20251001'),
     promptVersion: 'v1',
     maxOutputTokens: 1600,
     timeoutMs: 30_000,
@@ -278,9 +305,9 @@ export const DEFAULT_CONFIG: PlatformConfig = {
   },
 
   mockExam: {
-    confidenceReviewThreshold: Number(process.env.CONFIDENCE_REVIEW_THRESHOLD ?? 0.7),
-    gradingTimeoutMs: Number(process.env.GRADING_TIMEOUT_MS ?? 90_000),
-    gradingMaxRetries: Number(process.env.GRADING_MAX_RETRIES ?? 2),
+    confidenceReviewThreshold: numberEnv('CONFIDENCE_REVIEW_THRESHOLD', 0.7, 0),
+    gradingTimeoutMs: numberEnv('GRADING_TIMEOUT_MS', 90_000, 1_000),
+    gradingMaxRetries: numberEnv('GRADING_MAX_RETRIES', 2, 0),
     maxImagesPerQuestion: 3,
     maxImageBytes: 6 * 1024 * 1024,
     parallelGradeLimit: 4,

@@ -86,8 +86,28 @@ const PROVIDERS: Record<Exclude<MockAiProvider, 'mock'>, ProviderSpec> = {
   },
 };
 
-/** Thứ tự dò khi `MOCK_AI_PROVIDER` để trống: khóa nào có thì dùng khóa đó. */
-const AUTO_ORDER: Exclude<MockAiProvider, 'mock'>[] = ['groq', 'openai', 'anthropic'];
+/**
+ * Thứ tự dò khi `MOCK_AI_PROVIDER` để trống: khóa nào có thì dùng khóa đó —
+ * nhưng HAI LƯỢT DÒ THEO HAI THỨ TỰ KHÁC NHAU.
+ *
+ * Lượt chấm chỉ đọc chữ nên nhà nào cũng làm được: xếp Groq lên đầu cho nhanh
+ * và rẻ. Lượt đọc ảnh thì không: rất nhiều tài khoản Groq KHÔNG có model nhìn
+ * ảnh nào (tài khoản của chủ hệ thống này là một ví dụ). Nếu cả hai lượt cùng
+ * dò theo một thứ tự, thì gắn đủ cả hai khóa lại hỏng đúng lượt quan trọng
+ * nhất — Groq được chọn cho ảnh và trả 404 — trong khi khóa OpenAI nằm ngay đó
+ * mà không ai dùng tới. Xếp OpenAI/Anthropic lên trước cho lượt ảnh chữa đúng
+ * chuyện đó, và Groq vẫn ở cuối hàng để tài khoản chỉ có mỗi khóa Groq thì
+ * vẫn được thử.
+ *
+ * Đặt hẳn `GROQ_MODEL_VISION` = tuyên bố tài khoản mình CÓ model nhìn ảnh, khi
+ * đó tôn trọng ý người dùng và trả Groq về đầu hàng.
+ */
+function autoOrder(useCase: AiUseCase | undefined): Exclude<MockAiProvider, 'mock'>[] {
+  if (useCase !== 'vision' || env('GROQ_MODEL_VISION') !== '') {
+    return ['groq', 'openai', 'anthropic'];
+  }
+  return ['openai', 'anthropic', 'groq'];
+}
 
 export interface ResolvedProvider {
   provider: MockAiProvider;
@@ -171,7 +191,7 @@ export function resolveProvider(useCase?: AiUseCase): ResolvedProvider {
       : describe(requested);
   }
 
-  for (const name of AUTO_ORDER) {
+  for (const name of autoOrder(useCase)) {
     if (env(PROVIDERS[name].apiKeyEnv) !== '') return describe(name);
   }
   return NO_KEY_PROVIDER;

@@ -67,6 +67,9 @@ afterEach(() => {
   delete process.env.ANTHROPIC_API_KEY;
   delete process.env.ANTHROPIC_BASE_URL;
   delete process.env.OPENAI_MODEL_VISION;
+  delete process.env.GROQ_MODEL_VISION;
+  delete process.env.MOCK_AI_PROVIDER_VISION;
+  delete process.env.MOCK_AI_PROVIDER_GRADE;
 });
 
 function useOpenAi(): void {
@@ -126,6 +129,43 @@ describe('resolveProvider', () => {
     process.env.OPENAI_API_KEY = 'test';
     process.env.OPENAI_MODEL_VISION = 'model-moi-nam-sau';
     expect(resolveProvider().visionModel).toBe('model-moi-nam-sau');
+  });
+
+  /**
+   * Đây là tình huống của chính người vận hành hệ thống: dán cả hai khóa vào
+   * bảng biến môi trường rồi thôi. Nếu lượt đọc ảnh cũng dò theo thứ tự của
+   * lượt chấm thì Groq thắng, mà tài khoản Groq lại không có model nhìn ảnh —
+   * hỏng đúng lượt quyết định, trong khi khóa OpenAI nằm ngay đó.
+   */
+  it('có cả hai khóa: lượt chấm đi Groq cho rẻ, lượt đọc ảnh đi OpenAI', () => {
+    process.env.GROQ_API_KEY = 'gsk_test';
+    process.env.OPENAI_API_KEY = 'sk_test';
+    expect(resolveProvider('grade').provider).toBe('groq');
+    expect(resolveProvider('vision').provider).toBe('openai');
+  });
+
+  it('chỉ có mỗi khóa Groq thì lượt đọc ảnh vẫn thử Groq chứ không bỏ cuộc', () => {
+    process.env.GROQ_API_KEY = 'gsk_test';
+    expect(resolveProvider('vision').provider).toBe('groq');
+    expect(resolveProvider('vision').live).toBe(true);
+  });
+
+  it('đặt GROQ_MODEL_VISION = tuyên bố có model nhìn ảnh, Groq trở lại đầu hàng', () => {
+    process.env.GROQ_API_KEY = 'gsk_test';
+    process.env.OPENAI_API_KEY = 'sk_test';
+    process.env.GROQ_MODEL_VISION = 'model-nhin-anh-cua-toi';
+    const vision = resolveProvider('vision');
+    expect(vision.provider).toBe('groq');
+    expect(vision.visionModel).toBe('model-nhin-anh-cua-toi');
+  });
+
+  it('chỉ định đích danh cho từng lượt vẫn đè lên mọi thứ tự tự dò', () => {
+    process.env.GROQ_API_KEY = 'gsk_test';
+    process.env.OPENAI_API_KEY = 'sk_test';
+    process.env.MOCK_AI_PROVIDER_VISION = 'groq';
+    process.env.MOCK_AI_PROVIDER_GRADE = 'openai';
+    expect(resolveProvider('vision').provider).toBe('groq');
+    expect(resolveProvider('grade').provider).toBe('openai');
   });
 });
 
