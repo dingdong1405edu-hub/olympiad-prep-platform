@@ -4,6 +4,7 @@ import { requireTeacher } from '@/lib/auth';
 import { ApiError } from '@/lib/http';
 import { routes } from '@/lib/routes';
 import { getAttemptResult } from '@/server/mock-exam/service';
+import { getResultAdvice } from '@/server/mock-exam/advice';
 import { PageHeader } from '@/components/ui';
 import { ResultView } from '@/app/thi-thu/[slug]/ket-qua/[attemptId]/result-view';
 
@@ -21,6 +22,7 @@ export default async function TeacherMockAttemptPage({
 
   try {
     const result = await getAttemptResult(attemptId, session);
+    const advice = await getResultAdvice(result, session);
     return (
       <>
         <PageHeader
@@ -36,7 +38,7 @@ export default async function TeacherMockAttemptPage({
             </Link>
           }
         />
-        <ResultView result={result} />
+        <ResultView result={result} advice={advice} />
       </>
     );
   } catch (error) {

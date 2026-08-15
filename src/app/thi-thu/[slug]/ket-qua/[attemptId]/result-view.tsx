@@ -17,8 +17,10 @@ import Link from 'next/link';
 import { apiPatch, apiPost, ApiClientError } from '@/lib/client';
 import { API, routes } from '@/lib/routes';
 import type { AttemptResult, ResultAnswer } from '@/server/mock-exam/service';
+import type { ResultAdvice } from '@/server/mock-exam/advice';
 import { Alert, Badge, Button, Card, ProgressBar, cx } from '@/components/ui';
 import { RichText } from '@/components/rich-text';
+import { AdvicePanel } from './advice-panel';
 
 function scoreTone(ratio: number): 'success' | 'warn' | 'danger' {
   if (ratio >= 0.7) return 'success';
@@ -26,7 +28,17 @@ function scoreTone(ratio: number): 'success' | 'warn' | 'danger' {
   return 'danger';
 }
 
-export function ResultView({ result }: { result: AttemptResult }) {
+export function ResultView({
+  result,
+  advice = null,
+}: {
+  result: AttemptResult;
+  /**
+   * Xếp học lực + đề xuất khóa học. Để tùy chọn vì cùng một component này còn
+   * dùng lại ở màn chấm bài của giáo viên và quản trị.
+   */
+  advice?: ResultAdvice | null;
+}) {
   const router = useRouter();
   const [busyQuestion, setBusyQuestion] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -125,6 +137,9 @@ export function ResultView({ result }: { result: AttemptResult }) {
           {error}
         </Alert>
       ) : null}
+
+      {/* ---------------- Học lực + học tiếp gì ---------------- */}
+      {advice ? <AdvicePanel advice={advice} /> : null}
 
       {/* ---------------- Từng câu ---------------- */}
       <div className="mt-6 space-y-3">

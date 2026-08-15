@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import { getSession } from '@/lib/auth';
 import { ApiError } from '@/lib/http';
 import { getAttemptResult } from '@/server/mock-exam/service';
+import { getResultAdvice } from '@/server/mock-exam/advice';
 import { SiteShell } from '@/components/site-shell';
 import { ResultView } from './result-view';
 
@@ -23,10 +24,11 @@ export default async function MockExamResultPage({
 
   try {
     const result = await getAttemptResult(attemptId, session);
+    const advice = await getResultAdvice(result, session);
     return (
       <SiteShell signedIn={Boolean(session)}>
         <div className="bg-ink-50 pt-24 pb-12">
-          <ResultView result={result} />
+          <ResultView result={result} advice={advice} />
         </div>
       </SiteShell>
     );
