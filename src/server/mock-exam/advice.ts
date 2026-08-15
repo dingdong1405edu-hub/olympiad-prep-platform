@@ -128,7 +128,17 @@ export interface JudgeInput {
 export function judgeLevel(input: JudgeInput, levelConfig: LevelConfig): LevelVerdict {
   const totalPoints = Math.max(0, input.totalPoints);
   const score = Math.max(0, Math.min(input.score, totalPoints || input.score));
-  const percent = totalPoints > 0 ? round((score / totalPoints) * 100) : 0;
+
+  /**
+   * Xếp mức trên tỷ lệ THẬT, hiển thị mới làm tròn.
+   *
+   * Làm tròn trước rồi mới so ngưỡng thì 61,95% thành 62,0% và một em dưới
+   * ngưỡng được đôn lên mức trên. Sai một phần trăm nhưng sai đúng chỗ người ta
+   * nhìn vào, và không cách nào giải thích được khi hai em 61,95 và 62,0 cùng ra
+   * một mức.
+   */
+  const exactPercent = totalPoints > 0 ? (score / totalPoints) * 100 : 0;
+  const percent = round(exactPercent);
 
   const ungraded = input.answers.filter((answer) => !answer.graded);
   const ungradedPoints = round(
@@ -143,6 +153,35 @@ export function judgeLevel(input: JudgeInput, levelConfig: LevelConfig): LevelVe
   const spread = best && worst ? best.percent - worst.percent : 0;
   const strongest = spread >= PART_SPREAD_THRESHOLD ? best : null;
   const weakest = spread >= PART_SPREAD_THRESHOLD ? worst : null;
+
+  /**
+   * Bài không có câu nào thì không có gì để xếp.
+   *
+   * Nghe như chuyện không thể xảy ra, nhưng một lượt thi mà bước ghi các dòng
+   * câu trả lời hỏng giữa chừng sẽ để lại đúng hình dạng đó: 0 câu, 0 điểm, và
+   * không câu nào "chưa chấm" để cảnh báo. Xếp bừa vào đây là dán nhãn "Kém"
+   * lên một bài mà em chưa hề làm.
+   */
+  if (input.answers.length === 0) {
+    return {
+      level: null,
+      levelLabel: null,
+      percent,
+      score,
+      totalPoints,
+      ungradedPoints: 0,
+      ungradedCount: 0,
+      headline: 'Chưa xếp được học lực',
+      detail:
+        'Lượt thi này không ghi nhận được câu trả lời nào nên không có căn cứ để xếp học lực. ' +
+        'Hãy làm lại một lượt mới.',
+      nextLevel: null,
+      scale: buildScale(null, levelConfig),
+      parts: [],
+      strongest: null,
+      weakest: null,
+    };
+  }
 
   // Nguyên tắc 1: còn câu chưa chấm thì không xếp, và nói rõ còn thiếu gì.
   if (ungraded.length > 0) {
@@ -168,7 +207,7 @@ export function judgeLevel(input: JudgeInput, levelConfig: LevelConfig): LevelVe
     };
   }
 
-  const level = estimateLevel(percent, levelConfig);
+  const level = estimateLevel(exactPercent, levelConfig);
   const levelLabel = levelConfig.labels?.[level] ?? level;
 
   return {
@@ -181,7 +220,7 @@ export function judgeLevel(input: JudgeInput, levelConfig: LevelConfig): LevelVe
     ungradedCount: 0,
     headline: `Học lực ước lượng: ${levelLabel}`,
     detail: detailFor(level, percent, weakest),
-    nextLevel: nextLevelOf(level, percent, score, totalPoints, levelConfig),
+    nextLevel: nextLevelOf(level, exactPercent, score, totalPoints, levelConfig),
     scale: buildScale(level, levelConfig),
     parts,
     strongest,

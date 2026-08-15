@@ -147,6 +147,16 @@ export interface AiConfig {
  * Ở đây chỉ có ngưỡng nghiệp vụ mà admin cần chỉnh được khi vận hành.
  */
 export interface MockExamConfig {
+  /** Số lượt thi MIỄN PHÍ mỗi tài khoản được dùng cho MỖI đề. */
+  freeAttemptsPerExam: number;
+  /**
+   * Ân hạn cho lượt nộp cuối cùng, tính từ lúc hết giờ.
+   *
+   * Bấm "Nộp bài" đúng giây cuối thì request vẫn mất vài giây đi đường. Không có
+   * ân hạn thì bài bị coi là nộp muộn và mất phần vừa gõ. Quá ân hạn thì máy chủ
+   * chấm bản nháp đã lưu chứ không nhận thêm chữ nào — hết giờ là hết giờ.
+   */
+  submitGraceSeconds: number;
   /** Dưới ngưỡng tin cậy này thì bài được gắn cờ nhờ giáo viên xem lại. */
   confidenceReviewThreshold: number;
   /** Hết giờ chờ một lượt gọi AI → đánh dấu câu đó chấm hỏng, cho chấm lại. */
@@ -305,6 +315,8 @@ export const DEFAULT_CONFIG: PlatformConfig = {
   },
 
   mockExam: {
+    freeAttemptsPerExam: 5,
+    submitGraceSeconds: 120,
     confidenceReviewThreshold: numberEnv('CONFIDENCE_REVIEW_THRESHOLD', 0.7, 0),
     gradingTimeoutMs: numberEnv('GRADING_TIMEOUT_MS', 90_000, 1_000),
     gradingMaxRetries: numberEnv('GRADING_MAX_RETRIES', 2, 0),

@@ -1074,6 +1074,8 @@ enum MockGradingMode {
 }
 
 enum MockAttemptStatus {
+  /// Đang làm bài, CHƯA nộp. Máy chủ giữ đồng hồ và bản nháp của lượt này.
+  IN_PROGRESS
   GRADING
   DONE
   PARTIAL_FAILED
@@ -1151,12 +1153,18 @@ model MockExamRubric {
 
 model MockExamAttempt {
   id     String  @id @default(cuid())
+  /// Một LƯỢT THI: tạo lúc bấm bắt đầu, không phải lúc nộp. Nhờ vậy đồng hồ và
+  /// bản nháp do máy chủ giữ, và đếm được mỗi tài khoản đã dùng bao nhiêu lượt.
   examId String
-  /// NULL = khách chưa đăng nhập vẫn thi được (spec §4). Link kết quả là "chìa khóa".
+  /// NULL = lượt thi cũ của khách vãng lai (trước khi bắt buộc đăng nhập).
   userId String?
 
-  status      MockAttemptStatus @default(GRADING)
+  status      MockAttemptStatus @default(IN_PROGRESS)
   startedAt   DateTime          @default(now())
+  /// Hạn nộp do MÁY CHỦ chốt lúc bắt đầu = startedAt + durationMin. Đồng hồ của
+  /// trình duyệt chỉ để hiển thị; xóa localStorage hay chỉnh giờ máy không xin
+  /// thêm được một phút nào.
+  expiresAt   DateTime?
   submittedAt DateTime?
 
   /// Điểm máy chấm (verifier + AI). Không đổi khi giáo viên sửa tay.
@@ -1170,6 +1178,8 @@ model MockExamAttempt {
 
   @@index([userId, submittedAt])
   @@index([examId, submittedAt])
+  /// Đếm số lượt một tài khoản đã dùng cho một đề — chạy ở mọi lần bấm bắt đầu.
+  @@index([userId, examId])
 }
 
 model MockExamAnswer {

@@ -1,23 +1,31 @@
 'use client';
 
 /**
- * MÀN HÌNH LÀM BÀI THI THỬ.
+ * MÀN HÌNH LÀM BÀI THI THỬ — MỘT LƯỢT THI CỤ THỂ.
  *
- * Ba việc phải làm cho tốt, theo đúng thứ tự quan trọng:
- *  1. KHÔNG MẤT BÀI. Bản nháp ghi vào localStorage mỗi 5 giây và mỗi lần đổi
- *     đáp án. Học sinh tiểu học làm bài 180 phút trên máy nhà — sập nguồn, đóng
- *     nhầm tab, mẹ gọi ra ăn cơm rồi tắt máy: mở lại phải còn nguyên.
- *  2. Ảnh chụp phải lên được ngay, thấy được ảnh mình vừa chụp, xóa được ảnh mờ.
- *  3. Nộp xong phải thấy máy đang làm gì (spec §9.2) — 10 câu tự luận chấm song
- *     song, mỗi câu xong thì sáng lên một ô.
+ * Trang này luôn thuộc về đúng một lượt thi đã tồn tại ở máy chủ
+ * (`/thi-thu/<đề>/lam-bai/<id lượt>`). Đó là điều làm nó chạy được như một kỳ
+ * thi online thật:
+ *
+ *  1. ĐỀ SẠCH MỖI LƯỢT. Bài làm nạp từ chính lượt thi này, không phải từ một
+ *     bản nháp chung của cả cái đề. Trước đây bản nháp chỉ khóa theo slug đề nên
+ *     mở đề lần thứ hai là hiện nguyên bài của lần trước.
+ *  2. ĐỒNG HỒ CỦA MÁY CHỦ. Số giây còn lại do máy chủ cấp lúc mở trang và được
+ *     chỉnh lại sau mỗi lần tự lưu. Xóa localStorage hay vặn giờ máy không xin
+ *     thêm được phút nào.
+ *  3. KHÔNG MẤT BÀI. Tự lưu lên máy chủ mỗi 5 giây và mỗi lần đổi đáp án, kèm
+ *     một bản sao trong localStorage của riêng lượt này để không mất phần vừa gõ
+ *     khi rớt mạng.
+ *  4. Ảnh chụp lên được ngay, thấy được ảnh vừa chụp, xóa được ảnh mờ.
+ *  5. Nộp xong thấy máy đang làm gì (spec §9.2) — các câu tự luận chấm song song,
+ *     mỗi câu xong thì sáng lên một ô.
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { apiPost, ApiClientError } from '@/lib/client';
+import { apiPost, apiPut, ApiClientError } from '@/lib/client';
 import { API, routes } from '@/lib/routes';
 import { uploadExamImage } from '@/lib/image';
-import { checkExpression, type ExpressionConfig } from '@/server/mock-exam/expression';
-import type { ExamForPlayer, PlayerQuestion } from '@/server/mock-exam/service';
+import type { PlayerQuestion, Sitting } from '@/server/mock-exam/service';
 import { Alert, Badge, Button, Card, ProgressBar, cx } from '@/components/ui';
 import { RichText } from '@/components/rich-text';
 
@@ -31,28 +39,38 @@ interface AnswerDraft {
   imageUrls?: string[];
 }
 
-interface DraftFile {
-  startedAt: string;
-  answers: Record<string, AnswerDraft>;
-}
-
-const DRAFT_VERSION = 'v1';
 const AUTOSAVE_MS = 5_000;
 
-function draftKey(slug: string): string {
-  return `attempt_draft_${DRAFT_VERSION}_${slug}`;
+/**
+ * Bản sao chống rớt mạng, khóa theo ĐÚNG LƯỢT THI.
+ *
+ * Khóa cũ chỉ có slug đề, nên bản nháp của lượt trước tự động chui vào lượt sau.
+ * Có id lượt thi trong khóa thì chuyện đó không thể xảy ra nữa: lượt mới có khóa
+ * mới, và bản nháp cũ chết theo lượt cũ.
+ */
+function draftKey(attemptId: string): string {
+  return `attempt_draft_v2_${attemptId}`;
 }
 
-function readDraft(slug: string): DraftFile | null {
+function readLocalDraft(attemptId: string): Record<string, AnswerDraft> | null {
   try {
-    const raw = window.localStorage.getItem(draftKey(slug));
+    const raw = window.localStorage.getItem(draftKey(attemptId));
     if (!raw) return null;
-    const parsed = JSON.parse(raw) as DraftFile;
-    if (!parsed || typeof parsed !== 'object' || !parsed.answers) return null;
-    return parsed;
+    const parsed = JSON.parse(raw) as Record<string, AnswerDraft>;
+    return parsed && typeof parsed === 'object' ? parsed : null;
   } catch {
     return null;
   }
+}
+
+/** Câu này có gì để lưu không — dùng để biết bản nào mới hơn. */
+function filledCount(answers: Record<string, AnswerDraft>): number {
+  return Object.values(answers).filter(
+    (draft) =>
+      (draft.text ?? '').trim() !== '' ||
+      (draft.imageUrls?.length ?? 0) > 0 ||
+      (draft.grid ?? []).some((row) => row.some((cell) => cell !== null)),
+  ).length;
 }
 
 // ---------------------------------------------------------------------------
@@ -84,53 +102,102 @@ interface GradingRow {
 
 // ---------------------------------------------------------------------------
 
-export function ExamPlayer({ exam }: { exam: ExamForPlayer }) {
+export function ExamPlayer({ sitting }: { sitting: Sitting }) {
   const router = useRouter();
+  const { exam, attemptId } = sitting;
 
-  const [answers, setAnswers] = useState<Record<string, AnswerDraft>>({});
-  const [startedAt, setStartedAt] = useState<string>(() => new Date().toISOString());
-  const [restored, setRestored] = useState(false);
+  /** Bài làm đã lưu ở máy chủ cho ĐÚNG lượt này — nguồn sự thật lúc mở trang. */
+  const serverAnswers = useMemo(() => {
+    const map: Record<string, AnswerDraft> = {};
+    for (const saved of sitting.answers) {
+      const draft: AnswerDraft = {};
+      if (saved.text !== null) draft.text = saved.text;
+      if (saved.grid !== null) draft.grid = saved.grid;
+      if (saved.imageUrls.length > 0) draft.imageUrls = saved.imageUrls;
+      if (Object.keys(draft).length > 0) map[String(saved.number)] = draft;
+    }
+    return map;
+  }, [sitting.answers]);
+
+  const [answers, setAnswers] = useState<Record<string, AnswerDraft>>(serverAnswers);
   const [current, setCurrent] = useState(0);
-  const [now, setNow] = useState(() => Date.now());
   const [phase, setPhase] = useState<'doing' | 'grading'>('doing');
   const [grading, setGrading] = useState<GradingRow[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [uploading, setUploading] = useState<Record<number, boolean>>({});
+  const [saveState, setSaveState] = useState<'saved' | 'saving' | 'offline'>('saved');
   const submittedRef = useRef(false);
 
-  // --- Khôi phục bản nháp ---
-  useEffect(() => {
-    const draft = readDraft(exam.slug);
-    if (draft) {
-      setAnswers(draft.answers);
-      setStartedAt(draft.startedAt);
-      setRestored(Object.keys(draft.answers).length > 0);
-    } else {
-      const fresh: DraftFile = { startedAt: new Date().toISOString(), answers: {} };
-      window.localStorage.setItem(draftKey(exam.slug), JSON.stringify(fresh));
-      setStartedAt(fresh.startedAt);
-    }
-  }, [exam.slug]);
+  /**
+   * Đồng hồ neo vào MÁY CHỦ.
+   *
+   * `deadline` là mốc thời gian của máy học sinh tương ứng với hạn nộp của máy
+   * chủ, tính từ số giây còn lại mà máy chủ vừa cấp. Không đọc `expiresAt` trực
+   * tiếp vì đồng hồ máy học sinh có thể lệch hàng giờ.
+   */
+  const [deadline, setDeadline] = useState(() => Date.now() + sitting.secondsLeft * 1_000);
+  const [now, setNow] = useState(() => Date.now());
+  const secondsLeft = Math.max(0, Math.floor((deadline - now) / 1000));
 
-  // --- Tự lưu ---
+  // --- Khôi phục phần gõ dở khi rớt mạng ---
+  // Chỉ nhận bản localStorage khi nó ĐẦY ĐẶN HƠN bản máy chủ: nghĩa là lần tự
+  // lưu cuối cùng chưa kịp đi. Cùng lượt thi nên không có chuyện lẫn bài.
+  useEffect(() => {
+    const local = readLocalDraft(attemptId);
+    if (local && filledCount(local) > filledCount(serverAnswers)) setAnswers(local);
+  }, [attemptId, serverAnswers]);
+
+  // --- Tự lưu lên máy chủ ---
+  const pendingSaveRef = useRef<Record<string, AnswerDraft> | null>(null);
+  const savingRef = useRef(false);
+
+  const flushSave = useCallback(async () => {
+    const next = pendingSaveRef.current;
+    if (next === null || savingRef.current || submittedRef.current) return;
+    pendingSaveRef.current = null;
+    savingRef.current = true;
+    setSaveState('saving');
+    try {
+      const reply = await apiPut<{ secondsLeft: number }>(API.mockDraft(attemptId), {
+        answers: exam.questions.map((question) => {
+          const draft = next[String(question.number)] ?? {};
+          return {
+            number: question.number,
+            text: draft.text ?? null,
+            grid: draft.grid ?? null,
+            imageUrls: draft.imageUrls ?? [],
+          };
+        }),
+      });
+      // Chỉnh lại đồng hồ theo máy chủ sau mỗi lần lưu — trôi giờ bao nhiêu cũng
+      // được kéo về đúng.
+      setDeadline(Date.now() + reply.secondsLeft * 1_000);
+      setSaveState('saved');
+    } catch {
+      // Rớt mạng: bản localStorage vẫn còn, lần lưu sau gửi lại toàn bộ.
+      pendingSaveRef.current = next;
+      setSaveState('offline');
+    } finally {
+      savingRef.current = false;
+    }
+  }, [attemptId, exam.questions]);
+
   const saveDraft = useCallback(
     (next: Record<string, AnswerDraft>) => {
       try {
-        window.localStorage.setItem(
-          draftKey(exam.slug),
-          JSON.stringify({ startedAt, answers: next } satisfies DraftFile),
-        );
+        window.localStorage.setItem(draftKey(attemptId), JSON.stringify(next));
       } catch {
         // Hết chỗ lưu (chế độ ẩn danh) — không chặn học sinh làm bài.
       }
+      pendingSaveRef.current = next;
     },
-    [exam.slug, startedAt],
+    [attemptId],
   );
 
   useEffect(() => {
-    const timer = setInterval(() => saveDraft(answers), AUTOSAVE_MS);
+    const timer = setInterval(() => void flushSave(), AUTOSAVE_MS);
     return () => clearInterval(timer);
-  }, [answers, saveDraft]);
+  }, [flushSave]);
 
   const update = useCallback(
     (number: number, patch: AnswerDraft) => {
@@ -151,11 +218,6 @@ export function ExamPlayer({ exam }: { exam: ExamForPlayer }) {
     const timer = setInterval(() => setNow(Date.now()), 1_000);
     return () => clearInterval(timer);
   }, []);
-
-  const secondsLeft = useMemo(() => {
-    const end = new Date(startedAt).getTime() + exam.durationMin * 60_000;
-    return Math.max(0, Math.floor((end - now) / 1000));
-  }, [startedAt, exam.durationMin, now]);
 
   // ---------------------------------------------------------------------------
   // Nộp bài
@@ -191,9 +253,7 @@ export function ExamPlayer({ exam }: { exam: ExamForPlayer }) {
         attemptId: string;
         pending: { questionId: string; number: number; maxPoints: number }[];
         parallelLimit: number;
-      }>(API.mockSubmit, {
-        slug: exam.slug,
-        startedAt,
+      }>(API.mockSubmit(attemptId), {
         answers: exam.questions.map((question) => {
           const draft = answers[String(question.number)] ?? {};
           return {
@@ -205,9 +265,8 @@ export function ExamPlayer({ exam }: { exam: ExamForPlayer }) {
         }),
       });
 
-      // Nộp xong là bản nháp hết nhiệm vụ — giữ lại chỉ tổ làm lần thi sau hiện
-      // đáp án của lần trước.
-      window.localStorage.removeItem(draftKey(exam.slug));
+      // Nộp xong là bản sao chống rớt mạng hết nhiệm vụ.
+      window.localStorage.removeItem(draftKey(attemptId));
 
       const resultHref = routes.mockExamResult(exam.slug, payload.attemptId);
       if (payload.pending.length === 0) {
@@ -236,37 +295,20 @@ export function ExamPlayer({ exam }: { exam: ExamForPlayer }) {
           : 'Không nộp được bài. Kiểm tra mạng rồi bấm nộp lại — bài làm của em vẫn còn.',
       );
     }
-  }, [answers, exam.questions, exam.slug, router, startedAt, uploading]);
+  }, [answers, attemptId, exam.questions, exam.slug, router, uploading]);
 
   /**
-   * Hết giờ thì tự nộp — nhưng CHỈ khi đồng hồ thực sự chạy hết trong phiên này.
+   * Hết giờ là tự nộp.
    *
-   * Trước đây điều kiện là "startedAt cách đây hơn 5 giây", nhằm tránh nộp ngay
-   * ở lần render đầu. Với một bản nháp cũ thì điều kiện đó luôn đúng: mở lại đề
-   * hôm sau là `secondsLeft` đã bằng 0 và bài TỰ NỘP ngay khi trang vừa hiện,
-   * kể cả khi em chưa kịp làm câu nào. Bài thi 180 phút biến thành 0 điểm mà
-   * không ai bấm gì.
-   *
-   * Nay phải nhìn thấy đồng hồ còn thời gian ít nhất một nhịp thì mới coi là
-   * "hết giờ khi đang làm". Mở lại bản nháp đã quá hạn thì đề vẫn nằm đó, em tự
-   * quyết định nộp hay bỏ.
+   * Bây giờ mốc hết giờ do máy chủ cấp cho ĐÚNG lượt này, nên trường hợp cũ —
+   * mở một bản nháp quá hạn của lần trước rồi bị nộp ngay khi trang vừa hiện —
+   * không còn tồn tại: lượt quá hạn đã được máy chủ nộp hộ và chấm xong, mở lại
+   * chỉ ra trang kết quả. Ở đây chỉ còn đúng một tình huống: đang làm thì hết giờ.
    */
-  const sawTimeRemainingRef = useRef(false);
   useEffect(() => {
-    if (secondsLeft > 0) sawTimeRemainingRef.current = true;
-  }, [secondsLeft]);
-
-  useEffect(() => {
-    if (phase !== 'doing' || secondsLeft !== 0) return;
-    if (sawTimeRemainingRef.current) {
-      void submit();
-    } else if (restored) {
-      setError(
-        'Bản làm dở này đã hết giờ từ trước. Bài của em vẫn còn nguyên — bấm "Nộp bài" ' +
-          'để chấm phần đã làm, hoặc tải lại trang để bắt đầu lượt mới.',
-      );
-    }
-  }, [secondsLeft, phase, submit, restored]);
+    if (phase !== 'doing' || secondsLeft > 0) return;
+    void submit();
+  }, [secondsLeft, phase, submit]);
 
   // --- Cảnh báo khi đóng tab giữa chừng ---
   // Cảnh báo cả lúc đang chấm: việc chấm chạy từ chính tab này, đóng đi thì các
@@ -307,7 +349,19 @@ export function ExamPlayer({ exam }: { exam: ExamForPlayer }) {
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-semibold text-ink-900">{exam.title}</p>
             <p className="text-xs text-ink-500">
-              Đã làm {answeredNumbers.size}/{exam.questions.length} câu
+              Lượt {sitting.attemptNumber}/{sitting.quota.limit} · đã làm{' '}
+              {answeredNumbers.size}/{exam.questions.length} câu ·{' '}
+              <span
+                className={cx(
+                  saveState === 'offline' ? 'font-semibold text-rose-600' : 'text-ink-400',
+                )}
+              >
+                {saveState === 'offline'
+                  ? 'mất mạng — bài đang giữ trên máy em'
+                  : saveState === 'saving'
+                    ? 'đang lưu…'
+                    : 'đã lưu'}
+              </span>
             </p>
           </div>
 
@@ -352,9 +406,10 @@ export function ExamPlayer({ exam }: { exam: ExamForPlayer }) {
       </header>
 
       <main className="mx-auto max-w-3xl px-4 py-6">
-        {restored ? (
-          <Alert tone="info" className="mb-4">
-            Đã khôi phục bài làm dở của em từ lần trước.
+        {saveState === 'offline' ? (
+          <Alert tone="warn" title="Máy chủ chưa nhận được bài" className="mb-4">
+            Mạng đang chập chờn. Bài của em vẫn được giữ trên máy này và sẽ tự gửi lại — cứ làm tiếp,
+            nhưng đừng đóng tab cho tới khi dòng trạng thái ở trên hiện “đã lưu”.
           </Alert>
         ) : null}
 
@@ -557,18 +612,16 @@ function ExpressionInput({
   };
 
   const value = draft.text ?? '';
-  const preview = useMemo(() => {
-    if (value.trim() === '') return null;
-    if (!Array.isArray(config.digits) || typeof config.target !== 'number') return null;
-    const cfg: ExpressionConfig = {
-      digits: config.digits,
-      target: config.target,
-      tolerance: config.tolerance ?? undefined,
-      maxLength: config.max_length ?? undefined,
-    };
-    return checkExpression(value, cfg);
-  }, [value, config.digits, config.target, config.tolerance, config.max_length]);
+  const digits = Array.isArray(config.digits) ? config.digits.join(', ') : null;
 
+  /**
+   * KHÔNG chấm thử tại chỗ.
+   *
+   * Trước đây ô này gọi thẳng `checkExpression` ngay trong trình duyệt và in ✓/✗
+   * sau mỗi ký tự. Đó là một cái máy dò đáp án: em không giải được thì cứ gõ bừa
+   * cho tới khi hiện ✓, và câu này thành điểm cho không. Trong phòng thi không
+   * ai chấm hộ từng dòng nháp, ở đây cũng vậy — chỉ nhắc luật viết.
+   */
   return (
     <div>
       <label className="mb-1.5 block text-sm font-medium text-ink-700" htmlFor={`q-${question.id}`}>
@@ -583,25 +636,10 @@ function ExpressionInput({
         className="w-full max-w-md rounded-lg border border-ink-200 bg-white px-3 py-2.5 font-mono text-lg text-ink-800 focus:border-brand-500 focus:ring-4 focus:ring-brand-100 focus:outline-none"
         placeholder="Ví dụ: (8-4)/2"
       />
-
-      {preview ? (
-        <p
-          className={cx(
-            'animate-fade-up mt-2 rounded-lg px-3 py-2 text-sm ring-1 ring-inset',
-            preview.ok
-              ? 'bg-accent-50 text-accent-700 ring-accent-100'
-              : 'bg-amber-50 text-amber-900 ring-amber-200',
-          )}
-        >
-          {preview.ok
-            ? `Biểu thức của em bằng ${config.target} ✓`
-            : `✗ ${preview.reason ?? 'Chưa đúng.'}`}
-        </p>
-      ) : (
-        <p className="mt-1.5 text-xs text-ink-500">
-          Dùng được: + − × ÷ ( ) ^ , dấu thập phân và căn bậc hai (viết √ hoặc sqrt).
-        </p>
-      )}
+      <p className="mt-1.5 text-xs text-ink-500">
+        {digits ? `Chỉ dùng các chữ số ${digits}, mỗi chữ số đúng một lần. ` : ''}
+        Dùng được: + − × ÷ ( ) ^ , dấu thập phân và căn bậc hai (viết √ hoặc sqrt).
+      </p>
     </div>
   );
 }

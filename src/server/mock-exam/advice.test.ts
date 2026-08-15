@@ -148,7 +148,27 @@ describe('judgeLevel — biên', () => {
     const verdict = judgeLevel({ score: 0, totalPoints: 0, answers: [] }, levels);
     expect(verdict.percent).toBe(0);
     expect(verdict.parts).toEqual([]);
-    expect(verdict.level).toBe('WEAK');
+  });
+
+  /**
+   * Một lượt thi mà bước ghi các dòng câu trả lời hỏng giữa chừng để lại đúng
+   * hình dạng này: 0 câu, 0 điểm, không câu nào "chưa chấm" để mà cảnh báo.
+   * Xếp bừa vào đây là dán nhãn "Kém" lên bài mà em chưa hề làm.
+   */
+  it('bài không có câu nào thì KHÔNG xếp mức', () => {
+    const verdict = judgeLevel({ score: 0, totalPoints: 100, answers: [] }, levels);
+    expect(verdict.level).toBeNull();
+    expect(verdict.headline).toContain('Chưa xếp được');
+  });
+
+  it('xếp mức trên tỷ lệ thật, không phải tỷ lệ đã làm tròn', () => {
+    // 61,95% hiển thị thành 62,0% nhưng vẫn phải là Trung bình (ngưỡng Khá = 62).
+    const verdict = judgeLevel(
+      { score: 61.95, totalPoints: 100, answers: [answer('MCQ', 100, 61.95)] },
+      levels,
+    );
+    expect(verdict.percent).toBe(62);
+    expect(verdict.level).toBe('AVERAGE');
   });
 
   it('điểm âm hoặc vượt trần đều bị kéo về khoảng hợp lệ', () => {

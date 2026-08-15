@@ -11,7 +11,7 @@
  * hiện ngay ở dòng đầu tiên chứ không phải sau khi đã bực mình vì điểm thấp —
  * và có sẵn nút bắt AI đọc lại.
  */
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { apiPatch, apiPost, ApiClientError } from '@/lib/client';
@@ -43,6 +43,42 @@ export function ResultView({
   const [busyQuestion, setBusyQuestion] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [openNumber, setOpenNumber] = useState<number | null>(null);
+  const [finishing, setFinishing] = useState(false);
+
+  /**
+   * CHẤM NỐT NHỮNG CÂU CÒN BỎ LỬNG.
+   *
+   * Việc chấm chạy từ tab đang nộp bài. Đóng tab giữa chừng — hoặc rớt mạng —
+   * là những câu còn lại nằm im ở "chờ chấm" MÃI MÃI, và vì bài chưa chấm xong
+   * nên trang này không xếp học lực. Người dùng thấy đúng một thứ: "chưa xếp
+   * được học lực", lần nào mở cũng vậy, không có cách nào tự thoát ra ngoài
+   * việc bấm tay từng câu một.
+   *
+   * Mở trang kết quả mà còn câu chưa chấm thì chấm nốt ngay tại đây.
+   */
+  const pendingIds = result.answers
+    .filter((answer) => answer.status === 'PENDING')
+    .map((answer) => answer.questionId);
+  const pendingKey = pendingIds.join(',');
+  const startedRef = useRef('');
+
+  useEffect(() => {
+    if (pendingKey === '' || startedRef.current === pendingKey) return;
+    startedRef.current = pendingKey;
+    setFinishing(true);
+
+    void (async () => {
+      for (const questionId of pendingKey.split(',')) {
+        try {
+          await apiPost(API.mockGrade(result.id), { questionId });
+        } catch {
+          // Câu nào chấm không xong thì để lại nút bấm tay ở câu đó.
+        }
+      }
+      setFinishing(false);
+      router.refresh();
+    })();
+  }, [pendingKey, result.id, router]);
 
   const ratio = result.totalPoints > 0 ? result.score / result.totalPoints : 0;
   const tone = scoreTone(ratio);
@@ -127,8 +163,17 @@ export function ResultView({
 
       {result.pendingCount > 0 ? (
         <Alert tone="info" className="mt-4">
-          Còn {result.pendingCount} câu chưa được chấm — có thể do trang bị đóng khi đang chấm. Mở
-          câu đó ra rồi bấm “Chấm lại câu này”.
+          {finishing
+            ? `Đang chấm nốt ${result.pendingCount} câu còn lại. Cứ để trang mở, xong là điểm và học lực hiện ra.`
+            : `Còn ${result.pendingCount} câu chưa được chấm. Mở câu đó ra rồi bấm “Chấm lại câu này”.`}
+        </Alert>
+      ) : null}
+
+      {result.solutionLock?.locked ? (
+        <Alert tone="info" title="Đáp án và lời giải mẫu đang khóa" className="mt-4">
+          Em còn {result.solutionLock.remaining} lượt thi đề này, nên đáp án đúng và lời giải mẫu
+          chưa mở — mở ra bây giờ thì những lượt còn lại không còn ý nghĩa. Điểm từng câu, barem chấm
+          và nhận xét thì em xem được đầy đủ ngay bên dưới.
         </Alert>
       ) : null}
 

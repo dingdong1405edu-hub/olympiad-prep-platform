@@ -18,10 +18,15 @@ export const answerInputSchema = z.object({
   imageUrls: z.array(uploadUrlSchema).max(3).optional().default([]),
 });
 
-export const submitAttemptSchema = z.object({
-  slug: z.string().min(1).max(120),
-  /** Thời điểm bấm "Bắt đầu" ở trình duyệt — chỉ dùng để hiện thời gian làm bài. */
-  startedAt: z.string().datetime().optional(),
+/**
+ * Bản nháp gửi lên trong lúc làm bài, và bản cuối cùng lúc bấm nộp.
+ *
+ * KHÔNG còn nhận `slug` hay `startedAt` từ trình duyệt: lượt thi đã tồn tại ở
+ * máy chủ từ lúc bấm bắt đầu, nên đề nào và bắt đầu lúc nào là chuyện máy chủ
+ * biết. Trước đây trình duyệt tự khai giờ bắt đầu, tức là tự cho mình thêm giờ
+ * làm bài bao nhiêu cũng được.
+ */
+export const saveDraftSchema = z.object({
   answers: z.array(answerInputSchema).max(100).default([]),
 });
 
@@ -35,4 +40,4 @@ export const overrideAnswerSchema = z.object({
 });
 
 export type AnswerInput = z.infer<typeof answerInputSchema>;
-export type SubmitAttemptInput = z.infer<typeof submitAttemptSchema>;
+export type SaveDraftInput = z.infer<typeof saveDraftSchema>;

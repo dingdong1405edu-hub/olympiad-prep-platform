@@ -118,6 +118,11 @@ export interface AttemptResult {
   failedCount: number;
   needsReviewCount: number;
   canOverride: boolean;
+  /**
+   * Đáp án và lời giải mẫu chỉ mở khi em đã dùng hết lượt của đề.
+   * `remaining > 0` = còn lượt, nên còn giấu.
+   */
+  solutionLock: { locked: boolean; remaining: number } | null;
   ai: AiStatus;
 }
 
@@ -126,6 +131,9 @@ export const PART_LABEL: Record<MockPart, string> = {
   SHORT: 'Trả lời ngắn',
   ESSAY: 'Tự luận',
 };
+
+/** Thứ tự các phần in trên đề — dùng để sắp bảng cấu trúc đề. */
+const PART_SEQUENCE: MockPart[] = ['MCQ', 'SHORT', 'ESSAY'];
 
 // ---------------------------------------------------------------------------
 // Đọc đề
@@ -151,10 +159,11 @@ function toRecord(value: Prisma.JsonValue | null): Record<string, unknown> {
  */
 function publicConfig(mode: MockGradingMode, config: Record<string, unknown>): Record<string, unknown> {
   if (mode === 'EXPRESSION') {
+    // `target` và `tolerance` ở lại máy chủ: gửi xuống là gửi kèm luôn bộ máy
+    // dò đáp án. Đề bài đã nói phải bằng bao nhiêu; chỉ cần các chữ số được dùng
+    // để nhắc luật viết.
     return {
       digits: config.digits ?? [],
-      target: config.target ?? null,
-      tolerance: config.tolerance ?? null,
       max_length: config.max_length ?? null,
     };
   }
@@ -237,8 +246,54 @@ export async function getExamForPlayer(slug: string): Promise<ExamForPlayer> {
 }
 
 // ---------------------------------------------------------------------------
-// Nộp bài
+// Lượt thi — máy chủ giữ đồng hồ, bản nháp và quota
 // ---------------------------------------------------------------------------
+
+export interface AttemptQuota {
+  limit: number;
+  used: number;
+  remaining: number;
+}
+
+export interface AttemptHistoryRow {
+  attemptId: string;
+  submittedAt: string;
+  score: number;
+  totalPoints: number;
+  status: 'GRADING' | 'DONE' | 'PARTIAL_FAILED';
+}
+
+/** Trang giới thiệu một đề: ai cũng xem được, nhưng làm bài thì phải có tài khoản. */
+export interface ExamIntro extends ExamSummary {
+  instructions: string | null;
+  parts: { part: MockPart; label: string; count: number; points: number }[];
+  ai: AiStatus;
+  /** null = chưa đăng nhập nên chưa có quota nào để nói. */
+  quota: AttemptQuota | null;
+  /** Lượt đang làm dở còn hạn — vào tiếp chứ không tốn thêm lượt. */
+  liveAttemptId: string | null;
+  history: AttemptHistoryRow[];
+}
+
+export interface SittingAnswer {
+  number: number;
+  text: string | null;
+  grid: (string | null)[][] | null;
+  imageUrls: string[];
+}
+
+/** Một lượt thi đang mở: đề + bản nháp đã lưu + hạn nộp do máy chủ chốt. */
+export interface Sitting {
+  attemptId: string;
+  exam: ExamForPlayer;
+  answers: SittingAnswer[];
+  startedAt: string;
+  expiresAt: string;
+  /** Giây còn lại tính theo ĐỒNG HỒ MÁY CHỦ tại thời điểm dựng trang. */
+  secondsLeft: number;
+  attemptNumber: number;
+  quota: AttemptQuota;
+}
 
 export interface SubmitOutcome {
   attemptId: string;
@@ -261,20 +316,129 @@ function normalizeGrid(value: unknown): (string | null)[][] | null {
   return rows.length > 0 ? rows : null;
 }
 
+/** Lượt thi đã hết hạn mà chưa nộp thì máy chủ tự nộp hộ, chấm phần đã lưu. */
+async function finalizeExpiredSittings(userId: string, examId: string): Promise<void> {
+  const stale = await prisma.mockExamAttempt.findMany({
+    where: { userId, examId, status: 'IN_PROGRESS', expiresAt: { lt: new Date() } },
+    select: { id: true },
+  });
+  for (const attempt of stale) {
+    await gradeSubmittedAttempt(attempt.id);
+  }
+}
+
+async function quotaOf(userId: string, examId: string, limit: number): Promise<AttemptQuota> {
+  const used = await prisma.mockExamAttempt.count({ where: { userId, examId } });
+  return { limit, used, remaining: Math.max(0, limit - used) };
+}
+
 /**
- * Tạo bài làm và chấm ngay toàn bộ phần máy chấm được.
+ * Trang giới thiệu một đề — cửa vào của cả khu thi thử.
  *
- * Câu tự luận KHÔNG chấm ở đây: một lời gọi vision mất 15–40 giây, mười câu là
- * chắc chắn hết giờ HTTP. Chúng được để trạng thái PENDING và trình duyệt gọi
- * `/grade` song song từng câu (spec §2) — vừa không cần dựng hàng đợi, vừa có
- * thanh tiến độ để nhìn.
+ * Khách chưa đăng nhập vẫn xem được đầy đủ cấu trúc đề và cách chấm; chỉ khi
+ * bấm bắt đầu mới cần tài khoản. Giấu nội dung đi thì chẳng ai buồn đăng ký.
  */
-export async function submitMockAttempt(input: {
+export async function getExamIntro(slug: string, viewer: SessionUser | null): Promise<ExamIntro> {
+  const config = await getConfigGroup('mockExam');
+
+  const exam = await prisma.mockExam.findUnique({
+    where: { slug },
+    include: { questions: { orderBy: { number: 'asc' } } },
+  });
+  if (!exam || !exam.isPublished) throw ApiError.notFound('Không tìm thấy đề thi này.');
+
+  const partMap = new Map<MockPart, { count: number; points: number }>();
+  for (const question of exam.questions) {
+    const bucket = partMap.get(question.part) ?? { count: 0, points: 0 };
+    bucket.count += 1;
+    bucket.points += question.maxPoints;
+    partMap.set(question.part, bucket);
+  }
+
+  let quota: AttemptQuota | null = null;
+  let liveAttemptId: string | null = null;
+  let history: AttemptHistoryRow[] = [];
+
+  if (viewer) {
+    await finalizeExpiredSittings(viewer.id, exam.id);
+
+    const [rows, counted] = await Promise.all([
+      prisma.mockExamAttempt.findMany({
+        where: { userId: viewer.id, examId: exam.id },
+        orderBy: { startedAt: 'desc' },
+        select: {
+          id: true,
+          status: true,
+          expiresAt: true,
+          submittedAt: true,
+          autoScore: true,
+          finalScore: true,
+          totalPoints: true,
+        },
+      }),
+      quotaOf(viewer.id, exam.id, config.freeAttemptsPerExam),
+    ]);
+
+    quota = counted;
+    liveAttemptId =
+      rows.find(
+        (row) =>
+          row.status === 'IN_PROGRESS' && (row.expiresAt === null || row.expiresAt > new Date()),
+      )?.id ?? null;
+    history = rows
+      .filter((row) => row.status !== 'IN_PROGRESS' && row.submittedAt !== null)
+      .map((row) => ({
+        attemptId: row.id,
+        submittedAt: row.submittedAt!.toISOString(),
+        score: row.finalScore ?? row.autoScore,
+        totalPoints: row.totalPoints,
+        status: row.status as AttemptHistoryRow['status'],
+      }));
+  }
+
+  return {
+    slug: exam.slug,
+    title: exam.title,
+    subject: exam.subject,
+    gradeLevel: exam.gradeLevel,
+    durationMin: exam.durationMin,
+    totalPoints: exam.totalPoints,
+    questionCount: exam.questions.length,
+    essayCount: exam.questions.filter((q) => q.gradingMode === 'ESSAY').length,
+    instructions: exam.instructions,
+    parts: [...partMap.entries()]
+      .map(([part, bucket]) => ({
+        part,
+        label: PART_LABEL[part],
+        count: bucket.count,
+        points: Math.round(bucket.points * 100) / 100,
+      }))
+      .sort((a, b) => PART_SEQUENCE.indexOf(a.part) - PART_SEQUENCE.indexOf(b.part)),
+    ai: aiStatus(),
+    quota,
+    liveAttemptId,
+    history,
+  };
+}
+
+/**
+ * BẮT ĐẦU một lượt thi.
+ *
+ * Lượt thi là một bản ghi ở máy chủ, tạo ngay lúc bấm bắt đầu. Đó là thứ khiến
+ * khu này chạy được như một kỳ thi online thật:
+ *   - Đồng hồ do máy chủ chốt (`expiresAt`), trình duyệt chỉ hiển thị.
+ *   - Bản nháp nằm cùng lượt thi nên KHÔNG BAO GIỜ lẫn sang lượt sau. Trước
+ *     đây bản nháp chỉ khóa theo slug đề, nên mở đề lần hai là hiện nguyên bài
+ *     làm của lần trước — đúng thứ chủ hệ thống gọi là "dữ liệu cũ chèn vào".
+ *   - Đếm được mỗi tài khoản đã dùng bao nhiêu lượt cho đề nào.
+ *
+ * Mở lại trang khi đang có lượt dở thì VÀO TIẾP lượt đó, không tạo lượt mới —
+ * nếu không thì lỡ tay tải lại trang năm lần là hết sạch quota.
+ */
+export async function startMockAttempt(input: {
   slug: string;
-  userId: string | null;
-  startedAt?: string;
-  answers: AnswerInput[];
-}): Promise<SubmitOutcome> {
+  userId: string;
+}): Promise<{ attemptId: string; resumed: boolean; quota: AttemptQuota }> {
   const config = await getConfigGroup('mockExam');
 
   const exam = await prisma.mockExam.findUnique({
@@ -283,57 +447,241 @@ export async function submitMockAttempt(input: {
   });
   if (!exam || !exam.isPublished) throw ApiError.notFound('Không tìm thấy đề thi này.');
 
-  const byNumber = new Map(input.answers.map((a) => [a.number, a]));
+  await finalizeExpiredSittings(input.userId, exam.id);
 
-  // Ảnh phải có thật trong kho trước khi ghi vào bài làm.
-  const claimedUrls = input.answers.flatMap((a) => a.imageUrls ?? []);
-  const uploadIds = claimedUrls.map((url) => url.split('/').pop()!);
-  const knownUploads =
-    uploadIds.length > 0
-      ? await prisma.mockExamUpload.findMany({
-          where: { id: { in: uploadIds } },
-          select: { id: true },
-        })
-      : [];
-  const knownIds = new Set(knownUploads.map((u) => u.id));
+  const live = await prisma.mockExamAttempt.findFirst({
+    where: {
+      userId: input.userId,
+      examId: exam.id,
+      status: 'IN_PROGRESS',
+      OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }],
+    },
+    orderBy: { startedAt: 'desc' },
+    select: { id: true },
+  });
 
-  const startedAt = input.startedAt ? new Date(input.startedAt) : new Date();
-  const validStart =
-    Number.isFinite(startedAt.getTime()) && startedAt.getTime() <= Date.now()
-      ? startedAt
-      : new Date();
+  if (live) {
+    return {
+      attemptId: live.id,
+      resumed: true,
+      quota: await quotaOf(input.userId, exam.id, config.freeAttemptsPerExam),
+    };
+  }
 
+  const quota = await quotaOf(input.userId, exam.id, config.freeAttemptsPerExam);
+  if (quota.remaining <= 0) {
+    throw ApiError.forbidden(
+      `Em đã dùng hết ${quota.limit} lượt thi thử miễn phí của đề này. ` +
+        'Đăng ký khóa học để luyện tiếp với đề và lộ trình riêng.',
+    );
+  }
+
+  const startedAt = new Date();
   const attempt = await prisma.mockExamAttempt.create({
     data: {
       examId: exam.id,
       userId: input.userId,
-      status: 'GRADING',
-      startedAt: validStart,
-      submittedAt: new Date(),
+      status: 'IN_PROGRESS',
+      startedAt,
+      expiresAt: new Date(startedAt.getTime() + exam.durationMin * 60_000),
       totalPoints: exam.totalPoints,
     },
   });
 
-  const pending: SubmitOutcome['pending'] = [];
-  const rows: Prisma.MockExamAnswerUncheckedCreateInput[] = [];
-
-  for (const question of exam.questions) {
-    const given = byNumber.get(question.number);
-    const imageUrls = (given?.imageUrls ?? []).filter((url) =>
-      knownIds.has(url.split('/').pop()!),
-    );
-    const answerText = given?.text?.trim() ? given.text.trim() : null;
-    const answerGrid = normalizeGrid(given?.grid);
-
-    const data: Prisma.MockExamAnswerUncheckedCreateInput = {
+  // Một dòng cho MỌI câu ngay từ đầu: bản nháp ghi đè lên chính các dòng này,
+  // và tổng điểm tối đa của bài luôn bằng tổng điểm của đề dù em bỏ trống câu nào.
+  await prisma.mockExamAnswer.createMany({
+    data: exam.questions.map((question) => ({
       attemptId: attempt.id,
       questionId: question.id,
-      answerText,
-      answerJson: (answerGrid ?? undefined) as Prisma.InputJsonValue | undefined,
-      imageUrls: imageUrls.slice(0, config.maxImagesPerQuestion),
       maxPoints: question.maxPoints,
-      status: 'PENDING',
-    };
+      status: 'PENDING' as const,
+    })),
+  });
+
+  return {
+    attemptId: attempt.id,
+    resumed: false,
+    quota: await quotaOf(input.userId, exam.id, config.freeAttemptsPerExam),
+  };
+}
+
+/** Lượt thi phải đang mở, đúng chủ, và còn hạn. */
+async function loadOpenSitting(attemptId: string, userId: string) {
+  const attempt = await prisma.mockExamAttempt.findUnique({
+    where: { id: attemptId },
+    include: {
+      exam: { include: { questions: { orderBy: { number: 'asc' } } } },
+      answers: { select: { questionId: true, answerText: true, answerJson: true, imageUrls: true } },
+    },
+  });
+
+  if (!attempt) throw ApiError.notFound('Không tìm thấy lượt thi này.');
+  if (attempt.userId !== userId) throw ApiError.forbidden('Lượt thi này thuộc về tài khoản khác.');
+  if (attempt.status !== 'IN_PROGRESS') {
+    throw ApiError.badRequest('Lượt thi này đã nộp rồi. Mở trang kết quả để xem điểm.');
+  }
+  return attempt;
+}
+
+/** Đọc lại lượt đang làm để dựng màn hình làm bài (kể cả sau khi đổi máy). */
+export async function getSitting(attemptId: string, userId: string): Promise<Sitting> {
+  const config = await getConfigGroup('mockExam');
+  const attempt = await loadOpenSitting(attemptId, userId);
+
+  const expiresAt =
+    attempt.expiresAt ?? new Date(attempt.startedAt.getTime() + attempt.exam.durationMin * 60_000);
+
+  const byQuestion = new Map(attempt.answers.map((row) => [row.questionId, row]));
+  const [exam, quota, attemptNumber] = await Promise.all([
+    getExamForPlayer(attempt.exam.slug),
+    quotaOf(userId, attempt.examId, config.freeAttemptsPerExam),
+    prisma.mockExamAttempt.count({
+      where: { userId, examId: attempt.examId, startedAt: { lte: attempt.startedAt } },
+    }),
+  ]);
+
+  return {
+    attemptId: attempt.id,
+    exam,
+    answers: attempt.exam.questions.map((question) => {
+      const saved = byQuestion.get(question.id);
+      return {
+        number: question.number,
+        text: saved?.answerText ?? null,
+        grid: normalizeGrid(saved?.answerJson),
+        imageUrls: saved?.imageUrls ?? [],
+      };
+    }),
+    startedAt: attempt.startedAt.toISOString(),
+    expiresAt: expiresAt.toISOString(),
+    secondsLeft: Math.max(0, Math.floor((expiresAt.getTime() - Date.now()) / 1000)),
+    attemptNumber,
+    quota,
+  };
+}
+
+/** Ảnh phải có thật trong kho trước khi được ghi vào bài làm. */
+async function keepKnownUploads(answers: AnswerInput[]): Promise<Set<string>> {
+  const ids = answers.flatMap((a) => a.imageUrls ?? []).map((url) => url.split('/').pop()!);
+  if (ids.length === 0) return new Set();
+  const rows = await prisma.mockExamUpload.findMany({
+    where: { id: { in: ids } },
+    select: { id: true },
+  });
+  return new Set(rows.map((row) => row.id));
+}
+
+async function writeDraft(
+  attempt: { id: string; exam: { questions: { id: string; number: number }[] } },
+  answers: AnswerInput[],
+  maxImages: number,
+): Promise<void> {
+  const known = await keepKnownUploads(answers);
+  const byNumber = new Map(answers.map((a) => [a.number, a]));
+
+  await prisma.$transaction(
+    attempt.exam.questions.flatMap((question) => {
+      const given = byNumber.get(question.number);
+      if (!given) return [];
+      const imageUrls = (given.imageUrls ?? [])
+        .filter((url) => known.has(url.split('/').pop()!))
+        .slice(0, maxImages);
+      const grid = normalizeGrid(given.grid);
+
+      return [
+        prisma.mockExamAnswer.update({
+          where: { attemptId_questionId: { attemptId: attempt.id, questionId: question.id } },
+          data: {
+            answerText: given.text?.trim() ? given.text.trim() : null,
+            answerJson: (grid ?? Prisma.DbNull) as Prisma.InputJsonValue,
+            imageUrls,
+          },
+        }),
+      ];
+    }),
+  );
+
+  const uploadIds = answers
+    .flatMap((a) => a.imageUrls ?? [])
+    .map((url) => url.split('/').pop()!)
+    .filter((id) => known.has(id));
+  if (uploadIds.length > 0) {
+    // CHỈ nhận ảnh chưa thuộc lượt nào, hoặc đã thuộc chính lượt này. Không có
+    // điều kiện này thì một ảnh của lượt đã nộp bị kéo sang lượt mới, và quyền
+    // xem ảnh (uploads.ts tra theo lượt đang giữ ảnh) cũng đi theo luôn.
+    await prisma.mockExamUpload.updateMany({
+      where: {
+        id: { in: uploadIds },
+        OR: [{ attemptId: null }, { attemptId: attempt.id }],
+      },
+      data: { attemptId: attempt.id },
+    });
+  }
+}
+
+/**
+ * Tự lưu trong lúc làm bài.
+ *
+ * Ghi thẳng vào lượt thi ở máy chủ chứ không chỉ vào localStorage: mất điện,
+ * đổi máy, hay trình duyệt xóa dữ liệu thì bài vẫn còn — mà cũng không có cách
+ * nào để bản nháp lẫn sang một lượt thi khác.
+ */
+export async function saveSittingDraft(input: {
+  attemptId: string;
+  userId: string;
+  answers: AnswerInput[];
+}): Promise<{ secondsLeft: number }> {
+  const config = await getConfigGroup('mockExam');
+  const attempt = await loadOpenSitting(input.attemptId, input.userId);
+
+  const expiresAt =
+    attempt.expiresAt ?? new Date(attempt.startedAt.getTime() + attempt.exam.durationMin * 60_000);
+  const secondsLeft = Math.max(0, Math.floor((expiresAt.getTime() - Date.now()) / 1000));
+
+  // Hết giờ rồi thì không nhận thêm chữ nào nữa — nhưng cũng không báo lỗi ầm ĩ,
+  // vì trình duyệt sẽ tự nộp ngay sau đó.
+  if (secondsLeft > 0) {
+    await writeDraft(attempt, input.answers, config.maxImagesPerQuestion);
+  }
+  return { secondsLeft };
+}
+
+// ---------------------------------------------------------------------------
+// Nộp bài
+// ---------------------------------------------------------------------------
+
+/**
+ * Chấm toàn bộ phần máy chấm được của một lượt đã nộp.
+ *
+ * Tách riêng khỏi `submitSitting` để dùng lại được cho lượt hết giờ mà không ai
+ * bấm nộp: máy chủ tự nộp hộ và chấm đúng những gì đã lưu.
+ *
+ * Câu tự luận KHÔNG chấm ở đây: một lời gọi vision mất 15–40 giây, mười câu là
+ * chắc chắn hết giờ HTTP. Chúng ở lại trạng thái PENDING và được chấm bằng
+ * `/grade` từng câu (spec §2) — có thanh tiến độ để nhìn.
+ */
+async function gradeSubmittedAttempt(attemptId: string): Promise<SubmitOutcome> {
+  const config = await getConfigGroup('mockExam');
+
+  const attempt = await prisma.mockExamAttempt.findUnique({
+    where: { id: attemptId },
+    include: {
+      exam: { include: { questions: { orderBy: { number: 'asc' } } } },
+      answers: true,
+    },
+  });
+  if (!attempt) throw ApiError.notFound('Không tìm thấy lượt thi này.');
+
+  const byQuestion = new Map(attempt.answers.map((row) => [row.questionId, row]));
+  const pending: SubmitOutcome['pending'] = [];
+
+  for (const question of attempt.exam.questions) {
+    const saved = byQuestion.get(question.id);
+    if (!saved || saved.status !== 'PENDING') continue;
+
+    const answerText = saved.answerText;
+    const answerGrid = normalizeGrid(saved.answerJson);
 
     const auto = autoGrade({
       gradingMode: question.gradingMode,
@@ -345,19 +693,29 @@ export async function submitMockAttempt(input: {
     });
 
     if (auto) {
-      data.status = 'GRADED';
-      data.awarded = auto.awarded;
-      data.needsReview = auto.needsReview;
-      data.gradeDetail = auto.detail as Prisma.InputJsonValue;
-      data.gradedAt = new Date();
-    } else if (imageUrls.length === 0 && answerText === null) {
+      await prisma.mockExamAnswer.update({
+        where: { id: saved.id },
+        data: {
+          status: 'GRADED',
+          awarded: auto.awarded,
+          needsReview: auto.needsReview,
+          gradeDetail: auto.detail as Prisma.InputJsonValue,
+          gradedAt: new Date(),
+        },
+      });
+    } else if (saved.imageUrls.length === 0 && (answerText ?? '') === '') {
       // Tự luận bỏ trắng: không có gì để đọc, cho 0 luôn — khỏi tốn một lời gọi
       // AI và khỏi bắt học sinh chờ thanh tiến độ chạy cho một câu bỏ trống.
-      data.status = 'GRADED';
-      data.awarded = 0;
-      data.transcriptMd = '[không có bài làm]';
-      data.feedbackVi = 'Câu này chưa có bài làm nên chưa có điểm.';
-      data.gradedAt = new Date();
+      await prisma.mockExamAnswer.update({
+        where: { id: saved.id },
+        data: {
+          status: 'GRADED',
+          awarded: 0,
+          transcriptMd: '[không có bài làm]',
+          feedbackVi: 'Câu này chưa có bài làm nên chưa có điểm.',
+          gradedAt: new Date(),
+        },
+      });
     } else {
       pending.push({
         questionId: question.id,
@@ -365,18 +723,12 @@ export async function submitMockAttempt(input: {
         maxPoints: question.maxPoints,
       });
     }
-
-    rows.push(data);
   }
 
-  // Ghi 20 câu bằng MỘT lệnh: nộp bài là lúc học sinh đang nhìn màn hình chờ,
-  // 20 lượt đi–về database ở đây là 20 lần chờ vô ích.
-  await prisma.mockExamAnswer.createMany({ data: rows });
-
-  if (uploadIds.length > 0) {
-    await prisma.mockExamUpload.updateMany({
-      where: { id: { in: uploadIds } },
-      data: { attemptId: attempt.id },
+  if (attempt.submittedAt === null) {
+    await prisma.mockExamAttempt.update({
+      where: { id: attempt.id },
+      data: { submittedAt: new Date() },
     });
   }
 
@@ -384,12 +736,37 @@ export async function submitMockAttempt(input: {
 
   return {
     attemptId: attempt.id,
-    totalPoints: exam.totalPoints,
+    totalPoints: attempt.totalPoints,
     autoScore: totals.currentScore,
     pending,
     parallelLimit: config.parallelGradeLimit,
     ai: aiStatus(),
   };
+}
+
+/**
+ * NỘP BÀI.
+ *
+ * Nhận bản cuối cùng rồi chấm ngay phần máy chấm được. Quá hạn + ân hạn thì
+ * KHÔNG nhận thêm chữ nào: chấm đúng bản nháp máy chủ đã lưu trước lúc hết giờ.
+ */
+export async function submitSitting(input: {
+  attemptId: string;
+  userId: string;
+  answers: AnswerInput[];
+}): Promise<SubmitOutcome> {
+  const config = await getConfigGroup('mockExam');
+  const attempt = await loadOpenSitting(input.attemptId, input.userId);
+
+  const expiresAt =
+    attempt.expiresAt ?? new Date(attempt.startedAt.getTime() + attempt.exam.durationMin * 60_000);
+  const withinGrace = Date.now() <= expiresAt.getTime() + config.submitGraceSeconds * 1_000;
+
+  if (withinGrace) {
+    await writeDraft(attempt, input.answers, config.maxImagesPerQuestion);
+  }
+
+  return gradeSubmittedAttempt(attempt.id);
 }
 
 interface TallyInput {
@@ -625,9 +1002,25 @@ export async function gradeMockEssay(input: {
           ? error.message
           : 'Chấm câu này thất bại.';
 
+    /**
+     * CHẤM LẠI HỎNG THÌ GIỮ NGUYÊN ĐIỂM CŨ, KHÔNG HẠ CÂU XUỐNG "CHƯA CHẤM".
+     *
+     * Câu đã có điểm hợp lệ mà em bấm "AI đọc sai chữ" rồi lượt đọc lại rớt
+     * mạng: nếu ghi FAILED thì điểm cũ vẫn nằm trong tổng, nhưng cả bài bị coi
+     * là chưa chấm xong nên trang kết quả rút luôn phần xếp học lực — điểm thì
+     * vẫn tính, mà học lực thì biến mất, đúng kiểu "xếp hạng lúc có lúc không".
+     *
+     * Chỉ câu CHƯA từng chấm được mới rơi xuống FAILED.
+     */
+    const hadValidGrade = answer.status === 'GRADED' && answer.awarded !== null;
+
     const updated = await prisma.mockExamAnswer.update({
       where: { id: answer.id },
-      data: { status: 'FAILED', errorMsg: message.slice(0, 500), needsReview: true },
+      data: {
+        status: hadValidGrade ? 'GRADED' : 'FAILED',
+        errorMsg: message.slice(0, 500),
+        needsReview: true,
+      },
     });
 
     await recordGeneration(answer.id, resolveProvider().gradeModel, null, 'FAILED', message);
@@ -637,12 +1030,14 @@ export async function gradeMockEssay(input: {
       questionId: input.questionId,
       number: answer.question.number,
       status: updated.status,
-      awarded: null,
+      awarded: updated.awarded,
       maxPoints: answer.question.maxPoints,
       needsReview: true,
-      feedbackVi: null,
+      feedbackVi: updated.feedbackVi,
       transcriptMd: updated.transcriptMd,
-      errorMsg: message,
+      errorMsg: hadValidGrade
+        ? `${message} — điểm cũ của câu này được giữ nguyên.`
+        : message,
       attemptStatus: totals.status,
       attemptScore: totals.currentScore,
     };
@@ -751,6 +1146,8 @@ export async function getAttemptResult(
   attemptId: string,
   viewer: SessionUser | null,
 ): Promise<AttemptResult> {
+  const config = await getConfigGroup('mockExam');
+
   const attempt = await prisma.mockExamAttempt.findUnique({
     where: { id: attemptId },
     include: {
@@ -763,6 +1160,41 @@ export async function getAttemptResult(
 
   if (!attempt) throw ApiError.notFound('Không tìm thấy bài làm này.');
   assertCanView(attempt.userId, viewer);
+
+  /**
+   * CHƯA NỘP THÌ CHƯA CÓ KẾT QUẢ.
+   *
+   * Không phải chuyện gọn gàng mà là chuyện gian lận: trang kết quả trả về
+   * `answerKey`, `solutionMd` và cả barem. Lượt thi bây giờ tồn tại ở máy chủ
+   * ngay từ lúc bấm bắt đầu, nên nếu không chặn ở đây thì học sinh chỉ cần mở
+   * /ket-qua/<id> của chính lượt mình ĐANG LÀM ở một tab khác là có nguyên bộ
+   * đáp án và lời giải.
+   */
+  if (attempt.status === 'IN_PROGRESS' && !isStaff(viewer)) {
+    throw ApiError.badRequest('Lượt thi này chưa nộp nên chưa có kết quả để xem.');
+  }
+
+  /**
+   * ĐÁP ÁN VÀ LỜI GIẢI MẪU CHỈ MỞ KHI HẾT LƯỢT.
+   *
+   * Mỗi tài khoản có 5 lượt cho một đề. Nếu nộp lượt đầu là thấy ngay toàn bộ
+   * đáp án thì bốn lượt còn lại vô nghĩa: chép đáp án vào là 100/100, và con số
+   * "học lực Giỏi" thành ra vô giá trị với chính em lẫn với giáo viên.
+   *
+   * Em vẫn nhận đủ thứ để học được ngay từ lượt đầu: điểm từng câu, barem AI
+   * chấm sai ở tiêu chí nào, nhận xét bằng tiếng Việt, và bài AI đọc ra từ ảnh.
+   * Chỉ đáp số đúng và lời giải mẫu là để dành tới khi hết lượt.
+   */
+  const staffViewer = isStaff(viewer);
+  let solutionLock: AttemptResult['solutionLock'] = null;
+  if (!staffViewer && attempt.userId !== null) {
+    const used = await prisma.mockExamAttempt.count({
+      where: { userId: attempt.userId, examId: attempt.examId },
+    });
+    const remaining = Math.max(0, config.freeAttemptsPerExam - used);
+    solutionLock = { locked: remaining > 0, remaining };
+  }
+  const revealAnswers = solutionLock === null || !solutionLock.locked;
 
   const answers = [...attempt.answers].sort((a, b) => a.question.number - b.question.number);
 
@@ -811,11 +1243,12 @@ export async function getAttemptResult(
       awarded: Math.round(value.awarded * 100) / 100,
       total: value.total,
     })),
-    answers: answers.map((answer) => toResultAnswer(answer)),
+    answers: answers.map((answer) => toResultAnswer(answer, revealAnswers)),
     pendingCount,
     failedCount,
     needsReviewCount: answers.filter((a) => a.needsReview).length,
-    canOverride: isStaff(viewer),
+    canOverride: staffViewer,
+    solutionLock,
     ai: aiStatus(),
   };
 }
@@ -833,7 +1266,7 @@ type AnswerWithQuestion = MockExamAnswer & {
   };
 };
 
-function toResultAnswer(answer: AnswerWithQuestion): ResultAnswer {
+function toResultAnswer(answer: AnswerWithQuestion, revealAnswers: boolean): ResultAnswer {
   return {
     id: answer.id,
     questionId: answer.questionId,
@@ -856,8 +1289,12 @@ function toResultAnswer(answer: AnswerWithQuestion): ResultAnswer {
     gradeDetail: answer.gradeDetail ? toRecord(answer.gradeDetail) : null,
     errorMsg: answer.errorMsg,
     overridden: answer.overriddenById !== null,
-    solutionMd: answer.question.solutionMd,
-    answerKeyDisplay: answerKeyDisplay(answer.question.gradingMode, answer.question.answerKey),
+    // Còn lượt thi thì đáp án và lời giải KHÔNG ra khỏi máy chủ — cắt ở đây chứ
+    // không chỉ ẩn trên giao diện, vì ẩn trên giao diện thì mở tab Network là thấy.
+    solutionMd: revealAnswers ? answer.question.solutionMd : null,
+    answerKeyDisplay: revealAnswers
+      ? answerKeyDisplay(answer.question.gradingMode, answer.question.answerKey)
+      : null,
     rubric: answer.question.rubric,
   };
 }
@@ -941,6 +1378,9 @@ export async function listAttemptsForStaff(limit = 100): Promise<
   }[]
 > {
   const attempts = await prisma.mockExamAttempt.findMany({
+    // Lượt đang làm dở chưa có gì để chấm, và điểm của nó là 0 vì chưa nộp —
+    // để lẫn vào đây chỉ tổ làm giáo viên tưởng có một bài 0 điểm cần xem.
+    where: { status: { not: 'IN_PROGRESS' } },
     orderBy: { submittedAt: 'desc' },
     take: limit,
     include: {

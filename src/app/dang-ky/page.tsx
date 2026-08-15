@@ -17,31 +17,31 @@ export default async function RegisterPage({
   const session = await getSession();
   const { next } = await searchParams;
 
-  if (session) redirect(next ?? routes.myCourses());
+  if (session) redirect(next ?? routes.mockExams());
 
   return (
     <FocusShell
       title="Tạo tài khoản học sinh"
-      subtitle="Chỉ cần vài thông tin cơ bản để bắt đầu bài kiểm tra đầu vào."
+      subtitle="Xong là vào thi thử được ngay — 5 lượt miễn phí cho mỗi đề."
       aside={
         <FocusAside
-          eyebrow="Ba bước đầu tiên"
-          title="Từ lúc đăng ký tới lộ trình riêng, mất chừng 20 phút."
+          eyebrow="Ngay sau khi đăng ký"
+          title="Làm một đề Olympic thật, có người chấm, trong 180 phút."
           points={[
             {
-              title: '1 · Khai báo lớp và mức tự thấy',
+              title: '1 · Chọn đề và bấm bắt đầu',
               description:
-                'Hai câu hỏi ngắn, chỉ dùng để chọn độ khó cho bài kiểm tra đầu vào — không phải kết luận về con.',
+                'Đồng hồ do máy chủ giữ đúng như thi thật. Đóng nhầm tab vẫn vào lại được đúng lượt đang làm.',
             },
             {
-              title: '2 · Làm bài kiểm tra đầu vào',
+              title: '2 · Chụp ảnh bài giải tự luận',
               description:
-                'Bài trải đều các chương để hệ thống nhìn ra đâu là điểm mạnh, đâu là lỗ hổng thật sự.',
+                'AI đọc lại bài viết tay của con, chấm theo đúng barem của đề và chỉ ra mất điểm ở bước nào.',
             },
             {
-              title: '3 · Nhận lộ trình theo quỹ thời gian của mình',
+              title: '3 · Biết học lực và học tiếp cái gì',
               description:
-                'Bạn cho biết mỗi tuần học được mấy buổi, mỗi buổi bao nhiêu phút; hệ thống tính ngược ra đích đến khả thi.',
+                'Nộp xong có ngay mức Kém / Trung bình / Khá / Giỏi dựa trên điểm, kèm khóa học phù hợp với chỗ còn hổng.',
             },
           ]}
         />

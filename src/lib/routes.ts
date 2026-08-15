@@ -27,9 +27,13 @@ export const routes = {
   /** Trang xác nhận sau khi thoát — nơi API đăng xuất chuyển hướng tới. */
   loggedOut: () => '/dang-xuat',
 
-  // --- Thi thử chấm bằng AI (công khai, không cần đăng nhập) ---
+  // --- Thi thử chấm bằng AI ---
+  /** Giới thiệu + danh sách đề: ai cũng xem được. */
   mockExams: () => '/thi-thu',
+  /** Giới thiệu một đề + nút bắt đầu: xem được khi chưa đăng nhập. */
   mockExam: (slug: string) => `/thi-thu/${slug}`,
+  /** Màn hình làm bài của MỘT lượt thi cụ thể — chỉ chủ lượt thi vào được. */
+  mockExamSitting: (slug: string, attemptId: string) => `/thi-thu/${slug}/lam-bai/${attemptId}`,
   mockExamResult: (slug: string, attemptId: string) => `/thi-thu/${slug}/ket-qua/${attemptId}`,
 
   // --- Thanh toán ---
@@ -139,7 +143,11 @@ export const API = {
   exams: '/api/v1/exams',
   exam: (slug: string) => `/api/v1/exams/${encodeURIComponent(slug)}`,
   uploads: '/api/v1/uploads',
-  mockSubmit: '/api/v1/exam-attempts',
+  /** Bắt đầu (hoặc vào tiếp) một lượt thi — cần đăng nhập. */
+  mockStart: (slug: string) => `/api/v1/exams/${encodeURIComponent(slug)}/start`,
+  /** Tự lưu bản nháp của lượt đang làm. */
+  mockDraft: (attemptId: string) => `/api/v1/exam-attempts/${attemptId}/draft`,
+  mockSubmit: (attemptId: string) => `/api/v1/exam-attempts/${attemptId}/submit`,
   mockAttempt: (attemptId: string) => `/api/v1/exam-attempts/${attemptId}`,
   /** `docLai = true` khi học sinh báo AI đọc sai chữ: bỏ transcript cũ, đọc ảnh lại. */
   mockGrade: (attemptId: string, docLai = false) =>

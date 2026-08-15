@@ -42,7 +42,12 @@ export function RegisterForm({ next }: { next?: string }) {
         parentName: form.parentName.trim() || undefined,
         parentPhone: form.parentPhone.trim() || undefined,
       });
-      router.push(next ?? routes.myCourses());
+      /**
+       * Tài khoản vừa tạo thì chưa có khóa nào, nên /hoc-tap là một trang trống.
+       * Đưa thẳng vào khu thi thử: ở đó có việc để làm ngay (5 lượt miễn phí),
+       * và làm xong là biết học lực của mình cùng khóa nên học tiếp.
+       */
+      router.push(next ?? routes.mockExams());
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Không tạo được tài khoản.');

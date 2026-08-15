@@ -28,8 +28,10 @@ import { createGoal, getGoalOptions, getTodayPlan } from '../src/server/plan/ser
 import {
   getAttemptResult,
   getExamForPlayer,
+  getExamIntro,
   listPublishedExams,
-  submitMockAttempt,
+  startMockAttempt,
+  submitSitting,
 } from '../src/server/mock-exam/service';
 import { getConfig } from '../src/lib/config';
 import { addDays } from '../src/lib/dates';
@@ -444,8 +446,19 @@ async function main(): Promise<void> {
         !paperJson.includes('rubric'),
     );
 
-    const submitted = await submitMockAttempt({
-      slug,
+    const opened = await startMockAttempt({ slug, userId: registered.userId });
+    check('Mở lượt thi thử là một lượt mới, chưa dùng lượt nào trước đó', !opened.resumed);
+
+    // Bấm mở lần nữa phải VÀO TIẾP lượt đang dở, không đốt thêm quota.
+    const reopened = await startMockAttempt({ slug, userId: registered.userId });
+    check(
+      'Mở lại khi đang có lượt dở thì vào tiếp, không tốn lượt mới',
+      reopened.resumed && reopened.attemptId === opened.attemptId && reopened.quota.used === 1,
+      `used=${reopened.quota.used}`,
+    );
+
+    const submitted = await submitSitting({
+      attemptId: opened.attemptId,
       userId: registered.userId,
       answers: [
         { number: 1, text: 'B', imageUrls: [] },
@@ -480,9 +493,19 @@ async function main(): Promise<void> {
         .filter((a) => a.gradingMode === 'ESSAY')
         .every((a) => a.status === 'GRADED' && a.awarded === 0),
     );
+    /**
+     * Còn lượt thi thì KHÔNG được phát đáp án: nộp bừa lượt đầu để lấy đáp án
+     * rồi chép vào bốn lượt sau là cách phá tính năng này dễ nhất.
+     */
     check(
-      'Trang kết quả có đáp án và lời giải mẫu (vì đã nộp bài)',
-      marked.answers.some((a) => a.solutionMd !== null && a.answerKeyDisplay !== null),
+      'Còn lượt thi thì đáp án và lời giải mẫu chưa mở',
+      marked.solutionLock?.locked === true &&
+        marked.answers.every((a) => a.solutionMd === null && a.answerKeyDisplay === null),
+      `còn ${marked.solutionLock?.remaining} lượt`,
+    );
+    check(
+      'Nhưng vẫn thấy đủ điểm từng câu và nhận xét để học được',
+      marked.answers.every((a) => a.maxPoints > 0) && marked.answers.some((a) => a.awarded !== null),
     );
     check(
       'Học sinh khác KHÔNG xem được bài thi thử của người này',
@@ -494,6 +517,49 @@ async function main(): Promise<void> {
           roles: ['STUDENT'],
         }),
       ),
+    );
+
+    // --- Quota 5 lượt và lượt sạch ------------------------------------------
+    const viewer = { id: registered.userId, fullName: 'smoke', email: null, roles: ['STUDENT' as const] };
+    const config = await getConfig();
+    const limit = config.mockExam.freeAttemptsPerExam;
+
+    const fresh = await startMockAttempt({ slug, userId: registered.userId });
+    const freshSitting = await getExamIntro(slug, viewer);
+    check(
+      'Lượt mới KHÔNG mang theo bài làm của lượt trước',
+      freshSitting.liveAttemptId === fresh.attemptId &&
+        (await prisma.mockExamAnswer.count({
+          where: {
+            attemptId: fresh.attemptId,
+            OR: [{ answerText: { not: null } }, { imageUrls: { isEmpty: false } }],
+          },
+        })) === 0,
+    );
+
+    // Dùng cho hết quota rồi thử mở thêm một lượt nữa.
+    await submitSitting({ attemptId: fresh.attemptId, userId: registered.userId, answers: [] });
+    for (let used = 2; used < limit; used += 1) {
+      const extra = await startMockAttempt({ slug, userId: registered.userId });
+      await submitSitting({ attemptId: extra.attemptId, userId: registered.userId, answers: [] });
+    }
+
+    const exhausted = await getExamIntro(slug, viewer);
+    check(
+      `Đếm đúng ${limit} lượt đã dùng`,
+      exhausted.quota?.used === limit && exhausted.quota?.remaining === 0,
+      `used=${exhausted.quota?.used}`,
+    );
+    check(
+      'Hết quota thì KHÔNG mở được lượt thứ ' + (limit + 1),
+      await isBlocked(() => startMockAttempt({ slug, userId: registered.userId })),
+    );
+
+    const afterAll = await getAttemptResult(submitted.attemptId, viewer);
+    check(
+      'Hết lượt rồi thì đáp án và lời giải mẫu mới mở ra',
+      afterAll.solutionLock?.locked === false &&
+        afterAll.answers.some((a) => a.solutionMd !== null && a.answerKeyDisplay !== null),
     );
 
     console.log(`  · Bộ chấm AI đang dùng: ${marked.ai.label}`);

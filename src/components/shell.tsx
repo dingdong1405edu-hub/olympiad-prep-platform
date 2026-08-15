@@ -53,6 +53,9 @@ export const STUDENT_NAV = (enrollmentId: string): NavItem[] => [
   { href: routes.skillMap(enrollmentId), label: 'Bản đồ kỹ năng' },
   { href: routes.assessments(enrollmentId), label: 'Bài kiểm tra' },
   { href: routes.teacherSessions(enrollmentId), label: 'Buổi tư vấn' },
+  // Khu thi thử mở cho mọi học sinh, kể cả chưa mua khóa nào — nhưng trước đây
+  // không có lối nào dẫn tới nó từ trong hệ thống, chỉ ai biết URL mới vào được.
+  { href: routes.mockExams(), label: 'Thi thử' },
 ];
 
 export const TEACHER_NAV: NavItem[] = [

@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { getSession } from '@/lib/auth';
 import { routes } from '@/lib/routes';
 import { listPublishedExams, aiStatus } from '@/server/mock-exam/service';
+import { getConfigGroup } from '@/lib/config';
 import { SiteShell } from '@/components/site-shell';
 import { Badge, EmptyState } from '@/components/ui';
 
@@ -10,20 +11,50 @@ export const dynamic = 'force-dynamic';
 export const metadata = {
   title: 'Thi thử — chấm điểm bằng AI',
   description:
-    'Làm đề thi Olympic thật trên máy, chụp ảnh bài giải tự luận và nhận điểm kèm nhận xét từng câu theo barem.',
+    'Làm đề thi Olympic thật trên máy, chụp ảnh bài giải tự luận và nhận điểm kèm nhận xét từng câu theo barem, rồi biết mình đang ở mức học lực nào.',
 };
 
 const SHELL = 'mx-auto w-full max-w-5xl px-5 lg:px-8';
 
 /**
- * Danh sách đề thi thử.
+ * CỬA VÀO CỦA CẢ SẢN PHẨM.
  *
- * Vào được ngay, không cần đăng nhập, không cần mua khóa: đây là cửa vào rộng
- * nhất của sản phẩm — ai cũng thử được một đề thật rồi mới quyết định học.
+ * Đây là trang người lạ gặp đầu tiên, nên nó phải trả lời xong ba câu trước khi
+ * ai đó chịu bỏ ra 180 phút: làm bài này là làm cái gì, ai chấm và chấm kiểu gì,
+ * xong rồi mình được gì. Bản cũ chỉ có một câu tiêu đề rồi thả thẳng vào danh
+ * sách đề — không ai biết mình sắp bước vào cái gì.
  */
 export default async function MockExamListPage() {
-  const [exams, session] = await Promise.all([listPublishedExams(), getSession()]);
+  const [exams, session, config] = await Promise.all([
+    listPublishedExams(),
+    getSession(),
+    getConfigGroup('mockExam'),
+  ]);
   const ai = aiStatus();
+  const freeAttempts = config.freeAttemptsPerExam;
+
+  const steps = [
+    {
+      step: '1',
+      title: 'Bấm bắt đầu, đồng hồ chạy',
+      body: 'Đúng như phòng thi: máy chủ giữ giờ, hết giờ bài tự nộp. Đóng nhầm tab hay mất điện thì vào lại đúng lượt đang làm, bài còn nguyên.',
+    },
+    {
+      step: '2',
+      title: 'Chụp ảnh bài giải viết tay',
+      body: 'Trắc nghiệm và đáp số máy chấm chính xác tuyệt đối. Câu tự luận thì chụp ảnh bài làm — AI đọc lại chữ viết tay và chấm theo đúng barem của đề.',
+    },
+    {
+      step: '3',
+      title: 'Nhận điểm từng câu, không phải một con số',
+      body: 'Mỗi câu tự luận cho biết mất điểm ở tiêu chí nào và vì sao, kèm nhận xét tiếng Việt. Thấy AI đọc sai chữ thì bấm cho đọc lại.',
+    },
+    {
+      step: '4',
+      title: 'Biết mình đang ở đâu và học tiếp gì',
+      body: 'Xếp học lực Kém / Trung bình / Khá / Giỏi dựa trên điểm, chỉ ra phần mạnh phần yếu, rồi gợi ý khóa học đúng khối và đúng chỗ còn hổng.',
+    },
+  ];
 
   return (
     <SiteShell signedIn={Boolean(session)}>
@@ -37,27 +68,76 @@ export default async function MockExamListPage() {
             Làm đề thật. Chụp bài giải. Nhận điểm từng câu.
           </h1>
           <p className="mt-4 max-w-2xl text-navy-200">
-            Trắc nghiệm và đáp số được máy chấm chính xác tuyệt đối. Câu tự luận thì chụp ảnh bài làm
-            viết tay — AI đọc lại bài, chấm theo đúng barem của đề và chỉ ra em mất điểm ở bước nào.
+            Không phải bài trắc nghiệm cho vui. Đây là đề Olympic thật, chấm bằng đúng barem của đề,
+            và nói cho em biết em đang ở mức nào so với yêu cầu của kỳ thi.
           </p>
 
           <div className="mt-6 flex flex-wrap gap-2 text-xs text-navy-200">
-            <span className="rounded-full bg-white/10 px-3 py-1.5">Không cần đăng nhập</span>
-            <span className="rounded-full bg-white/10 px-3 py-1.5">Có đồng hồ đếm ngược</span>
-            <span className="rounded-full bg-white/10 px-3 py-1.5">Nhận xét bằng tiếng Việt</span>
+            <span className="rounded-full bg-gold-400/20 px-3 py-1.5 font-semibold text-gold-200">
+              {freeAttempts} lượt miễn phí mỗi đề
+            </span>
+            <span className="rounded-full bg-white/10 px-3 py-1.5">Đồng hồ như thi thật</span>
+            <span className="rounded-full bg-white/10 px-3 py-1.5">Chấm tự luận theo barem</span>
+            <span className="rounded-full bg-white/10 px-3 py-1.5">Có xếp học lực</span>
           </div>
+
+          {session === null ? (
+            <div className="mt-7 flex flex-wrap items-center gap-3">
+              <Link
+                href={routes.register(routes.mockExams())}
+                className="press rounded-lg bg-gold-400 px-6 py-3 text-sm font-bold text-navy-900 transition-all hover:bg-gold-300"
+              >
+                Đăng ký miễn phí để làm bài
+              </Link>
+              <Link
+                href={routes.login(routes.mockExams())}
+                className="text-sm font-medium text-navy-200 hover:text-white"
+              >
+                Đã có tài khoản? Đăng nhập
+              </Link>
+            </div>
+          ) : null}
         </div>
       </section>
 
+      {/* ---------------- Bốn bước ---------------- */}
       <section className={`${SHELL} py-12`}>
+        <h2 className="font-display text-2xl text-ink-900">Thi thử ở đây diễn ra thế nào</h2>
+        <ol className="stagger mt-6 grid gap-4 sm:grid-cols-2">
+          {steps.map((item) => (
+            <li
+              key={item.step}
+              className="animate-fade-up rounded-xl bg-white p-5 ring-1 ring-ink-100 shadow-[0_1px_3px_rgb(23_27_38/0.05)]"
+            >
+              <span
+                aria-hidden
+                className="flex h-8 w-8 items-center justify-center rounded-lg bg-navy-900 text-sm font-bold text-gold-300"
+              >
+                {item.step}
+              </span>
+              <h3 className="mt-3 font-semibold text-ink-900">{item.title}</h3>
+              <p className="mt-1 text-sm leading-relaxed text-ink-600">{item.body}</p>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      {/* ---------------- Danh sách đề ---------------- */}
+      <section className={`${SHELL} pb-16`}>
+        <h2 className="font-display text-2xl text-ink-900">Chọn một đề để bắt đầu</h2>
+        <p className="mt-1 text-sm text-ink-600">
+          Mỗi tài khoản có {freeAttempts} lượt miễn phí cho mỗi đề. Bấm vào đề để xem cấu trúc trước
+          khi tính giờ.
+        </p>
+
         {exams.length === 0 ? (
           <EmptyState
             icon="📄"
-            title="Chưa có đề thi thử nào trong hệ thống"
-            description="Nạp đề mẫu bằng lệnh: npm run db:seed:exam"
+            title="Chưa có đề thi thử nào đang mở"
+            description="Các đề đang được chuẩn bị. Quay lại sau ít hôm nhé."
           />
         ) : (
-          <ul className="stagger grid gap-5 sm:grid-cols-2">
+          <ul className="stagger mt-6 grid gap-5 sm:grid-cols-2">
             {exams.map((exam) => (
               <li key={exam.slug} className="animate-fade-up">
                 <Link
@@ -75,7 +155,7 @@ export default async function MockExamListPage() {
                     ) : null}
                   </div>
 
-                  <h2 className="text-lg font-bold text-ink-900">{exam.title}</h2>
+                  <h3 className="text-lg font-bold text-ink-900">{exam.title}</h3>
                   <p className="mt-1 text-sm text-ink-500">
                     {[exam.subject === 'math' ? 'Toán' : exam.subject, exam.gradeLevel]
                       .filter(Boolean)
@@ -83,7 +163,7 @@ export default async function MockExamListPage() {
                   </p>
 
                   <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-700">
-                    Bắt đầu làm bài →
+                    Xem đề và bắt đầu →
                   </span>
                 </Link>
               </li>
@@ -96,7 +176,7 @@ export default async function MockExamListPage() {
           <p className="mt-6 rounded-lg bg-amber-50 px-4 py-3 text-sm text-amber-900 ring-1 ring-amber-200">
             {ai.demo
               ? 'Hệ thống đang ở chế độ thử: câu tự luận nhận ĐIỂM MẪU, không phải điểm AI chấm.'
-              : 'Chưa gắn khóa AI. Trắc nghiệm và đáp số vẫn chấm bình thường; câu tự luận sẽ được ghi "chưa chấm được" và chấm lại sau khi gắn khóa.'}
+              : 'Phần chấm tự luận bằng AI đang tạm nghỉ. Trắc nghiệm và đáp số vẫn chấm bình thường; câu tự luận sẽ được chấm bù sau.'}
           </p>
         ) : null}
       </section>
