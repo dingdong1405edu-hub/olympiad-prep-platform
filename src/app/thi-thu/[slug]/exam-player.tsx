@@ -163,6 +163,25 @@ export function ExamPlayer({ exam }: { exam: ExamForPlayer }) {
 
   const submit = useCallback(async () => {
     if (submittedRef.current) return;
+
+    /**
+     * Ảnh đang tải lên thì chưa được nộp.
+     *
+     * `answers` chỉ có đường dẫn ảnh SAU khi tải lên xong. Bấm "Nộp bài" giữa
+     * chừng — hoặc hết giờ đúng lúc đó — thì câu ấy đi lên máy chủ với danh sách
+     * ảnh rỗng: bài làm em vừa chụp biến mất, chấm 0, và không một dòng báo lỗi
+     * nào. Chặn ở đây và nói rõ còn thiếu gì.
+     */
+    const pendingUploads = Object.entries(uploading)
+      .filter(([, busy]) => busy)
+      .map(([number]) => number);
+    if (pendingUploads.length > 0) {
+      setError(
+        `Ảnh của câu ${pendingUploads.join(', ')} đang tải lên. Đợi vài giây cho ảnh hiện ra rồi bấm nộp lại — nộp bây giờ sẽ mất ảnh đó.`,
+      );
+      return;
+    }
+
     submittedRef.current = true;
     setError(null);
     setPhase('grading');
@@ -217,14 +236,37 @@ export function ExamPlayer({ exam }: { exam: ExamForPlayer }) {
           : 'Không nộp được bài. Kiểm tra mạng rồi bấm nộp lại — bài làm của em vẫn còn.',
       );
     }
-  }, [answers, exam.questions, exam.slug, router, startedAt]);
+  }, [answers, exam.questions, exam.slug, router, startedAt, uploading]);
 
-  // Hết giờ thì tự nộp: đề ghi 180 phút thì phải đúng 180 phút.
+  /**
+   * Hết giờ thì tự nộp — nhưng CHỈ khi đồng hồ thực sự chạy hết trong phiên này.
+   *
+   * Trước đây điều kiện là "startedAt cách đây hơn 5 giây", nhằm tránh nộp ngay
+   * ở lần render đầu. Với một bản nháp cũ thì điều kiện đó luôn đúng: mở lại đề
+   * hôm sau là `secondsLeft` đã bằng 0 và bài TỰ NỘP ngay khi trang vừa hiện,
+   * kể cả khi em chưa kịp làm câu nào. Bài thi 180 phút biến thành 0 điểm mà
+   * không ai bấm gì.
+   *
+   * Nay phải nhìn thấy đồng hồ còn thời gian ít nhất một nhịp thì mới coi là
+   * "hết giờ khi đang làm". Mở lại bản nháp đã quá hạn thì đề vẫn nằm đó, em tự
+   * quyết định nộp hay bỏ.
+   */
+  const sawTimeRemainingRef = useRef(false);
   useEffect(() => {
-    if (phase === 'doing' && secondsLeft === 0 && restoredOrStarted(startedAt)) {
+    if (secondsLeft > 0) sawTimeRemainingRef.current = true;
+  }, [secondsLeft]);
+
+  useEffect(() => {
+    if (phase !== 'doing' || secondsLeft !== 0) return;
+    if (sawTimeRemainingRef.current) {
       void submit();
+    } else if (restored) {
+      setError(
+        'Bản làm dở này đã hết giờ từ trước. Bài của em vẫn còn nguyên — bấm "Nộp bài" ' +
+          'để chấm phần đã làm, hoặc tải lại trang để bắt đầu lượt mới.',
+      );
     }
-  }, [secondsLeft, phase, submit, startedAt]);
+  }, [secondsLeft, phase, submit, restored]);
 
   // --- Cảnh báo khi đóng tab giữa chừng ---
   // Cảnh báo cả lúc đang chấm: việc chấm chạy từ chính tab này, đóng đi thì các
@@ -390,11 +432,6 @@ export function ExamPlayer({ exam }: { exam: ExamForPlayer }) {
       </main>
     </div>
   );
-}
-
-/** Chỉ tự nộp khi đồng hồ đã thực sự chạy (tránh nộp ngay ở lần render đầu). */
-function restoredOrStarted(startedAt: string): boolean {
-  return Date.now() - new Date(startedAt).getTime() > 5_000;
 }
 
 // ---------------------------------------------------------------------------
@@ -697,17 +734,23 @@ function EssayInput({
     const picked = Array.from(fileList).slice(0, Math.max(0, room));
     const uploaded: string[] = [];
 
-    for (const file of picked) {
-      try {
-        const result = await uploadExamImage(file);
-        uploaded.push(result.url);
-      } catch (error) {
-        setUploadError(error instanceof Error ? error.message : 'Tải ảnh lên thất bại.');
+    // `finally` chứ không phải gọi ở cuối hàm: cờ "đang tải" nay CHẶN nút nộp
+    // bài, nên một lỗi bất ngờ làm cờ kẹt ở true sẽ khóa luôn đường nộp — hỏng
+    // nặng hơn cả cái lỗi mà nó sinh ra để vá.
+    try {
+      for (const file of picked) {
+        try {
+          const result = await uploadExamImage(file);
+          uploaded.push(result.url);
+        } catch (error) {
+          setUploadError(error instanceof Error ? error.message : 'Tải ảnh lên thất bại.');
+        }
       }
-    }
 
-    if (uploaded.length > 0) onChange({ imageUrls: [...images, ...uploaded] });
-    onUploadingChange(false);
+      if (uploaded.length > 0) onChange({ imageUrls: [...images, ...uploaded] });
+    } finally {
+      onUploadingChange(false);
+    }
   }
 
   return (

@@ -18,6 +18,9 @@
 
 export type MockAiProvider = 'groq' | 'openai' | 'anthropic' | 'mock';
 
+/** Hai lượt gọi của pipeline chấm: đọc ảnh, rồi chấm theo barem. */
+export type AiUseCase = 'vision' | 'grade';
+
 type Dialect = 'openai' | 'anthropic';
 
 interface ProviderSpec {
@@ -46,8 +49,18 @@ const PROVIDERS: Record<Exclude<MockAiProvider, 'mock'>, ProviderSpec> = {
     apiKeyEnv: 'GROQ_API_KEY',
     visionModelEnv: 'GROQ_MODEL_VISION',
     gradeModelEnv: 'GROQ_MODEL_GRADE',
-    defaultVisionModel: 'meta-llama/llama-4-scout-17b-16e-instruct',
-    defaultGradeModel: 'moonshotai/kimi-k2-instruct',
+    /**
+     * Groq đổi danh mục model liên tục và mỗi tài khoản thấy một danh sách khác
+     * nhau — hai tên mặc định cũ (`llama-4-scout`, `kimi-k2`) đã bị gỡ và trả
+     * 404 trên tài khoản thật. Đây chỉ là điểm khởi đầu; xem tài khoản của mình
+     * có gì bằng `GET https://api.groq.com/openai/v1/models` rồi đặt lại bằng
+     * `GROQ_MODEL_VISION` / `GROQ_MODEL_GRADE`.
+     *
+     * Nhiều tài khoản Groq KHÔNG có model đọc ảnh nào. Khi đó để lượt đọc ảnh
+     * cho nhà khác: `MOCK_AI_PROVIDER_VISION=openai`.
+     */
+    defaultVisionModel: 'meta-llama/llama-4-maverick-17b-128e-instruct',
+    defaultGradeModel: 'llama-3.3-70b-versatile',
   },
   openai: {
     dialect: 'openai',
@@ -134,8 +147,22 @@ const NO_KEY_PROVIDER: ResolvedProvider = {
  * khóa, vì im lặng rơi sang nhà khác là kiểu lỗi khiến người ta tưởng đã chấm
  * bằng model này mà thật ra là model khác (đúng bài học từ cổng thanh toán).
  */
-export function resolveProvider(): ResolvedProvider {
-  const requested = env('MOCK_AI_PROVIDER').toLowerCase();
+export function resolveProvider(useCase?: AiUseCase): ResolvedProvider {
+  /**
+   * Chọn được nhà cung cấp RIÊNG cho từng lượt gọi.
+   *
+   * Hai lượt đòi hai năng lực khác nhau: lượt 1 phải ĐỌC ĐƯỢC ẢNH, lượt 2 chỉ
+   * cần suy luận trên văn bản. Nhiều tài khoản Groq không có model nhìn ảnh nào
+   * — bắt cả hai lượt dùng chung một nhà là hoặc mất khả năng chấm ảnh, hoặc
+   * phải trả giá model đắt cho cả lượt chỉ cộng điểm.
+   *
+   *   MOCK_AI_PROVIDER_VISION=openai   # đọc bài viết tay
+   *   MOCK_AI_PROVIDER_GRADE=groq      # chấm theo barem, rẻ và nhanh
+   *
+   * Không đặt thì rơi về `MOCK_AI_PROVIDER` chung, rồi mới tới tự dò.
+   */
+  const perUseCase = useCase ? env(`MOCK_AI_PROVIDER_${useCase.toUpperCase()}`) : '';
+  const requested = (perUseCase || env('MOCK_AI_PROVIDER')).toLowerCase();
 
   if (requested === 'mock' || requested === 'demo') return DEMO_PROVIDER;
   if (requested === 'groq' || requested === 'openai' || requested === 'anthropic') {
@@ -226,8 +253,20 @@ async function postJson(
 
     const text = await response.text();
     if (!response.ok) {
+      /**
+       * Tên model sai là lỗi cấu hình phổ biến nhất của tính năng này — nhà
+       * cung cấp gỡ model cũ mà không báo — nên nói thẳng phải sửa biến nào,
+       * thay vì để lại một dòng 404 thô cho người đọc tự đoán.
+       */
+      const wrongModel =
+        response.status === 404 || /model .*(does not exist|not found|decommission)/i.test(text);
+      const hint = wrongModel
+        ? ' — tên model không còn hiệu lực. Đặt lại bằng biến *_MODEL_VISION / *_MODEL_GRADE, ' +
+          'hoặc chuyển lượt đọc ảnh sang nhà khác bằng MOCK_AI_PROVIDER_VISION.'
+        : '';
+
       throw new AiProviderError(
-        `AI trả lỗi ${response.status}: ${text.slice(0, 500)}`,
+        `AI trả lỗi ${response.status}: ${text.slice(0, 500)}${hint}`,
         response.status,
         response.status === 408 || response.status === 429 || response.status >= 500,
       );
@@ -513,12 +552,12 @@ async function callAnthropic(
 // ---------------------------------------------------------------------------
 
 async function callWithRetry(
-  useCase: 'vision' | 'grade',
+  useCase: AiUseCase,
   call: LlmCall,
   json: JsonShape | null,
   maxRetries: number,
 ): Promise<LlmReply> {
-  const resolved = resolveProvider();
+  const resolved = resolveProvider(useCase);
   if (!resolved.live) {
     throw new AiProviderError(
       'Chưa gắn khóa AI (GROQ_API_KEY / OPENAI_API_KEY / ANTHROPIC_API_KEY).',
