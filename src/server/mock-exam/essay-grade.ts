@@ -426,7 +426,17 @@ export async function gradeEssayAnswer(input: EssayGradeInput): Promise<EssayGra
           attempt === 0
             ? userPrompt
             : `${userPrompt}\n\nLƯU Ý: lần trước bạn trả về sai cấu trúc. Chỉ trả về JSON với đúng các khóa: criteria[{code, awarded, evidence, reason}], confidence, needs_human_review, feedback_vi.`,
-        maxTokens: 2000,
+        /**
+         * Lượt chấm chỉ trả về một JSON ngắn: vài tiêu chí kèm lý do, một câu
+         * nhận xét. 1100 token là thừa sức.
+         *
+         * Xin 2000 không phải là "phòng xa" mà là tự bắn vào chân: Groq tính
+         * hạn mức theo prompt CỘNG max_tokens, nên mỗi lượt chấm giữ chỗ gần
+         * 900 token vô ích trong hạn mức 12.000/phút — tức mất đứt một lượt
+         * chấm khác. Đề có 10 câu tự luận thì đó là khác biệt giữa chấm xong
+         * và treo bốn câu.
+         */
+        maxTokens: 1100,
         timeoutMs: input.timeoutMs,
       },
       GRADE_JSON_SHAPE,

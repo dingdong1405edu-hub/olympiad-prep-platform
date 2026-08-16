@@ -48,37 +48,44 @@ export function ResultView({
   /**
    * CHẤM NỐT NHỮNG CÂU CÒN BỎ LỬNG.
    *
-   * Việc chấm chạy từ tab đang nộp bài. Đóng tab giữa chừng — hoặc rớt mạng —
-   * là những câu còn lại nằm im ở "chờ chấm" MÃI MÃI, và vì bài chưa chấm xong
-   * nên trang này không xếp học lực. Người dùng thấy đúng một thứ: "chưa xếp
-   * được học lực", lần nào mở cũng vậy, không có cách nào tự thoát ra ngoài
-   * việc bấm tay từng câu một.
+   * Việc chấm chạy từ tab đang nộp bài. Đóng tab giữa chừng, rớt mạng, hoặc nhà
+   * cung cấp AI chặn vì quá hạn mức tốc độ — những câu còn lại nằm im MÃI MÃI,
+   * và vì bài chưa chấm xong nên trang này không xếp học lực. Người dùng mở lại
+   * bao nhiêu lần cũng chỉ thấy đúng một dòng "chưa xếp được học lực", không có
+   * cách nào thoát ra ngoài việc bấm tay từng câu một.
    *
-   * Mở trang kết quả mà còn câu chưa chấm thì chấm nốt ngay tại đây.
+   * PHẢI GOM CẢ HAI TRẠNG THÁI. Lần trước chỗ này chỉ nhặt câu PENDING, mà khi
+   * bị 429 thì câu rơi vào FAILED — tức là đúng những câu cần chấm lại nhất thì
+   * không được chấm lại. Đó chính là bốn câu treo trên bản chạy thật.
    */
-  const pendingIds = result.answers
-    .filter((answer) => answer.status === 'PENDING')
+  const unfinished = result.answers
+    .filter((answer) => answer.status === 'PENDING' || answer.status === 'FAILED')
     .map((answer) => answer.questionId);
-  const pendingKey = pendingIds.join(',');
-  const startedRef = useRef('');
+  const unfinishedKey = unfinished.join(',');
+  const attemptedRef = useRef(new Set<string>());
 
   useEffect(() => {
-    if (pendingKey === '' || startedRef.current === pendingKey) return;
-    startedRef.current = pendingKey;
+    if (unfinishedKey === '') return;
+    const todo = unfinishedKey.split(',').filter((id) => !attemptedRef.current.has(id));
+    if (todo.length === 0) return;
+
+    todo.forEach((id) => attemptedRef.current.add(id));
     setFinishing(true);
 
     void (async () => {
-      for (const questionId of pendingKey.split(',')) {
+      let changed = false;
+      for (const questionId of todo) {
         try {
           await apiPost(API.mockGrade(result.id), { questionId });
+          changed = true;
         } catch {
-          // Câu nào chấm không xong thì để lại nút bấm tay ở câu đó.
+          // Câu nào vẫn không xong thì để lại nút bấm tay ở câu đó.
         }
       }
       setFinishing(false);
-      router.refresh();
+      if (changed) router.refresh();
     })();
-  }, [pendingKey, result.id, router]);
+  }, [unfinishedKey, result.id, router]);
 
   const ratio = result.totalPoints > 0 ? result.score / result.totalPoints : 0;
   const tone = scoreTone(ratio);
@@ -155,9 +162,10 @@ export function ResultView({
       ) : null}
 
       {result.failedCount > 0 ? (
-        <Alert tone="danger" className="mt-4">
-          Có {result.failedCount} câu chấm chưa xong. Bấm “Chấm lại câu này” ở câu đó — các câu khác
-          vẫn giữ nguyên điểm.
+        <Alert tone={finishing ? 'info' : 'danger'} className="mt-4">
+          {finishing
+            ? `Đang chấm lại ${result.failedCount} câu chưa xong. Cứ để trang mở — chấm nốt là điểm và học lực hiện ra.`
+            : `Có ${result.failedCount} câu chấm chưa xong. Bấm “Chấm lại câu này” ở câu đó — các câu khác vẫn giữ nguyên điểm.`}
         </Alert>
       ) : null}
 

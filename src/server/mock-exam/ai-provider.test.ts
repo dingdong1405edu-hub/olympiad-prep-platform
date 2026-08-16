@@ -21,7 +21,7 @@ let server: Server;
 let baseUrl = '';
 const received: Recorded[] = [];
 /** Hàng đợi phản hồi: mỗi lời gọi lấy một mục; hết thì dùng mục cuối. */
-let replies: { status: number; body: unknown }[] = [];
+let replies: { status: number; body: unknown; headers?: Record<string, string> }[] = [];
 
 function readBody(request: IncomingMessage): Promise<string> {
   return new Promise((resolve) => {
@@ -42,7 +42,7 @@ beforeAll(async () => {
         body: raw === '' ? {} : (JSON.parse(raw) as Record<string, unknown>),
       });
       const reply = replies.length > 1 ? replies.shift()! : (replies[0] ?? { status: 200, body: {} });
-      response.writeHead(reply.status, { 'Content-Type': 'application/json' });
+      response.writeHead(reply.status, { 'Content-Type': 'application/json', ...reply.headers });
       response.end(JSON.stringify(reply.body));
     });
   });
@@ -64,6 +64,7 @@ afterEach(() => {
   delete process.env.OPENAI_API_KEY;
   delete process.env.OPENAI_BASE_URL;
   delete process.env.GROQ_API_KEY;
+  delete process.env.GROQ_BASE_URL;
   delete process.env.ANTHROPIC_API_KEY;
   delete process.env.ANTHROPIC_BASE_URL;
   delete process.env.OPENAI_MODEL_VISION;
@@ -265,6 +266,103 @@ describe('phương ngữ OpenAI (dùng chung cho Groq)', () => {
   it('chưa gắn khóa thì không bắn request nào ra ngoài', async () => {
     await expect(callAiText({ system: 's', user: 'u' })).rejects.toBeInstanceOf(AiProviderError);
     expect(received).toHaveLength(0);
+  });
+});
+
+/**
+ * Đây là chỗ bản chạy thật gãy: gói Groq miễn phí có 12.000 token/phút, một đề
+ * 10 câu tự luận cần chừng 40.000, nên một loạt câu nhận 429 rồi hỏng hẳn — bài
+ * đứng ở "chưa chấm được" và không xếp được học lực.
+ */
+describe('bị giới hạn tốc độ (429)', () => {
+  function rateLimited(retryAfterSeconds?: string, message = 'Rate limit reached') {
+    return {
+      status: 429,
+      body: { error: { message } },
+      headers: retryAfterSeconds ? { 'retry-after': retryAfterSeconds } : undefined,
+    };
+  }
+
+  it('đợi đúng số giây nhà cung cấp dặn trong header rồi mới gọi lại', async () => {
+    useOpenAi();
+    replies = [rateLimited('1'), openAiReply('xong')];
+
+    const started = Date.now();
+    const reply = await callAiText({ system: 's', user: 'u' }, 1);
+    const waited = Date.now() - started;
+
+    expect(reply.text).toBe('xong');
+    expect(received).toHaveLength(2);
+    // 1s nhà cung cấp dặn + 0,5s cho chắc. Trước đây luôn đợi cứng 2s.
+    expect(waited).toBeGreaterThanOrEqual(1_400);
+    expect(waited).toBeLessThan(2_400);
+  });
+
+  it('đọc được cả số giây nằm trong câu báo lỗi khi không có header', async () => {
+    useOpenAi();
+    replies = [
+      rateLimited(undefined, 'Rate limit reached ... Please try again in 1.2s. Need more tokens?'),
+      openAiReply('xong'),
+    ];
+
+    const started = Date.now();
+    await callAiText({ system: 's', user: 'u' }, 1);
+    expect(Date.now() - started).toBeGreaterThanOrEqual(1_600);
+  });
+
+  it('nhà chính nghẽn thì sang nhà phụ, KHÔNG trả về "chưa chấm được"', async () => {
+    // Cả hai nhà trỏ vào cùng máy chủ giả; phân biệt nhau bằng khóa gửi kèm.
+    process.env.GROQ_API_KEY = 'khoa-groq';
+    process.env.GROQ_BASE_URL = baseUrl;
+    process.env.OPENAI_API_KEY = 'khoa-openai';
+    process.env.OPENAI_BASE_URL = baseUrl;
+    replies = [rateLimited('60'), openAiReply('{"ok":true}')];
+
+    // Lượt CHẤM: thứ tự tự dò là groq → openai, nên nhà chính là Groq.
+    const reply = await callAiJson(
+      { system: 's', user: 'u' },
+      { name: 'g', description: 'd', schema: { type: 'object' } },
+      0,
+    );
+
+    expect(reply.text).toBe('{"ok":true}');
+    expect(received[0]?.headers.authorization).toBe('Bearer khoa-groq');
+    expect(received[1]?.headers.authorization).toBe('Bearer khoa-openai');
+  });
+
+  it('vẫn đổi nhà kể cả khi đã chỉ đích danh — không chấm được mới là hỏng nặng nhất', async () => {
+    process.env.MOCK_AI_PROVIDER_GRADE = 'groq';
+    process.env.GROQ_API_KEY = 'khoa-groq';
+    process.env.GROQ_BASE_URL = baseUrl;
+    process.env.OPENAI_API_KEY = 'khoa-openai';
+    process.env.OPENAI_BASE_URL = baseUrl;
+    replies = [rateLimited('60'), openAiReply('{"ok":true}')];
+
+    await callAiJson(
+      { system: 's', user: 'u' },
+      { name: 'g', description: 'd', schema: { type: 'object' } },
+      0,
+    );
+    expect(received[1]?.headers.authorization).toBe('Bearer khoa-openai');
+  });
+
+  it('sai khóa thì KHÔNG đổi nhà — đổi chỉ làm hỏng hai lần thay vì một', async () => {
+    process.env.GROQ_API_KEY = 'khoa-groq';
+    process.env.GROQ_BASE_URL = baseUrl;
+    process.env.OPENAI_API_KEY = 'khoa-openai';
+    process.env.OPENAI_BASE_URL = baseUrl;
+    replies = [{ status: 401, body: { error: { message: 'Invalid API key' } } }];
+
+    await expect(callAiText({ system: 's', user: 'u' }, 0)).rejects.toThrow(AiProviderError);
+    expect(received).toHaveLength(1);
+  });
+
+  it('chỉ có một khóa thì báo lỗi 429 như cũ, không lặng lẽ thành công', async () => {
+    process.env.GROQ_API_KEY = 'khoa-groq';
+    process.env.GROQ_BASE_URL = baseUrl;
+    replies = [rateLimited('60')];
+
+    await expect(callAiText({ system: 's', user: 'u' }, 0)).rejects.toThrow(/429/);
   });
 });
 

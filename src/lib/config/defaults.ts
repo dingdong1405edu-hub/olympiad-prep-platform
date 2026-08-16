@@ -224,7 +224,9 @@ export const DEFAULT_CONFIG: PlatformConfig = {
 
   levels: {
     labels: {
-      WEAK: 'Kém',
+      // "Kém" là một lời phán về con người; "Dưới trung bình" là một vị trí trên
+      // thang điểm, và đó mới đúng thứ hệ thống đo được.
+      WEAK: 'Dưới trung bình',
       AVERAGE: 'Trung bình',
       GOOD: 'Khá',
       EXCELLENT: 'Giỏi',
@@ -322,7 +324,12 @@ export const DEFAULT_CONFIG: PlatformConfig = {
     gradingMaxRetries: numberEnv('GRADING_MAX_RETRIES', 2, 0),
     maxImagesPerQuestion: 3,
     maxImageBytes: 6 * 1024 * 1024,
-    parallelGradeLimit: 4,
+    /**
+     * Chấm 4 câu cùng lúc nghe thì nhanh, nhưng gói Groq miễn phí chỉ có 12.000
+     * token/phút: bắn 4 lượt song song là ba lượt ăn 429 ngay lập tức. Để 2 thì
+     * gần như không đụng trần, và 10 câu vẫn xong trong khoảng nửa phút.
+     */
+    parallelGradeLimit: 2,
   },
 };
 

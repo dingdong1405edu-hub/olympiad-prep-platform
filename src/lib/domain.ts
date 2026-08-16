@@ -24,7 +24,7 @@ import type {
 export const STUDENT_LEVELS: StudentLevel[] = ['WEAK', 'AVERAGE', 'GOOD', 'EXCELLENT'];
 
 export const LEVEL_LABEL: Record<StudentLevel, string> = {
-  WEAK: 'Kém',
+  WEAK: 'Dưới trung bình',
   AVERAGE: 'Trung bình',
   GOOD: 'Khá',
   EXCELLENT: 'Giỏi',

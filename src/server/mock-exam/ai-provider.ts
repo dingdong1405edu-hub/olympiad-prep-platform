@@ -240,10 +240,40 @@ export class AiProviderError extends Error {
     message: string,
     public readonly status: number | null,
     public readonly retryable: boolean,
+    /**
+     * Nhà cung cấp bảo đợi bao lâu rồi hãy gọi lại (ms).
+     *
+     * Groq trả cả header `retry-after` lẫn câu "Please try again in 5.885s"
+     * trong thân lỗi. Không đọc con số này mà cứ đợi theo lịch của mình thì gọi
+     * lại quá sớm, ăn thêm một lần 429 nữa, rồi hết lượt thử — đúng thứ làm bài
+     * của học sinh dừng ở "chưa chấm được".
+     */
+    public readonly retryAfterMs: number | null = null,
   ) {
     super(message);
     this.name = 'AiProviderError';
   }
+}
+
+/** Đọc thời gian chờ nhà cung cấp yêu cầu, từ header hoặc từ chính câu báo lỗi. */
+function readRetryAfterMs(headers: Headers, body: string): number | null {
+  const header = headers.get('retry-after');
+  if (header !== null) {
+    const seconds = Number(header.trim());
+    if (Number.isFinite(seconds) && seconds >= 0) return seconds * 1_000;
+    const date = Date.parse(header);
+    if (Number.isFinite(date)) return Math.max(0, date - Date.now());
+  }
+  // "Please try again in 5.885s" / "try again in 1m20s"
+  const match = body.match(/try again in\s+(?:(\d+)m)?\s*([\d.]+)s/i);
+  if (match) {
+    const minutes = Number(match[1] ?? 0);
+    const seconds = Number(match[2] ?? 0);
+    if (Number.isFinite(minutes) && Number.isFinite(seconds)) {
+      return Math.round((minutes * 60 + seconds) * 1_000);
+    }
+  }
+  return null;
 }
 
 const DEFAULT_TIMEOUT_MS = 90_000;
@@ -289,6 +319,7 @@ async function postJson(
         `AI trả lỗi ${response.status}: ${text.slice(0, 500)}${hint}`,
         response.status,
         response.status === 408 || response.status === 429 || response.status >= 500,
+        readRetryAfterMs(response.headers, text),
       );
     }
     try {
@@ -571,6 +602,44 @@ async function callAnthropic(
 // Điểm vào
 // ---------------------------------------------------------------------------
 
+/** Chờ lâu nhất cho một lần bị giới hạn tốc độ. Quá mức này thì đổi nhà cung cấp. */
+const MAX_RATE_LIMIT_WAIT_MS = 35_000;
+
+async function callOneProvider(
+  name: Exclude<MockAiProvider, 'mock'>,
+  useCase: AiUseCase,
+  call: LlmCall,
+  json: JsonShape | null,
+  maxRetries: number,
+): Promise<LlmReply> {
+  const spec = PROVIDERS[name];
+  const described = describe(name);
+  const model = useCase === 'vision' ? described.visionModel : described.gradeModel;
+
+  // Backoff 2s → 5s theo spec §11 (429 / 529 / rớt mạng) — nhưng khi nhà cung
+  // cấp NÓI RÕ phải đợi bao lâu thì nghe theo họ, cộng nửa giây cho chắc.
+  const delays = [2_000, 5_000];
+  let lastError: unknown;
+
+  for (let attempt = 0; attempt <= maxRetries; attempt += 1) {
+    try {
+      return spec.dialect === 'anthropic'
+        ? await callAnthropic(spec, model, call, json)
+        : await callOpenAiCompatible(spec, model, call, json);
+    } catch (error) {
+      lastError = error;
+      if (!(error instanceof AiProviderError) || !error.retryable) break;
+      if (attempt >= maxRetries) break;
+
+      const asked = error.retryAfterMs;
+      if (asked !== null && asked > MAX_RATE_LIMIT_WAIT_MS) break;
+      await sleep(asked !== null ? asked + 500 : delays[Math.min(attempt, delays.length - 1)]!);
+    }
+  }
+
+  throw lastError instanceof Error ? lastError : new Error('Gọi AI thất bại.');
+}
+
 async function callWithRetry(
   useCase: AiUseCase,
   call: LlmCall,
@@ -586,27 +655,41 @@ async function callWithRetry(
     );
   }
 
-  const spec = PROVIDERS[resolved.provider as Exclude<MockAiProvider, 'mock'>];
-  const model = useCase === 'vision' ? resolved.visionModel : resolved.gradeModel;
+  const primary = resolved.provider as Exclude<MockAiProvider, 'mock'>;
 
-  // Backoff 2s → 5s theo spec §11 (429 / 529 / rớt mạng).
-  const delays = [2_000, 5_000];
-  let lastError: unknown;
+  try {
+    return await callOneProvider(primary, useCase, call, json, maxRetries);
+  } catch (error) {
+    /**
+     * NHÀ CHÍNH NGHẼN THÌ SANG NHÀ PHỤ, thay vì trả về "chưa chấm được".
+     *
+     * Gói Groq miễn phí có 12.000 token mỗi phút. Một đề 10 câu tự luận cần
+     * chừng 40.000 token, nên dù chờ đúng như Groq dặn thì trong một phút cũng
+     * KHÔNG có cách nào chấm hết — đo thật: 6 câu xong, 4 câu 429. Đó chính là
+     * bài 22/100 với bốn câu treo trên bản chạy thật, và vì bài chưa chấm xong
+     * nên không xếp được học lực.
+     *
+     * Đổi nhà cả khi người vận hành đã chỉ đích danh. Ban đầu tôi để ngược lại
+     * — chỉ định rồi thì tôn trọng tuyệt đối, theo bài học từ cổng thanh toán.
+     * Nhưng hai chuyện không giống nhau: âm thầm đổi cổng thanh toán là tiền đi
+     * nhầm chỗ, còn ở đây không đổi nghĩa là bài của học sinh KHÔNG BAO GIỜ
+     * được chấm. Model nào thực sự chấm vẫn được ghi lại từng lượt trong
+     * `AiGeneration`, nên đổi nhà không phải là giấu.
+     *
+     * Chỉ hai điều tuyệt đối: `mock`/`demo` thì không bao giờ gọi thật (xử lý ở
+     * `resolveProvider`), và chỉ đổi khi lỗi thuộc loại thử lại được — sai khóa
+     * hay sai tên model thì đổi nhà chỉ làm hỏng hai lần thay vì một.
+     */
+    const retryable = error instanceof AiProviderError && error.retryable;
+    if (!retryable) throw error;
 
-  for (let attempt = 0; attempt <= maxRetries; attempt += 1) {
-    try {
-      return spec.dialect === 'anthropic'
-        ? await callAnthropic(spec, model, call, json)
-        : await callOpenAiCompatible(spec, model, call, json);
-    } catch (error) {
-      lastError = error;
-      const retryable = error instanceof AiProviderError ? error.retryable : false;
-      if (!retryable || attempt >= maxRetries) break;
-      await sleep(delays[Math.min(attempt, delays.length - 1)]!);
-    }
+    const backup = autoOrder(useCase).find(
+      (name) => name !== primary && env(PROVIDERS[name].apiKeyEnv) !== '',
+    );
+    if (!backup) throw error;
+
+    return callOneProvider(backup, useCase, call, json, maxRetries);
   }
-
-  throw lastError instanceof Error ? lastError : new Error('Gọi AI thất bại.');
 }
 
 /** Gọi model có ảnh, nhận về văn bản thuần. */
