@@ -29,12 +29,12 @@ export default function GlobalError({
 
   return (
     <div className="paper flex min-h-screen items-center justify-center px-5 py-16">
-      <div className="w-full max-w-lg rounded-2xl bg-white p-8 ring-1 ring-navy-100 shadow-[0_24px_56px_-24px_rgb(13_27_49/0.35)]">
+      <div className="w-full max-w-lg rounded-2xl bg-white p-8 ring-1 ring-warm-100 shadow-[0_24px_56px_-24px_rgb(120_70_45/0.35)]">
         <div className="gold-rule mb-4" aria-hidden />
-        <h1 className="font-display text-2xl font-bold tracking-tight text-navy-900">
+        <h1 className="font-display text-2xl font-bold tracking-tight text-warm-900">
           Trang này đang gặp sự cố
         </h1>
-        <p className="mt-2 text-[15px] leading-relaxed text-navy-600">
+        <p className="mt-2 text-[15px] leading-relaxed text-warm-600">
           Lỗi xảy ra ở phía máy chủ, không phải do thao tác của bạn. Dữ liệu bạn đã lưu trước đó vẫn
           nguyên vẹn.
         </p>
@@ -43,22 +43,22 @@ export default function GlobalError({
           <button
             type="button"
             onClick={reset}
-            className="press rounded-lg bg-navy-900 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-navy-800"
+            className="press rounded-lg btn-fire px-5 py-2.5 text-sm font-bold"
           >
             Thử lại
           </button>
           <Link
             href={routes.home()}
-            className="press rounded-lg px-5 py-2.5 text-sm font-semibold text-navy-700 ring-1 ring-navy-200 transition-colors hover:bg-navy-50"
+            className="press rounded-lg px-5 py-2.5 text-sm font-semibold text-warm-700 ring-1 ring-warm-200 transition-colors hover:bg-warm-50"
           >
             Về trang chủ
           </Link>
         </div>
 
         {error.digest ? (
-          <p className="mt-6 border-t border-navy-100 pt-4 text-xs text-navy-400">
+          <p className="mt-6 border-t border-warm-100 pt-4 text-xs text-warm-400">
             Mã lỗi để báo cho bộ phận kỹ thuật:{' '}
-            <code className="font-mono text-navy-600">{error.digest}</code>
+            <code className="font-mono text-warm-600">{error.digest}</code>
           </p>
         ) : null}
       </div>

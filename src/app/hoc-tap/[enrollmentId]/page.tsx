@@ -141,7 +141,7 @@ export default async function StudyDashboardPage({
       ) : null}
 
       {/* --- Khối mở đầu: mục tiêu, thời gian còn lại, tiến độ chu kỳ --- */}
-      <section className="hero-glow animate-fade-up mb-6 rounded-2xl bg-white p-5 ring-1 ring-ink-100 shadow-[0_1px_3px_rgb(23_27_38/0.05)] sm:p-7">
+      <section className="hero-glow animate-fade-up mb-6 rounded-2xl bg-white p-5 ring-1 ring-ink-100 shadow-[0_1px_3px_rgb(120_70_45/0.05)] sm:p-7">
         <div className="flex flex-wrap items-start justify-between gap-6">
           <div className="min-w-0 flex-1">
             <p className="text-xs font-semibold tracking-wider text-brand-700 uppercase">
@@ -486,7 +486,7 @@ function WelcomeGate({
   note?: string;
 }) {
   return (
-    <div className="hero-glow animate-fade-up rounded-2xl bg-white p-6 ring-1 ring-ink-100 shadow-[0_1px_3px_rgb(23_27_38/0.05)] sm:p-10">
+    <div className="hero-glow animate-fade-up rounded-2xl bg-white p-6 ring-1 ring-ink-100 shadow-[0_1px_3px_rgb(120_70_45/0.05)] sm:p-10">
       <p className="text-xs font-semibold tracking-wider text-brand-700 uppercase">{eyebrow}</p>
       <h1 className="mt-2 max-w-2xl text-2xl font-bold tracking-tight text-ink-900 sm:text-3xl">
         {title}

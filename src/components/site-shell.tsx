@@ -22,6 +22,7 @@ export async function SiteShell({
   const t = await getCopy();
 
   const copy: ShellCopy = {
+    topbar: t('nav.topbar'),
     brandName: t('nav.brand.name'),
     brandTagline: t('nav.brand.tagline'),
     links: {

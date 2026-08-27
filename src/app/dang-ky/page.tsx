@@ -49,7 +49,7 @@ export default async function RegisterPage({
       footer={
         <>
           Đã có tài khoản?{' '}
-          <Link href={routes.login(next)} className="font-semibold text-navy-800 hover:underline">
+          <Link href={routes.login(next)} className="font-semibold text-warm-800 hover:underline">
             Đăng nhập
           </Link>
         </>

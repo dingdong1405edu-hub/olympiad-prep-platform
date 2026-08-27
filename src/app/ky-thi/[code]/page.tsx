@@ -43,8 +43,12 @@ export default async function ProgramPage({ params }: { params: Promise<{ code: 
   return (
     <SiteShell signedIn={Boolean(session)}>
       {/* ================= Đầu trang ================= */}
-      <section className="relative overflow-hidden bg-navy-900 pt-28 pb-16 sm:pt-36 lg:pt-40 lg:pb-20">
-        <div className="grid-faint-dark pointer-events-none absolute inset-0" aria-hidden />
+      <section className="paper relative overflow-hidden pt-14 pb-16 sm:pt-16 lg:pt-20 lg:pb-20">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(90%_70%_at_80%_4%,#ffe6d5_0%,rgba(255,242,233,0)_62%),radial-gradient(70%_60%_at_8%_32%,#fff0e2_0%,rgba(255,251,248,0)_60%),linear-gradient(180deg,#fff7f1_0%,#fffbf8_82%)]"
+        />
+        <div className="grid-faint pointer-events-none absolute inset-0" aria-hidden />
         <span
           aria-hidden
           className="absolute inset-x-0 top-0 h-1"
@@ -54,7 +58,7 @@ export default async function ProgramPage({ params }: { params: Promise<{ code: 
         <div className={`${SHELL} relative`}>
           <Link
             href={routes.home()}
-            className="text-[13px] font-medium text-navy-300 transition-colors hover:text-white"
+            className="text-[13px] font-medium text-warm-500 transition-colors hover:text-warm-900"
           >
             ← {t('program.back')}
           </Link>
@@ -69,17 +73,17 @@ export default async function ProgramPage({ params }: { params: Promise<{ code: 
                 {program.season ? ` · Mùa ${program.season}` : ''}
               </p>
 
-              <h1 className="font-display mt-3 max-w-2xl text-[34px] leading-[1.1] font-bold tracking-tight text-white text-balance sm:text-5xl lg:text-[56px]">
+              <h1 className="font-display mt-3 max-w-2xl text-[34px] leading-[1.1] font-bold tracking-tight text-warm-900 text-balance sm:text-5xl lg:text-[56px]">
                 {program.name}
               </h1>
 
               {program.tagline ? (
-                <p className="mt-4 max-w-xl text-[17px] leading-snug font-medium text-gold-300 text-pretty">
+                <p className="mt-4 max-w-xl text-[17px] leading-snug font-medium text-brand-700 text-pretty">
                   {program.tagline}
                 </p>
               ) : null}
 
-              <p className="mt-5 max-w-xl text-[16.5px] leading-relaxed text-navy-200 text-pretty">
+              <p className="mt-5 max-w-xl text-[16.5px] leading-relaxed text-warm-500 text-pretty">
                 {program.description}
               </p>
 
@@ -99,13 +103,13 @@ export default async function ProgramPage({ params }: { params: Promise<{ code: 
             <div className="flex flex-col gap-4 sm:flex-row lg:flex-col lg:items-end">
               {lowestPrice > 0 ? (
                 <div className="rounded-2xl bg-white/8 px-6 py-5 ring-1 ring-white/12 backdrop-blur-sm">
-                  <p className="text-[11px] font-semibold tracking-[0.14em] text-navy-300 uppercase">
+                  <p className="text-[11px] font-semibold tracking-[0.14em] text-warm-500 uppercase">
                     {t('program.price.label')}
                   </p>
-                  <p className="font-display mt-1 text-3xl font-bold text-gold-300">
+                  <p className="font-display mt-1 text-3xl font-bold text-brand-700">
                     {formatVnd(lowestPrice)}
                   </p>
-                  <p className="mt-1 text-[12.5px] text-navy-300">
+                  <p className="mt-1 text-[12.5px] text-warm-500">
                     {program.courses.length} khóa đang mở · {program.availability.length} khối lớp
                   </p>
                 </div>
@@ -113,13 +117,13 @@ export default async function ProgramPage({ params }: { params: Promise<{ code: 
 
               {program.activeCohort ? (
                 <div className="rounded-2xl bg-white/8 px-6 py-5 ring-1 ring-white/12 backdrop-blur-sm">
-                  <p className="text-[11px] font-semibold tracking-[0.14em] text-navy-300 uppercase">
+                  <p className="text-[11px] font-semibold tracking-[0.14em] text-warm-500 uppercase">
                     Ngày thi dự kiến
                   </p>
-                  <p className="font-display mt-1 text-2xl font-bold text-white tabular-nums">
+                  <p className="font-display mt-1 text-2xl font-bold text-warm-900 tabular-nums">
                     {program.activeCohort.examDate.toLocaleDateString('vi-VN')}
                   </p>
-                  <p className="mt-1 text-[12.5px] text-navy-300">
+                  <p className="mt-1 text-[12.5px] text-warm-500">
                     Hệ thống dồn trọng tâm ôn luyện khi mốc này tới gần
                   </p>
                 </div>
@@ -128,10 +132,10 @@ export default async function ProgramPage({ params }: { params: Promise<{ code: 
           </div>
 
           {program.highlights.length > 0 ? (
-            <ul className="mt-12 grid gap-x-8 gap-y-3 border-t border-white/10 pt-8 sm:grid-cols-2 lg:grid-cols-3">
+            <ul className="mt-12 grid gap-x-8 gap-y-3 border-t border-warm-200 pt-8 sm:grid-cols-2 lg:grid-cols-3">
               {program.highlights.map((highlight) => (
-                <li key={highlight} className="flex gap-2.5 text-[14px] leading-snug text-navy-100">
-                  <span aria-hidden className="mt-px shrink-0 text-gold-300">
+                <li key={highlight} className="flex gap-2.5 text-[14px] leading-snug text-warm-600">
+                  <span aria-hidden className="mt-px shrink-0 text-brand-700">
                     ◆
                   </span>
                   {highlight}
@@ -149,7 +153,7 @@ export default async function ProgramPage({ params }: { params: Promise<{ code: 
             <div className="grid gap-12 lg:grid-cols-[1.05fr_1fr] lg:items-start lg:gap-16">
               <Reveal>
                 <span className="gold-rule block" aria-hidden />
-                <h2 className="font-display mt-5 text-[28px] leading-[1.15] font-bold tracking-tight text-navy-900 text-balance sm:text-[36px]">
+                <h2 className="font-display mt-5 text-[28px] leading-[1.15] font-bold tracking-tight text-warm-900 text-balance sm:text-[36px]">
                   {program.introVideoUrl ? t('program.video.title') : t('program.courses.title')}
                 </h2>
 
@@ -162,7 +166,7 @@ export default async function ProgramPage({ params }: { params: Promise<{ code: 
                       .map((paragraph) => (
                         <p
                           key={paragraph.slice(0, 40)}
-                          className="text-[16px] leading-relaxed whitespace-pre-line text-navy-600 text-pretty"
+                          className="text-[16px] leading-relaxed whitespace-pre-line text-warm-600 text-pretty"
                         >
                           {paragraph}
                         </p>
@@ -171,13 +175,13 @@ export default async function ProgramPage({ params }: { params: Promise<{ code: 
                 ) : null}
 
                 {program.sections.length > 0 ? (
-                  <div className="mt-8 space-y-6 border-t border-navy-100 pt-8">
+                  <div className="mt-8 space-y-6 border-t border-warm-100 pt-8">
                     {program.sections.map((section) => (
                       <div key={section.title}>
-                        <h3 className="font-display text-[19px] font-bold text-navy-900">
+                        <h3 className="font-display text-[19px] font-bold text-warm-900">
                           {section.title}
                         </h3>
-                        <p className="mt-2 text-[15.5px] leading-relaxed whitespace-pre-line text-navy-600">
+                        <p className="mt-2 text-[15.5px] leading-relaxed whitespace-pre-line text-warm-600">
                           {section.body}
                         </p>
                       </div>
@@ -192,9 +196,9 @@ export default async function ProgramPage({ params }: { params: Promise<{ code: 
                     url={program.introVideoUrl}
                     poster={program.introVideoPoster}
                     title={`${program.name} — video giới thiệu`}
-                    className="shadow-[0_24px_60px_-30px_rgb(13_27_49/0.6)]"
+                    className="shadow-[0_24px_60px_-30px_rgb(120_70_45/0.6)]"
                   />
-                  <p className="mt-3 text-[13.5px] leading-relaxed text-navy-500">
+                  <p className="mt-3 text-[13.5px] leading-relaxed text-warm-500">
                     {t('program.video.subtitle')}
                   </p>
                 </Reveal>
@@ -209,10 +213,10 @@ export default async function ProgramPage({ params }: { params: Promise<{ code: 
         <div className={SHELL}>
           <Reveal>
             <span className="gold-rule block" aria-hidden />
-            <h2 className="font-display mt-5 text-[28px] leading-tight font-bold tracking-tight text-navy-900 sm:text-[38px]">
+            <h2 className="font-display mt-5 text-[28px] leading-tight font-bold tracking-tight text-warm-900 sm:text-[38px]">
               {t('program.courses.title')}
             </h2>
-            <p className="mt-3 max-w-2xl text-[16px] leading-relaxed whitespace-pre-line text-navy-600">
+            <p className="mt-3 max-w-2xl text-[16px] leading-relaxed whitespace-pre-line text-warm-600">
               {t('program.courses.subtitle')}
             </p>
           </Reveal>
@@ -227,39 +231,39 @@ export default async function ProgramPage({ params }: { params: Promise<{ code: 
                 return (
                   <Reveal key={band.gradeBand} delay={bandIndex * 70}>
                     <div className="flex items-center gap-4">
-                      <h3 className="text-[12px] font-bold tracking-[0.16em] text-navy-500 uppercase">
+                      <h3 className="text-[12px] font-bold tracking-[0.16em] text-warm-500 uppercase">
                         {GRADE_BAND_LABEL[band.gradeBand]}
                       </h3>
-                      <span className="h-px flex-1 bg-navy-200" aria-hidden />
-                      <span className="text-[12.5px] text-navy-400">{courses.length} khóa</span>
+                      <span className="h-px flex-1 bg-warm-200" aria-hidden />
+                      <span className="text-[12.5px] text-warm-400">{courses.length} khóa</span>
                     </div>
 
                     <div className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                       {courses.map((course) => (
                         <div
                           key={course.id}
-                          className="hover-lift flex flex-col rounded-2xl bg-white p-6 ring-1 ring-navy-100 shadow-[0_2px_10px_-4px_rgb(13_27_49/0.1)]"
+                          className="hover-lift flex flex-col rounded-2xl bg-white p-6 ring-1 ring-warm-100 shadow-[0_2px_10px_-4px_rgb(120_70_45/0.1)]"
                         >
-                          <h4 className="font-display text-[20px] font-bold text-navy-900">
+                          <h4 className="font-display text-[20px] font-bold text-warm-900">
                             {SUBJECT_LABEL[course.subject]}
                           </h4>
                           {course.description ? (
-                            <p className="mt-2 text-[14px] leading-relaxed text-navy-600">
+                            <p className="mt-2 text-[14px] leading-relaxed text-warm-600">
                               {course.description}
                             </p>
                           ) : null}
 
-                          <div className="mt-6 border-t border-navy-100 pt-4">
-                            <p className="font-display text-[26px] leading-none font-bold text-navy-900">
+                          <div className="mt-6 border-t border-warm-100 pt-4">
+                            <p className="font-display text-[26px] leading-none font-bold text-warm-900">
                               {formatVnd(course.pricing.price)}
                             </p>
-                            <p className="mt-1.5 text-[12.5px] text-navy-500">
+                            <p className="mt-1.5 text-[12.5px] text-warm-500">
                               Truy cập {course.pricing.accessDurationDays} ngày
                             </p>
 
                             <Link
                               href={routes.course(course.id)}
-                              className="press mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-navy-900 px-5 py-3 text-[14.5px] font-semibold text-white transition-all hover:bg-navy-800 hover:shadow-[0_10px_24px_-10px_rgb(13_27_49/0.55)]"
+                              className="press mt-4 flex w-full items-center justify-center gap-2 rounded-xl btn-fire px-5 py-3 text-[14.5px] font-bold"
                             >
                               {t('courses.card.cta')}
                               <span aria-hidden>→</span>
@@ -273,9 +277,9 @@ export default async function ProgramPage({ params }: { params: Promise<{ code: 
               })}
             </div>
           ) : (
-            <div className="mt-10 rounded-2xl border border-dashed border-navy-200 bg-white/60 px-6 py-14 text-center">
-              <p className="font-medium text-navy-700">Chưa có khóa nào được mở cho kỳ thi này</p>
-              <p className="mx-auto mt-1 max-w-md text-sm text-navy-500">
+            <div className="mt-10 rounded-2xl border border-dashed border-warm-200 bg-white/60 px-6 py-14 text-center">
+              <p className="font-medium text-warm-700">Chưa có khóa nào được mở cho kỳ thi này</p>
+              <p className="mx-auto mt-1 max-w-md text-sm text-warm-500">
                 Bạn có thể xem các kỳ thi khác ở trang chủ.
               </p>
             </div>
@@ -289,17 +293,17 @@ export default async function ProgramPage({ params }: { params: Promise<{ code: 
           <div className="grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20">
             <Reveal>
               <span className="gold-rule block" aria-hidden />
-              <h2 className="font-display mt-5 text-[28px] leading-[1.15] font-bold tracking-tight text-navy-900 text-balance sm:text-[38px]">
+              <h2 className="font-display mt-5 text-[28px] leading-[1.15] font-bold tracking-tight text-warm-900 text-balance sm:text-[38px]">
                 {t('program.deliverables.title')}
               </h2>
-              <p className="mt-4 text-[15.5px] leading-relaxed text-navy-600">
+              <p className="mt-4 text-[15.5px] leading-relaxed text-warm-600">
                 Học phí trả một lần cho trọn thời gian truy cập. Không có gói nâng cấp ẩn, không tính
                 thêm theo số bài con làm.
               </p>
 
               <Link
                 href={session ? routes.myCourses() : routes.register(routes.program(code))}
-                className="press mt-8 inline-flex items-center gap-2.5 rounded-xl bg-navy-900 px-7 py-4 text-[15px] font-semibold text-white shadow-[0_12px_30px_-10px_rgb(13_27_49/0.5)] transition-all hover:bg-navy-800"
+                className="press mt-8 inline-flex items-center gap-2.5 rounded-xl btn-fire px-7 py-4 text-[15px] font-bold"
               >
                 {session ? t('program.cta.member') : t('program.cta.guest')}
                 <span aria-hidden>→</span>
@@ -307,18 +311,18 @@ export default async function ProgramPage({ params }: { params: Promise<{ code: 
             </Reveal>
 
             <Reveal delay={100}>
-              <ol className="divide-y divide-navy-100 border-y border-navy-100">
+              <ol className="divide-y divide-warm-100 border-y border-warm-100">
                 {deliverables.map((row, index) => (
                   <li key={row.t} className="flex gap-5 py-5">
                     <span
                       aria-hidden
-                      className="step-numeral shrink-0 text-[26px] font-bold text-navy-200"
+                      className="step-numeral shrink-0 text-[26px] font-bold"
                     >
                       {String(index + 1).padStart(2, '0')}
                     </span>
                     <div>
-                      <p className="text-[15.5px] font-semibold text-navy-900">{row.t}</p>
-                      <p className="mt-1 text-[14px] leading-relaxed text-navy-600">{row.d}</p>
+                      <p className="text-[15.5px] font-semibold text-warm-900">{row.t}</p>
+                      <p className="mt-1 text-[14px] leading-relaxed text-warm-600">{row.d}</p>
                     </div>
                   </li>
                 ))}
@@ -334,25 +338,25 @@ export default async function ProgramPage({ params }: { params: Promise<{ code: 
             <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
               <Reveal>
                 <span className="gold-rule block" aria-hidden />
-                <h2 className="font-display mt-5 text-[28px] leading-tight font-bold tracking-tight text-navy-900 sm:text-[36px]">
+                <h2 className="font-display mt-5 text-[28px] leading-tight font-bold tracking-tight text-warm-900 sm:text-[36px]">
                   {t('program.faq.title')}
                 </h2>
               </Reveal>
 
               <Reveal delay={100}>
-                <div className="divide-y divide-navy-100 border-y border-navy-100">
+                <div className="divide-y divide-warm-100 border-y border-warm-100">
                   {program.faqs.map((faq) => (
                     <details key={faq.question} className="group py-5">
-                      <summary className="flex cursor-pointer list-none items-start justify-between gap-5 text-[16px] font-semibold text-navy-900 marker:content-['']">
+                      <summary className="flex cursor-pointer list-none items-start justify-between gap-5 text-[16px] font-semibold text-warm-900 marker:content-['']">
                         {faq.question}
                         <span
                           aria-hidden
-                          className="mt-0.5 shrink-0 text-xl leading-none font-light text-navy-400 transition-transform duration-300 group-open:rotate-45"
+                          className="mt-0.5 shrink-0 text-xl leading-none font-light text-warm-400 transition-transform duration-300 group-open:rotate-45"
                         >
                           +
                         </span>
                       </summary>
-                      <p className="mt-3 max-w-2xl text-[15px] leading-relaxed whitespace-pre-line text-navy-600 text-pretty">
+                      <p className="mt-3 max-w-2xl text-[15px] leading-relaxed whitespace-pre-line text-warm-600 text-pretty">
                         {faq.answer}
                       </p>
                     </details>

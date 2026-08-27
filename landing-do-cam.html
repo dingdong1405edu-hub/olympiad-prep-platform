@@ -1,0 +1,1317 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Olympiad Prep — Ôn luyện Olympic cá nhân hóa bằng AI</title>
+<meta name="description" content="Đo năng lực theo từng kỹ năng nhỏ, phát hiện lỗ hổng của riêng con bạn và giao đúng bài cần học mỗi ngày. ASMOPSS · NEO · STEM · FMC." />
+<meta name="theme-color" content="#FFF7F1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Lora:ital,wght@0,500;0,600;0,700;1,600&display=swap" rel="stylesheet" />
+<style>
+/* ═══════════════════════════════════════════════════════════
+   TOKENS — đỏ cam bản nhạt, nền kem/đào sáng
+   ═══════════════════════════════════════════════════════════ */
+:root{
+  /* nhấn — dùng cho nút, gradient, thanh biểu đồ */
+  --ember-700:#C13F1D;   /* chữ nhấn nhỏ, đủ tương phản trên nền kem */
+  --ember-600:#E4572E;
+  --ember-500:#F26B3A;
+  --flame-500:#FF854A;
+  --flame-400:#FF9E5E;
+  --amber-400:#FFB067;
+  --gold-300:#FFD09B;
+
+  /* chữ — nâu ấm, không dùng đen */
+  --ink-950:#3A211A;
+  --ink-900:#4A2C22;
+  --ink-800:#5C3A2E;
+  --ink-700:#6E4A3C;
+  --ink-500:#8C6455;
+  --ink-400:#9C7264;
+  --ink-300:#C6A899;
+
+  /* nền */
+  --cream:#FFFBF8;
+  --cream-2:#FFF2E9;
+  --peach:#FFEADF;
+  --line:#F7E2D6;
+  --line-2:#F0D2C1;
+
+  --shell:min(1240px, 100% - 40px);
+  --r-lg:26px;
+  --r-md:18px;
+  --sans:'Be Vietnam Pro', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --serif:'Lora', Georgia, 'Times New Roman', serif;
+
+  --glow-sm:0 14px 30px -14px rgba(228,87,46,.5);
+  --glow-md:0 24px 50px -18px rgba(228,87,46,.55);
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  font-family:var(--sans);
+  background:var(--cream);
+  color:var(--ink-900);
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+img,svg{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+ul,ol,dl,dd{margin:0;padding:0;list-style:none}
+h1,h2,h3,p{margin:0}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+
+.shell{width:var(--shell);margin-inline:auto}
+
+/* ── chữ gradient lửa ────────────────────────────────────── */
+.flame-text{
+  background:linear-gradient(100deg,var(--flame-500),var(--ember-600) 55%,var(--ember-700));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.swoosh{position:relative;white-space:nowrap}
+.swoosh svg{
+  position:absolute;left:-2%;bottom:-.28em;width:104%;height:.42em;
+  stroke:url(#swooshGrad);fill:none;stroke-width:7;stroke-linecap:round;
+  stroke-dasharray:340;stroke-dashoffset:340;
+  animation:draw 1.1s .5s cubic-bezier(.4,0,.2,1) forwards;
+}
+@keyframes draw{to{stroke-dashoffset:0}}
+
+/* ── nhãn nhỏ, vạch mở đầu ───────────────────────────────── */
+.eyebrow{
+  font-size:11px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ember-700);
+}
+.rule{
+  display:block;width:52px;height:4px;border-radius:99px;
+  background:linear-gradient(90deg,var(--ember-600),var(--amber-400));
+}
+
+/* ── nút ─────────────────────────────────────────────────── */
+.btn{
+  display:inline-flex;align-items:center;gap:10px;
+  padding:16px 30px;border-radius:14px;
+  font-size:15px;font-weight:700;letter-spacing:-.01em;
+  transition:transform .18s cubic-bezier(.34,1.4,.64,1), box-shadow .25s, background .25s, color .2s;
+  will-change:transform;
+}
+.btn:active{transform:translateY(1px) scale(.985)}
+.btn-fire{
+  color:#fff;position:relative;overflow:hidden;
+  background:linear-gradient(105deg,var(--ember-600),var(--ember-500) 50%,var(--flame-500));
+  box-shadow:var(--glow-sm);
+}
+.btn-fire::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(105deg,var(--flame-500),var(--ember-500) 50%,var(--ember-600));
+  opacity:0;transition:opacity .3s;
+}
+.btn-fire>*{position:relative;z-index:1}
+.btn-fire:hover{box-shadow:var(--glow-md);transform:translateY(-2px)}
+.btn-fire:hover::after{opacity:1}
+
+.btn-soft{color:var(--ember-700);background:var(--cream-2);box-shadow:inset 0 0 0 1.5px var(--line-2)}
+.btn-soft:hover{background:var(--peach);box-shadow:inset 0 0 0 1.5px #E8BCA3;transform:translateY(-2px)}
+.btn-ghost{color:var(--ink-800);background:#fff;box-shadow:inset 0 0 0 1.5px var(--line-2), 0 6px 18px -14px rgba(120,70,45,.5)}
+.btn-ghost:hover{box-shadow:inset 0 0 0 1.5px #E8BCA3, 0 12px 26px -16px rgba(120,70,45,.5);transform:translateY(-2px)}
+.btn-white{background:#fff;color:var(--ember-700);box-shadow:0 14px 30px -18px rgba(150,80,50,.6)}
+.btn-white:hover{transform:translateY(-2px);box-shadow:0 22px 44px -20px rgba(150,80,50,.6)}
+
+/* ═══════════════════════════════════════════════════════════
+   THANH THÔNG BÁO + ĐIỀU HƯỚNG
+   ═══════════════════════════════════════════════════════════ */
+.topbar{
+  background:linear-gradient(90deg,var(--cream-2),var(--peach) 45%,#FFE7D3 100%);
+  color:var(--ember-700);font-size:12.5px;font-weight:600;
+  padding:10px 0;text-align:center;position:relative;z-index:60;
+  box-shadow:inset 0 -1px 0 var(--line);
+}
+.topbar b{font-weight:800}
+.topbar .dot{display:inline-block;width:6px;height:6px;border-radius:99px;background:var(--ember-600);margin-right:8px;vertical-align:middle;animation:pulse 1.8s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.7)}}
+
+.nav{position:sticky;top:0;z-index:50;transition:background .3s, box-shadow .3s, backdrop-filter .3s}
+.nav.stuck{background:rgba(255,251,248,.82);backdrop-filter:blur(16px) saturate(1.3);box-shadow:0 1px 0 var(--line), 0 20px 40px -34px rgba(120,70,45,.5)}
+.nav-in{display:flex;align-items:center;gap:28px;height:74px}
+.brand{display:flex;align-items:center;gap:12px}
+.brand-mark{
+  width:42px;height:42px;border-radius:13px;display:grid;place-items:center;flex:none;
+  background:linear-gradient(140deg,var(--ember-600),var(--flame-500) 60%,var(--amber-400));
+  box-shadow:0 10px 22px -12px rgba(228,87,46,.75), inset 0 1px 0 rgba(255,255,255,.45);
+  font-family:var(--serif);font-weight:700;font-size:20px;color:#fff;
+}
+.brand-name{font-family:var(--serif);font-weight:700;font-size:18.5px;color:var(--ink-950);line-height:1.1}
+.brand-tag{font-size:11px;color:var(--ink-400);letter-spacing:.02em}
+.nav-links{display:flex;gap:4px;margin-left:auto}
+.nav-links a{
+  padding:9px 14px;border-radius:10px;font-size:14px;font-weight:600;color:var(--ink-700);
+  transition:color .2s, background .2s;
+}
+.nav-links a:hover{color:var(--ember-700);background:var(--cream-2)}
+.nav-cta{display:flex;align-items:center;gap:10px}
+.nav-cta .btn{padding:11px 20px;font-size:14px;border-radius:11px}
+.burger{display:none;width:44px;height:44px;border-radius:12px;place-items:center;background:#fff;box-shadow:inset 0 0 0 1.5px var(--line-2)}
+.burger span{display:block;width:18px;height:2px;background:var(--ink-700);border-radius:9px;box-shadow:0 -6px 0 var(--ink-700), 0 6px 0 var(--ink-700)}
+.mobile-menu{display:none;background:rgba(255,251,248,.97);backdrop-filter:blur(14px);border-top:1px solid var(--line)}
+.mobile-menu.open{display:block}
+.mobile-menu a{display:block;padding:14px 0;font-size:15px;font-weight:600;color:var(--ink-800);border-bottom:1px solid var(--line)}
+.mobile-menu .btn{width:100%;justify-content:center;margin:16px 0}
+
+/* ═══════════════════════════════════════════════════════════
+   HERO — nền sáng, quầng màu đào mềm
+   ═══════════════════════════════════════════════════════════ */
+.hero{
+  position:relative;margin-top:-74px;padding:150px 0 190px;
+  background:
+    radial-gradient(90% 70% at 80% 4%, #FFE6D5 0%, rgba(255,242,233,0) 62%),
+    radial-gradient(70% 60% at 8% 32%, #FFF0E2 0%, rgba(255,251,248,0) 60%),
+    linear-gradient(180deg,#FFF7F1 0%, var(--cream) 78%);
+  overflow:hidden;isolation:isolate;
+}
+.hero::before{
+  content:'';position:absolute;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(196,100,60,.07) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(196,100,60,.07) 1px,transparent 1px);
+  background-size:64px 64px;
+  mask-image:radial-gradient(80% 65% at 50% 30%,#000 20%,transparent 100%);
+}
+.hero::after{
+  content:'';position:absolute;left:0;right:0;bottom:-1px;height:180px;z-index:0;pointer-events:none;
+  background:linear-gradient(to top, var(--cream), rgba(255,251,248,0));
+}
+.blob{position:absolute;border-radius:50%;filter:blur(80px);z-index:0;pointer-events:none;will-change:transform}
+.blob-a{width:520px;height:520px;top:-150px;right:-80px;background:radial-gradient(circle,rgba(255,133,74,.3),transparent 68%);animation:drift 16s ease-in-out infinite}
+.blob-b{width:400px;height:400px;top:200px;right:300px;background:radial-gradient(circle,rgba(255,176,103,.28),transparent 68%);animation:drift 19s 1.5s ease-in-out infinite reverse}
+.blob-c{width:340px;height:340px;bottom:-40px;left:-110px;background:radial-gradient(circle,rgba(255,208,155,.38),transparent 70%);animation:drift 22s ease-in-out infinite}
+@keyframes drift{
+  0%,100%{transform:translate3d(0,0,0) scale(1)}
+  33%{transform:translate3d(-38px,34px,0) scale(1.08)}
+  66%{transform:translate3d(28px,-26px,0) scale(.95)}
+}
+.hero-in{position:relative;z-index:2;display:grid;gap:60px;align-items:center;grid-template-columns:1.02fr .98fr}
+
+.badge{
+  display:inline-flex;align-items:center;gap:9px;
+  padding:8px 16px 8px 12px;border-radius:99px;
+  font-size:11.5px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ember-700);background:#fff;
+  box-shadow:inset 0 0 0 1px var(--line-2), 0 6px 16px -12px rgba(150,80,50,.5);
+}
+.badge i{width:7px;height:7px;border-radius:99px;background:var(--flame-500);box-shadow:0 0 10px 2px rgba(255,133,74,.7);animation:pulse 2.2s ease-in-out infinite}
+
+.hero h1{
+  font-family:var(--serif);font-weight:700;color:var(--ink-950);
+  font-size:clamp(40px,5.6vw,72px);line-height:1.04;letter-spacing:-.025em;
+  margin-top:26px;max-width:15ch;text-wrap:balance;
+}
+.hero-sub{margin-top:26px;max-width:52ch;font-size:17.5px;line-height:1.68;color:var(--ink-500);text-wrap:pretty}
+.hero-cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:36px}
+.hero-note{margin-top:22px;font-size:13px;color:var(--ink-400)}
+
+/* ── thẻ bản đồ kỹ năng ─────────────────────────────────── */
+.art{position:relative}
+.card-art{
+  background:#fff;border-radius:var(--r-lg);padding:24px;
+  box-shadow:0 36px 70px -40px rgba(150,80,50,.45), inset 0 0 0 1px var(--line);
+}
+.art-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+.art-title{font-size:14px;font-weight:700;color:var(--ink-900)}
+.art-sub{font-size:11.5px;color:var(--ink-400);margin-top:2px}
+.chip{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:6px 11px;border-radius:99px;background:var(--cream-2);color:var(--ember-700);box-shadow:inset 0 0 0 1px var(--line)}
+
+.skillrow{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:11px 0;border-top:1px solid var(--line)}
+.skillrow:first-of-type{border-top:0}
+.skillname{font-size:13px;font-weight:600;color:var(--ink-800)}
+.bar{height:7px;border-radius:99px;background:var(--cream-2);overflow:hidden;margin-top:7px}
+.bar i{display:block;height:100%;border-radius:99px;width:0;transition:width 1.2s cubic-bezier(.22,1,.36,1)}
+.bar.hot i{background:linear-gradient(90deg,var(--ember-600),var(--flame-500))}
+.bar.warm i{background:linear-gradient(90deg,var(--flame-500),var(--amber-400))}
+.bar.good i{background:linear-gradient(90deg,var(--amber-400),var(--gold-300))}
+.pct{font-size:12.5px;font-weight:700;color:var(--ember-700);font-variant-numeric:tabular-nums;min-width:38px;text-align:right}
+
+.float-card{
+  position:absolute;left:-38px;bottom:-46px;width:262px;z-index:3;
+  background:#fff;border-radius:var(--r-md);padding:16px 18px;
+  box-shadow:0 26px 50px -26px rgba(150,80,50,.5), inset 0 0 0 1px var(--line);
+  animation:bob 5.5s ease-in-out infinite;
+}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-11px)}}
+.float-card .why{display:flex;align-items:center;gap:8px;font-size:10.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--ember-700)}
+.float-card p{margin-top:9px;font-size:13px;line-height:1.55;color:var(--ink-700)}
+.float-card .tag{display:inline-block;margin-top:11px;font-size:11px;font-weight:700;padding:5px 10px;border-radius:8px;background:var(--cream-2);color:var(--ember-700)}
+
+/* ═══════════════════════════════════════════════════════════
+   SỐ LIỆU + BĂNG CHẠY
+   ═══════════════════════════════════════════════════════════ */
+.stats{position:relative;z-index:5;margin-top:-118px}
+.stats-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:1px;
+  background:var(--line);border-radius:var(--r-lg);overflow:hidden;
+  box-shadow:0 34px 70px -44px rgba(150,80,50,.45), 0 0 0 1px var(--line);
+}
+.stat{background:#fff;padding:30px 26px;transition:background .3s}
+.stat:hover{background:var(--cream-2)}
+.stat dd{font-family:var(--serif);font-weight:700;font-size:46px;line-height:1;font-variant-numeric:tabular-nums;
+  background:linear-gradient(120deg,var(--ember-600),var(--flame-500) 55%,var(--amber-400));
+  -webkit-background-clip:text;background-clip:text;color:transparent;}
+.stat dt{margin-top:10px;font-size:13.5px;font-weight:700;color:var(--ink-900)}
+.stat p{margin-top:3px;font-size:12px;color:var(--ink-400)}
+
+.marquee{margin-top:56px;overflow:hidden;position:relative;
+  mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
+.marquee-track{display:flex;gap:44px;width:max-content;animation:slide 26s linear infinite}
+.marquee:hover .marquee-track{animation-play-state:paused}
+@keyframes slide{to{transform:translateX(-50%)}}
+.marquee-item{display:flex;align-items:center;gap:11px;font-family:var(--serif);font-size:19px;font-weight:600;color:var(--ink-400);white-space:nowrap}
+.marquee-item b{color:var(--ember-700);font-family:var(--sans);font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase}
+.marquee-item .sep{color:var(--amber-400)}
+
+/* ═══════════════════════════════════════════════════════════
+   SECTION chung
+   ═══════════════════════════════════════════════════════════ */
+section{position:relative}
+.sec{padding:104px 0}
+.sec-cream{background:var(--cream)}
+.sec-white{background:#fff}
+.sec-tint{background:linear-gradient(180deg,#FFF6EF,#FFEFE4 55%,#FFF6EF)}
+.sec-tint::before{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background-image:linear-gradient(rgba(196,100,60,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(196,100,60,.06) 1px,transparent 1px);
+  background-size:64px 64px;mask-image:radial-gradient(75% 70% at 50% 40%,#000,transparent)
+}
+.h2{font-family:var(--serif);font-weight:700;color:var(--ink-950);font-size:clamp(29px,3.6vw,46px);line-height:1.12;letter-spacing:-.02em;margin-top:20px;text-wrap:balance}
+.lead{margin-top:18px;font-size:17px;line-height:1.7;color:var(--ink-500);max-width:60ch;text-wrap:pretty}
+
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .75s cubic-bezier(.22,1,.36,1), transform .75s cubic-bezier(.22,1,.36,1)}
+.reveal.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){
+  .reveal{opacity:1;transform:none;transition:none}
+  .blob,.float-card,.marquee-track,.badge i,.topbar .dot,.cta .halo{animation:none!important}
+  .swoosh svg{stroke-dashoffset:0;animation:none}
+}
+
+/* ── vấn đề ─────────────────────────────────────────────── */
+.split{display:grid;grid-template-columns:1fr 1.05fr;gap:72px;align-items:center}
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.card-old{background:var(--cream);border-radius:var(--r-md);padding:26px;box-shadow:inset 0 0 0 1px var(--line)}
+.card-old .eyebrow{color:var(--ink-400)}
+.card-new{
+  border-radius:var(--r-md);padding:26px;position:relative;overflow:hidden;
+  background:linear-gradient(155deg,#FFE8D8,#FFD9C2 60%,#FFCDB0);
+  box-shadow:0 24px 50px -30px rgba(228,87,46,.5), inset 0 0 0 1px rgba(228,87,46,.16);
+}
+.card-new::before{content:'';position:absolute;width:220px;height:220px;border-radius:50%;top:-90px;right:-70px;background:radial-gradient(circle,rgba(255,255,255,.75),transparent 70%)}
+.card-new .eyebrow{position:relative}
+.clist{margin-top:18px;display:grid;gap:13px;position:relative}
+.clist li{display:flex;gap:11px;font-size:13.5px;line-height:1.5}
+.card-old .clist li{color:var(--ink-500)}
+.card-old .clist .mk{color:var(--ink-300);font-weight:700}
+.card-new .clist li{color:var(--ink-800)}
+.card-new .clist .mk{color:var(--ember-600);font-weight:800}
+.mk{flex:none;margin-top:1px}
+
+/* ── thẻ kỳ thi ─────────────────────────────────────────── */
+.programs{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:52px}
+.pcard{
+  position:relative;display:flex;flex-direction:column;background:#fff;border-radius:var(--r-lg);
+  overflow:hidden;box-shadow:inset 0 0 0 1px var(--line), 0 4px 16px -12px rgba(150,80,50,.35);
+  transition:transform .3s cubic-bezier(.22,1,.36,1), box-shadow .3s;
+}
+.pcard:hover{transform:translateY(-6px);box-shadow:inset 0 0 0 1px transparent, 0 30px 55px -32px rgba(180,90,50,.45), 0 0 0 1.5px var(--accent)}
+.pcard-top{height:6px;background:linear-gradient(90deg,var(--accent),var(--accent2))}
+.pcard-body{padding:28px 28px 24px;display:flex;flex-direction:column;flex:1}
+.pcard-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+.pemoji{
+  width:50px;height:50px;border-radius:15px;display:grid;place-items:center;font-size:24px;flex:none;
+  background:linear-gradient(150deg,var(--accent),var(--accent2));
+  box-shadow:0 12px 24px -14px var(--accent);
+}
+.pcode{font-size:11px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--accent-ink)}
+.pname{font-family:var(--serif);font-size:21px;font-weight:700;line-height:1.3;margin-top:6px;color:var(--ink-950)}
+.ptag{margin-top:12px;font-size:14px;line-height:1.6;color:var(--ink-500)}
+.phl{margin-top:18px;display:grid;gap:9px}
+.phl li{display:flex;gap:9px;font-size:13.5px;line-height:1.5;color:var(--ink-700)}
+.phl .mk{color:var(--accent);font-size:9px;margin-top:5px}
+.pfoot{margin-top:auto;padding-top:20px;display:flex;align-items:flex-end;justify-content:space-between;gap:14px;border-top:1px solid var(--line);font-size:13px;color:var(--ink-400)}
+.pprice{text-align:right}
+.pprice span{display:block;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase}
+.pprice b{font-family:var(--serif);font-size:20px;color:var(--ink-950)}
+.parrow{display:inline-flex;align-items:center;gap:6px;font-weight:700;color:var(--accent-ink);transition:gap .25s}
+.pcard:hover .parrow{gap:11px}
+
+/* ── các bước ───────────────────────────────────────────── */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:44px 40px;margin-top:60px;position:relative}
+.step{display:flex;gap:20px}
+.step-n{
+  font-family:var(--serif);font-size:44px;font-weight:700;line-height:.9;flex:none;
+  background:linear-gradient(160deg,var(--flame-500),rgba(255,133,74,.28));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.step-body{border-left:1px solid var(--line-2);padding-left:20px}
+.step h3{font-size:16.5px;font-weight:700;color:var(--ink-950)}
+.step p{margin-top:9px;font-size:14px;line-height:1.65;color:var(--ink-500)}
+
+/* ── tính năng ──────────────────────────────────────────── */
+.feature{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center}
+.feature + .feature{margin-top:104px}
+.feature.flip .f-text{order:2}
+.f-text h3{font-family:var(--serif);font-size:clamp(24px,2.6vw,33px);font-weight:700;line-height:1.24;margin-top:12px;letter-spacing:-.015em;color:var(--ink-950)}
+.f-text p{margin-top:16px;font-size:16px;line-height:1.72;color:var(--ink-500);text-wrap:pretty}
+.mock{
+  background:#fff;border-radius:var(--r-lg);padding:24px;position:relative;
+  box-shadow:0 30px 60px -40px rgba(150,80,50,.45), inset 0 0 0 1px var(--line);
+}
+.mock-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+.mock-title{font-size:14px;font-weight:700;color:var(--ink-900)}
+.mock-sub{font-size:11.5px;color:var(--ink-400);margin-top:2px}
+.pill{font-size:10.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:6px 11px;border-radius:99px;background:var(--cream-2);color:var(--ember-700);box-shadow:inset 0 0 0 1px var(--line)}
+
+.task{display:flex;gap:13px;padding:14px;border-radius:14px;background:var(--cream);box-shadow:inset 0 0 0 1px var(--line)}
+.task + .task{margin-top:10px}
+.task-i{width:32px;height:32px;border-radius:10px;display:grid;place-items:center;flex:none;font-size:14px;font-weight:800;color:#fff}
+.t1{background:linear-gradient(145deg,var(--ember-600),var(--ember-500))}
+.t2{background:linear-gradient(145deg,var(--ember-500),var(--flame-500))}
+.t3{background:linear-gradient(145deg,var(--flame-500),var(--amber-400))}
+.task h4{margin:0;font-size:13.5px;font-weight:700;color:var(--ink-900)}
+.task small{display:block;margin-top:3px;font-size:11.5px;color:var(--ink-400)}
+.task .lab{margin-left:auto;font-size:10.5px;font-weight:700;color:var(--ember-700);white-space:nowrap;align-self:center}
+
+.dial-wrap{display:flex;align-items:center;gap:26px}
+.dial-legend li{display:flex;align-items:center;gap:9px;font-size:12.5px;color:var(--ink-500)}
+.dial-legend li + li{margin-top:10px}
+.dot{width:9px;height:9px;border-radius:99px;flex:none}
+.seq{display:flex;gap:6px;margin-top:20px;flex-wrap:wrap}
+.seq i{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;font-size:11px;font-weight:800;font-style:normal;color:#fff}
+.ok{background:linear-gradient(145deg,var(--amber-400),var(--gold-300));color:#8A4212}
+.no{background:linear-gradient(145deg,var(--ember-600),var(--ember-500))}
+.nu{background:var(--cream-2);color:var(--ink-300);box-shadow:inset 0 0 0 1px var(--line)}
+
+/* ── phụ huynh ──────────────────────────────────────────── */
+.plist{margin-top:32px;display:grid;gap:18px}
+.plist li{display:flex;gap:14px}
+.tick{width:24px;height:24px;border-radius:99px;flex:none;display:grid;place-items:center;font-size:12px;font-weight:800;color:#fff;
+  background:linear-gradient(145deg,var(--ember-600),var(--flame-500));box-shadow:0 8px 16px -10px rgba(228,87,46,.8)}
+.plist h4{margin:0;font-size:15px;font-weight:700;color:var(--ink-950)}
+.plist p{margin-top:3px;font-size:14px;line-height:1.6;color:var(--ink-500)}
+.session-card{
+  margin-top:22px;border-radius:var(--r-md);padding:26px;position:relative;overflow:hidden;
+  background:linear-gradient(150deg,#FFF2E9,#FFE2D0 70%,#FFD6BE);
+  box-shadow:0 24px 50px -34px rgba(180,100,60,.5), inset 0 0 0 1px rgba(228,87,46,.14);
+}
+.session-card::before{content:'';position:absolute;width:200px;height:200px;border-radius:50%;bottom:-90px;left:-60px;background:radial-gradient(circle,rgba(255,255,255,.8),transparent 70%)}
+.session-card .eyebrow{position:relative}
+.session-card p{margin-top:12px;font-size:15px;line-height:1.7;color:var(--ink-700);position:relative}
+
+/* ── FAQ ───────────────────────────────────────────────── */
+.faq-grid{display:grid;grid-template-columns:.75fr 1.25fr;gap:64px}
+.faq{border-top:1px solid var(--line)}
+.faq details{border-bottom:1px solid var(--line)}
+.faq summary{
+  display:flex;gap:20px;align-items:flex-start;justify-content:space-between;
+  padding:22px 0;font-size:16.5px;font-weight:700;color:var(--ink-950);cursor:pointer;list-style:none;
+  transition:color .2s;
+}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary:hover{color:var(--ember-700)}
+.faq .plus{
+  flex:none;width:28px;height:28px;border-radius:99px;display:grid;place-items:center;
+  font-size:19px;font-weight:400;line-height:1;color:var(--ember-700);background:var(--cream-2);
+  transition:transform .35s cubic-bezier(.34,1.4,.64,1), background .25s, color .25s;
+}
+.faq details[open] .plus{transform:rotate(135deg);background:var(--ember-600);color:#fff}
+.faq details[open] summary{color:var(--ember-700)}
+.faq .ans{padding:0 0 24px;max-width:70ch;font-size:15px;line-height:1.72;color:var(--ink-500);text-wrap:pretty}
+
+/* ── CTA cuối ──────────────────────────────────────────── */
+.cta-wrap{padding:0 0 104px;background:#fff}
+.cta{
+  position:relative;overflow:hidden;border-radius:36px;padding:88px 40px;text-align:center;
+  background:linear-gradient(140deg,#FFF0E3 0%,#FFE0CB 40%,#FFD1B4 72%,#FFC3A0 100%);
+  box-shadow:0 40px 80px -50px rgba(200,110,60,.6), inset 0 0 0 1px rgba(228,87,46,.14);
+}
+.cta::before{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background-image:linear-gradient(rgba(196,100,60,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(196,100,60,.07) 1px,transparent 1px);
+  background-size:56px 56px;mask-image:radial-gradient(70% 70% at 50% 50%,#000,transparent)
+}
+.cta .halo{position:absolute;width:520px;height:520px;border-radius:50%;top:-270px;left:50%;transform:translateX(-50%);
+  background:radial-gradient(circle,rgba(255,255,255,.9),transparent 65%);animation:bob 7s ease-in-out infinite}
+.cta-in{position:relative;max-width:660px;margin-inline:auto}
+.cta .rule{margin-inline:auto}
+.cta h2{font-family:var(--serif);font-weight:700;color:var(--ink-950);font-size:clamp(30px,4vw,46px);line-height:1.12;margin-top:24px;letter-spacing:-.02em;text-wrap:balance}
+.cta p{margin-top:20px;font-size:17px;line-height:1.7;color:var(--ink-700);text-wrap:pretty}
+.cta-btns{margin-top:36px;display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+.cta small{display:block;margin-top:24px;font-size:13px;color:var(--ink-500)}
+
+/* ── chân trang ────────────────────────────────────────── */
+.foot{background:var(--cream-2);color:var(--ink-500);padding:72px 0 34px;box-shadow:inset 0 1px 0 var(--line)}
+.foot-grid{display:grid;grid-template-columns:1.5fr 1fr 1.4fr;gap:56px}
+.foot .brand-name{font-size:19px}
+.foot-tag{margin-top:16px;font-size:14px;line-height:1.7;max-width:38ch}
+.foot h4{margin:0 0 16px;font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--ember-700)}
+.foot li + li{margin-top:11px}
+.foot li{font-size:14px;line-height:1.55}
+.foot a:hover{color:var(--ember-700)}
+.foot-bottom{margin-top:56px;padding-top:24px;border-top:1px solid var(--line-2);display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;font-size:12.5px;color:var(--ink-400)}
+
+/* ═══════════════════════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════════════════════ */
+@media (max-width:1080px){
+  .nav-links{display:none}
+  .burger{display:grid}
+  .nav-cta .btn-soft{display:none}
+  .hero-in{grid-template-columns:1fr;gap:74px}
+  .hero{padding:120px 0 170px}
+  .hero h1{max-width:20ch}
+  .float-card{left:auto;right:-10px;bottom:-40px}
+  .split,.feature{grid-template-columns:1fr;gap:40px}
+  .feature.flip .f-text{order:0}
+  .steps{grid-template-columns:1fr 1fr}
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .faq-grid{grid-template-columns:1fr;gap:36px}
+  .foot-grid{grid-template-columns:1fr 1fr;gap:40px}
+}
+@media (max-width:760px){
+  :root{--shell:min(1240px, 100% - 32px)}
+  .sec{padding:76px 0}
+  .programs{grid-template-columns:1fr}
+  .compare{grid-template-columns:1fr}
+  .steps{grid-template-columns:1fr;gap:32px}
+  .stats{margin-top:-90px}
+  .stat{padding:22px 18px}
+  .stat dd{font-size:36px}
+  .float-card{position:static;width:100%;margin-top:18px;animation:none}
+  .cta{padding:64px 24px;border-radius:26px}
+  .foot-grid{grid-template-columns:1fr}
+  .btn{padding:15px 24px}
+  .marquee-item{font-size:16px}
+  .dial-wrap{flex-direction:column;align-items:flex-start;gap:18px}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════ Dải thông báo ══════════ -->
+<div class="topbar">
+  <span class="dot"></span>Đang nhận học sinh cho <b>mùa thi 2026</b> — kiểm tra đầu vào miễn phí, không cần thẻ thanh toán
+</div>
+
+<!-- ══════════ Thanh điều hướng ══════════ -->
+<header class="nav" id="nav">
+  <div class="shell nav-in">
+    <a class="brand" href="#top">
+      <span class="brand-mark">Ω</span>
+      <span>
+        <span class="brand-name">Olympiad Prep</span>
+        <span class="brand-tag" style="display:block">Ôn luyện cá nhân hóa</span>
+      </span>
+    </a>
+    <nav class="nav-links">
+      <a href="#ky-thi">Kỳ thi</a>
+      <a href="#cach-hoat-dong">Cách hoạt động</a>
+      <a href="#tinh-nang">Tính năng</a>
+      <a href="#phu-huynh">Cho phụ huynh</a>
+      <a href="#cau-hoi">Câu hỏi</a>
+    </nav>
+    <div class="nav-cta">
+      <a class="btn btn-soft" href="#">Đăng nhập</a>
+      <a class="btn btn-fire" href="#"><span>Kiểm tra miễn phí</span></a>
+      <button class="burger" id="burger" aria-label="Mở menu" aria-expanded="false"><span></span></button>
+    </div>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <div class="shell">
+      <a href="#ky-thi">Kỳ thi</a>
+      <a href="#cach-hoat-dong">Cách hoạt động</a>
+      <a href="#tinh-nang">Tính năng</a>
+      <a href="#phu-huynh">Cho phụ huynh</a>
+      <a href="#cau-hoi">Câu hỏi</a>
+      <a class="btn btn-fire" href="#"><span>Kiểm tra đầu vào miễn phí</span></a>
+    </div>
+  </div>
+</header>
+
+<!-- ══════════ Màn hình đầu tiên ══════════ -->
+<section class="hero" id="top">
+  <span class="blob blob-a"></span>
+  <span class="blob blob-b"></span>
+  <span class="blob blob-c"></span>
+
+  <div class="shell hero-in">
+    <div>
+      <p class="badge"><i></i>Ôn luyện vòng quốc gia</p>
+
+      <h1>
+        Con bạn đang yếu
+        <span class="swoosh flame-text">chính xác
+          <svg viewBox="0 0 300 12" preserveAspectRatio="none" aria-hidden="true">
+            <defs>
+              <linearGradient id="swooshGrad" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="#FFB067"/>
+                <stop offset="50%" stop-color="#FF854A"/>
+                <stop offset="100%" stop-color="#E4572E"/>
+              </linearGradient>
+            </defs>
+            <path d="M4 8 C 70 2, 150 12, 296 4" />
+          </svg>
+        </span>
+        chỗ nào?
+      </h1>
+
+      <p class="hero-sub">
+        Hầu hết học sinh ôn Olympic đều học chăm. Cái thiếu không phải thời gian, mà là
+        biết chắc nên dồn thời gian đó vào đâu. Hệ thống đo năng lực theo từng kỹ năng nhỏ,
+        tìm ra lỗ hổng thật và giao đúng bài cần học hôm nay.
+      </p>
+
+      <div class="hero-cta">
+        <a class="btn btn-fire" href="#"><span>Kiểm tra đầu vào miễn phí</span><span aria-hidden="true">→</span></a>
+        <a class="btn btn-ghost" href="#cach-hoat-dong">Xem cách hoạt động</a>
+      </div>
+
+      <p class="hero-note">Không cần thẻ thanh toán · Xong bài là có ngay bản đồ kỹ năng</p>
+    </div>
+
+    <!-- Ảnh sản phẩm -->
+    <div class="art">
+      <div class="card-art">
+        <div class="art-head">
+          <div>
+            <p class="art-title">Bản đồ kỹ năng · Toán khối 6</p>
+            <p class="art-sub">Cập nhật sau mỗi câu con làm</p>
+          </div>
+          <span class="chip">Cập nhật 2 phút trước</span>
+        </div>
+
+        <div class="skillrow">
+          <div>
+            <p class="skillname">Quy đồng &amp; so sánh phân số</p>
+            <div class="bar hot"><i data-w="34%"></i></div>
+          </div>
+          <span class="pct">34%</span>
+        </div>
+        <div class="skillrow">
+          <div>
+            <p class="skillname">Tỉ lệ thức và bài toán tỉ lệ</p>
+            <div class="bar hot"><i data-w="46%"></i></div>
+          </div>
+          <span class="pct">46%</span>
+        </div>
+        <div class="skillrow">
+          <div>
+            <p class="skillname">Ước chung lớn nhất, bội chung</p>
+            <div class="bar warm"><i data-w="68%"></i></div>
+          </div>
+          <span class="pct">68%</span>
+        </div>
+        <div class="skillrow">
+          <div>
+            <p class="skillname">Suy luận logic, tìm quy luật</p>
+            <div class="bar good"><i data-w="81%"></i></div>
+          </div>
+          <span class="pct">81%</span>
+        </div>
+        <div class="skillrow">
+          <div>
+            <p class="skillname">Hình học phẳng cơ bản</p>
+            <div class="bar good"><i data-w="90%"></i></div>
+          </div>
+          <span class="pct">90%</span>
+        </div>
+      </div>
+
+      <div class="float-card">
+        <p class="why">◆ Vì sao bài này</p>
+        <p>Con sai 4/5 câu quy đồng mẫu trong 7 ngày qua, và thời gian làm mỗi câu gấp đôi trung bình.</p>
+        <span class="tag">Vá lỗ hổng · ưu tiên cao nhất</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ Dải số liệu ══════════ -->
+<section class="sec-cream" style="padding-bottom:104px">
+  <div class="shell stats">
+    <dl class="stats-grid reveal">
+      <div class="stat"><dd data-count="186">0</dd><dt>kỹ năng được đo riêng</dt><p>không phải 4 môn chung chung</p></div>
+      <div class="stat"><dd data-count="15">0</dd><dt>câu ở bài đầu vào</dt><p>bám cấu trúc đề thật</p></div>
+      <div class="stat"><dd data-count="14">0</dd><dt>ngày một chu kỳ đo</dt><p>có câu neo để so sánh</p></div>
+      <div class="stat"><dd data-count="20">0</dd><dt>phút tư vấn cùng giáo viên</dt><p>sau mỗi lần đo</p></div>
+    </dl>
+
+    <div class="marquee reveal" aria-hidden="true">
+      <div class="marquee-track" id="track">
+        <span class="marquee-item"><b>ASMOPSS</b><span class="sep">◆</span>Olympic Toán &amp; Khoa học châu Á</span>
+        <span class="marquee-item"><b>NEO</b><span class="sep">◆</span>Olympic Toán &amp; Khoa học Quốc tế</span>
+        <span class="marquee-item"><b>STEM</b><span class="sep">◆</span>Olympic Khoa học Công nghệ</span>
+        <span class="marquee-item"><b>FMC</b><span class="sep">◆</span>Toán Tư duy</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ Vấn đề ══════════ -->
+<section class="sec sec-white">
+  <div class="shell split">
+    <div class="reveal">
+      <span class="rule"></span>
+      <h2 class="h2">Học thêm 2 tiếng mỗi ngày không bằng học đúng 30 phút</h2>
+      <p class="lead">
+        Một học sinh làm 200 bài phân số mà không ai chỉ ra em đang nhầm ở bước quy đồng thì
+        200 bài đó chỉ củng cố cái sai. Vấn đề của việc ôn thi không nằm ở khối lượng — nó nằm
+        ở chỗ không ai đủ thời gian ngồi soi từng em xem lỗ hổng thật nằm ở đâu.
+      </p>
+      <p class="lead">
+        Đó chính xác là việc mà một hệ thống làm tốt hơn con người: nhớ từng câu, từng lỗi,
+        từng giây do dự của từng học sinh, rồi rút ra kết luận.
+      </p>
+    </div>
+
+    <div class="compare reveal">
+      <div class="card-old">
+        <p class="eyebrow">Kho đề thông thường</p>
+        <ul class="clist">
+          <li><span class="mk">✕</span>Mọi học sinh thấy cùng một danh sách bài.</li>
+          <li><span class="mk">✕</span>Gia đình tự đoán con yếu chỗ nào.</li>
+          <li><span class="mk">✕</span>Làm nhiều bài dễ vẫn thấy điểm cao, lỗ hổng còn nguyên.</li>
+          <li><span class="mk">✕</span>Không có cách nào biết con tiến bộ bao nhiêu.</li>
+        </ul>
+      </div>
+      <div class="card-new">
+        <p class="eyebrow">Nền tảng này</p>
+        <ul class="clist">
+          <li><span class="mk">✓</span>Hồ sơ năng lực theo từng kỹ năng nhỏ, cập nhật sau mỗi câu.</li>
+          <li><span class="mk">✓</span>Bài được giao đúng chỗ yếu, kèm lý do cụ thể.</li>
+          <li><span class="mk">✓</span>Độ khó tự nâng khi con vững, tự hạ khi con đuối.</li>
+          <li><span class="mk">✓</span>Đo tiến bộ bằng câu neo mỗi 14 ngày, có giáo viên xác nhận.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ Kỳ thi ══════════ -->
+<section class="sec sec-cream" id="ky-thi" style="scroll-margin-top:90px">
+  <div class="shell">
+    <div class="reveal">
+      <span class="rule"></span>
+      <h2 class="h2">Chọn kỳ thi của con</h2>
+      <p class="lead">
+        Mỗi kỳ thi có cấu trúc đề riêng, thang điểm riêng và kiểu tư duy riêng. Hệ thống ra bài
+        bám đúng cấu trúc đó chứ không dùng chung một kho cho tất cả.
+      </p>
+    </div>
+
+    <div class="programs">
+      <a class="pcard reveal" href="#" style="--accent:#E4572E;--accent2:#FF9E5E;--accent-ink:#C13F1D">
+        <span class="pcard-top"></span>
+        <div class="pcard-body">
+          <div class="pcard-head">
+            <div>
+              <p class="pcode">ASMOPSS</p>
+              <h3 class="pname">Olympic Toán và Khoa học châu Á</h3>
+            </div>
+            <span class="pemoji">🌏</span>
+          </div>
+          <p class="ptag">Đấu trường quốc tế đầu tiên, luyện bằng đề song ngữ sát chuẩn châu Á.</p>
+          <ul class="phl">
+            <li><span class="mk">◆</span>Đề thi song ngữ Anh – Việt, sát chuẩn khu vực</li>
+            <li><span class="mk">◆</span>Trọng tâm suy luận logic và toán thực tế</li>
+            <li><span class="mk">◆</span>Có vòng loại quốc gia và chung kết quốc tế</li>
+          </ul>
+          <div class="pfoot">
+            <span>4 khối lớp · 6 khóa</span>
+            <span class="parrow">Xem lộ trình <span aria-hidden="true">→</span></span>
+          </div>
+        </div>
+      </a>
+
+      <a class="pcard reveal" href="#" style="--accent:#F2703A;--accent2:#FFB067;--accent-ink:#C2501F">
+        <span class="pcard-top"></span>
+        <div class="pcard-body">
+          <div class="pcard-head">
+            <div>
+              <p class="pcode">NEO</p>
+              <h3 class="pname">Olympic Toán và Khoa học Quốc tế NEO</h3>
+            </div>
+            <span class="pemoji">🚀</span>
+          </div>
+          <p class="ptag">Cấu trúc đề phân tầng rõ ba mức, hợp nhất với lộ trình cá nhân hóa.</p>
+          <ul class="phl">
+            <li><span class="mk">◆</span>Phân tầng độ khó rõ ràng, dễ đo tiến bộ</li>
+            <li><span class="mk">◆</span>Kho câu hỏi khối 6–7 môn Toán đầy đủ nhất</li>
+            <li><span class="mk">◆</span>Kiểm tra tiến bộ mỗi 14 ngày kèm buổi tư vấn</li>
+          </ul>
+          <div class="pfoot">
+            <span>2 khối lớp · 4 khóa</span>
+            <span class="pprice"><span>từ</span><b>1.990.000₫</b></span>
+          </div>
+        </div>
+      </a>
+
+      <a class="pcard reveal" href="#" style="--accent:#F0913F;--accent2:#FFD09B;--accent-ink:#B4651C">
+        <span class="pcard-top"></span>
+        <div class="pcard-body">
+          <div class="pcard-head">
+            <div>
+              <p class="pcode">STEM</p>
+              <h3 class="pname">Olympic Khoa học Công nghệ STEM</h3>
+            </div>
+            <span class="pemoji">🔬</span>
+          </div>
+          <p class="ptag">Thi liên môn Khoa học – Công nghệ, mạnh về vận dụng thực tế.</p>
+          <ul class="phl">
+            <li><span class="mk">◆</span>Kết hợp Toán – Khoa học – Công nghệ trong một đề</li>
+            <li><span class="mk">◆</span>Nhiều câu dựa trên bảng số liệu và biểu đồ thật</li>
+            <li><span class="mk">◆</span>Có phần thi thực hành cho khối 10–12</li>
+          </ul>
+          <div class="pfoot">
+            <span>5 khối lớp · 7 khóa</span>
+            <span class="parrow">Xem lộ trình <span aria-hidden="true">→</span></span>
+          </div>
+        </div>
+      </a>
+
+      <a class="pcard reveal" href="#" style="--accent:#D9482A;--accent2:#FF854A;--accent-ink:#B33A1C">
+        <span class="pcard-top"></span>
+        <div class="pcard-body">
+          <div class="pcard-head">
+            <div>
+              <p class="pcode">FMC</p>
+              <h3 class="pname">Kỳ thi Toán Tư duy FMC</h3>
+            </div>
+            <span class="pemoji">🧠</span>
+          </div>
+          <p class="ptag">Toán tư duy thuần túy — đo cách nghĩ, không đo trí nhớ công thức.</p>
+          <ul class="phl">
+            <li><span class="mk">◆</span>Trọng tâm quy luật và suy luận logic</li>
+            <li><span class="mk">◆</span>Ít phụ thuộc sách giáo khoa, hợp nhiều trình độ</li>
+            <li><span class="mk">◆</span>Rèn chiến thuật làm bài và quản lý thời gian</li>
+          </ul>
+          <div class="pfoot">
+            <span>4 khối lớp · 5 khóa</span>
+            <span class="parrow">Xem lộ trình <span aria-hidden="true">→</span></span>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ Cách hoạt động ══════════ -->
+<section class="sec sec-tint" id="cach-hoat-dong" style="scroll-margin-top:90px">
+  <div class="shell" style="position:relative">
+    <div class="reveal">
+      <span class="rule"></span>
+      <h2 class="h2">Một chu trình khép kín, lặp tới ngày thi</h2>
+      <p class="lead">
+        Không có bước nào là hộp đen. Ở mỗi bước, gia đình đều thấy hệ thống đang kết luận gì
+        về con mình và dựa trên dữ liệu nào.
+      </p>
+    </div>
+
+    <ol class="steps">
+      <li class="step reveal">
+        <span class="step-n">01</span>
+        <div class="step-body">
+          <h3>Làm bài kiểm tra đầu vào</h3>
+          <p>15 câu chọn theo đúng cấu trúc đề của kỳ thi con bạn nhắm tới — không phải 15 câu ngẫu nhiên lấy từ kho chung.</p>
+        </div>
+      </li>
+      <li class="step reveal">
+        <span class="step-n">02</span>
+        <div class="step-body">
+          <h3>Hệ thống chỉ ra chỗ hổng</h3>
+          <p>Chấm theo độ khó, chủ đề và cả tốc độ làm bài. Hai học sinh cùng 10/15 nhưng sai khác nhau sẽ nhận hai lộ trình khác nhau.</p>
+        </div>
+      </li>
+      <li class="step reveal">
+        <span class="step-n">03</span>
+        <div class="step-body">
+          <h3>Gia đình tự chọn mục tiêu</h3>
+          <p>Khai thật con học được mấy ngày một tuần, mỗi ngày bao nhiêu phút. Hệ thống tính ngược xem mục tiêu đó có khả thi không và nói thẳng nếu không.</p>
+        </div>
+      </li>
+      <li class="step reveal">
+        <span class="step-n">04</span>
+        <div class="step-body">
+          <h3>Học đúng bài mình cần</h3>
+          <p>Mỗi ngày một danh sách ngắn: vá lỗ hổng, củng cố, thử thách vừa sức. Bài nào cũng kèm câu trả lời cho “vì sao con phải làm bài này”.</p>
+        </div>
+      </li>
+      <li class="step reveal">
+        <span class="step-n">05</span>
+        <div class="step-body">
+          <h3>Đo lại sau mỗi 14 ngày</h3>
+          <p>Bài kiểm tra tiến bộ có câu neo để so với lần trước — đo mức tiến bộ thật, không phải đếm số bài đã làm.</p>
+        </div>
+      </li>
+      <li class="step reveal">
+        <span class="step-n">06</span>
+        <div class="step-body">
+          <h3>Giáo viên tư vấn 20 phút</h3>
+          <p>Thầy cô đọc báo cáo trước buổi, trao đổi đúng vấn đề đang vướng, rồi cùng gia đình chỉnh lộ trình cho 2 tuần kế tiếp.</p>
+        </div>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<!-- ══════════ Ba tính năng ══════════ -->
+<section class="sec sec-cream" id="tinh-nang" style="scroll-margin-top:90px">
+  <div class="shell">
+    <div class="reveal" style="max-width:22ch">
+      <span class="rule"></span>
+      <h2 class="h2">Đây là những gì con bạn thật sự nhìn thấy</h2>
+    </div>
+
+    <div style="margin-top:64px">
+      <!-- 1 -->
+      <div class="feature flip reveal">
+        <div class="f-text">
+          <p class="eyebrow">Mỗi ngày</p>
+          <h3>Một danh sách ngắn, và lý do cho từng bài</h3>
+          <p>Không phải một kho bài để con tự bơi. Mỗi ngày là ba tới năm việc, xếp theo thứ tự: vá chỗ hổng nặng nhất trước, rồi củng cố, rồi mới tới thử thách.</p>
+          <p>Bài nào cũng bấm được nút “vì sao bài này” để xem hệ thống đang dựa vào dữ liệu nào mà giao. Con hiểu mình đang sửa cái gì thì mới chịu ngồi làm.</p>
+        </div>
+        <div class="mock">
+          <div class="mock-head">
+            <div>
+              <p class="mock-title">Việc hôm nay · Thứ Ba</p>
+              <p class="mock-sub">Ước tính 32 phút</p>
+            </div>
+            <span class="pill">3 việc</span>
+          </div>
+          <div class="task">
+            <span class="task-i t1">1</span>
+            <div>
+              <h4>Quy đồng mẫu số — 6 câu</h4>
+              <small>Vá lỗ hổng · mức 2/5</small>
+            </div>
+            <span class="lab">12 phút</span>
+          </div>
+          <div class="task">
+            <span class="task-i t2">2</span>
+            <div>
+              <h4>Bài toán tỉ lệ nghịch — 5 câu</h4>
+              <small>Củng cố · mức 3/5</small>
+            </div>
+            <span class="lab">14 phút</span>
+          </div>
+          <div class="task">
+            <span class="task-i t3">3</span>
+            <div>
+              <h4>Tìm quy luật dãy số — 2 câu</h4>
+              <small>Thử thách · mức 4/5</small>
+            </div>
+            <span class="lab">6 phút</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2 -->
+      <div class="feature reveal">
+        <div class="f-text">
+          <p class="eyebrow">Theo thời gian thực</p>
+          <h3>Độ khó bám sát con, không bám sát giáo án</h3>
+          <p>Ba câu đúng liên tiếp là nâng một bậc. Hai câu sai liên tiếp là hạ xuống và quay lại nền. Con luôn ở vùng vừa đủ khó để phải nghĩ, nhưng chưa đủ khó để bỏ cuộc.</p>
+          <p>Đây là chỗ lớp học đông không làm được: một giáo viên không thể chỉnh độ khó riêng cho ba mươi em cùng lúc, sau từng câu.</p>
+        </div>
+        <div class="mock">
+          <div class="mock-head">
+            <div>
+              <p class="mock-title">Độ khó đang áp dụng</p>
+              <p class="mock-sub">Tự chỉnh sau từng câu</p>
+            </div>
+            <span class="pill">Mức 3 / 5</span>
+          </div>
+
+          <div class="dial-wrap">
+            <svg viewBox="0 0 180 108" width="180" height="108" aria-hidden="true" style="flex:none">
+              <defs>
+                <linearGradient id="dialGrad" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stop-color="#FFD09B"/>
+                  <stop offset="55%" stop-color="#FF854A"/>
+                  <stop offset="100%" stop-color="#E4572E"/>
+                </linearGradient>
+              </defs>
+              <path d="M18 96 A 72 72 0 0 1 162 96" fill="none" stroke="#F7E2D6" stroke-width="15" stroke-linecap="round"/>
+              <path d="M18 96 A 72 72 0 0 1 162 96" fill="none" stroke="url(#dialGrad)" stroke-width="15" stroke-linecap="round"
+                    stroke-dasharray="226" stroke-dashoffset="226" class="dial-arc"/>
+              <circle cx="126" cy="42" r="7" fill="#fff" stroke="#E4572E" stroke-width="4"/>
+              <text x="90" y="80" text-anchor="middle" font-family="Lora, serif" font-size="34" font-weight="700" fill="#3A211A">3</text>
+              <text x="90" y="96" text-anchor="middle" font-family="Be Vietnam Pro, sans-serif" font-size="10" font-weight="700" fill="#9C7264">TRÊN 5 BẬC</text>
+            </svg>
+
+            <ul class="dial-legend">
+              <li><span class="dot" style="background:#FFD09B"></span>Bậc 1–2 · xây lại nền</li>
+              <li><span class="dot" style="background:#FF854A"></span>Bậc 3 · vùng vừa sức</li>
+              <li><span class="dot" style="background:#E4572E"></span>Bậc 4–5 · thử thách</li>
+            </ul>
+          </div>
+
+          <div class="seq">
+            <i class="ok">✓</i><i class="ok">✓</i><i class="ok">✓</i><i class="no">✕</i><i class="ok">✓</i><i class="ok">✓</i><i class="no">✕</i><i class="ok">✓</i><i class="nu">·</i><i class="nu">·</i>
+          </div>
+          <p style="margin-top:12px;font-size:12px;color:var(--ink-400)">3 đúng liên tiếp → nâng bậc · 2 sai liên tiếp → hạ bậc</p>
+        </div>
+      </div>
+
+      <!-- 3 -->
+      <div class="feature flip reveal">
+        <div class="f-text">
+          <p class="eyebrow">Mỗi 14 ngày</p>
+          <h3>Tiến bộ đo bằng câu neo, không đếm số bài</h3>
+          <p>“Con làm được 300 bài rồi” không nói lên điều gì. Bài kiểm tra tiến bộ dùng câu neo — những câu có cùng độ khó với lần đo trước — nên con số tăng lên là tăng thật, không phải do đề lần này dễ hơn.</p>
+          <p>Đường tiến bộ có lúc chững lại, và hệ thống không giấu điều đó. Một biểu đồ chỉ biết đi lên là một biểu đồ không đáng tin.</p>
+        </div>
+        <div class="mock">
+          <div class="mock-head">
+            <div>
+              <p class="mock-title">Mastery trung bình · 5 chu kỳ</p>
+              <p class="mock-sub">Đo bằng câu neo cùng độ khó</p>
+            </div>
+            <span class="pill">+27 điểm</span>
+          </div>
+
+          <svg viewBox="0 0 460 210" width="100%" height="auto" role="img" aria-label="Biểu đồ tiến bộ qua năm chu kỳ đo">
+            <defs>
+              <linearGradient id="lineGrad" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="#FFB067"/>
+                <stop offset="60%" stop-color="#FF854A"/>
+                <stop offset="100%" stop-color="#E4572E"/>
+              </linearGradient>
+              <linearGradient id="fillGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#FF854A" stop-opacity=".2"/>
+                <stop offset="100%" stop-color="#FF854A" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+
+            <g stroke="#F7E2D6" stroke-width="1">
+              <line x1="34" y1="20"  x2="450" y2="20"/>
+              <line x1="34" y1="60"  x2="450" y2="60"/>
+              <line x1="34" y1="100" x2="450" y2="100"/>
+              <line x1="34" y1="140" x2="450" y2="140"/>
+              <line x1="34" y1="180" x2="450" y2="180"/>
+            </g>
+            <g font-family="Be Vietnam Pro, sans-serif" font-size="10" fill="#C6A899" text-anchor="end">
+              <text x="26" y="24">100</text><text x="26" y="104">50</text><text x="26" y="184">0</text>
+            </g>
+
+            <path d="M60 156 L 155 138 L 250 132 L 345 96 L 440 62 L 440 180 L 60 180 Z" fill="url(#fillGrad)"/>
+            <path d="M60 156 L 155 138 L 250 132 L 345 96 L 440 62"
+                  fill="none" stroke="url(#lineGrad)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"
+                  stroke-dasharray="420" stroke-dashoffset="420" class="chart-line"/>
+
+            <g fill="#fff" stroke="#FF854A" stroke-width="3.5">
+              <circle cx="60"  cy="156" r="5.5"/>
+              <circle cx="155" cy="138" r="5.5"/>
+              <circle cx="250" cy="132" r="5.5"/>
+              <circle cx="345" cy="96"  r="5.5"/>
+              <circle cx="440" cy="62"  r="6.5" stroke="#E4572E"/>
+            </g>
+
+            <g font-family="Be Vietnam Pro, sans-serif" font-size="10" font-weight="600" fill="#9C7264" text-anchor="middle">
+              <text x="60" y="202">Đầu vào</text>
+              <text x="155" y="202">Chu kỳ 1</text>
+              <text x="250" y="202">Chu kỳ 2</text>
+              <text x="345" y="202">Chu kỳ 3</text>
+              <text x="440" y="202">Chu kỳ 4</text>
+            </g>
+
+            <g>
+              <rect x="206" y="106" width="92" height="20" rx="6" fill="#FFF2E9"/>
+              <text x="252" y="120" font-family="Be Vietnam Pro, sans-serif" font-size="10" font-weight="700" fill="#C13F1D" text-anchor="middle">chững 1 chu kỳ</text>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ Cho phụ huynh ══════════ -->
+<section class="sec sec-white" id="phu-huynh" style="scroll-margin-top:90px">
+  <div class="shell split" style="align-items:start">
+    <div class="reveal">
+      <span class="rule"></span>
+      <h2 class="h2">Phụ huynh biết chính xác mình đang trả tiền cho cái gì</h2>
+      <p class="lead">
+        Nỗi khổ lớn nhất khi đầu tư cho con học thêm là không có cách nào biết nó có tác dụng hay
+        không, cho tới lúc thi xong thì đã muộn. Ở đây, sau mỗi 14 ngày gia đình nhận một báo cáo
+        bằng số, kèm phần diễn giải bằng lời cho người không chuyên môn.
+      </p>
+
+      <ul class="plist">
+        <li>
+          <span class="tick">✓</span>
+          <div>
+            <h4>Mastery từng mảng tăng bao nhiêu</h4>
+            <p>So với chính con 14 ngày trước, không so với bạn cùng lớp.</p>
+          </div>
+        </li>
+        <li>
+          <span class="tick">✓</span>
+          <div>
+            <h4>Lỗi nào đã sửa được, lỗi nào còn lặp</h4>
+            <p>Gọi tên cụ thể chứ không phải “cần cố gắng thêm”.</p>
+          </div>
+        </li>
+        <li>
+          <span class="tick">✓</span>
+          <div>
+            <h4>Thời gian học thật so với cam kết</h4>
+            <p>Biết con có ngồi vào bàn thật hay không.</p>
+          </div>
+        </li>
+        <li>
+          <span class="tick">✓</span>
+          <div>
+            <h4>Mục tiêu còn khả thi không</h4>
+            <p>Nếu không kịp, hệ thống nói sớm để còn điều chỉnh.</p>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <div class="reveal">
+      <div class="mock">
+        <div class="mock-head">
+          <div>
+            <p class="mock-title">Báo cáo gửi phụ huynh · chu kỳ 4</p>
+            <p class="mock-sub">Gửi tự động sau mỗi lần đo</p>
+          </div>
+          <span class="pill">14 ngày</span>
+        </div>
+
+        <div class="skillrow">
+          <div>
+            <p class="skillname">Quy đồng &amp; so sánh phân số</p>
+            <div class="bar hot"><i data-w="72%"></i></div>
+          </div>
+          <span class="pct">+38</span>
+        </div>
+        <div class="skillrow">
+          <div>
+            <p class="skillname">Tỉ lệ thức và bài toán tỉ lệ</p>
+            <div class="bar warm"><i data-w="65%"></i></div>
+          </div>
+          <span class="pct">+19</span>
+        </div>
+        <div class="skillrow">
+          <div>
+            <p class="skillname">Suy luận logic, tìm quy luật</p>
+            <div class="bar good"><i data-w="88%"></i></div>
+          </div>
+          <span class="pct">+7</span>
+        </div>
+
+        <div style="margin-top:18px;padding:14px;border-radius:14px;background:var(--cream);box-shadow:inset 0 0 0 1px var(--line)">
+          <p style="font-size:12.5px;line-height:1.6;color:var(--ink-700)">
+            <b style="color:var(--ember-700)">Diễn giải:</b> lỗi quy đồng mẫu đã gần như hết.
+            Còn lặp ở bước rút gọn sau khi cộng — hai tuần tới sẽ tập trung vào đây.
+          </p>
+        </div>
+      </div>
+
+      <div class="session-card">
+        <p class="eyebrow">Buổi tư vấn 20 phút</p>
+        <p>
+          Sau mỗi lần đo, giáo viên đọc trước toàn bộ hồ sơ rồi mới vào buổi. Không mất mười phút
+          đầu để hỏi lại “dạo này cháu học thế nào” — đi thẳng vào chỗ đang vướng và chốt điều chỉnh
+          cho hai tuần tới.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ Câu hỏi thường gặp ══════════ -->
+<section class="sec sec-cream" id="cau-hoi" style="scroll-margin-top:90px">
+  <div class="shell faq-grid">
+    <div class="reveal">
+      <span class="rule"></span>
+      <h2 class="h2">Câu hỏi thường gặp</h2>
+      <p class="lead">
+        Còn thắc mắc khác? Tạo tài khoản và làm thử bài đầu vào — mất khoảng 20 phút và không
+        cần thanh toán.
+      </p>
+      <a class="btn btn-fire" href="#" style="margin-top:26px"><span>Làm thử bài đầu vào</span><span aria-hidden="true">→</span></a>
+    </div>
+
+    <div class="faq reveal">
+      <details open>
+        <summary>Khác gì so với các kho đề luyện thi khác?<span class="plus">+</span></summary>
+        <p class="ans">Kho đề bán cho bạn quyền tự chọn bài trong một kho chung — việc chọn đúng bài vẫn là của bạn. Ở đây, hệ thống giữ một hồ sơ năng lực riêng cho từng học sinh theo từng kỹ năng nhỏ, và tự quyết định hôm nay em nên làm bài nào, ở mức khó nào, bao nhiêu câu.</p>
+      </details>
+      <details>
+        <summary>AI có tự ra đề không?<span class="plus">+</span></summary>
+        <p class="ans">Không. Toàn bộ câu hỏi do đội chuyên môn biên soạn và qua kiểm duyệt trước khi vào kho. AI chỉ đọc dữ liệu làm bài của học sinh để chọn câu phù hợp và diễn giải lại lời giải đã được duyệt cho dễ hiểu hơn.</p>
+      </details>
+      <details>
+        <summary>Một bài 15 câu có đủ để đánh giá con tôi không?<span class="plus">+</span></summary>
+        <p class="ans">Không, và hệ thống cũng không coi đó là kết luận cuối cùng. Đó là mốc khởi đầu để có cái mà bắt đầu. Hồ sơ năng lực được cập nhật sau mỗi câu con làm, và được đo lại chính thức bằng câu neo sau mỗi 14 ngày.</p>
+      </details>
+      <details>
+        <summary>Nếu con học không kịp theo kế hoạch?<span class="plus">+</span></summary>
+        <p class="ans">Hệ thống tự dàn lại lịch và nói rõ phần nào bị lùi, thay vì để kế hoạch dồn thành một đống nợ khiến con nản. Gia đình cũng có thể đổi mục tiêu bất cứ lúc nào — hệ thống sẽ tính lại khối lượng cho phù hợp.</p>
+      </details>
+      <details>
+        <summary>Phụ huynh theo dõi được không?<span class="plus">+</span></summary>
+        <p class="ans">Được. Sau mỗi chu kỳ 14 ngày đều có báo cáo bằng số liệu cụ thể: mastery từng mảng kiến thức tăng bao nhiêu, tốc độ làm bài cải thiện thế nào, lỗi nào đã sửa được và lỗi nào còn lặp lại.</p>
+      </details>
+      <details>
+        <summary>Con tôi mất gốc, có theo được không?<span class="plus">+</span></summary>
+        <p class="ans">Đây chính là trường hợp hệ thống làm tốt nhất. Bài kiểm tra đầu vào sẽ tìm ra đúng tầng kiến thức bị hổng, kể cả khi nó nằm ở lớp dưới, rồi dựng lại từ đó lên. Độ khó sẽ hạ xuống mức con làm được trước khi nâng dần.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ Lời kêu gọi cuối ══════════ -->
+<div class="cta-wrap">
+  <div class="shell">
+    <div class="cta reveal">
+      <span class="halo" aria-hidden="true"></span>
+      <div class="cta-in">
+        <span class="rule"></span>
+        <h2>Bắt đầu bằng bài kiểm tra đầu vào 15 câu</h2>
+        <p>
+          Mất khoảng 20 phút. Xong bài, bạn thấy ngay bản đồ kỹ năng của con: mạnh ở đâu,
+          hổng ở đâu, và nên sửa theo thứ tự nào.
+        </p>
+        <div class="cta-btns">
+          <a class="btn btn-fire" href="#"><span>Làm bài kiểm tra miễn phí</span><span aria-hidden="true">→</span></a>
+          <a class="btn btn-white" href="#">Đã có tài khoản</a>
+        </div>
+        <small>Không cần thẻ thanh toán · Dữ liệu học tập của con thuộc về gia đình</small>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ Chân trang ══════════ -->
+<footer class="foot">
+  <div class="shell">
+    <div class="foot-grid">
+      <div>
+        <div class="brand">
+          <span class="brand-mark">Ω</span>
+          <span class="brand-name">Olympiad Prep</span>
+        </div>
+        <p class="foot-tag">
+          Ôn luyện cá nhân hóa cho ASMOPSS, NEO, STEM và FMC. Mỗi học sinh một lộ trình,
+          tính lại sau mỗi bài làm.
+        </p>
+      </div>
+
+      <div>
+        <h4>Khám phá</h4>
+        <ul>
+          <li><a href="#ky-thi">Kỳ thi</a></li>
+          <li><a href="#">Khóa học</a></li>
+          <li><a href="#">Thi thử</a></li>
+          <li><a href="#cach-hoat-dong">Cách hoạt động</a></li>
+          <li><a href="#">Tạo tài khoản</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4>Cam kết với phụ huynh</h4>
+        <ul>
+          <li>Chỉ thu thập dữ liệu cần cho việc học.</li>
+          <li>Không dùng dữ liệu học sinh cho mục đích khác.</li>
+          <li>Câu hỏi do đội chuyên môn biên soạn và kiểm duyệt.</li>
+          <li>AI không tự ra đề, chỉ chọn bài và giải thích.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="foot-bottom">
+      <span>© 2026 Olympiad Prep. Nền tảng ôn luyện Olympic cá nhân hóa.</span>
+      <span>Đang nhận học sinh cho mùa thi 2027</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  'use strict';
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ── nav dính khi cuộn ─────────────────────────────── */
+  var nav = document.getElementById('nav');
+  function onScroll(){ nav.classList.toggle('stuck', window.scrollY > 40); }
+  onScroll();
+  window.addEventListener('scroll', onScroll, {passive:true});
+
+  /* ── menu di động ──────────────────────────────────── */
+  var burger = document.getElementById('burger');
+  var menu = document.getElementById('mobileMenu');
+  burger.addEventListener('click', function(){
+    var open = menu.classList.toggle('open');
+    burger.setAttribute('aria-expanded', String(open));
+  });
+  menu.addEventListener('click', function(e){
+    if (e.target.tagName === 'A'){ menu.classList.remove('open'); burger.setAttribute('aria-expanded','false'); }
+  });
+
+  /* ── băng chạy: nhân đôi nội dung cho vòng lặp liền ── */
+  var track = document.getElementById('track');
+  if (track) track.innerHTML += track.innerHTML;
+
+  /* ── các hiệu ứng chạy khi khối lọt vào màn hình ──── */
+  function activate(root){
+    if (!root) return;
+    root.querySelectorAll('.bar i').forEach(function(bar){
+      bar.style.width = bar.getAttribute('data-w');
+    });
+    root.querySelectorAll('[data-count]').forEach(count);
+    root.querySelectorAll('.chart-line, .dial-arc').forEach(function(p){
+      p.style.transition = 'stroke-dashoffset 1.6s cubic-bezier(.22,1,.36,1)';
+      p.style.strokeDashoffset = '0';
+    });
+  }
+
+  /* ── đếm số ────────────────────────────────────────── */
+  function count(el){
+    var end = parseInt(el.getAttribute('data-count'), 10);
+    if (reduce){ el.textContent = end; return; }
+    var dur = 1100, t0 = null;
+    function tick(ts){
+      if (t0 === null) t0 = ts;
+      var p = Math.min((ts - t0) / dur, 1);
+      el.textContent = Math.round(end * (1 - Math.pow(1 - p, 3)));
+      if (p < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+
+  /* ── hiện dần khi cuộn tới ─────────────────────────── */
+  var targets = document.querySelectorAll('.reveal');
+  if (reduce || !('IntersectionObserver' in window)){
+    targets.forEach(function(el){ el.classList.add('in'); });
+    activate(document);
+  } else {
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if (!en.isIntersecting) return;
+        en.target.classList.add('in');
+        io.unobserve(en.target);
+        activate(en.target);
+      });
+    }, {rootMargin:'0px 0px -12% 0px', threshold:.12});
+    targets.forEach(function(el, i){ el.style.transitionDelay = (i % 4) * 70 + 'ms'; io.observe(el); });
+  }
+
+  /* ── hero chạy ngay, không chờ cuộn ────────────────── */
+  activate(document.querySelector('.hero'));
+})();
+</script>
+</body>
+</html>

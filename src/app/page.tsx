@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react';
 import Link from 'next/link';
 import { getCatalogTree } from '@/server/catalog/service';
 import { getSession } from '@/lib/auth';
@@ -8,6 +9,7 @@ import { SiteShell } from '@/components/site-shell';
 import { Reveal } from '@/components/motion';
 import {
   DifficultyDialVisual,
+  ParentReportVisual,
   ProgressChartVisual,
   SkillMapVisual,
   TodayPlanVisual,
@@ -25,6 +27,23 @@ export const dynamic = 'force-dynamic';
  * Chữ vẫn được giới hạn riêng bằng max-w-* ở từng khối để không quá dài.
  */
 const SHELL = 'mx-auto w-full max-w-7xl px-5 lg:px-8';
+
+/**
+ * Bốn cặp màu nhấn cho thẻ kỳ thi.
+ *
+ * KHÔNG lấy `program.colorHex` từ database nữa: các mã đó là xanh dương, xanh
+ * lá, vàng — bốn màu lạc hẳn khỏi tông đỏ cam của trang. Ở đây mỗi kỳ thi nhận
+ * một nấc khác nhau trên thang lửa, vẫn phân biệt được nhưng cùng một họ màu.
+ * Màu gốc trong DB vẫn giữ nguyên cho khu quản trị và các biểu đồ trong app.
+ *
+ * `ink` là bản đậm hơn dùng cho chữ: nấc cam sáng đọc không nổi trên nền trắng.
+ */
+const ACCENTS = [
+  { from: '#e4572e', to: '#ff9e5e', ink: '#c13f1d' },
+  { from: '#f2703a', to: '#ffb067', ink: '#c2501f' },
+  { from: '#f0913f', to: '#ffd09b', ink: '#b4651c' },
+  { from: '#d9482a', to: '#ff854a', ink: '#b33a1c' },
+] as const;
 
 export default async function HomePage() {
   const [programs, session, t] = await Promise.all([getCatalogTree(), getSession(), getCopy()]);
@@ -55,45 +74,77 @@ export default async function HomePage() {
   return (
     <SiteShell signedIn={Boolean(session)}>
       {/* ================= Hero ================= */}
-      <section className="paper relative overflow-hidden pt-28 pb-16 sm:pt-36 lg:pt-40 lg:pb-24">
-        <div className="grid-faint pointer-events-none absolute inset-0" aria-hidden />
+      <section className="relative isolate overflow-hidden pt-16 pb-40 sm:pt-20 lg:pt-24 lg:pb-48">
+        {/* Nền: hai quầng kem đào chồng lên nhau, sáng dần về phía dưới */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(90%_70%_at_80%_4%,#ffe6d5_0%,rgba(255,242,233,0)_62%),radial-gradient(70%_60%_at_8%_32%,#fff0e2_0%,rgba(255,251,248,0)_60%),linear-gradient(180deg,#fff7f1_0%,#fffbf8_78%)]"
+        />
+        <div className="grid-faint pointer-events-none absolute inset-0 -z-10" aria-hidden />
+        <span
+          aria-hidden
+          className="warm-blob -top-36 -right-20 h-[520px] w-[520px] -z-10 bg-[radial-gradient(circle,rgba(255,133,74,0.3),transparent_68%)]"
+        />
+        <span
+          aria-hidden
+          className="warm-blob top-48 right-72 h-[400px] w-[400px] -z-10 bg-[radial-gradient(circle,rgba(255,176,103,0.28),transparent_68%)] [animation-delay:1.5s] [animation-direction:reverse]"
+        />
+        <span
+          aria-hidden
+          className="warm-blob -bottom-10 -left-28 h-[340px] w-[340px] -z-10 bg-[radial-gradient(circle,rgba(255,208,155,0.38),transparent_70%)] [animation-duration:22s]"
+        />
 
         <div className={`${SHELL} relative`}>
-          <div className="grid items-center gap-14 lg:grid-cols-[1.05fr_1fr] lg:gap-16">
+          <div className="grid items-center gap-14 lg:grid-cols-[1.02fr_0.98fr] lg:gap-16">
             {/* --- Lời chào --- */}
             <div>
-              <p className="animate-fade-down inline-flex items-center gap-2 rounded-full bg-white px-3.5 py-1.5 text-[11px] font-bold tracking-[0.14em] text-navy-700 uppercase ring-1 ring-navy-100">
-                <span className="h-1.5 w-1.5 rounded-full bg-gold-400" aria-hidden />
+              <p className="animate-fade-down inline-flex items-center gap-2.5 rounded-full bg-white px-4 py-2 text-[11.5px] font-extrabold tracking-[0.14em] text-brand-700 uppercase shadow-[inset_0_0_0_1px_var(--color-warm-250),0_6px_16px_-12px_rgb(150_80_50/0.5)]">
+                <span
+                  className="h-1.5 w-1.5 animate-[pulse-dot_2.2s_ease-in-out_infinite] rounded-full bg-brand-400 shadow-[0_0_10px_2px_rgb(255_133_74/0.7)]"
+                  aria-hidden
+                />
                 {t('home.hero.badge')}
               </p>
 
-              <h1 className="animate-fade-up delay-1 font-display mt-6 max-w-2xl text-[38px] leading-[1.08] font-bold tracking-tight text-navy-900 text-balance sm:text-[54px] lg:text-[66px]">
+              <h1 className="animate-fade-up delay-1 font-display mt-6 max-w-[15ch] text-[40px] leading-[1.04] font-bold tracking-tight text-warm-900 text-balance sm:text-[54px] lg:text-[68px]">
                 {t('home.hero.title.before')}{' '}
-                <span className="gold-underline">{t('home.hero.title.highlight')}</span>{' '}
+                <span className="flame-underline flame-text">
+                  {t('home.hero.title.highlight')}
+                  <svg viewBox="0 0 300 12" preserveAspectRatio="none" aria-hidden>
+                    <defs>
+                      <linearGradient id="swoosh" x1="0" y1="0" x2="1" y2="0">
+                        <stop offset="0%" stopColor="var(--color-gold-400)" />
+                        <stop offset="50%" stopColor="var(--color-brand-400)" />
+                        <stop offset="100%" stopColor="var(--color-brand-600)" />
+                      </linearGradient>
+                    </defs>
+                    <path d="M4 8 C 70 2, 150 12, 296 4" stroke="url(#swoosh)" />
+                  </svg>
+                </span>{' '}
                 {t('home.hero.title.after')}
               </h1>
 
-              <p className="animate-fade-up delay-2 mt-6 max-w-xl text-[17px] leading-relaxed text-navy-600 text-pretty sm:text-lg">
+              <p className="animate-fade-up delay-2 mt-6 max-w-[52ch] text-[17px] leading-relaxed text-warm-500 text-pretty sm:text-[17.5px]">
                 {t('home.hero.subtitle')}
               </p>
 
               <div className="animate-fade-up delay-3 mt-9 flex flex-wrap items-center gap-3">
                 <Link
                   href={primaryCta}
-                  className="press inline-flex items-center gap-2.5 rounded-xl bg-navy-900 px-7 py-4 text-[15px] font-semibold text-white shadow-[0_12px_30px_-10px_rgb(13_27_49/0.55)] transition-all hover:bg-navy-800 hover:shadow-[0_18px_40px_-12px_rgb(13_27_49/0.6)]"
+                  className="press btn-fire inline-flex items-center gap-2.5 rounded-2xl px-7 py-4 text-[15px] font-bold"
                 >
                   {session ? t('home.hero.cta.member') : t('home.hero.cta.guest')}
                   <span aria-hidden>→</span>
                 </Link>
                 <a
                   href="#cach-hoat-dong"
-                  className="press inline-flex items-center gap-2 rounded-xl bg-white px-6 py-4 text-[15px] font-semibold text-navy-800 ring-1 ring-navy-200 transition-all hover:ring-navy-300"
+                  className="press inline-flex items-center gap-2 rounded-2xl bg-white px-6 py-4 text-[15px] font-bold text-warm-800 shadow-[inset_0_0_0_1.5px_var(--color-warm-250),0_6px_18px_-14px_rgb(120_70_45/0.5)] transition-all hover:shadow-[inset_0_0_0_1.5px_#e8bca3,0_12px_26px_-16px_rgb(120_70_45/0.5)]"
                 >
                   {t('home.hero.cta.secondary')}
                 </a>
               </div>
 
-              <p className="animate-fade-up delay-4 mt-5 text-[13px] text-navy-500">
+              <p className="animate-fade-up delay-4 mt-6 text-[13px] text-warm-400">
                 {t('home.hero.note')}
               </p>
             </div>
@@ -101,188 +152,243 @@ export default async function HomePage() {
             {/* --- Ảnh sản phẩm --- */}
             <div className="animate-fade-up delay-3 relative lg:pl-6">
               <SkillMapVisual className="artifact-frame relative z-10" />
-
-              <WhyThisItemCard className="animate-float absolute -bottom-10 -left-4 z-20 hidden sm:block lg:-left-14" />
-
-              <div
-                aria-hidden
-                className="absolute -top-8 -right-4 z-0 hidden h-32 w-32 rounded-full bg-gold-200/50 blur-2xl lg:block"
-              />
+              <WhyThisItemCard className="animate-float absolute -bottom-11 -left-9 z-20 hidden sm:block" />
             </div>
           </div>
         </div>
       </section>
 
       {/* ================= Dải số liệu ================= */}
-      <section className="relative overflow-hidden bg-navy-900">
-        <div className="grid-faint-dark pointer-events-none absolute inset-0" aria-hidden />
-        <div className={`${SHELL} relative`}>
-          <dl className="grid grid-cols-2 divide-navy-700/60 py-10 sm:divide-x lg:grid-cols-4">
-            {stats.map((stat, index) => (
-              <div key={stat.l} className={index % 2 === 0 ? 'pr-4 sm:px-6' : 'pl-4 sm:px-6'}>
-                <dd className="font-display text-4xl font-bold text-gold-300 tabular-nums lg:text-5xl">
-                  {stat.v}
-                </dd>
-                <dt className="mt-2 text-[13.5px] font-semibold text-white">{stat.l}</dt>
-                <p className="mt-0.5 text-[12px] text-navy-300">{stat.h}</p>
+      <section className="paper pb-24 lg:pb-28">
+        <div className={SHELL}>
+          {/*
+            Thẻ số liệu đè lên đáy hero. Trước đây khối này là một dải navy chạy
+            hết bề ngang — thứ duy nhất tối trên trang. Nay là bốn ô trắng nổi
+            trên nền kem, vẫn tách bạch nhưng bằng bóng đổ chứ không bằng nền tối.
+          */}
+          <Reveal className="relative z-10 -mt-32">
+            <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-3xl bg-warm-200 shadow-[0_34px_70px_-44px_rgb(150_80_50/0.45),0_0_0_1px_var(--color-warm-200)] lg:grid-cols-4">
+              {stats.map((stat) => (
+                <div key={stat.l} className="bg-white px-6 py-8 transition-colors hover:bg-warm-100">
+                  <dd className="font-display bg-gradient-to-br from-brand-600 via-brand-400 to-gold-400 bg-clip-text text-[38px] leading-none font-bold text-transparent tabular-nums lg:text-[46px]">
+                    {stat.v}
+                  </dd>
+                  <dt className="mt-2.5 text-[13.5px] font-bold text-warm-900">{stat.l}</dt>
+                  <p className="mt-1 text-[12px] text-warm-400">{stat.h}</p>
+                </div>
+              ))}
+            </dl>
+          </Reveal>
+
+          {/* Băng tên các kỳ thi đang mở — lấy thẳng từ catalog, không viết cứng */}
+          {openPrograms.length > 0 ? (
+            <Reveal className="mt-14">
+              <div className="marquee-mask overflow-hidden" aria-hidden>
+                <div className="marquee-track">
+                  {[0, 1].map((copyIndex) => (
+                    <div key={copyIndex} className="flex shrink-0 gap-11 pr-11">
+                    {openPrograms.map((program) => (
+                      <span
+                        key={program.id}
+                        className="font-display flex items-center gap-3 text-[19px] font-semibold whitespace-nowrap text-warm-400"
+                      >
+                        <b className="font-sans text-[13px] font-extrabold tracking-[0.1em] text-brand-700 uppercase">
+                          {program.shortName ?? program.code}
+                        </b>
+                        <span className="text-gold-400">◆</span>
+                        {program.description.split('.')[0]}
+                      </span>
+                    ))}
+                  </div>
+                ))}
+                </div>
               </div>
-            ))}
-          </dl>
+            </Reveal>
+          ) : null}
         </div>
       </section>
 
       {/* ================= Vấn đề ================= */}
-      <Reveal as="section" className="paper py-20 lg:py-28">
+      <section className="bg-white py-24 lg:py-28">
         <div className={SHELL}>
-          <div className="grid gap-12 lg:grid-cols-[1fr_1.05fr] lg:items-center lg:gap-20">
-            <div>
+          <div className="grid gap-14 lg:grid-cols-[1fr_1.05fr] lg:items-center lg:gap-[72px]">
+            <Reveal>
               <span className="gold-rule block" aria-hidden />
-              <h2 className="font-display mt-5 max-w-lg text-[30px] leading-[1.14] font-bold tracking-tight text-navy-900 text-balance sm:text-4xl lg:text-[44px]">
+              <h2 className="font-display mt-5 max-w-lg text-[30px] leading-[1.12] font-bold tracking-tight text-warm-900 text-balance sm:text-4xl lg:text-[44px]">
                 {t('home.problem.title')}
               </h2>
-              <p className="mt-5 max-w-lg text-[16.5px] leading-relaxed text-navy-600 text-pretty">
+              <p className="mt-5 max-w-lg text-[17px] leading-relaxed text-warm-500 text-pretty">
                 {t('home.problem.body1')}
               </p>
-              <p className="mt-4 max-w-lg text-[16.5px] leading-relaxed text-navy-600 text-pretty">
+              <p className="mt-4 max-w-lg text-[17px] leading-relaxed text-warm-500 text-pretty">
                 {t('home.problem.body2')}
               </p>
-            </div>
+            </Reveal>
 
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="rounded-2xl bg-white p-6 ring-1 ring-navy-100">
-                <p className="text-[11px] font-bold tracking-[0.14em] text-ink-400 uppercase">
-                  {t('home.problem.old.title')}
-                </p>
-                <ul className="mt-4 space-y-3">
-                  {[1, 2, 3, 4].map((n) => t(`home.problem.old.${n}`)).map((line) => (
-                    <li key={line} className="flex gap-2.5 text-[13.5px] leading-snug text-ink-500">
-                      <span aria-hidden className="mt-px shrink-0 text-ink-300">
-                        ✕
-                      </span>
-                      {line}
-                    </li>
-                  ))}
-                </ul>
-              </div>
+            <Reveal delay={120}>
+              <div className="grid gap-4.5 sm:grid-cols-2">
+                <div className="rounded-3xl bg-warm-50 p-7 shadow-[inset_0_0_0_1px_var(--color-warm-200)]">
+                  <p className="text-[11px] font-extrabold tracking-[0.16em] text-warm-400 uppercase">
+                    {t('home.problem.old.title')}
+                  </p>
+                  <ul className="mt-4.5 space-y-3.5">
+                    {[1, 2, 3, 4].map((n) => t(`home.problem.old.${n}`)).map((line) => (
+                      <li key={line} className="flex gap-3 text-[13.5px] leading-snug text-warm-500">
+                        <span aria-hidden className="mt-px shrink-0 font-bold text-warm-300">
+                          ✕
+                        </span>
+                        {line}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
 
-              <div className="rounded-2xl bg-navy-900 p-6 shadow-[0_20px_44px_-20px_rgb(13_27_49/0.6)]">
-                <p className="text-[11px] font-bold tracking-[0.14em] text-gold-300 uppercase">
-                  {t('home.problem.new.title')}
-                </p>
-                <ul className="mt-4 space-y-3">
-                  {[1, 2, 3, 4].map((n) => t(`home.problem.new.${n}`)).map((line) => (
-                    <li key={line} className="flex gap-2.5 text-[13.5px] leading-snug text-navy-100">
-                      <span aria-hidden className="mt-px shrink-0 font-bold text-gold-300">
-                        ✓
-                      </span>
-                      {line}
-                    </li>
-                  ))}
-                </ul>
+                {/*
+                  Cột "nền tảng này" từng là một khối navy đặc chữ trắng. Nay là
+                  kem đào: vẫn tách hẳn khỏi cột bên trái nhờ có màu, nhưng không
+                  đục một lỗ tối giữa mục.
+                */}
+                <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#ffe8d8] via-[#ffd9c2] to-[#ffcdb0] p-7 shadow-[0_24px_50px_-30px_rgb(228_87_46/0.5),inset_0_0_0_1px_rgb(228_87_46/0.16)]">
+                  <span
+                    aria-hidden
+                    className="absolute -top-24 -right-16 h-56 w-56 rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.75),transparent_70%)]"
+                  />
+                  <p className="relative text-[11px] font-extrabold tracking-[0.16em] text-brand-700 uppercase">
+                    {t('home.problem.new.title')}
+                  </p>
+                  <ul className="relative mt-4.5 space-y-3.5">
+                    {[1, 2, 3, 4].map((n) => t(`home.problem.new.${n}`)).map((line) => (
+                      <li key={line} className="flex gap-3 text-[13.5px] leading-snug text-warm-800">
+                        <span aria-hidden className="mt-px shrink-0 font-extrabold text-brand-600">
+                          ✓
+                        </span>
+                        {line}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
-            </div>
+            </Reveal>
           </div>
         </div>
-      </Reveal>
+      </section>
 
       {/* ================= Kỳ thi ================= */}
-      <section id="ky-thi" className="scroll-mt-24 bg-white py-20 lg:py-28">
+      <section id="ky-thi" className="paper scroll-mt-24 py-24 lg:py-28">
         <div className={SHELL}>
           <Reveal>
             <span className="gold-rule block" aria-hidden />
-            <h2 className="font-display mt-5 text-[30px] leading-tight font-bold tracking-tight text-navy-900 sm:text-4xl lg:text-[44px]">
+            <h2 className="font-display mt-5 text-[30px] leading-tight font-bold tracking-tight text-warm-900 sm:text-4xl lg:text-[44px]">
               {t('home.programs.title')}
             </h2>
-            <p className="mt-4 max-w-2xl text-[16.5px] leading-relaxed text-navy-600">
+            <p className="mt-4 max-w-2xl text-[17px] leading-relaxed text-warm-500">
               {t('home.programs.subtitle')}
             </p>
           </Reveal>
 
           {openPrograms.length > 0 ? (
-            <div className="mt-12 grid gap-6 md:grid-cols-2">
-              {openPrograms.map((program, index) => (
-                <Reveal key={program.id} delay={index * 80}>
-                  <Link
-                    href={routes.program(program.code)}
-                    className="hover-lift group flex h-full flex-col overflow-hidden rounded-2xl bg-white ring-1 ring-navy-100 shadow-[0_2px_10px_-4px_rgb(13_27_49/0.1)]"
-                  >
-                    <span
-                      aria-hidden
-                      className="block h-1.5 w-full"
-                      style={{ backgroundColor: program.colorHex }}
-                    />
+            <div className="mt-13 grid gap-5.5 md:grid-cols-2">
+              {openPrograms.map((program, index) => {
+                const accent = ACCENTS[index % ACCENTS.length]!;
 
-                    <div className="flex flex-1 flex-col p-6 lg:p-7">
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="min-w-0">
-                          <p
-                            className="text-[11px] font-bold tracking-[0.16em] uppercase"
-                            style={{ color: program.colorHex }}
-                          >
-                            {program.shortName ?? program.code}
-                          </p>
-                          <h3 className="font-display mt-1.5 text-[22px] leading-snug font-bold text-navy-900 transition-colors group-hover:text-navy-700">
-                            {program.name}
-                          </h3>
-                        </div>
-                        {program.examDate ? (
-                          <span className="shrink-0 rounded-lg bg-navy-50 px-3 py-1.5 text-center">
-                            <span className="block text-[10px] font-semibold tracking-wide text-navy-400 uppercase">
-                              Thi
-                            </span>
-                            <span className="block text-[12.5px] font-bold text-navy-800 tabular-nums">
-                              {program.examDate.toLocaleDateString('vi-VN', {
-                                day: '2-digit',
-                                month: '2-digit',
-                                year: 'numeric',
-                              })}
-                            </span>
-                          </span>
-                        ) : null}
-                      </div>
+                return (
+                  <Reveal key={program.id} delay={index * 80}>
+                    <Link
+                      href={routes.program(program.code)}
+                      className="group flex h-full flex-col overflow-hidden rounded-3xl bg-white shadow-[inset_0_0_0_1px_var(--color-warm-200),0_4px_16px_-12px_rgb(150_80_50/0.35)] transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_30px_55px_-32px_rgb(180_90_50/0.45),0_0_0_1.5px_var(--pcard-accent)]"
+                      style={{ '--pcard-accent': accent.from } as CSSProperties}
+                    >
+                      <span
+                        aria-hidden
+                        className="block h-1.5 w-full"
+                        style={{
+                          backgroundImage: `linear-gradient(90deg, ${accent.from}, ${accent.to})`,
+                        }}
+                      />
 
-                      <p className="mt-3 text-[14.5px] leading-relaxed text-navy-600">
-                        {program.description}
-                      </p>
-
-                      {program.highlights.length > 0 ? (
-                        <ul className="mt-4 space-y-1.5">
-                          {program.highlights.slice(0, 3).map((highlight) => (
-                            <li
-                              key={highlight}
-                              className="flex gap-2 text-[13.5px] leading-snug text-navy-700"
+                      <div className="flex flex-1 flex-col p-7">
+                        <div className="flex items-start justify-between gap-4">
+                          <div className="min-w-0">
+                            <p
+                              className="text-[11px] font-extrabold tracking-[0.16em] uppercase"
+                              style={{ color: accent.ink }}
                             >
-                              <span aria-hidden className="mt-px shrink-0 text-gold-500">
-                                ◆
-                              </span>
-                              {highlight}
-                            </li>
-                          ))}
-                        </ul>
-                      ) : null}
-
-                      <div className="mt-auto flex flex-wrap items-end justify-between gap-3 border-t border-navy-100 pt-4 text-[13px] text-navy-500">
-                        <span>
-                          {program.bands.length} khối lớp · {program.courseCount} khóa
-                        </span>
-                        {program.fromPrice > 0 ? (
-                          <span className="text-right">
-                            <span className="block text-[10.5px] tracking-wide uppercase">từ</span>
-                            <span className="font-display block text-[19px] font-bold text-navy-900">
-                              {formatVnd(program.fromPrice)}
+                              {program.shortName ?? program.code}
+                            </p>
+                            <h3 className="font-display mt-1.5 text-[21px] leading-snug font-bold text-warm-900">
+                              {program.name}
+                            </h3>
+                          </div>
+                          {program.logoEmoji ? (
+                            <span
+                              aria-hidden
+                              className="grid h-[50px] w-[50px] shrink-0 place-items-center rounded-2xl text-2xl"
+                              style={{
+                                backgroundImage: `linear-gradient(150deg, ${accent.from}, ${accent.to})`,
+                                boxShadow: `0 12px 24px -14px ${accent.from}`,
+                              }}
+                            >
+                              {program.logoEmoji}
                             </span>
-                          </span>
+                          ) : null}
+                        </div>
+
+                        <p className="mt-3 text-[14px] leading-relaxed text-warm-500">
+                          {program.description}
+                        </p>
+
+                        {program.highlights.length > 0 ? (
+                          <ul className="mt-4.5 space-y-2.5">
+                            {program.highlights.slice(0, 3).map((highlight) => (
+                              <li
+                                key={highlight}
+                                className="flex gap-2.5 text-[13.5px] leading-snug text-warm-700"
+                              >
+                                <span
+                                  aria-hidden
+                                  className="mt-1.5 shrink-0 text-[9px]"
+                                  style={{ color: accent.from }}
+                                >
+                                  ◆
+                                </span>
+                                {highlight}
+                              </li>
+                            ))}
+                          </ul>
                         ) : null}
+
+                        <div className="mt-auto flex flex-wrap items-end justify-between gap-3 border-t border-warm-200 pt-5 text-[13px] text-warm-400">
+                          <span>
+                            {program.bands.length} khối lớp · {program.courseCount} khóa
+                          </span>
+                          {program.fromPrice > 0 ? (
+                            <span className="text-right">
+                              <span className="block text-[10.5px] tracking-[0.1em] uppercase">
+                                từ
+                              </span>
+                              <span className="font-display block text-[20px] font-bold text-warm-900">
+                                {formatVnd(program.fromPrice)}
+                              </span>
+                            </span>
+                          ) : (
+                            <span
+                              className="inline-flex items-center gap-1.5 font-bold transition-all group-hover:gap-2.5"
+                              style={{ color: accent.ink }}
+                            >
+                              Xem lộ trình <span aria-hidden>→</span>
+                            </span>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  </Link>
-                </Reveal>
-              ))}
+                    </Link>
+                  </Reveal>
+                );
+              })}
             </div>
           ) : (
-            <div className="mt-12 rounded-2xl border border-dashed border-navy-200 bg-navy-50/50 px-6 py-14 text-center">
-              <p className="font-medium text-navy-700">{t('home.programs.empty.title')}</p>
-              <p className="mx-auto mt-1 max-w-md text-sm whitespace-pre-line text-navy-500">
+            <div className="mt-12 rounded-3xl border border-dashed border-warm-250 bg-warm-100/60 px-6 py-14 text-center">
+              <p className="font-semibold text-warm-700">{t('home.programs.empty.title')}</p>
+              <p className="mx-auto mt-1 max-w-md text-sm whitespace-pre-line text-warm-400">
                 {t('home.programs.empty.body')}
               </p>
             </div>
@@ -293,34 +399,31 @@ export default async function HomePage() {
       {/* ================= Cách hoạt động ================= */}
       <section
         id="cach-hoat-dong"
-        className="relative scroll-mt-24 overflow-hidden bg-navy-900 py-20 lg:py-28"
+        className="tint-panel relative scroll-mt-24 overflow-hidden py-24 lg:py-28"
       >
-        <div className="grid-faint-dark pointer-events-none absolute inset-0" aria-hidden />
+        <div className="grid-faint-soft pointer-events-none absolute inset-0" aria-hidden />
 
         <div className={`${SHELL} relative`}>
           <Reveal>
             <span className="gold-rule block" aria-hidden />
-            <h2 className="font-display mt-5 text-[30px] leading-tight font-bold tracking-tight text-white sm:text-4xl lg:text-[44px]">
+            <h2 className="font-display mt-5 text-[30px] leading-tight font-bold tracking-tight text-warm-900 sm:text-4xl lg:text-[44px]">
               {t('home.steps.title')}
             </h2>
-            <p className="mt-4 max-w-2xl text-[16.5px] leading-relaxed text-navy-200">
+            <p className="mt-4 max-w-2xl text-[17px] leading-relaxed text-warm-500">
               {t('home.steps.subtitle')}
             </p>
           </Reveal>
 
-          <ol className="mt-14 grid gap-x-10 gap-y-11 sm:grid-cols-2 lg:grid-cols-3">
+          <ol className="mt-15 grid gap-x-10 gap-y-11 sm:grid-cols-2 lg:grid-cols-3">
             {steps.map((step, index) => (
               <Reveal as="li" key={step.n} delay={index * 60}>
                 <div className="flex gap-5">
-                  <span
-                    aria-hidden
-                    className="step-numeral shrink-0 text-[34px] font-bold text-navy-600"
-                  >
+                  <span aria-hidden className="step-numeral shrink-0 text-[44px] font-bold">
                     {step.n}
                   </span>
-                  <div className="min-w-0 border-l border-navy-700 pl-5">
-                    <h3 className="text-[16.5px] font-semibold text-white">{step.title}</h3>
-                    <p className="mt-2 text-[14px] leading-relaxed text-navy-300">{step.body}</p>
+                  <div className="min-w-0 border-l border-warm-250 pl-5">
+                    <h3 className="text-[16.5px] font-bold text-warm-900">{step.title}</h3>
+                    <p className="mt-2 text-[14px] leading-relaxed text-warm-500">{step.body}</p>
                   </div>
                 </div>
               </Reveal>
@@ -330,30 +433,30 @@ export default async function HomePage() {
       </section>
 
       {/* ================= Tính năng có ảnh thật ================= */}
-      <section className="paper py-20 lg:py-28">
+      <section id="tinh-nang" className="paper scroll-mt-24 py-24 lg:py-28">
         <div className={SHELL}>
           <Reveal>
             <span className="gold-rule block" aria-hidden />
-            <h2 className="font-display mt-5 max-w-2xl text-[30px] leading-[1.14] font-bold tracking-tight text-navy-900 text-balance sm:text-4xl lg:text-[44px]">
+            <h2 className="font-display mt-5 max-w-[22ch] text-[30px] leading-[1.12] font-bold tracking-tight text-warm-900 text-balance sm:text-4xl lg:text-[44px]">
               {t('home.features.title')}
             </h2>
           </Reveal>
 
-          <div className="mt-16 space-y-20 lg:space-y-28">
+          <div className="mt-16 space-y-24 lg:space-y-26">
             {/* --- Việc hôm nay --- */}
             <Reveal>
               <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
                 <div className="lg:order-2">
-                  <p className="text-[11px] font-bold tracking-[0.16em] text-gold-600 uppercase">
+                  <p className="text-[11px] font-extrabold tracking-[0.16em] text-brand-700 uppercase">
                     {t('home.features.1.eyebrow')}
                   </p>
-                  <h3 className="font-display mt-3 text-[26px] leading-snug font-bold text-navy-900 sm:text-[32px]">
+                  <h3 className="font-display mt-3 text-[26px] leading-snug font-bold text-warm-900 sm:text-[32px]">
                     {t('home.features.1.title')}
                   </h3>
-                  <p className="mt-4 text-[16px] leading-relaxed text-navy-600 text-pretty">
+                  <p className="mt-4 text-[16px] leading-relaxed text-warm-500 text-pretty">
                     {t('home.features.1.body1')}
                   </p>
-                  <p className="mt-4 text-[16px] leading-relaxed text-navy-600 text-pretty">
+                  <p className="mt-4 text-[16px] leading-relaxed text-warm-500 text-pretty">
                     {t('home.features.1.body2')}
                   </p>
                 </div>
@@ -367,16 +470,16 @@ export default async function HomePage() {
             <Reveal>
               <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
                 <div>
-                  <p className="text-[11px] font-bold tracking-[0.16em] text-gold-600 uppercase">
+                  <p className="text-[11px] font-extrabold tracking-[0.16em] text-brand-700 uppercase">
                     {t('home.features.2.eyebrow')}
                   </p>
-                  <h3 className="font-display mt-3 text-[26px] leading-snug font-bold text-navy-900 sm:text-[32px]">
+                  <h3 className="font-display mt-3 text-[26px] leading-snug font-bold text-warm-900 sm:text-[32px]">
                     {t('home.features.2.title')}
                   </h3>
-                  <p className="mt-4 text-[16px] leading-relaxed text-navy-600 text-pretty">
+                  <p className="mt-4 text-[16px] leading-relaxed text-warm-500 text-pretty">
                     {t('home.features.2.body1')}
                   </p>
-                  <p className="mt-4 text-[16px] leading-relaxed text-navy-600 text-pretty">
+                  <p className="mt-4 text-[16px] leading-relaxed text-warm-500 text-pretty">
                     {t('home.features.2.body2')}
                   </p>
                 </div>
@@ -388,16 +491,16 @@ export default async function HomePage() {
             <Reveal>
               <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
                 <div className="lg:order-2">
-                  <p className="text-[11px] font-bold tracking-[0.16em] text-gold-600 uppercase">
+                  <p className="text-[11px] font-extrabold tracking-[0.16em] text-brand-700 uppercase">
                     {t('home.features.3.eyebrow')}
                   </p>
-                  <h3 className="font-display mt-3 text-[26px] leading-snug font-bold text-navy-900 sm:text-[32px]">
+                  <h3 className="font-display mt-3 text-[26px] leading-snug font-bold text-warm-900 sm:text-[32px]">
                     {t('home.features.3.title')}
                   </h3>
-                  <p className="mt-4 text-[16px] leading-relaxed text-navy-600 text-pretty">
+                  <p className="mt-4 text-[16px] leading-relaxed text-warm-500 text-pretty">
                     {t('home.features.3.body1')}
                   </p>
-                  <p className="mt-4 text-[16px] leading-relaxed text-navy-600 text-pretty">
+                  <p className="mt-4 text-[16px] leading-relaxed text-warm-500 text-pretty">
                     {t('home.features.3.body2')}
                   </p>
                 </div>
@@ -411,30 +514,30 @@ export default async function HomePage() {
       </section>
 
       {/* ================= Cho phụ huynh ================= */}
-      <section id="phu-huynh" className="scroll-mt-24 bg-white py-20 lg:py-28">
+      <section id="phu-huynh" className="scroll-mt-24 bg-white py-24 lg:py-28">
         <div className={SHELL}>
-          <div className="grid gap-12 lg:grid-cols-[1fr_1fr] lg:items-start lg:gap-20">
+          <div className="grid gap-14 lg:grid-cols-[1fr_1fr] lg:items-start lg:gap-[72px]">
             <Reveal>
               <span className="gold-rule block" aria-hidden />
-              <h2 className="font-display mt-5 text-[30px] leading-[1.14] font-bold tracking-tight text-navy-900 text-balance sm:text-4xl lg:text-[44px]">
+              <h2 className="font-display mt-5 text-[30px] leading-[1.12] font-bold tracking-tight text-warm-900 text-balance sm:text-4xl lg:text-[44px]">
                 {t('home.parents.title')}
               </h2>
-              <p className="mt-5 text-[16.5px] leading-relaxed text-navy-600 text-pretty">
+              <p className="mt-5 text-[17px] leading-relaxed text-warm-500 text-pretty">
                 {t('home.parents.body')}
               </p>
 
-              <ul className="mt-8 space-y-4">
+              <ul className="mt-8 space-y-4.5">
                 {parentItems.map((row) => (
                   <li key={row.t} className="flex gap-3.5">
                     <span
                       aria-hidden
-                      className="mt-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-gold-100 text-[11px] font-bold text-gold-700"
+                      className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand-600 to-brand-400 text-[12px] font-extrabold text-white shadow-[0_8px_16px_-10px_rgb(228_87_46/0.8)]"
                     >
                       ✓
                     </span>
                     <div>
-                      <p className="text-[15px] font-semibold text-navy-900">{row.t}</p>
-                      <p className="mt-0.5 text-[14px] leading-relaxed text-navy-600">{row.d}</p>
+                      <p className="text-[15px] font-bold text-warm-900">{row.t}</p>
+                      <p className="mt-0.5 text-[14px] leading-relaxed text-warm-500">{row.d}</p>
                     </div>
                   </li>
                 ))}
@@ -442,16 +545,19 @@ export default async function HomePage() {
             </Reveal>
 
             <Reveal delay={120}>
-              <div className="space-y-5">
-                <ProgressChartVisual className="artifact-frame" />
-                <div className="rounded-2xl bg-navy-900 p-6 shadow-[0_20px_44px_-20px_rgb(13_27_49/0.6)]">
-                  <p className="text-[11px] font-bold tracking-[0.14em] text-gold-300 uppercase">
-                    {t('home.parents.session.title')}
-                  </p>
-                  <p className="mt-3 text-[15px] leading-relaxed text-navy-100 text-pretty">
-                    {t('home.parents.session.body')}
-                  </p>
-                </div>
+              <ParentReportVisual className="artifact-frame" />
+
+              <div className="relative mt-5.5 overflow-hidden rounded-3xl bg-gradient-to-br from-warm-100 via-[#ffe2d0] to-[#ffd6be] p-7 shadow-[0_24px_50px_-34px_rgb(180_100_60/0.5),inset_0_0_0_1px_rgb(228_87_46/0.14)]">
+                <span
+                  aria-hidden
+                  className="absolute -bottom-24 -left-16 h-52 w-52 rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.8),transparent_70%)]"
+                />
+                <p className="relative text-[11px] font-extrabold tracking-[0.16em] text-brand-700 uppercase">
+                  {t('home.parents.session.title')}
+                </p>
+                <p className="relative mt-3 text-[15px] leading-relaxed text-warm-700 text-pretty">
+                  {t('home.parents.session.body')}
+                </p>
               </div>
             </Reveal>
           </div>
@@ -459,33 +565,44 @@ export default async function HomePage() {
       </section>
 
       {/* ================= FAQ ================= */}
-      <section id="cau-hoi" className="paper scroll-mt-24 py-20 lg:py-28">
+      <section id="cau-hoi" className="paper scroll-mt-24 py-24 lg:py-28">
         <div className={SHELL}>
-          <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
+          <div className="grid gap-10 lg:grid-cols-[0.75fr_1.25fr] lg:gap-16">
             <Reveal>
               <span className="gold-rule block" aria-hidden />
-              <h2 className="font-display mt-5 text-[30px] leading-tight font-bold tracking-tight text-navy-900 sm:text-4xl lg:text-[44px]">
+              <h2 className="font-display mt-5 text-[30px] leading-tight font-bold tracking-tight text-warm-900 sm:text-4xl lg:text-[44px]">
                 {t('home.faq.title')}
               </h2>
-              <p className="mt-4 text-[15.5px] leading-relaxed text-navy-600">
+              <p className="mt-4 text-[16px] leading-relaxed text-warm-500">
                 {t('home.faq.subtitle')}
               </p>
+              <Link
+                href={primaryCta}
+                className="press btn-fire mt-7 inline-flex items-center gap-2.5 rounded-2xl px-7 py-4 text-[15px] font-bold"
+              >
+                {session ? t('home.cta.primary.member') : t('home.cta.primary.guest')}
+                <span aria-hidden>→</span>
+              </Link>
             </Reveal>
 
             <Reveal delay={100}>
-              <div className="divide-y divide-navy-100 border-y border-navy-100">
-                {faqs.map((faq) => (
-                  <details key={faq.q} className="group py-5">
-                    <summary className="flex cursor-pointer list-none items-start justify-between gap-5 text-[16px] font-semibold text-navy-900 marker:content-['']">
+              <div className="border-t border-warm-200">
+                {faqs.map((faq, index) => (
+                  <details
+                    key={faq.q}
+                    className="group border-b border-warm-200"
+                    open={index === 0}
+                  >
+                    <summary className="flex cursor-pointer list-none items-start justify-between gap-5 py-5.5 text-[16.5px] font-bold text-warm-900 transition-colors marker:content-[''] hover:text-brand-700 group-open:text-brand-700">
                       {faq.q}
                       <span
                         aria-hidden
-                        className="mt-0.5 shrink-0 text-xl leading-none font-light text-navy-400 transition-transform duration-300 group-open:rotate-45"
+                        className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-warm-100 text-[19px] leading-none font-light text-brand-700 transition-all duration-300 group-open:rotate-[135deg] group-open:bg-brand-600 group-open:text-white"
                       >
                         +
                       </span>
                     </summary>
-                    <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-navy-600 text-pretty">
+                    <p className="max-w-[70ch] pb-6 text-[15px] leading-relaxed text-warm-500 text-pretty">
                       {faq.a}
                     </p>
                   </details>
@@ -497,29 +614,34 @@ export default async function HomePage() {
       </section>
 
       {/* ================= CTA cuối ================= */}
-      <section className="bg-white pb-20 lg:pb-28">
+      <section className="bg-white pb-24 lg:pb-28">
         <div className={SHELL}>
           <Reveal>
-            <div className="relative overflow-hidden rounded-3xl bg-navy-900 px-6 py-16 text-center sm:px-12 lg:py-20">
-              <div className="grid-faint-dark pointer-events-none absolute inset-0" aria-hidden />
-              <div
+            {/*
+              Khối chốt. Vẫn là mảng có màu đậm nhất trang để đóng lại hành trình
+              đọc, nhưng là kem đào chứ không phải navy — chữ vì thế vẫn là nâu
+              đậm, không phải chữ trắng trên nền tối.
+            */}
+            <div className="relative overflow-hidden rounded-[36px] bg-gradient-to-br from-[#fff0e3] via-[#ffe0cb] to-[#ffc3a0] px-6 py-20 text-center shadow-[0_40px_80px_-50px_rgb(200_110_60/0.6),inset_0_0_0_1px_rgb(228_87_46/0.14)] sm:px-12 lg:py-24">
+              <div className="grid-faint-soft pointer-events-none absolute inset-0" aria-hidden />
+              <span
                 aria-hidden
-                className="animate-float absolute -top-24 left-1/2 h-64 w-64 -translate-x-1/2 rounded-full bg-gold-400/12 blur-3xl"
+                className="animate-float absolute -top-64 left-1/2 h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.9),transparent_65%)]"
               />
 
-              <div className="relative mx-auto max-w-2xl">
+              <div className="relative mx-auto max-w-[660px]">
                 <span className="gold-rule mx-auto block" aria-hidden />
-                <h2 className="font-display mt-6 text-[30px] leading-[1.14] font-bold tracking-tight text-white text-balance sm:text-[42px]">
+                <h2 className="font-display mt-6 text-[30px] leading-[1.12] font-bold tracking-tight text-warm-900 text-balance sm:text-[42px]">
                   {t('home.cta.title')}
                 </h2>
-                <p className="mx-auto mt-5 max-w-xl text-[16.5px] leading-relaxed text-navy-200 text-pretty">
+                <p className="mx-auto mt-5 max-w-xl text-[17px] leading-relaxed text-warm-700 text-pretty">
                   {t('home.cta.body')}
                 </p>
 
                 <div className="mt-9 flex flex-wrap justify-center gap-3">
                   <Link
                     href={primaryCta}
-                    className="press inline-flex items-center gap-2.5 rounded-xl bg-gold-300 px-8 py-4 text-[15px] font-bold text-navy-900 shadow-[0_14px_34px_-12px_rgb(221_169_44/0.7)] transition-all hover:bg-gold-200"
+                    className="press btn-fire inline-flex items-center gap-2.5 rounded-2xl px-8 py-4 text-[15px] font-bold"
                   >
                     {session ? t('home.cta.primary.member') : t('home.cta.primary.guest')}
                     <span aria-hidden>→</span>
@@ -527,16 +649,14 @@ export default async function HomePage() {
                   {session ? null : (
                     <Link
                       href={routes.login()}
-                      className="press inline-flex items-center rounded-xl px-6 py-4 text-[15px] font-semibold text-navy-100 ring-1 ring-navy-600 transition-colors hover:bg-navy-800"
+                      className="press btn-cream inline-flex items-center rounded-2xl px-7 py-4 text-[15px] font-bold"
                     >
                       {t('home.cta.secondary')}
                     </Link>
                   )}
                 </div>
 
-                <p className="mt-6 text-[13px] text-navy-400">
-                  {t('home.cta.note')}
-                </p>
+                <p className="mt-6 text-[13px] text-warm-500">{t('home.cta.note')}</p>
               </div>
             </div>
           </Reveal>

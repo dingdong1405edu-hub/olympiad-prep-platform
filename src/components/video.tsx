@@ -73,9 +73,9 @@ export function IntroVideo({
   if (!video) {
     return (
       <div
-        className={`flex aspect-video items-center justify-center rounded-2xl bg-navy-50 px-6 text-center ring-1 ring-navy-200 ${className ?? ''}`}
+        className={`flex aspect-video items-center justify-center rounded-2xl bg-warm-50 px-6 text-center ring-1 ring-warm-200 ${className ?? ''}`}
       >
-        <p className="max-w-sm text-[14px] leading-relaxed text-navy-500">
+        <p className="max-w-sm text-[14px] leading-relaxed text-warm-500">
           Đường dẫn video chưa dùng được. Hãy dán link YouTube, Vimeo hoặc một tệp .mp4.
         </p>
       </div>
@@ -87,7 +87,7 @@ export function IntroVideo({
   if (video.kind === 'file') {
     return (
       <video
-        className={`aspect-video w-full rounded-2xl bg-navy-900 object-cover ring-1 ring-navy-200 ${className ?? ''}`}
+        className={`aspect-video w-full rounded-2xl bg-warm-100 object-cover ring-1 ring-warm-200 ${className ?? ''}`}
         src={video.src}
         poster={cover ?? undefined}
         controls
@@ -105,7 +105,7 @@ export function IntroVideo({
         type="button"
         onClick={() => setPlaying(true)}
         aria-label={`Phát video: ${title}`}
-        className={`group relative block aspect-video w-full overflow-hidden rounded-2xl bg-navy-900 ring-1 ring-navy-200 ${className ?? ''}`}
+        className={`group relative block aspect-video w-full overflow-hidden rounded-2xl bg-warm-100 ring-1 ring-warm-200 ${className ?? ''}`}
       >
         {cover ? (
           // Ảnh nền lấy từ nhà cung cấp video nên dùng thẻ img thường: next/image
@@ -118,10 +118,10 @@ export function IntroVideo({
             loading="lazy"
           />
         ) : null}
-        <span className="absolute inset-0 bg-gradient-to-t from-navy-950/70 via-navy-950/10 to-transparent" />
+        <span className="absolute inset-0 bg-gradient-to-t from-warm-950/70 via-warm-950/10 to-transparent" />
         <span className="absolute inset-0 flex items-center justify-center">
-          <span className="flex h-16 w-16 items-center justify-center rounded-full bg-white/95 shadow-[0_10px_30px_-8px_rgb(13_27_49/0.6)] transition-transform duration-300 group-hover:scale-110">
-            <svg viewBox="0 0 24 24" className="ml-1 h-7 w-7 fill-navy-900" aria-hidden>
+          <span className="flex h-16 w-16 items-center justify-center rounded-full bg-white/95 shadow-[0_10px_30px_-8px_rgb(120_70_45/0.6)] transition-transform duration-300 group-hover:scale-110">
+            <svg viewBox="0 0 24 24" className="ml-1 h-7 w-7 fill-warm-900" aria-hidden>
               <path d="M8 5.5v13l11-6.5-11-6.5Z" />
             </svg>
           </span>
@@ -135,7 +135,7 @@ export function IntroVideo({
 
   return (
     <iframe
-      className={`aspect-video w-full rounded-2xl bg-navy-900 ring-1 ring-navy-200 ${className ?? ''}`}
+      className={`aspect-video w-full rounded-2xl bg-warm-100 ring-1 ring-warm-200 ${className ?? ''}`}
       src={video.src}
       title={title}
       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"

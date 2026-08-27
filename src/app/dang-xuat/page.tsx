@@ -30,7 +30,7 @@ export default async function LoggedOutPage() {
       footer={
         <>
           Chưa có tài khoản?{' '}
-          <Link href={routes.register()} className="font-medium text-navy-800 hover:underline">
+          <Link href={routes.register()} className="font-medium text-warm-800 hover:underline">
             Đăng ký học thử
           </Link>
         </>
@@ -45,8 +45,8 @@ export default async function LoggedOutPage() {
         </LinkButton>
       </div>
 
-      <div className="mt-6 rounded-xl bg-navy-50 px-4 py-3.5 text-sm leading-relaxed text-navy-600 ring-1 ring-navy-100">
-        <p className="font-semibold text-navy-900">Đang dùng máy chung?</p>
+      <div className="mt-6 rounded-xl bg-warm-50 px-4 py-3.5 text-sm leading-relaxed text-warm-600 ring-1 ring-warm-100">
+        <p className="font-semibold text-warm-900">Đang dùng máy chung?</p>
         <p className="mt-1">
           Hãy đóng luôn cửa sổ trình duyệt để xóa nốt các trang còn nằm trong bộ nhớ tạm.
         </p>

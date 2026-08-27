@@ -31,7 +31,7 @@ type ButtonSize = 'sm' | 'md' | 'lg';
 
 const BUTTON_VARIANT: Record<ButtonVariant, string> = {
   primary:
-    'bg-brand-600 text-white shadow-[0_1px_2px_rgb(23_27_38/0.08)] hover:bg-brand-700 hover:shadow-[0_6px_18px_rgb(47_66_224/0.28)]',
+    'bg-brand-600 text-white shadow-[0_1px_2px_rgb(120_70_45/0.08)] hover:bg-brand-700 hover:shadow-[0_6px_18px_rgb(47_66_224/0.28)]',
   secondary: 'bg-white text-ink-700 ring-1 ring-inset ring-ink-200 hover:bg-ink-50 hover:ring-ink-300',
   ghost: 'bg-transparent text-ink-600 hover:bg-ink-100 hover:text-ink-900',
   subtle: 'bg-brand-50 text-brand-700 hover:bg-brand-100',
@@ -132,7 +132,7 @@ export function Card({
   return (
     <div
       className={cx(
-        'rounded-xl bg-white ring-1 ring-ink-100 shadow-[0_1px_3px_rgb(23_27_38/0.05)]',
+        'rounded-xl bg-white ring-1 ring-ink-100 shadow-[0_1px_3px_rgb(120_70_45/0.05)]',
         padded && 'p-5',
         interactive && 'hover-lift cursor-pointer',
         className,
@@ -535,7 +535,7 @@ export function StatTile({
   return (
     <div
       className={cx(
-        'hover-lift rounded-xl bg-white p-4 ring-1 ring-ink-100 shadow-[0_1px_3px_rgb(23_27_38/0.05)]',
+        'hover-lift rounded-xl bg-white p-4 ring-1 ring-ink-100 shadow-[0_1px_3px_rgb(120_70_45/0.05)]',
         className,
       )}
     >
@@ -594,7 +594,7 @@ export function EmptyState({
 
 export function Table({ head, children }: { head: ReactNode[]; children: ReactNode }) {
   return (
-    <div className="scroll-x rounded-xl bg-white ring-1 ring-ink-100 shadow-[0_1px_3px_rgb(23_27_38/0.05)]">
+    <div className="scroll-x rounded-xl bg-white ring-1 ring-ink-100 shadow-[0_1px_3px_rgb(120_70_45/0.05)]">
       <table className="w-full min-w-max text-left text-sm">
         <thead className="border-b border-ink-100 bg-ink-50/70">
           <tr>

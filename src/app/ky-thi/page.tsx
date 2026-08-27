@@ -34,16 +34,20 @@ export default async function ProgramListPage() {
   return (
     <SiteShell signedIn={Boolean(session)}>
       {/* ================= Đầu trang ================= */}
-      <section className="relative overflow-hidden bg-navy-900 pt-28 pb-16 sm:pt-36 lg:pt-40 lg:pb-20">
-        <div className="grid-faint-dark pointer-events-none absolute inset-0" aria-hidden />
+      <section className="paper relative overflow-hidden pt-14 pb-16 sm:pt-16 lg:pt-20 lg:pb-20">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(90%_70%_at_80%_4%,#ffe6d5_0%,rgba(255,242,233,0)_62%),radial-gradient(70%_60%_at_8%_32%,#fff0e2_0%,rgba(255,251,248,0)_60%),linear-gradient(180deg,#fff7f1_0%,#fffbf8_82%)]"
+        />
+        <div className="grid-faint pointer-events-none absolute inset-0" aria-hidden />
         <div className={`${SHELL} relative`}>
-          <p className="text-[11px] font-bold tracking-[0.18em] text-gold-400 uppercase">
+          <p className="text-[11px] font-bold tracking-[0.18em] text-brand-700 uppercase">
             {t('programs.eyebrow')}
           </p>
-          <h1 className="font-display mt-3 max-w-3xl text-[34px] leading-[1.1] font-bold tracking-tight text-white text-balance sm:text-5xl lg:text-[56px]">
+          <h1 className="font-display mt-3 max-w-3xl text-[34px] leading-[1.1] font-bold tracking-tight text-warm-900 text-balance sm:text-5xl lg:text-[56px]">
             {t('programs.title')}
           </h1>
-          <p className="mt-5 max-w-2xl text-[16.5px] leading-relaxed text-navy-200 text-pretty">
+          <p className="mt-5 max-w-2xl text-[16.5px] leading-relaxed text-warm-500 text-pretty">
             {t('programs.subtitle')}
           </p>
 
@@ -55,10 +59,10 @@ export default async function ProgramListPage() {
                 { k: t('programs.stat.subjects'), v: String(allSubjects.length) },
               ].map((stat) => (
                 <div key={stat.k}>
-                  <dt className="text-[11px] font-semibold tracking-[0.14em] text-navy-400 uppercase">
+                  <dt className="text-[11px] font-semibold tracking-[0.14em] text-warm-400 uppercase">
                     {stat.k}
                   </dt>
-                  <dd className="font-display mt-1 text-3xl font-bold text-white tabular-nums">
+                  <dd className="font-display mt-1 text-3xl font-bold text-warm-900 tabular-nums">
                     {stat.v}
                   </dd>
                 </div>
@@ -72,16 +76,16 @@ export default async function ProgramListPage() {
       <section className="bg-white py-16 lg:py-24">
         <div className={SHELL}>
           {openPrograms.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-navy-200 bg-navy-50/50 px-6 py-16 text-center">
-              <p className="font-display text-xl font-bold text-navy-800">
+            <div className="rounded-2xl border border-dashed border-warm-200 bg-warm-50/50 px-6 py-16 text-center">
+              <p className="font-display text-xl font-bold text-warm-800">
                 {t('programs.empty.title')}
               </p>
-              <p className="mx-auto mt-2 max-w-md text-[15px] leading-relaxed whitespace-pre-line text-navy-500">
+              <p className="mx-auto mt-2 max-w-md text-[15px] leading-relaxed whitespace-pre-line text-warm-500">
                 {t('programs.empty.body')}
               </p>
               <Link
                 href={routes.home()}
-                className="mt-6 inline-block text-[14px] font-semibold text-navy-700 underline underline-offset-4 hover:text-navy-900"
+                className="mt-6 inline-block text-[14px] font-semibold text-warm-700 underline underline-offset-4 hover:text-warm-900"
               >
                 ← Về trang chủ
               </Link>
@@ -90,7 +94,7 @@ export default async function ProgramListPage() {
             <div className="space-y-8">
               {openPrograms.map((program, index) => (
                 <Reveal key={program.id} delay={index * 70}>
-                  <article className="overflow-hidden rounded-2xl bg-white ring-1 ring-navy-100 shadow-[0_2px_12px_-6px_rgb(13_27_49/0.12)]">
+                  <article className="overflow-hidden rounded-2xl bg-white ring-1 ring-warm-100 shadow-[0_2px_12px_-6px_rgb(120_70_45/0.12)]">
                     <span
                       aria-hidden
                       className="block h-1.5 w-full"
@@ -108,7 +112,7 @@ export default async function ProgramListPage() {
                             {program.shortName ?? program.code}
                           </span>
                           {program.season ? (
-                            <span className="rounded-md bg-navy-50 px-2 py-0.5 text-[11.5px] font-medium text-navy-600">
+                            <span className="rounded-md bg-warm-50 px-2 py-0.5 text-[11.5px] font-medium text-warm-600">
                               Mùa {program.season}
                             </span>
                           ) : null}
@@ -124,16 +128,16 @@ export default async function ProgramListPage() {
                           ) : null}
                         </div>
 
-                        <h2 className="font-display mt-2 text-[26px] leading-snug font-bold text-navy-900">
+                        <h2 className="font-display mt-2 text-[26px] leading-snug font-bold text-warm-900">
                           <Link
                             href={routes.program(program.code)}
-                            className="transition-colors hover:text-navy-700"
+                            className="transition-colors hover:text-warm-700"
                           >
                             {program.name}
                           </Link>
                         </h2>
 
-                        <p className="mt-3 text-[15px] leading-relaxed text-navy-600">
+                        <p className="mt-3 text-[15px] leading-relaxed text-warm-600">
                           {program.description}
                         </p>
 
@@ -142,7 +146,7 @@ export default async function ProgramListPage() {
                             {program.highlights.slice(0, 4).map((highlight) => (
                               <li
                                 key={highlight}
-                                className="flex gap-2 text-[14px] leading-snug text-navy-700"
+                                className="flex gap-2 text-[14px] leading-snug text-warm-700"
                               >
                                 <span aria-hidden className="mt-px shrink-0 text-gold-500">
                                   ◆
@@ -156,14 +160,14 @@ export default async function ProgramListPage() {
                         <div className="mt-6 flex flex-wrap items-center gap-4">
                           <Link
                             href={routes.program(program.code)}
-                            className="press rounded-xl bg-navy-900 px-5 py-2.5 text-[14.5px] font-semibold text-white transition-colors hover:bg-navy-800"
+                            className="press rounded-xl btn-fire px-5 py-2.5 text-[14.5px] font-bold"
                           >
                             {t('programs.card.cta')}
                           </Link>
                           {program.fromPrice > 0 ? (
-                            <span className="text-[13.5px] text-navy-500">
+                            <span className="text-[13.5px] text-warm-500">
                               Học phí từ{' '}
-                              <strong className="font-display text-[17px] font-bold text-navy-900">
+                              <strong className="font-display text-[17px] font-bold text-warm-900">
                                 {formatVnd(program.fromPrice)}
                               </strong>
                             </span>
@@ -172,20 +176,20 @@ export default async function ProgramListPage() {
                       </div>
 
                       {/* --- Khối lớp & môn --- */}
-                      <div className="rounded-xl bg-navy-50/60 p-5 ring-1 ring-navy-100">
-                        <p className="text-[11px] font-semibold tracking-[0.14em] text-navy-500 uppercase">
+                      <div className="rounded-xl bg-warm-50/60 p-5 ring-1 ring-warm-100">
+                        <p className="text-[11px] font-semibold tracking-[0.14em] text-warm-500 uppercase">
                           {t('programs.card.courses')}
                         </p>
 
                         {program.bands.length === 0 ? (
-                          <p className="mt-3 text-[14px] text-navy-500">
+                          <p className="mt-3 text-[14px] text-warm-500">
                             Kỳ thi này chưa mở khóa nào cho mùa hiện tại.
                           </p>
                         ) : (
                           <ul className="mt-3 space-y-3">
                             {program.bands.map((band) => (
                               <li key={band.gradeBand}>
-                                <p className="text-[13.5px] font-semibold text-navy-800">
+                                <p className="text-[13.5px] font-semibold text-warm-800">
                                   {band.gradeBandLabel}
                                 </p>
                                 <ul className="mt-1 flex flex-wrap gap-1.5">
@@ -193,12 +197,12 @@ export default async function ProgramListPage() {
                                     <li key={course.id}>
                                       <Link
                                         href={routes.course(course.id)}
-                                        className="inline-flex items-baseline gap-1.5 rounded-lg bg-white px-2.5 py-1 text-[12.5px] ring-1 ring-navy-200 transition-shadow hover:ring-navy-300"
+                                        className="inline-flex items-baseline gap-1.5 rounded-lg bg-white px-2.5 py-1 text-[12.5px] ring-1 ring-warm-200 transition-shadow hover:ring-warm-300"
                                       >
-                                        <span className="font-medium text-navy-700">
+                                        <span className="font-medium text-warm-700">
                                           {SUBJECT_LABEL[course.subject]}
                                         </span>
-                                        <span className="text-[11.5px] text-navy-400 tabular-nums">
+                                        <span className="text-[11.5px] text-warm-400 tabular-nums">
                                           {formatVnd(course.price)}
                                         </span>
                                       </Link>

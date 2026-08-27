@@ -92,7 +92,7 @@ export default async function MyCoursesPage() {
       )}
 
       <p className="mt-8 text-sm text-ink-500">
-        <Link href={routes.account()} className="link-underline hover:text-navy-900">
+        <Link href={routes.account()} className="link-underline hover:text-warm-900">
           Quản lý tài khoản, mật khẩu và hóa đơn →
         </Link>
       </p>
@@ -112,20 +112,20 @@ function FocusPanel({ firstName, card }: { firstName: string; card: StudyCard })
   const { enrollment, step, cycle, day } = card;
 
   return (
-    <section className="animate-fade-up relative mb-8 overflow-hidden rounded-2xl bg-navy-900 text-white shadow-[0_24px_56px_-28px_rgb(13_27_49/0.6)]">
-      <div className="grid-faint-dark pointer-events-none absolute inset-0" aria-hidden />
+    <section className="animate-fade-up relative mb-8 overflow-hidden rounded-3xl bg-gradient-to-br from-warm-100 via-[#ffe4d4] to-[#ffd3ba] shadow-[0_28px_60px_-38px_rgb(200_110_60/0.55),inset_0_0_0_1px_rgb(228_87_46/0.14)]">
+      <div className="grid-faint-soft pointer-events-none absolute inset-0" aria-hidden />
 
       <div className="relative flex flex-wrap items-start justify-between gap-8 p-6 sm:p-8">
         <div className="min-w-0 flex-1">
-          <p className="text-xs font-semibold tracking-[0.16em] text-gold-300 uppercase">
+          <p className="text-xs font-extrabold tracking-[0.16em] text-brand-700 uppercase">
             Chào {firstName} · {enrollment.course.programCode} · {enrollment.course.subjectLabel}
           </p>
 
-          <h1 className="font-display mt-2.5 text-2xl leading-tight font-bold tracking-tight text-balance sm:text-3xl">
+          <h1 className="font-display mt-2.5 text-2xl leading-tight font-bold tracking-tight text-warm-900 text-balance sm:text-3xl">
             {step.title}
           </h1>
 
-          <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-navy-200 text-pretty">
+          <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-warm-700 text-pretty">
             {step.description}
           </p>
 
@@ -135,8 +135,8 @@ function FocusPanel({ firstName, card }: { firstName: string; card: StudyCard })
               size="lg"
               className={
                 step.urgent
-                  ? 'animate-pulse-ring bg-gold-400 text-navy-950 hover:bg-gold-300'
-                  : 'bg-white text-navy-900 hover:bg-navy-100'
+                  ? 'animate-pulse-ring btn-fire'
+                  : 'btn-cream'
               }
             >
               {step.cta}
@@ -145,7 +145,7 @@ function FocusPanel({ firstName, card }: { firstName: string; card: StudyCard })
               href={routes.studyDashboard(enrollment.id)}
               variant="ghost"
               size="lg"
-              className="text-navy-200 hover:bg-white/10 hover:text-white"
+              className="text-warm-700 hover:bg-white/70 hover:text-brand-700"
             >
               Xem toàn bộ lộ trình
             </LinkButton>
@@ -158,23 +158,23 @@ function FocusPanel({ firstName, card }: { firstName: string; card: StudyCard })
               value={cycle.percent}
               size={116}
               stroke={10}
-              color="var(--color-gold-300)"
-              trackColor="rgb(255 255 255 / 0.16)"
+              color="var(--color-brand-500)"
+              trackColor="rgb(228 87 46 / 0.16)"
               label={
                 <>
-                  <span className="text-2xl font-bold tabular-nums">{cycle.percent}%</span>
-                  <span className="text-xs text-navy-300">
+                  <span className="text-2xl font-bold text-warm-900 tabular-nums">{cycle.percent}%</span>
+                  <span className="text-xs text-warm-500">
                     {cycle.completedDays}/{cycle.totalDays} buổi
                   </span>
                 </>
               }
             />
-            <p className="text-xs text-navy-300">Chu kỳ {cycle.cycleNo}</p>
+            <p className="text-xs text-warm-500">Chu kỳ {cycle.cycleNo}</p>
           </div>
         ) : day ? (
-          <div className="shrink-0 rounded-xl bg-white/10 px-5 py-4 text-center">
-            <p className="text-3xl font-bold tabular-nums">{day.itemCount}</p>
-            <p className="mt-0.5 text-xs text-navy-300">câu trong buổi này</p>
+          <div className="shrink-0 rounded-2xl bg-white/70 px-5 py-4 text-center shadow-[inset_0_0_0_1px_rgb(228_87_46/0.12)]">
+            <p className="text-3xl font-bold text-warm-900 tabular-nums">{day.itemCount}</p>
+            <p className="mt-0.5 text-xs text-warm-500">câu trong buổi này</p>
           </div>
         ) : null}
       </div>
@@ -197,7 +197,7 @@ function CourseCard({ card }: { card: StudyCard }) {
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="rounded-md bg-navy-900 px-2 py-0.5 text-[11px] font-bold tracking-wider text-gold-200 uppercase">
+              <span className="rounded-md bg-brand-600 px-2 py-0.5 text-[11px] font-bold tracking-wider text-white uppercase">
                 {enrollment.course.programCode}
               </span>
               <span className="text-xs font-medium text-ink-500">
@@ -307,7 +307,7 @@ function CourseCard({ card }: { card: StudyCard }) {
 
 function Stat({ label, value, hint }: { label: string; value: React.ReactNode; hint: string }) {
   return (
-    <div className="hover-lift rounded-xl bg-white p-4 ring-1 ring-ink-100 shadow-[0_1px_3px_rgb(23_27_38/0.05)]">
+    <div className="hover-lift rounded-xl bg-white p-4 ring-1 ring-ink-100 shadow-[0_1px_3px_rgb(120_70_45/0.05)]">
       <p className="text-xs font-medium tracking-wide text-ink-500 uppercase">{label}</p>
       <p className="mt-1.5 text-2xl font-bold text-ink-900 tabular-nums">{value}</p>
       <p className="mt-1 text-sm text-ink-500">{hint}</p>
@@ -321,28 +321,28 @@ function ExploreMore() {
     <div className="grid gap-4 sm:grid-cols-2">
       <Link
         href={routes.programs()}
-        className="hover-lift group rounded-xl bg-white p-5 ring-1 ring-ink-100 shadow-[0_1px_3px_rgb(23_27_38/0.05)]"
+        className="hover-lift group rounded-xl bg-white p-5 ring-1 ring-ink-100 shadow-[0_1px_3px_rgb(120_70_45/0.05)]"
       >
         <p className="text-xs font-semibold tracking-[0.14em] text-gold-600 uppercase">Kỳ thi</p>
         <p className="mt-2 font-semibold text-ink-900">Bốn đấu trường đang mở</p>
         <p className="mt-1 text-sm leading-relaxed text-ink-600">
           ASMOPSS, NEO, STEM và FMC — cấu trúc đề, mốc thời gian và cách hệ thống ôn cho từng kỳ.
         </p>
-        <span className="mt-3 inline-block text-sm font-medium text-navy-800 group-hover:underline">
+        <span className="mt-3 inline-block text-sm font-medium text-warm-800 group-hover:underline">
           Xem các kỳ thi →
         </span>
       </Link>
 
       <Link
         href={routes.courses()}
-        className="hover-lift group rounded-xl bg-white p-5 ring-1 ring-ink-100 shadow-[0_1px_3px_rgb(23_27_38/0.05)]"
+        className="hover-lift group rounded-xl bg-white p-5 ring-1 ring-ink-100 shadow-[0_1px_3px_rgb(120_70_45/0.05)]"
       >
         <p className="text-xs font-semibold tracking-[0.14em] text-gold-600 uppercase">Khóa học</p>
         <p className="mt-2 font-semibold text-ink-900">Thêm môn, thêm khối lớp</p>
         <p className="mt-1 text-sm leading-relaxed text-ink-600">
           Mỗi khóa có video giới thiệu và nội dung từng chặng để xem trước khi đăng ký.
         </p>
-        <span className="mt-3 inline-block text-sm font-medium text-navy-800 group-hover:underline">
+        <span className="mt-3 inline-block text-sm font-medium text-warm-800 group-hover:underline">
           Xem danh mục khóa →
         </span>
       </Link>
@@ -354,16 +354,16 @@ function ExploreMore() {
 function NoCourses({ firstName }: { firstName: string }) {
   return (
     <>
-      <section className="animate-fade-up relative mb-8 overflow-hidden rounded-2xl bg-navy-900 p-6 text-white shadow-[0_24px_56px_-28px_rgb(13_27_49/0.6)] sm:p-10">
-        <div className="grid-faint-dark pointer-events-none absolute inset-0" aria-hidden />
+      <section className="animate-fade-up relative mb-8 overflow-hidden rounded-3xl bg-gradient-to-br from-warm-100 via-[#ffe4d4] to-[#ffd3ba] p-6 shadow-[0_28px_60px_-38px_rgb(200_110_60/0.55),inset_0_0_0_1px_rgb(228_87_46/0.14)] sm:p-10">
+        <div className="grid-faint-soft pointer-events-none absolute inset-0" aria-hidden />
         <div className="relative">
-          <p className="text-xs font-semibold tracking-[0.16em] text-gold-300 uppercase">
+          <p className="text-xs font-extrabold tracking-[0.16em] text-brand-700 uppercase">
             Chào {firstName}
           </p>
-          <h1 className="font-display mt-2.5 max-w-2xl text-2xl leading-tight font-bold tracking-tight text-balance sm:text-3xl">
+          <h1 className="font-display mt-2.5 max-w-2xl text-2xl leading-tight font-bold tracking-tight text-warm-900 text-balance sm:text-3xl">
             Bạn chưa ghi danh khóa nào
           </h1>
-          <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-navy-200 text-pretty">
+          <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-warm-700 text-pretty">
             Chọn kỳ thi con dự định thi, xem video giới thiệu và nội dung khóa, rồi làm bài kiểm tra
             đầu vào — hệ thống dựng lộ trình riêng ngay sau đó.
           </p>
@@ -371,7 +371,7 @@ function NoCourses({ firstName }: { firstName: string }) {
             <LinkButton
               href={routes.programs()}
               size="lg"
-              className="bg-gold-400 text-navy-950 hover:bg-gold-300"
+              className="btn-fire"
             >
               Chọn kỳ thi
             </LinkButton>
@@ -379,7 +379,7 @@ function NoCourses({ firstName }: { firstName: string }) {
               href={routes.courses()}
               variant="ghost"
               size="lg"
-              className="text-navy-200 hover:bg-white/10 hover:text-white"
+              className="text-warm-700 hover:bg-white/70 hover:text-brand-700"
             >
               Xem tất cả khóa học
             </LinkButton>
@@ -407,7 +407,7 @@ function NoCourses({ firstName }: { firstName: string }) {
             },
           ].map((item) => (
             <li key={item.n} className="rounded-xl bg-white p-5 ring-1 ring-ink-100">
-              <span className="step-numeral block text-3xl text-navy-200">{item.n}</span>
+              <span className="step-numeral block text-3xl">{item.n}</span>
               <p className="mt-2 font-semibold text-ink-900">{item.title}</p>
               <p className="mt-1 text-sm leading-relaxed text-ink-600">{item.body}</p>
             </li>

@@ -277,7 +277,7 @@ export function AttemptPlayer({
       {/* Hộp xác nhận nộp bài */}
       {confirming ? (
         <div className="fixed inset-0 z-40 flex items-end justify-center bg-ink-900/40 p-4 sm:items-center">
-          <div className="animate-scale-in w-full max-w-md rounded-2xl bg-white p-6 shadow-[0_12px_28px_rgb(23_27_38/0.2)]">
+          <div className="animate-scale-in w-full max-w-md rounded-2xl bg-white p-6 shadow-[0_12px_28px_rgb(120_70_45/0.2)]">
             <h2 className="text-lg font-bold text-ink-900">Nộp bài kiểm tra?</h2>
             {answeredCount < total ? (
               <Alert tone="warn" className="mt-3">

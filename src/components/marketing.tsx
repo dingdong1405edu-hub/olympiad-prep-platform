@@ -6,8 +6,12 @@
  * Vì sao không dùng lại AppShell: header của AppShell là thanh công cụ của một
  * ứng dụng — logo nhỏ, nền trắng đục, dính cứng ngay từ pixel đầu. Đặt nó lên
  * đầu trang bán hàng thì khách vào đã thấy "phần mềm nội bộ" trước khi kịp đọc
- * lời chào. Ở đây header nổi trên ảnh hero, chỉ đặc lại khi người đọc bắt đầu
- * cuộn — lúc đó nó mới cần làm nhiệm vụ điều hướng.
+ * lời chào. Ở đây header trong suốt nằm trên hero, chỉ đặc lại khi người đọc
+ * bắt đầu cuộn — lúc đó nó mới cần làm nhiệm vụ điều hướng.
+ *
+ * Cả khung nằm trên nền kem sáng. Bản trước header đặc lại thành trắng đục và
+ * chân trang là một mảng navy gần đen; nay cả hai đều là kem, khác nhau ở sắc
+ * độ chứ không ở độ tối.
  */
 import { useEffect, useState, type ReactNode } from 'react';
 import Link from 'next/link';
@@ -46,6 +50,7 @@ const SECTION_HREFS = [
  * liệu thuần đi qua ranh giới server/client được, hàm thì không.
  */
 export interface ShellCopy {
+  topbar: string;
   brandName: string;
   brandTagline: string;
   links: {
@@ -74,12 +79,37 @@ function sections(copy: ShellCopy) {
 
 // ---------------------------------------------------------------------------
 
+/**
+ * Dải thông báo trên cùng.
+ *
+ * Cuộn theo trang chứ không dính: nó là tin của lúc vừa vào, không phải công cụ
+ * cần theo suốt. Header dính bên dưới nó nên khi dải này trôi khỏi màn hình,
+ * menu tự lên chiếm chỗ mà không giật.
+ */
+function AnnouncementBar({ text }: { text: string }) {
+  if (!text.trim()) return null;
+
+  return (
+    <div className="relative z-50 bg-gradient-to-r from-warm-100 via-warm-150 to-[#ffe7d3] py-2.5 text-center shadow-[inset_0_-1px_0_var(--color-warm-200)]">
+      <p className="mx-auto max-w-7xl px-5 text-[12.5px] font-semibold text-brand-700">
+        <span
+          aria-hidden
+          className="mr-2 inline-block h-1.5 w-1.5 animate-[pulse-dot_1.8s_ease-in-out_infinite] rounded-full bg-brand-600 align-middle"
+        />
+        {text}
+      </p>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+
 export function MarketingHeader({ signedIn, copy }: { signedIn: boolean; copy: ShellCopy }) {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
+    const onScroll = () => setScrolled(window.scrollY > 40);
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
@@ -96,10 +126,10 @@ export function MarketingHeader({ signedIn, copy }: { signedIn: boolean; copy: S
   return (
     <header
       className={cx(
-        'fixed inset-x-0 top-0 z-40 transition-all duration-300',
+        'sticky top-0 z-40 transition-all duration-300',
         scrolled
-          ? 'border-b border-navy-100 bg-white/88 backdrop-blur-lg shadow-[0_1px_16px_rgb(13_27_49/0.06)]'
-          : 'border-b border-transparent',
+          ? 'bg-warm-50/85 shadow-[0_1px_0_var(--color-warm-200),0_20px_40px_-34px_rgb(120_70_45/0.5)] backdrop-blur-lg backdrop-saturate-150'
+          : '',
       )}
     >
       <div className="mx-auto flex max-w-7xl items-center gap-8 px-5 py-3.5 lg:px-8">
@@ -110,18 +140,18 @@ export function MarketingHeader({ signedIn, copy }: { signedIn: boolean; copy: S
             <Link
               key={section.href}
               href={section.href}
-              className="rounded-lg px-3 py-2 text-sm font-medium text-navy-600 transition-colors hover:bg-navy-50 hover:text-navy-900"
+              className="rounded-lg px-3.5 py-2 text-sm font-semibold text-warm-600 transition-colors hover:bg-warm-100 hover:text-brand-700"
             >
               {section.label}
             </Link>
           ))}
         </nav>
 
-        <div className="ml-auto flex items-center gap-2 lg:ml-0">
+        <div className="ml-auto flex items-center gap-2.5 lg:ml-0">
           {signedIn ? (
             <Link
               href={routes.myCourses()}
-              className="press rounded-lg bg-navy-900 px-5 py-2.5 text-sm font-semibold text-white transition-all hover:bg-navy-800"
+              className="press btn-fire rounded-xl px-5 py-2.5 text-sm font-bold"
             >
               {copy.ctaSignedIn}
             </Link>
@@ -129,13 +159,13 @@ export function MarketingHeader({ signedIn, copy }: { signedIn: boolean; copy: S
             <>
               <Link
                 href={routes.login()}
-                className="hidden rounded-lg px-3.5 py-2.5 text-sm font-medium text-navy-700 transition-colors hover:bg-navy-50 sm:block"
+                className="press btn-soft hidden rounded-xl px-4 py-2.5 text-sm font-semibold sm:block"
               >
                 {copy.ctaLogin}
               </Link>
               <Link
                 href={routes.register()}
-                className="press rounded-lg bg-navy-900 px-4 py-2.5 text-sm font-semibold text-white transition-all hover:bg-navy-800 hover:shadow-[0_8px_20px_rgb(13_27_49/0.24)] sm:px-5"
+                className="press btn-fire rounded-xl px-4 py-2.5 text-sm font-bold sm:px-5"
               >
                 {copy.ctaRegister}
               </Link>
@@ -145,11 +175,11 @@ export function MarketingHeader({ signedIn, copy }: { signedIn: boolean; copy: S
           <button
             type="button"
             onClick={() => setMenuOpen((open) => !open)}
-            className="press -mr-1 rounded-lg p-2 text-navy-700 transition-colors hover:bg-navy-50 lg:hidden"
+            className="press -mr-1 rounded-xl bg-white p-2.5 text-warm-700 shadow-[inset_0_0_0_1.5px_var(--color-warm-250)] transition-colors hover:text-brand-700 lg:hidden"
             aria-label={menuOpen ? 'Đóng menu' : 'Mở menu'}
             aria-expanded={menuOpen}
           >
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
               {menuOpen ? (
                 <path
                   d="M6 6l12 12M18 6L6 18"
@@ -171,14 +201,14 @@ export function MarketingHeader({ signedIn, copy }: { signedIn: boolean; copy: S
       </div>
 
       {menuOpen ? (
-        <div className="animate-fade-down border-t border-navy-100 bg-white px-5 pb-5 lg:hidden">
+        <div className="animate-fade-down border-t border-warm-200 bg-warm-50/97 px-5 pb-5 backdrop-blur-lg lg:hidden">
           <nav className="flex flex-col py-2">
             {sections(copy).map((section) => (
               <Link
                 key={section.href}
                 href={section.href}
                 onClick={() => setMenuOpen(false)}
-                className="border-b border-navy-50 py-3.5 text-[15px] font-medium text-navy-800 last:border-0"
+                className="border-b border-warm-200 py-3.5 text-[15px] font-semibold text-warm-800 last:border-0"
               >
                 {section.label}
               </Link>
@@ -188,9 +218,9 @@ export function MarketingHeader({ signedIn, copy }: { signedIn: boolean; copy: S
             <Link
               href={routes.login()}
               onClick={() => setMenuOpen(false)}
-              className="mt-2 block rounded-lg py-3 text-center text-sm font-semibold text-navy-700 ring-1 ring-navy-200"
+              className="press btn-soft mt-2 block rounded-xl py-3 text-center text-sm font-semibold"
             >
-              Đăng nhập
+              {copy.ctaLogin}
             </Link>
           )}
         </div>
@@ -205,30 +235,30 @@ export function MarketingFooter({ copy }: { copy: ShellCopy }) {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="bg-navy-950 text-navy-300">
-      <div className="mx-auto max-w-7xl px-5 py-14 lg:px-8">
-        <div className="grid gap-10 md:grid-cols-[1.4fr_1fr_1fr]">
+    <footer className="bg-warm-100 text-warm-500 shadow-[inset_0_1px_0_var(--color-warm-200)]">
+      <div className="mx-auto max-w-7xl px-5 py-16 lg:px-8">
+        <div className="grid gap-12 md:grid-cols-[1.4fr_1fr_1.2fr]">
           <div className="max-w-sm">
-            <Wordmark tone="dark" name={copy.brandName} tagline={copy.brandTagline} />
-            <p className="mt-4 text-sm leading-relaxed whitespace-pre-line text-navy-300">
+            <Wordmark name={copy.brandName} tagline={copy.brandTagline} />
+            <p className="mt-4 text-sm leading-relaxed whitespace-pre-line text-warm-500">
               {copy.footerTagline}
             </p>
           </div>
 
           <div>
-            <p className="text-xs font-semibold tracking-[0.14em] text-navy-400 uppercase">
+            <p className="text-[11px] font-extrabold tracking-[0.14em] text-brand-700 uppercase">
               {copy.footerExplore}
             </p>
             <ul className="mt-4 space-y-2.5 text-sm">
               {sections(copy).map((section) => (
                 <li key={section.href}>
-                  <Link href={section.href} className="transition-colors hover:text-white">
+                  <Link href={section.href} className="transition-colors hover:text-brand-700">
                     {section.label}
                   </Link>
                 </li>
               ))}
               <li>
-                <Link href={routes.register()} className="transition-colors hover:text-white">
+                <Link href={routes.register()} className="transition-colors hover:text-brand-700">
                   {copy.footerRegister}
                 </Link>
               </li>
@@ -236,7 +266,7 @@ export function MarketingFooter({ copy }: { copy: ShellCopy }) {
           </div>
 
           <div>
-            <p className="text-xs font-semibold tracking-[0.14em] text-navy-400 uppercase">
+            <p className="text-[11px] font-extrabold tracking-[0.14em] text-brand-700 uppercase">
               {copy.footerPromiseTitle}
             </p>
             <ul className="mt-4 space-y-2.5 text-sm leading-relaxed">
@@ -247,12 +277,12 @@ export function MarketingFooter({ copy }: { copy: ShellCopy }) {
           </div>
         </div>
 
-        <div className="mt-12 flex flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-6 text-xs text-navy-400">
+        <div className="mt-14 flex flex-wrap items-center justify-between gap-3 border-t border-warm-250 pt-6 text-xs text-warm-400">
           <p>
             © {year} {copy.footerCopyright}
           </p>
           <p className="flex items-center gap-2">
-            <span className="h-1.5 w-1.5 rounded-full bg-accent-500" aria-hidden />
+            <span className="h-1.5 w-1.5 rounded-full bg-brand-500" aria-hidden />
             {copy.footerSeason} {year + 1}
           </p>
         </div>
@@ -273,7 +303,8 @@ export function MarketingShell({
   children: ReactNode;
 }) {
   return (
-    <div className="flex min-h-screen flex-col overflow-x-clip">
+    <div className="flex min-h-screen flex-col overflow-x-clip bg-warm-50">
+      <AnnouncementBar text={copy.topbar} />
       <MarketingHeader signedIn={signedIn} copy={copy} />
       <main className="flex-1">{children}</main>
       <MarketingFooter copy={copy} />

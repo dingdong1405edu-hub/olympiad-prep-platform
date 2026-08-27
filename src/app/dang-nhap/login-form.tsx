@@ -79,7 +79,7 @@ export function LoginForm({ next }: { next?: string }) {
       </Button>
 
       <p className="mt-3 text-center text-sm">
-        <Link href={routes.forgotPassword()} className="text-navy-500 hover:text-navy-900">
+        <Link href={routes.forgotPassword()} className="text-warm-500 hover:text-warm-900">
           Quên mật khẩu?
         </Link>
       </p>

@@ -14,78 +14,86 @@
   /* Chữ chân — chỉ dùng cho tiêu đề lớn ở trang bán hàng, không dùng trong app */
   --font-display: var(--font-lora), 'Lora', Georgia, 'Times New Roman', serif;
 
-  /* --- Thương hiệu: xanh indigo, tin cậy, không trẻ con --- */
-  --color-brand-50: #eef3ff;
-  --color-brand-100: #dae4ff;
-  --color-brand-200: #bccdff;
-  --color-brand-300: #93aeff;
-  --color-brand-400: #6685fb;
-  --color-brand-500: #4361f2;
-  --color-brand-600: #2f42e0;
-  --color-brand-700: #2733b8;
-  --color-brand-800: #252f92;
-  --color-brand-900: #232c74;
+  /* --- Thương hiệu: đỏ cam than hồng. Đây là màu của hành động — nút chính,
+         thanh mastery, số liệu. Dùng đậm ở diện tích nhỏ, không phủ mảng lớn. --- */
+  --color-brand-50: #fff4ee;
+  --color-brand-100: #ffe4d6;
+  --color-brand-200: #ffc9af;
+  --color-brand-300: #ffa983;
+  --color-brand-400: #ff854a;
+  --color-brand-500: #f26b3a;
+  --color-brand-600: #e4572e;
+  --color-brand-700: #c13f1d;
+  --color-brand-800: #9b3317;
+  --color-brand-900: #7c2a14;
 
-  /* --- Điểm nhấn phụ: xanh ngọc, dùng cho tiến bộ và thành tựu --- */
-  --color-accent-50: #eafbf5;
-  --color-accent-100: #cdf5e7;
-  --color-accent-300: #6fdcb8;
-  --color-accent-500: #17b183;
-  --color-accent-600: #0f9d70;
-  --color-accent-700: #0c7d5b;
+  /* --- Điểm nhấn phụ: xanh lá. KHÔNG đổi sang tông ấm dù cả hệ đã ấm — đây là
+         màu ngữ nghĩa "đúng / tiến bộ", đặt cạnh rose-500 của câu sai. Nếu nhuộm
+         cam thì đúng và cảnh báo trông giống hệt nhau ở màn hình kết quả. --- */
+  --color-accent-50: #edfaf1;
+  --color-accent-100: #d2f2dc;
+  --color-accent-300: #7dd79a;
+  --color-accent-500: #2fa35f;
+  --color-accent-600: #248c50;
+  --color-accent-700: #1b6e3f;
 
-  /* --- Mực: thang xám hơi ngả xanh, dịu mắt khi đọc lâu --- */
-  --color-ink-50: #f7f8fa;
-  --color-ink-100: #eef0f4;
-  --color-ink-200: #dde1e9;
-  --color-ink-300: #c3cad7;
-  --color-ink-400: #94a0b5;
-  --color-ink-500: #6b7792;
-  --color-ink-600: #4e5871;
-  --color-ink-700: #3b4358;
-  --color-ink-800: #262c3c;
-  --color-ink-900: #171b26;
+  /* --- Mực: thang nâu ấm thay cho xám ngả xanh. Chữ đậm nhất là #3a211a chứ
+         không phải đen — trên nền kem, đen thật tạo tương phản gắt. --- */
+  --color-ink-50: #fdf8f5;
+  --color-ink-100: #f6ebe4;
+  --color-ink-200: #efdcd1;
+  --color-ink-300: #c6a899;
+  --color-ink-400: #9c7264;
+  --color-ink-500: #8c6455;
+  --color-ink-600: #6e4a3c;
+  --color-ink-700: #5c3a2e;
+  --color-ink-800: #4a2c22;
+  --color-ink-900: #3a211a;
 
-  /* --- Navy: nền tối của trang bán hàng. Xanh mực đậm gợi sự lâu đời và
-         nghiêm túc, thứ phụ huynh tìm khi bỏ tiền cho việc học của con. --- */
-  --color-navy-50: #f2f5fa;
-  --color-navy-100: #e1e9f4;
-  --color-navy-200: #c4d2e8;
-  --color-navy-300: #94aed2;
-  --color-navy-400: #5d80af;
-  --color-navy-500: #3a5c8c;
-  --color-navy-600: #2a466e;
-  --color-navy-700: #1e3557;
-  --color-navy-800: #152744;
-  --color-navy-900: #0d1b31;
-  --color-navy-950: #070f1d;
+  /* --- Warm: thang của trang bán hàng. Đầu thang là nền kem/đào, cuối thang là
+         chữ nâu đậm. Trước đây chỗ này là navy và cuối thang dùng làm nền tối
+         cho hero; nay không còn khối tối nào, các mảng lớn đều nằm ở 50–200. --- */
+  --color-warm-50: #fffbf8;
+  --color-warm-100: #fff2e9;
+  --color-warm-150: #ffeadf;
+  --color-warm-200: #f7e2d6;
+  --color-warm-250: #f0d2c1;
+  --color-warm-300: #c6a899;
+  --color-warm-400: #9c7264;
+  --color-warm-500: #8c6455;
+  --color-warm-600: #6e4a3c;
+  --color-warm-700: #5c3a2e;
+  --color-warm-800: #4a2c22;
+  --color-warm-900: #3a211a;
+  --color-warm-950: #2c1811;
 
-  /* --- Vàng huy chương: điểm nhấn duy nhất trên nền navy. Dùng rất tiết chế —
-         một gạch chân, một con số, một viền. Lạm dụng là thành rẻ tiền. --- */
-  --color-gold-50: #fdf9ee;
-  --color-gold-100: #f9edcd;
-  --color-gold-200: #f2d992;
-  --color-gold-300: #e8c25e;
-  --color-gold-400: #dda92c;
-  --color-gold-500: #c68d12;
-  --color-gold-600: #a06b0c;
-  --color-gold-700: #7a520e;
+  /* --- Hổ phách: điểm nhấn ấm phụ, dùng cho vạch mở mục và đầu gradient lửa --- */
+  --color-gold-50: #fff9f2;
+  --color-gold-100: #ffebd7;
+  --color-gold-200: #ffdcbb;
+  --color-gold-300: #ffd09b;
+  --color-gold-400: #ffb067;
+  --color-gold-500: #f0913f;
+  --color-gold-600: #c97a22;
+  --color-gold-700: #a05f17;
 
-  /* --- 4 mức mastery: Mạnh – Ổn – Cần củng cố – Hổng (đã kiểm định mù màu) --- */
-  --color-tier-strong: #1c5cab;
-  --color-tier-ok: #6da7ec;
-  --color-tier-warn: #eda100;
-  --color-tier-gap: #d03b3b;
+  /* --- 4 mức mastery: Mạnh – Ổn – Cần củng cố – Hổng.
+         Giữ trục xanh↔đỏ chứ không nhuộm cam toàn bộ: bốn mức cùng tông cam thì
+         chỉ còn phân biệt được bằng độ sáng, hỏng với màn hình kém tương phản. --- */
+  --color-tier-strong: #1f7a5a;
+  --color-tier-ok: #6bbf9a;
+  --color-tier-warn: #f0913f;
+  --color-tier-gap: #c13f1d;
 
   --color-surface: #ffffff;
-  --color-canvas: #f6f8fc;
+  --color-canvas: #fffbf8;
 
   /* --- Bóng đổ nhiều lớp: nông và mềm, không viền đen cứng --- */
-  --shadow-xs: 0 1px 2px rgb(23 27 38 / 0.04);
-  --shadow-sm: 0 1px 3px rgb(23 27 38 / 0.05), 0 1px 2px rgb(23 27 38 / 0.03);
-  --shadow-md: 0 4px 12px rgb(23 27 38 / 0.06), 0 2px 4px rgb(23 27 38 / 0.04);
-  --shadow-lg: 0 12px 28px rgb(23 27 38 / 0.09), 0 4px 10px rgb(23 27 38 / 0.04);
-  --shadow-brand: 0 8px 24px rgb(47 66 224 / 0.22);
+  --shadow-xs: 0 1px 2px rgb(120 70 45 / 0.05);
+  --shadow-sm: 0 1px 3px rgb(120 70 45 / 0.06), 0 1px 2px rgb(120 70 45 / 0.04);
+  --shadow-md: 0 4px 12px rgb(120 70 45 / 0.07), 0 2px 4px rgb(120 70 45 / 0.05);
+  --shadow-lg: 0 12px 28px rgb(120 70 45 / 0.11), 0 4px 10px rgb(120 70 45 / 0.05);
+  --shadow-brand: 0 14px 30px -14px rgb(228 87 46 / 0.5);
 
   /* --- Nhịp chuyển động --- */
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
@@ -239,13 +247,25 @@ body {
 
 @keyframes pulse-ring {
   0% {
-    box-shadow: 0 0 0 0 rgb(47 66 224 / 0.35);
+    box-shadow: 0 0 0 0 rgb(228 87 46 / 0.35);
   }
   70% {
-    box-shadow: 0 0 0 12px rgb(47 66 224 / 0);
+    box-shadow: 0 0 0 12px rgb(228 87 46 / 0);
   }
   100% {
-    box-shadow: 0 0 0 0 rgb(47 66 224 / 0);
+    box-shadow: 0 0 0 0 rgb(228 87 46 / 0);
+  }
+}
+
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.3;
+    transform: scale(0.7);
   }
 }
 
@@ -271,6 +291,24 @@ body {
   }
   to {
     transform: scaleX(1);
+  }
+}
+
+@keyframes dial-sweep {
+  from {
+    stroke-dashoffset: 226;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes line-draw {
+  from {
+    stroke-dashoffset: 420;
+  }
+  to {
+    stroke-dashoffset: 0;
   }
 }
 
@@ -409,8 +447,8 @@ body {
 /* Nền chuyển sắc dịu cho khối hero */
 .hero-glow {
   background:
-    radial-gradient(60rem 30rem at 50% -10%, rgb(67 97 242 / 0.1), transparent 65%),
-    radial-gradient(40rem 24rem at 85% 8%, rgb(23 177 131 / 0.08), transparent 60%);
+    radial-gradient(60rem 30rem at 50% -10%, rgb(255 133 74 / 0.16), transparent 65%),
+    radial-gradient(40rem 24rem at 85% 8%, rgb(255 176 103 / 0.14), transparent 60%);
 }
 
 /* Đường kẻ mảnh dần về hai đầu — dùng để chia mục */
@@ -421,85 +459,222 @@ body {
 
 /* ==========================================================================
    TRANG BÁN HÀNG
-   Chỉ dùng ở landing page. Bên trong ứng dụng vẫn giữ nguyên hệ brand/ink —
-   khu học tập cần yên tĩnh, khu bán hàng cần thuyết phục, hai việc khác nhau.
+   Cả trang nằm trên nền kem sáng. Không có khối tối nào: chỗ cần tách mảng thì
+   đổi sắc độ kem (trắng → #fffbf8 → #fff2e9) chứ không lật sang nền đậm.
+   Màu đỏ cam bão hòa chỉ xuất hiện ở diện tích nhỏ — nút, vạch, thanh số liệu.
    ========================================================================== */
 
-/* Nền giấy ngà, ấm hơn canvas một chút — đỡ chói khi đọc trang dài */
+/* Nền kem của các mục xen kẽ */
 .paper {
-  background-color: #fbfaf7;
+  background-color: var(--color-warm-50);
 }
 
 /**
- * Lưới mờ sau khối hero. Gợi giấy kẻ ô của vở toán mà không kể lể, đồng thời
- * cho mắt một điểm tựa về chiều sâu thay vì mặt phẳng trống trơn.
+ * Mảng kem đậm hơn một bậc, thay cho các dải nền tối trước đây.
+ * Dùng cho mục "Cách hoạt động" — đủ khác nền để tách mục, không đủ đậm để
+ * cắt trang làm hai nửa.
+ */
+.tint-panel {
+  background: linear-gradient(180deg, #fff6ef, #ffefe4 55%, #fff6ef);
+}
+
+/**
+ * Lưới mờ. Gợi giấy kẻ ô của vở toán mà không kể lể, đồng thời cho mắt một điểm
+ * tựa về chiều sâu thay vì mặt phẳng trống trơn. Vẽ bằng nâu cam nhạt để nằm
+ * được trên mọi sắc kem của trang.
  */
 .grid-faint {
   background-image:
-    linear-gradient(to right, rgb(13 27 49 / 0.045) 1px, transparent 1px),
-    linear-gradient(to bottom, rgb(13 27 49 / 0.045) 1px, transparent 1px);
-  background-size: 68px 68px;
+    linear-gradient(to right, rgb(196 100 60 / 0.07) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(196 100 60 / 0.07) 1px, transparent 1px);
+  background-size: 64px 64px;
   background-position: center top;
-  mask-image: radial-gradient(58rem 34rem at 50% 22%, #000 25%, transparent 78%);
+  mask-image: radial-gradient(58rem 34rem at 50% 26%, #000 22%, transparent 80%);
 }
 
-/* Cùng lưới đó nhưng vẽ bằng ánh sáng, dùng trên dải navy */
-.grid-faint-dark {
+/* Cùng lưới, đặt giữa một khối đã có nền kem đậm */
+.grid-faint-soft {
   background-image:
-    linear-gradient(to right, rgb(255 255 255 / 0.05) 1px, transparent 1px),
-    linear-gradient(to bottom, rgb(255 255 255 / 0.05) 1px, transparent 1px);
-  background-size: 68px 68px;
-  mask-image: radial-gradient(52rem 30rem at 50% 0%, #000 20%, transparent 76%);
+    linear-gradient(to right, rgb(196 100 60 / 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(196 100 60 / 0.06) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(52rem 30rem at 50% 40%, #000 20%, transparent 78%);
 }
 
 /**
- * Gạch chân vàng dưới cụm chữ quan trọng nhất của tiêu đề. Vẽ bằng nền chứ
- * không phải border để nó nằm sau chữ, chừa chỗ cho phần đuôi chữ thả xuống
- * (g, y, ạ) — viền dưới thật sẽ cắt ngang các dấu đó.
+ * Quầng màu đào mờ sau khối hero. Ba quầng trôi lệch pha nhau tạo cảm giác
+ * trang đang "thở" — thay cho việc phải bôi một mảng tối để hero có chiều sâu.
  */
-.gold-underline {
-  background-image: linear-gradient(
-    to top,
-    var(--color-gold-200) 0,
-    var(--color-gold-200) 0.34em,
-    transparent 0.34em
-  );
-  background-repeat: no-repeat;
-  background-size: 100% 100%;
-  padding-inline: 0.06em;
+.warm-blob {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(80px);
+  pointer-events: none;
+  will-change: transform;
+  animation: blob-drift 18s ease-in-out infinite;
 }
 
-/* Đường kẻ vàng ngắn — dấu hiệu mở đầu một mục lớn */
-.gold-rule {
-  height: 3px;
-  width: 3.5rem;
-  border-radius: 999px;
-  background: linear-gradient(90deg, var(--color-gold-400), var(--color-gold-200));
+@keyframes blob-drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  33% {
+    transform: translate3d(-38px, 34px, 0) scale(1.08);
+  }
+  66% {
+    transform: translate3d(28px, -26px, 0) scale(0.95);
+  }
+}
+
+/* Chữ tô gradient lửa — chỉ dùng cho cụm chữ quan trọng nhất của một tiêu đề */
+.flame-text {
+  background: linear-gradient(
+    100deg,
+    var(--color-brand-400),
+    var(--color-brand-600) 55%,
+    var(--color-brand-700)
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 /**
- * Khung ảnh sản phẩm: viền kép mảnh + bóng sâu, kiểu khung tranh.
- * Làm ảnh minh họa trông như một hiện vật được trưng bày, không phải
- * một cái div trôi nổi.
+ * Vệt gạch chân dưới cụm chữ được nhấn. Vẽ bằng SVG nằm sau chữ chứ không phải
+ * border-bottom, để chừa chỗ cho phần đuôi chữ thả xuống (g, y, ạ) — viền dưới
+ * thật sẽ cắt ngang các dấu đó.
+ */
+.flame-underline {
+  position: relative;
+  white-space: nowrap;
+}
+.flame-underline > svg {
+  position: absolute;
+  left: -2%;
+  bottom: -0.28em;
+  width: 104%;
+  height: 0.42em;
+  fill: none;
+  stroke-width: 7;
+  stroke-linecap: round;
+  stroke-dasharray: 340;
+  stroke-dashoffset: 340;
+  animation: swoosh-draw 1.1s 0.5s var(--ease-out-expo) forwards;
+}
+@keyframes swoosh-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Vạch ngắn màu lửa — dấu hiệu mở đầu một mục lớn */
+.gold-rule {
+  height: 4px;
+  width: 3.25rem;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--color-brand-600), var(--color-gold-400));
+}
+
+/**
+ * Khung ảnh sản phẩm: nền trắng, viền kem mảnh, bóng đổ nâu ấm rất loang.
+ * Bóng nhẹ hơn hẳn bản cũ — trên nền kem sáng, bóng sâu đọc thành một vết bẩn.
  */
 .artifact-frame {
-  border-radius: 1rem;
+  border-radius: 1.4rem;
   background: #fff;
   box-shadow:
-    0 0 0 1px rgb(13 27 49 / 0.08),
-    0 0 0 7px rgb(255 255 255 / 0.75),
-    0 0 0 8px rgb(13 27 49 / 0.06),
-    0 32px 64px -22px rgb(13 27 49 / 0.35),
-    0 12px 24px -12px rgb(13 27 49 / 0.18);
+    inset 0 0 0 1px var(--color-warm-200),
+    0 34px 70px -40px rgb(150 80 50 / 0.45);
 }
 
-.artifact-frame-dark {
-  border-radius: 1rem;
-  background: var(--color-navy-800);
-  box-shadow:
-    0 0 0 1px rgb(255 255 255 / 0.1),
-    0 0 0 7px rgb(255 255 255 / 0.04),
-    0 32px 64px -22px rgb(0 0 0 / 0.6);
+/**
+ * NÚT CHÍNH.
+ *
+ * Trước đây nút chính là một mảng navy đặc. Trên nền kem, một mảng đặc như vậy
+ * là thứ tối duy nhất của màn hình và hút hết mắt về phía nó kể cả khi nó không
+ * phải việc quan trọng nhất. Ở đây nút mang gradient lửa: vẫn là vật nổi nhất
+ * trang, nhưng nổi bằng màu chứ không bằng độ tối.
+ *
+ * Hiệu ứng hover trượt nền thay vì chồng một lớp ::after — nhờ vậy nút dùng
+ * được với nội dung là text thuần, không phải bọc thêm <span>.
+ */
+.btn-fire {
+  color: #fff;
+  background-image: linear-gradient(
+    105deg,
+    var(--color-brand-600),
+    var(--color-brand-500) 30%,
+    var(--color-brand-400) 58%,
+    var(--color-brand-500) 82%,
+    var(--color-brand-600)
+  );
+  background-size: 220% 100%;
+  background-position: 0% 0;
+  box-shadow: 0 14px 30px -14px rgb(228 87 46 / 0.5);
+  transition:
+    background-position var(--dur-slow) var(--ease-out-expo),
+    box-shadow var(--dur-base) var(--ease-out-expo),
+    transform var(--dur-base) var(--ease-spring);
+}
+@media (hover: hover) {
+  .btn-fire:hover {
+    background-position: 100% 0;
+    box-shadow: 0 24px 50px -18px rgb(228 87 46 / 0.58);
+    transform: translateY(-2px);
+  }
+}
+
+/* Nút phụ: nền kem, chữ đỏ gạch. Đứng cạnh nút lửa mà không tranh chỗ. */
+.btn-soft {
+  color: var(--color-brand-700);
+  background-color: var(--color-warm-100);
+  box-shadow: inset 0 0 0 1.5px var(--color-warm-250);
+  transition:
+    background-color var(--dur-base) var(--ease-out-expo),
+    box-shadow var(--dur-base) var(--ease-out-expo),
+    transform var(--dur-base) var(--ease-spring);
+}
+@media (hover: hover) {
+  .btn-soft:hover {
+    background-color: var(--color-warm-150);
+    box-shadow: inset 0 0 0 1.5px #e8bca3;
+    transform: translateY(-2px);
+  }
+}
+
+/* Nút trên nền đã có màu (khối kêu gọi cuối trang): nền trắng, chữ đỏ gạch */
+.btn-cream {
+  color: var(--color-brand-700);
+  background-color: #fff;
+  box-shadow: 0 14px 30px -18px rgb(150 80 50 / 0.6);
+  transition:
+    box-shadow var(--dur-base) var(--ease-out-expo),
+    transform var(--dur-base) var(--ease-spring);
+}
+@media (hover: hover) {
+  .btn-cream:hover {
+    box-shadow: 0 22px 44px -20px rgb(150 80 50 / 0.6);
+    transform: translateY(-2px);
+  }
+}
+
+/* Băng chạy tên các kỳ thi, dừng lại khi rê chuột để còn đọc được */
+.marquee-mask {
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee-slide 26s linear infinite;
+}
+.marquee-mask:hover .marquee-track {
+  animation-play-state: paused;
+}
+@keyframes marquee-slide {
+  to {
+    transform: translateX(-50%);
+  }
 }
 
 /* Số thứ tự cỡ lớn làm nền cho các bước — đọc được nhưng không giành chỗ */
@@ -507,6 +682,10 @@ body {
   font-family: var(--font-display);
   font-variant-numeric: tabular-nums;
   line-height: 1;
+  background: linear-gradient(160deg, var(--color-brand-400), rgb(255 133 74 / 0.28));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 /* Chữ không bị rơi một từ lẻ xuống dòng cuối */

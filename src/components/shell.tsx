@@ -123,7 +123,7 @@ export function AppShell({
 
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="sticky top-0 z-30 border-b border-navy-100 bg-white/88 backdrop-blur-md">
+      <header className="sticky top-0 z-30 border-b border-warm-100 bg-white/88 backdrop-blur-md">
         <div className={cx('mx-auto flex items-center gap-3 px-4 py-2.5 sm:gap-4', container)}>
           <Wordmark href={homeHref} compact />
 
@@ -135,7 +135,7 @@ export function AppShell({
           {showAreaSwitcher ? (
             <nav
               aria-label="Chuyển khu vực"
-              className="flex shrink-0 items-center gap-0.5 rounded-lg bg-navy-50 p-0.5 ring-1 ring-navy-100"
+              className="flex shrink-0 items-center gap-0.5 rounded-lg bg-warm-50 p-0.5 ring-1 ring-warm-100"
             >
               {areas.map((item) => (
                 <Link
@@ -145,8 +145,8 @@ export function AppShell({
                   className={cx(
                     'rounded-md px-2 py-1.5 text-xs font-semibold whitespace-nowrap transition-colors sm:px-2.5 sm:text-sm',
                     item === area
-                      ? 'bg-white text-navy-900 shadow-[0_1px_2px_rgb(13_27_49/0.12)]'
-                      : 'text-navy-500 hover:text-navy-900',
+                      ? 'bg-white text-warm-900 shadow-[0_1px_2px_rgb(120_70_45/0.12)]'
+                      : 'text-warm-500 hover:text-warm-900',
                   )}
                 >
                   {AREA_META[item].label}
@@ -154,7 +154,7 @@ export function AppShell({
               ))}
             </nav>
           ) : areaLabel ? (
-            <span className="hidden rounded-md bg-navy-50 px-2 py-1 text-[11px] font-semibold tracking-[0.12em] text-navy-600 uppercase ring-1 ring-navy-100 sm:inline">
+            <span className="hidden rounded-md bg-warm-50 px-2 py-1 text-[11px] font-semibold tracking-[0.12em] text-warm-600 uppercase ring-1 ring-warm-100 sm:inline">
               {areaLabel}
             </span>
           ) : null}
@@ -165,15 +165,15 @@ export function AppShell({
             <div className="flex items-center gap-1.5 sm:gap-2">
               <Link
                 href={routes.account()}
-                className="flex items-center gap-2 rounded-lg px-2 py-1.5 transition-colors hover:bg-navy-50"
+                className="flex items-center gap-2 rounded-lg px-2 py-1.5 transition-colors hover:bg-warm-50"
               >
                 <span
                   aria-hidden
-                  className="flex h-8 w-8 items-center justify-center rounded-full bg-navy-900 text-[11px] font-bold text-gold-200"
+                  className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-brand-600 to-brand-400 text-[11px] font-bold text-white"
                 >
                   {initials(user.fullName)}
                 </span>
-                <span className="hidden text-sm font-medium text-navy-800 sm:inline">
+                <span className="hidden text-sm font-medium text-warm-800 sm:inline">
                   {user.fullName}
                 </span>
               </Link>
@@ -184,7 +184,7 @@ export function AppShell({
               <form action={API.logout} method="post">
                 <button
                   type="submit"
-                  className="press flex items-center gap-1.5 rounded-lg px-2.5 py-2 text-sm font-medium text-navy-500 transition-colors hover:bg-rose-50 hover:text-rose-600"
+                  className="press flex items-center gap-1.5 rounded-lg px-2.5 py-2 text-sm font-medium text-warm-500 transition-colors hover:bg-rose-50 hover:text-rose-600"
                 >
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
                     <path
@@ -203,13 +203,13 @@ export function AppShell({
             <div className="flex items-center gap-2">
               <Link
                 href={routes.login()}
-                className="rounded-lg px-3 py-2 text-sm font-medium text-navy-700 transition-colors hover:bg-navy-50"
+                className="rounded-lg px-3 py-2 text-sm font-medium text-warm-700 transition-colors hover:bg-warm-50"
               >
                 Đăng nhập
               </Link>
               <Link
                 href={routes.register()}
-                className="press rounded-lg bg-navy-900 px-4 py-2 text-sm font-semibold text-white transition-all hover:bg-navy-800 hover:shadow-[0_8px_20px_rgb(13_27_49/0.24)]"
+                className="press rounded-lg btn-fire px-4 py-2 text-sm font-bold"
               >
                 Bắt đầu
               </Link>
@@ -246,19 +246,19 @@ export function SiteFooter({ wide = false }: { wide?: boolean }) {
   const container = wide ? 'max-w-screen-2xl' : 'max-w-5xl';
 
   return (
-    <footer className="mt-12 bg-navy-950 text-navy-300">
+    <footer className="mt-12 bg-warm-100 text-warm-500 shadow-[inset_0_1px_0_var(--color-warm-200)]">
       <div className={cx('mx-auto px-4 py-8', container)}>
         <div className="flex flex-wrap items-start justify-between gap-6">
           <div className="max-w-sm">
-            <Wordmark tone="dark" />
-            <p className="mt-3 text-sm leading-relaxed text-navy-300">
+            <Wordmark />
+            <p className="mt-3 text-sm leading-relaxed text-warm-500">
               Ôn luyện cá nhân hóa cho ASMOPSS, NEO, STEM và FMC. Mỗi học sinh một lộ trình, tính
               lại sau mỗi bài làm.
             </p>
           </div>
 
           <div className="text-sm">
-            <p className="mb-2.5 text-xs font-semibold tracking-[0.14em] text-navy-400 uppercase">
+            <p className="mb-2.5 text-xs font-extrabold tracking-[0.14em] text-brand-700 uppercase">
               Cam kết với phụ huynh
             </p>
             <ul className="space-y-1.5">
@@ -269,9 +269,9 @@ export function SiteFooter({ wide = false }: { wide?: boolean }) {
           </div>
         </div>
 
-        <div className="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-5 text-xs text-navy-400">
+        <div className="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-warm-250 pt-5 text-xs text-warm-400">
           <p>© {new Date().getFullYear()} Olympiad Prep. Nền tảng ôn luyện Olympic cá nhân hóa.</p>
-          <Link href={routes.home()} className="transition-colors hover:text-white">
+          <Link href={routes.home()} className="transition-colors hover:text-brand-700">
             Trang giới thiệu
           </Link>
         </div>
@@ -312,7 +312,7 @@ export function FocusShell({
         <Wordmark />
         <Link
           href={routes.home()}
-          className="rounded-lg px-3 py-2 text-sm font-medium text-navy-600 transition-colors hover:bg-navy-50 hover:text-navy-900"
+          className="rounded-lg px-3 py-2 text-sm font-medium text-warm-600 transition-colors hover:bg-warm-50 hover:text-warm-900"
         >
           ← Về trang chủ
         </Link>
@@ -328,19 +328,19 @@ export function FocusShell({
           {hasAside ? <div className="hidden lg:block">{aside}</div> : null}
 
           <div className="w-full">
-            <div className="animate-fade-up rounded-2xl bg-white p-6 ring-1 ring-navy-100 shadow-[0_24px_56px_-24px_rgb(13_27_49/0.35)] sm:p-8">
+            <div className="animate-fade-up rounded-2xl bg-white p-6 ring-1 ring-warm-100 shadow-[0_24px_56px_-24px_rgb(120_70_45/0.35)] sm:p-8">
               <div className="gold-rule mb-4" aria-hidden />
-              <h1 className="font-display text-2xl font-bold tracking-tight text-navy-900">
+              <h1 className="font-display text-2xl font-bold tracking-tight text-warm-900">
                 {title}
               </h1>
               {subtitle ? (
-                <p className="mt-1.5 text-sm leading-relaxed text-navy-500">{subtitle}</p>
+                <p className="mt-1.5 text-sm leading-relaxed text-warm-500">{subtitle}</p>
               ) : null}
               <div className="mt-6">{children}</div>
             </div>
 
             {footer ? (
-              <div className="animate-fade-in delay-2 mt-5 text-center text-sm text-navy-500">
+              <div className="animate-fade-in delay-2 mt-5 text-center text-sm text-warm-500">
                 {footer}
               </div>
             ) : null}
@@ -367,7 +367,7 @@ export function FocusAside({
   return (
     <div className="animate-fade-up">
       <p className="text-xs font-semibold tracking-[0.16em] text-gold-600 uppercase">{eyebrow}</p>
-      <h2 className="font-display mt-3 text-3xl leading-tight font-bold tracking-tight text-navy-900">
+      <h2 className="font-display mt-3 text-3xl leading-tight font-bold tracking-tight text-warm-900">
         {title}
       </h2>
 
@@ -376,8 +376,8 @@ export function FocusAside({
           <li key={point.title} className="flex gap-3.5">
             <Crest className="mt-0.5 h-6 w-6 shrink-0" />
             <div>
-              <p className="font-semibold text-navy-900">{point.title}</p>
-              <p className="mt-0.5 text-sm leading-relaxed text-navy-600">{point.description}</p>
+              <p className="font-semibold text-warm-900">{point.title}</p>
+              <p className="mt-0.5 text-sm leading-relaxed text-warm-600">{point.description}</p>
             </div>
           </li>
         ))}

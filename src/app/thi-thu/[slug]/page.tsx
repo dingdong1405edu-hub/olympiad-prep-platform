@@ -44,24 +44,28 @@ export default async function MockExamIntroPage({
 
   return (
     <SiteShell signedIn={Boolean(session)}>
-      <section className="relative overflow-hidden bg-navy-900 pt-28 pb-12 sm:pt-32">
-        <div className="grid-faint-dark pointer-events-none absolute inset-0" aria-hidden />
+      <section className="paper relative overflow-hidden pt-14 pb-12 sm:pt-16">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(90%_70%_at_80%_4%,#ffe6d5_0%,rgba(255,242,233,0)_62%),radial-gradient(70%_60%_at_8%_32%,#fff0e2_0%,rgba(255,251,248,0)_60%),linear-gradient(180deg,#fff7f1_0%,#fffbf8_82%)]"
+        />
+        <div className="grid-faint pointer-events-none absolute inset-0" aria-hidden />
         <div className={`${SHELL} relative`}>
           <Link
             href={routes.mockExams()}
-            className="text-xs font-medium text-navy-300 hover:text-white"
+            className="text-xs font-medium text-warm-500 hover:text-warm-900"
           >
             ← Tất cả đề thi thử
           </Link>
-          <h1 className="font-display mt-3 text-3xl leading-tight text-white sm:text-4xl">
+          <h1 className="font-display mt-3 text-3xl leading-tight text-warm-900 sm:text-4xl">
             {intro.title}
           </h1>
-          <div className="mt-4 flex flex-wrap gap-2 text-xs text-navy-100">
-            <span className="rounded-full bg-white/10 px-3 py-1.5">{intro.questionCount} câu</span>
-            <span className="rounded-full bg-white/10 px-3 py-1.5">{intro.durationMin} phút</span>
-            <span className="rounded-full bg-white/10 px-3 py-1.5">{intro.totalPoints} điểm</span>
+          <div className="mt-4 flex flex-wrap gap-2 text-xs text-warm-600">
+            <span className="rounded-full bg-white px-3 py-1.5">{intro.questionCount} câu</span>
+            <span className="rounded-full bg-white px-3 py-1.5">{intro.durationMin} phút</span>
+            <span className="rounded-full bg-white px-3 py-1.5">{intro.totalPoints} điểm</span>
             {intro.essayCount > 0 ? (
-              <span className="rounded-full bg-gold-400/20 px-3 py-1.5 text-gold-200">
+              <span className="rounded-full bg-gold-400/20 px-3 py-1.5 text-brand-700">
                 {intro.essayCount} câu tự luận chấm bằng AI
               </span>
             ) : null}
@@ -118,7 +122,7 @@ export default async function MockExamIntroPage({
 
           {/* ---------------- Cột bắt đầu ---------------- */}
           <aside className="lg:sticky lg:top-24 lg:self-start">
-            <div className="rounded-xl bg-white p-5 ring-1 ring-ink-100 shadow-[0_1px_3px_rgb(23_27_38/0.05)]">
+            <div className="rounded-xl bg-white p-5 ring-1 ring-ink-100 shadow-[0_1px_3px_rgb(120_70_45/0.05)]">
               {session === null ? (
                 <>
                   <p className="text-sm font-semibold text-ink-900">Miễn phí 5 lượt cho đề này</p>

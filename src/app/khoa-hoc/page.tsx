@@ -101,28 +101,32 @@ export default async function CourseCatalogPage({
 
   const chip =
     'inline-flex items-center rounded-lg px-3 py-1.5 text-[13px] font-medium transition-colors';
-  const chipOff = `${chip} bg-white text-navy-600 ring-1 ring-navy-200 hover:ring-navy-300`;
-  const chipOn = `${chip} bg-navy-900 text-white ring-1 ring-navy-900`;
+  const chipOff = `${chip} bg-white text-warm-600 ring-1 ring-warm-200 hover:ring-warm-300`;
+  const chipOn = `${chip} btn-fire`;
 
   return (
     <SiteShell signedIn={Boolean(session)}>
-      <section className="relative overflow-hidden bg-navy-900 pt-28 pb-14 sm:pt-36 lg:pt-40 lg:pb-16">
-        <div className="grid-faint-dark pointer-events-none absolute inset-0" aria-hidden />
+      <section className="paper relative overflow-hidden pt-14 pb-14 sm:pt-16 lg:pt-20 lg:pb-16">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(90%_70%_at_80%_4%,#ffe6d5_0%,rgba(255,242,233,0)_62%),radial-gradient(70%_60%_at_8%_32%,#fff0e2_0%,rgba(255,251,248,0)_60%),linear-gradient(180deg,#fff7f1_0%,#fffbf8_82%)]"
+        />
+        <div className="grid-faint pointer-events-none absolute inset-0" aria-hidden />
         <div className={`${SHELL} relative`}>
-          <p className="text-[11px] font-bold tracking-[0.18em] text-gold-400 uppercase">
+          <p className="text-[11px] font-bold tracking-[0.18em] text-brand-700 uppercase">
             {t('courses.eyebrow')}
           </p>
-          <h1 className="font-display mt-3 max-w-3xl text-[34px] leading-[1.1] font-bold tracking-tight text-white text-balance sm:text-5xl lg:text-[52px]">
+          <h1 className="font-display mt-3 max-w-3xl text-[34px] leading-[1.1] font-bold tracking-tight text-warm-900 text-balance sm:text-5xl lg:text-[52px]">
             {t('courses.title')}
           </h1>
-          <p className="mt-5 max-w-2xl text-[16.5px] leading-relaxed text-navy-200 text-pretty">
+          <p className="mt-5 max-w-2xl text-[16.5px] leading-relaxed text-warm-500 text-pretty">
             {t('courses.subtitle')}
           </p>
         </div>
       </section>
 
       {/* ================= Bộ lọc ================= */}
-      <section className="border-b border-navy-100 bg-navy-50/60 py-6">
+      <section className="border-b border-warm-100 bg-warm-50/60 py-6">
         <div className={`${SHELL} space-y-4`}>
           {[
             {
@@ -156,7 +160,7 @@ export default async function CourseCatalogPage({
             .filter((group) => group.items.length > 0)
             .map((group) => (
               <div key={group.key} className="flex flex-wrap items-center gap-2">
-                <span className="w-20 shrink-0 text-[11px] font-semibold tracking-[0.12em] text-navy-500 uppercase">
+                <span className="w-20 shrink-0 text-[11px] font-semibold tracking-[0.12em] text-warm-500 uppercase">
                   {group.label}
                 </span>
                 {group.items.map((item) => (
@@ -177,14 +181,14 @@ export default async function CourseCatalogPage({
       {/* ================= Kết quả ================= */}
       <section className="bg-white py-14 lg:py-20">
         <div className={SHELL}>
-          <p className="text-[13.5px] text-navy-500">
+          <p className="text-[13.5px] text-warm-500">
             {rows.length === all.length
               ? `${all.length} khóa đang mở`
               : `${rows.length} / ${all.length} khóa khớp bộ lọc`}
             {rows.length !== all.length ? (
               <>
                 {' · '}
-                <Link href={routes.courses()} className="font-medium text-navy-700 underline underline-offset-4">
+                <Link href={routes.courses()} className="font-medium text-warm-700 underline underline-offset-4">
                   {t('courses.filter.clear')}
                 </Link>
               </>
@@ -192,11 +196,11 @@ export default async function CourseCatalogPage({
           </p>
 
           {rows.length === 0 ? (
-            <div className="mt-8 rounded-2xl border border-dashed border-navy-200 bg-navy-50/50 px-6 py-16 text-center">
-              <p className="font-display text-xl font-bold text-navy-800">
+            <div className="mt-8 rounded-2xl border border-dashed border-warm-200 bg-warm-50/50 px-6 py-16 text-center">
+              <p className="font-display text-xl font-bold text-warm-800">
                 {all.length === 0 ? t('courses.empty.title') : t('courses.empty.filtered')}
               </p>
-              <p className="mx-auto mt-2 max-w-md text-[15px] leading-relaxed whitespace-pre-line text-navy-500">
+              <p className="mx-auto mt-2 max-w-md text-[15px] leading-relaxed whitespace-pre-line text-warm-500">
                 {all.length === 0 ? t('courses.empty.body') : t('courses.empty.filteredBody')}
               </p>
             </div>
@@ -204,7 +208,7 @@ export default async function CourseCatalogPage({
             <div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
               {rows.map((row, index) => (
                 <Reveal key={row.id} delay={Math.min(index, 8) * 50}>
-                  <article className="hover-lift flex h-full flex-col overflow-hidden rounded-2xl bg-white ring-1 ring-navy-100 shadow-[0_2px_10px_-5px_rgb(13_27_49/0.1)]">
+                  <article className="hover-lift flex h-full flex-col overflow-hidden rounded-2xl bg-white ring-1 ring-warm-100 shadow-[0_2px_10px_-5px_rgb(120_70_45/0.1)]">
                     <span
                       aria-hidden
                       className="block h-1 w-full"
@@ -219,34 +223,34 @@ export default async function CourseCatalogPage({
                         {row.programShort}
                       </Link>
 
-                      <h2 className="font-display mt-1.5 text-[18px] leading-snug font-bold text-navy-900">
-                        <Link href={routes.course(row.id)} className="transition-colors hover:text-navy-700">
+                      <h2 className="font-display mt-1.5 text-[18px] leading-snug font-bold text-warm-900">
+                        <Link href={routes.course(row.id)} className="transition-colors hover:text-warm-700">
                           {row.name}
                         </Link>
                       </h2>
 
-                      <p className="mt-2 text-[13px] text-navy-500">
+                      <p className="mt-2 text-[13px] text-warm-500">
                         {GRADE_BAND_LABEL[row.gradeBand]} · {SUBJECT_LABEL[row.subject]}
                       </p>
 
                       {row.description ? (
-                        <p className="mt-3 line-clamp-3 text-[14px] leading-relaxed text-navy-600">
+                        <p className="mt-3 line-clamp-3 text-[14px] leading-relaxed text-warm-600">
                           {row.description}
                         </p>
                       ) : null}
 
-                      <div className="mt-auto flex items-end justify-between gap-3 border-t border-navy-100 pt-4">
+                      <div className="mt-auto flex items-end justify-between gap-3 border-t border-warm-100 pt-4">
                         <span>
-                          <span className="block text-[10.5px] tracking-wide text-navy-400 uppercase">
+                          <span className="block text-[10.5px] tracking-wide text-warm-400 uppercase">
                             {t('courses.card.price')}
                           </span>
-                          <span className="font-display block text-[18px] font-bold text-navy-900">
+                          <span className="font-display block text-[18px] font-bold text-warm-900">
                             {formatVnd(row.price)}
                           </span>
                         </span>
                         <Link
                           href={routes.course(row.id)}
-                          className="press rounded-lg bg-navy-900 px-3.5 py-2 text-[13.5px] font-semibold text-white transition-colors hover:bg-navy-800"
+                          className="press rounded-lg btn-fire px-3.5 py-2 text-[13.5px] font-bold"
                         >
                           {t('courses.card.cta')}
                         </Link>

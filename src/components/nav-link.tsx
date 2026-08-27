@@ -29,8 +29,8 @@ export function NavLink({
       className={cx(
         'relative rounded-lg px-3 py-1.5 text-sm whitespace-nowrap transition-all duration-200',
         active
-          ? 'bg-navy-50 font-semibold text-navy-900'
-          : 'font-medium text-navy-500 hover:bg-navy-50 hover:text-navy-800',
+          ? 'bg-warm-50 font-semibold text-warm-900'
+          : 'font-medium text-warm-500 hover:bg-warm-50 hover:text-warm-800',
       )}
     >
       {children}

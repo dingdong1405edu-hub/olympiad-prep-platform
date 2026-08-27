@@ -358,9 +358,9 @@ function TaskLink({ href, title, hint }: { href: string; title: string; hint: st
   return (
     <Link
       href={href}
-      className="hover-lift group rounded-xl bg-white p-4 ring-1 ring-ink-100 shadow-[0_1px_3px_rgb(23_27_38/0.05)]"
+      className="hover-lift group rounded-xl bg-white p-4 ring-1 ring-ink-100 shadow-[0_1px_3px_rgb(120_70_45/0.05)]"
     >
-      <p className="font-semibold text-ink-900 group-hover:text-navy-900">{title} →</p>
+      <p className="font-semibold text-ink-900 group-hover:text-warm-900">{title} →</p>
       <p className="mt-1 text-sm leading-relaxed text-ink-600">{hint}</p>
     </Link>
   );

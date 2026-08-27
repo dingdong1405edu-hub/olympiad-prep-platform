@@ -58,40 +58,44 @@ export default async function MockExamListPage() {
 
   return (
     <SiteShell signedIn={Boolean(session)}>
-      <section className="relative overflow-hidden bg-navy-900 pt-28 pb-14 sm:pt-36 lg:pt-40">
-        <div className="grid-faint-dark pointer-events-none absolute inset-0" aria-hidden />
+      <section className="paper relative overflow-hidden pt-14 pb-14 sm:pt-16 lg:pt-20">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(90%_70%_at_80%_4%,#ffe6d5_0%,rgba(255,242,233,0)_62%),radial-gradient(70%_60%_at_8%_32%,#fff0e2_0%,rgba(255,251,248,0)_60%),linear-gradient(180deg,#fff7f1_0%,#fffbf8_82%)]"
+        />
+        <div className="grid-faint pointer-events-none absolute inset-0" aria-hidden />
         <div className={`${SHELL} relative`}>
-          <p className="text-[11px] font-bold tracking-[0.18em] text-gold-400 uppercase">
+          <p className="text-[11px] font-bold tracking-[0.18em] text-brand-700 uppercase">
             Thi thử có chấm
           </p>
-          <h1 className="font-display mt-3 max-w-2xl text-3xl leading-tight text-white sm:text-4xl lg:text-5xl">
+          <h1 className="font-display mt-3 max-w-2xl text-3xl leading-tight text-warm-900 sm:text-4xl lg:text-5xl">
             Làm đề thật. Chụp bài giải. Nhận điểm từng câu.
           </h1>
-          <p className="mt-4 max-w-2xl text-navy-200">
+          <p className="mt-4 max-w-2xl text-warm-500">
             Không phải bài trắc nghiệm cho vui. Đây là đề Olympic thật, chấm bằng đúng barem của đề,
             và nói cho em biết em đang ở mức nào so với yêu cầu của kỳ thi.
           </p>
 
-          <div className="mt-6 flex flex-wrap gap-2 text-xs text-navy-200">
-            <span className="rounded-full bg-gold-400/20 px-3 py-1.5 font-semibold text-gold-200">
+          <div className="mt-6 flex flex-wrap gap-2 text-xs text-warm-500">
+            <span className="rounded-full bg-gold-400/20 px-3 py-1.5 font-semibold text-brand-700">
               {freeAttempts} lượt miễn phí mỗi đề
             </span>
-            <span className="rounded-full bg-white/10 px-3 py-1.5">Đồng hồ như thi thật</span>
-            <span className="rounded-full bg-white/10 px-3 py-1.5">Chấm tự luận theo barem</span>
-            <span className="rounded-full bg-white/10 px-3 py-1.5">Có xếp học lực</span>
+            <span className="rounded-full bg-white px-3 py-1.5">Đồng hồ như thi thật</span>
+            <span className="rounded-full bg-white px-3 py-1.5">Chấm tự luận theo barem</span>
+            <span className="rounded-full bg-white px-3 py-1.5">Có xếp học lực</span>
           </div>
 
           {session === null ? (
             <div className="mt-7 flex flex-wrap items-center gap-3">
               <Link
                 href={routes.register(routes.mockExams())}
-                className="press rounded-lg bg-gold-400 px-6 py-3 text-sm font-bold text-navy-900 transition-all hover:bg-gold-300"
+                className="press rounded-lg bg-gold-400 px-6 py-3 text-sm font-bold text-warm-900 transition-all hover:bg-gold-300"
               >
                 Đăng ký miễn phí để làm bài
               </Link>
               <Link
                 href={routes.login(routes.mockExams())}
-                className="text-sm font-medium text-navy-200 hover:text-white"
+                className="text-sm font-medium text-warm-500 hover:text-warm-900"
               >
                 Đã có tài khoản? Đăng nhập
               </Link>
@@ -107,11 +111,11 @@ export default async function MockExamListPage() {
           {steps.map((item) => (
             <li
               key={item.step}
-              className="animate-fade-up rounded-xl bg-white p-5 ring-1 ring-ink-100 shadow-[0_1px_3px_rgb(23_27_38/0.05)]"
+              className="animate-fade-up rounded-xl bg-white p-5 ring-1 ring-ink-100 shadow-[0_1px_3px_rgb(120_70_45/0.05)]"
             >
               <span
                 aria-hidden
-                className="flex h-8 w-8 items-center justify-center rounded-lg bg-navy-900 text-sm font-bold text-gold-300"
+                className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-brand-600 to-brand-400 text-sm font-bold text-white"
               >
                 {item.step}
               </span>
@@ -142,7 +146,7 @@ export default async function MockExamListPage() {
               <li key={exam.slug} className="animate-fade-up">
                 <Link
                   href={routes.mockExam(exam.slug)}
-                  className="hover-lift block h-full rounded-xl bg-white p-6 ring-1 ring-ink-100 shadow-[0_1px_3px_rgb(23_27_38/0.05)] transition-all"
+                  className="hover-lift block h-full rounded-xl bg-white p-6 ring-1 ring-ink-100 shadow-[0_1px_3px_rgb(120_70_45/0.05)] transition-all"
                 >
                   <div className="mb-3 flex flex-wrap gap-2">
                     <Badge tone="brand">{exam.questionCount} câu</Badge>

@@ -51,7 +51,7 @@ export default async function LoginPage({
           Chưa có tài khoản?{' '}
           <Link
             href={routes.register(next)}
-            className="font-semibold text-navy-800 hover:underline"
+            className="font-semibold text-warm-800 hover:underline"
           >
             Đăng ký ngay
           </Link>

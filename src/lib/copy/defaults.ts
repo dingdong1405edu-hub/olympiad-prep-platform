@@ -74,6 +74,12 @@ const NAV_GROUP: CopyGroup = {
   label: 'Thanh điều hướng & chân trang',
   description: 'Chữ trên thanh menu trên cùng và phần chân của mọi trang bán hàng.',
   fields: [
+    f(
+      'nav.topbar',
+      'Dải thông báo trên cùng',
+      'Đang nhận học sinh cho mùa thi 2026 — kiểm tra đầu vào miễn phí, không cần thẻ thanh toán',
+      { hint: 'Hiện trên mọi trang bán hàng, ngay phía trên thanh menu.' },
+    ),
     f('nav.brand.name', 'Tên thương hiệu', 'Olympiad Prep'),
     f('nav.brand.tagline', 'Dòng phụ dưới tên thương hiệu', 'Ôn luyện cá nhân hóa'),
     f('nav.link.programs', 'Menu — Kỳ thi', 'Kỳ thi'),

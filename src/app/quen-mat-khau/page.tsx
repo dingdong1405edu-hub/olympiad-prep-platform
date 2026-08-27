@@ -11,7 +11,7 @@ export default function ForgotPasswordPage() {
       title="Đặt lại mật khẩu"
       subtitle="Nhập email hoặc số điện thoại đã đăng ký, hệ thống sẽ gửi mã xác nhận."
       footer={
-        <Link href={routes.login()} className="font-semibold text-navy-800 hover:underline">
+        <Link href={routes.login()} className="font-semibold text-warm-800 hover:underline">
           ← Quay lại đăng nhập
         </Link>
       }

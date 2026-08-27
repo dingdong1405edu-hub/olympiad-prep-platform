@@ -536,33 +536,33 @@ function OverrideBox({
   }
 
   return (
-    <div className="mt-5 rounded-xl bg-navy-50 p-4 ring-1 ring-navy-100">
-      <p className="text-xs font-semibold tracking-wide text-navy-700 uppercase">
+    <div className="mt-5 rounded-xl bg-warm-50 p-4 ring-1 ring-warm-100">
+      <p className="text-xs font-semibold tracking-wide text-warm-700 uppercase">
         Giáo viên sửa điểm
       </p>
       <div className="mt-2 flex flex-wrap items-end gap-3">
-        <label className="text-sm text-navy-800">
+        <label className="text-sm text-warm-800">
           Điểm (tối đa {answer.maxPoints})
           <input
             value={awarded}
             onChange={(event) => setAwarded(event.target.value)}
             inputMode="decimal"
-            className="mt-1 block w-28 rounded-lg border border-navy-200 bg-white px-3 py-2 text-sm font-semibold tabular-nums focus:border-brand-500 focus:ring-4 focus:ring-brand-100 focus:outline-none"
+            className="mt-1 block w-28 rounded-lg border border-warm-200 bg-white px-3 py-2 text-sm font-semibold tabular-nums focus:border-brand-500 focus:ring-4 focus:ring-brand-100 focus:outline-none"
           />
         </label>
-        <label className="min-w-56 flex-1 text-sm text-navy-800">
+        <label className="min-w-56 flex-1 text-sm text-warm-800">
           Nhận xét gửi học sinh
           <input
             value={feedback}
             onChange={(event) => setFeedback(event.target.value)}
-            className="mt-1 block w-full rounded-lg border border-navy-200 bg-white px-3 py-2 text-sm focus:border-brand-500 focus:ring-4 focus:ring-brand-100 focus:outline-none"
+            className="mt-1 block w-full rounded-lg border border-warm-200 bg-white px-3 py-2 text-sm focus:border-brand-500 focus:ring-4 focus:ring-brand-100 focus:outline-none"
           />
         </label>
         <Button size="sm" loading={saving} onClick={() => void save()}>
           Lưu
         </Button>
       </div>
-      {message ? <p className="mt-2 text-sm text-navy-700">{message}</p> : null}
+      {message ? <p className="mt-2 text-sm text-warm-700">{message}</p> : null}
     </div>
   );
 }

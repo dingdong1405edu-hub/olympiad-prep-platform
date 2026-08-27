@@ -453,7 +453,7 @@ export default async function TeacherDashboardPage() {
                     <li key={`${alert.enrollmentId}-${alert.kind}-${index}`}>
                       <Link
                         href={routes.teacherStudent(alert.enrollmentId)}
-                        className="hover-lift press block h-full rounded-xl bg-white p-4 ring-1 ring-ink-100 shadow-[0_1px_3px_rgb(23_27_38/0.05)] transition-shadow"
+                        className="hover-lift press block h-full rounded-xl bg-white p-4 ring-1 ring-ink-100 shadow-[0_1px_3px_rgb(120_70_45/0.05)] transition-shadow"
                       >
                         <div className="flex items-start gap-3">
                           <span

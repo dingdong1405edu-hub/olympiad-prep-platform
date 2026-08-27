@@ -75,10 +75,10 @@ export function ShellNav({ items, className }: { items: ShellNavItem[]; classNam
           onClick={() => setOpen((value) => !value)}
           aria-expanded={open}
           aria-haspopup="menu"
-          className="press flex w-full items-center justify-between gap-2 rounded-lg bg-navy-50 px-3 py-2 text-sm font-semibold text-navy-900 ring-1 ring-navy-100"
+          className="press flex w-full items-center justify-between gap-2 rounded-lg bg-warm-50 px-3 py-2 text-sm font-semibold text-warm-900 ring-1 ring-warm-100"
         >
           <span className="truncate">{current?.label ?? 'Chọn mục'}</span>
-          <span className="flex shrink-0 items-center gap-1.5 text-xs font-medium text-navy-500">
+          <span className="flex shrink-0 items-center gap-1.5 text-xs font-medium text-warm-500">
             {items.length} mục
             <svg
               width="14"
@@ -102,7 +102,7 @@ export function ShellNav({ items, className }: { items: ShellNavItem[]; classNam
         {open ? (
           <div
             role="menu"
-            className="animate-fade-down absolute inset-x-0 top-full z-40 mt-1.5 max-h-[70vh] overflow-y-auto rounded-xl bg-white p-1.5 ring-1 ring-navy-100 shadow-[0_16px_40px_-12px_rgb(13_27_49/0.35)]"
+            className="animate-fade-down absolute inset-x-0 top-full z-40 mt-1.5 max-h-[70vh] overflow-y-auto rounded-xl bg-white p-1.5 ring-1 ring-warm-100 shadow-[0_16px_40px_-12px_rgb(120_70_45/0.35)]"
           >
             {items.map((item) => {
               const active = isActive(pathname, item);
@@ -115,8 +115,8 @@ export function ShellNav({ items, className }: { items: ShellNavItem[]; classNam
                   className={cx(
                     'block rounded-lg px-3 py-2.5 text-sm transition-colors',
                     active
-                      ? 'bg-navy-50 font-semibold text-navy-900'
-                      : 'font-medium text-navy-600 hover:bg-navy-50 hover:text-navy-900',
+                      ? 'bg-warm-50 font-semibold text-warm-900'
+                      : 'font-medium text-warm-600 hover:bg-warm-50 hover:text-warm-900',
                   )}
                 >
                   {item.label}

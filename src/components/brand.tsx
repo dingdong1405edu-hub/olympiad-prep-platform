@@ -22,19 +22,29 @@ export function Crest({
   /** light = đặt trên nền sáng; dark = đặt trên nền navy. */
   tone?: 'light' | 'dark';
 }) {
-  const plate = tone === 'light' ? 'var(--color-navy-900)' : '#ffffff';
-  const mark = tone === 'light' ? 'var(--color-gold-300)' : 'var(--color-navy-900)';
+  // Khiên nay là gradient lửa thay cho mảng navy đặc: nó phải đứng được trên nền
+  // kem của cả trang bán hàng lẫn khu học tập mà vẫn là vật đậm màu nhất góc đó.
+  const solid = tone === 'light' ? undefined : '#ffffff';
+  const mark = tone === 'light' ? '#ffffff' : 'var(--color-brand-600)';
+  const gradientId = 'crest-flame';
 
   return (
     <svg viewBox="0 0 40 40" className={className} aria-hidden fill="none">
+      <defs>
+        <linearGradient id={gradientId} x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="var(--color-brand-600)" />
+          <stop offset="60%" stopColor="var(--color-brand-400)" />
+          <stop offset="100%" stopColor="var(--color-gold-400)" />
+        </linearGradient>
+      </defs>
       <path
         d="M20 2.5 34.5 7.2v13.4c0 8.1-5.7 15-14.5 17.9C11.2 35.6 5.5 28.7 5.5 20.6V7.2L20 2.5Z"
-        fill={plate}
+        fill={solid ?? `url(#${gradientId})`}
       />
       <path
         d="M20 2.5 34.5 7.2v13.4c0 8.1-5.7 15-14.5 17.9C11.2 35.6 5.5 28.7 5.5 20.6V7.2L20 2.5Z"
         stroke={mark}
-        strokeOpacity="0.45"
+        strokeOpacity="0.35"
         strokeWidth="1.1"
       />
       <path
@@ -74,7 +84,7 @@ export function Wordmark({
         <span
           className={cx(
             'font-display block text-[17px] font-bold tracking-tight',
-            tone === 'light' ? 'text-navy-900' : 'text-white',
+            tone === 'light' ? 'text-warm-900' : 'text-white',
           )}
         >
           {name}
@@ -82,7 +92,7 @@ export function Wordmark({
         <span
           className={cx(
             'mt-0.5 block text-[10px] font-semibold tracking-[0.16em] uppercase',
-            tone === 'light' ? 'text-navy-400' : 'text-navy-300',
+            tone === 'light' ? 'text-warm-400' : 'text-warm-200',
           )}
         >
           {tagline}

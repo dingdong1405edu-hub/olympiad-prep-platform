@@ -468,34 +468,34 @@ export function PaymentQrPanel({
   return (
     <div
       className={cx(
-        'animate-scale-in overflow-hidden rounded-2xl bg-white ring-1 ring-ink-100 shadow-[0_24px_64px_-28px_rgb(13_27_49/0.5)]',
+        'animate-scale-in overflow-hidden rounded-2xl bg-white ring-1 ring-ink-100 shadow-[0_24px_64px_-28px_rgb(120_70_45/0.5)]',
         className,
       )}
     >
       {/* --- Đầu trang: số tiền + đồng hồ ------------------------------------ */}
-      <header className="grid-faint-dark relative bg-gradient-to-br from-navy-800 via-navy-900 to-navy-950 px-6 py-5 text-white">
+      <header className="grid-faint-soft relative bg-gradient-to-br from-warm-100 via-[#ffe2d0] to-[#ffd0b4] px-6 py-5">
         <div className="relative flex flex-wrap items-start justify-between gap-4">
           <div className="min-w-0">
-            <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-2.5 py-1 text-xs font-medium text-navy-100 ring-1 ring-inset ring-white/15">
+            <span className="inline-flex items-center gap-2 rounded-full bg-white/75 px-2.5 py-1 text-xs font-semibold text-brand-700 ring-1 ring-inset ring-white">
               <span className="relative flex h-2 w-2" aria-hidden>
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-gold-300 opacity-75" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-gold-400" />
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-brand-500 opacity-75" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-brand-600" />
               </span>
               Đang chờ chuyển khoản
             </span>
 
-            <p className="mt-3 text-3xl font-bold tracking-tight tabular-nums">{session.amountLabel}</p>
-            <p className="mt-1 truncate text-sm text-navy-200">
+            <p className="mt-3 text-3xl font-bold tracking-tight text-warm-900 tabular-nums">{session.amountLabel}</p>
+            <p className="mt-1 truncate text-sm text-warm-600">
               {session.course.programName} · {session.course.name}
             </p>
           </div>
 
           <div className="text-right">
-            <p className="text-[11px] tracking-wider text-navy-300 uppercase">Mã còn hiệu lực</p>
+            <p className="text-[11px] font-semibold tracking-wider text-warm-500 uppercase">Mã còn hiệu lực</p>
             <p
               className={cx(
                 'mt-1 font-mono text-2xl font-bold tabular-nums',
-                urgent ? 'text-rose-300' : 'text-gold-200',
+                urgent ? 'text-rose-600' : 'text-brand-700',
               )}
             >
               {formatClock(remainingMs)}
@@ -531,7 +531,7 @@ export function PaymentQrPanel({
                     className="pointer-events-none absolute top-1/2 left-1/2 flex h-[18%] w-[18%] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-lg bg-white shadow-[0_0_0_3px_#fff]"
                     aria-hidden
                   >
-                    <span className="flex h-full w-full items-center justify-center rounded-md bg-navy-900 text-[10px] font-bold text-gold-300">
+                    <span className="flex h-full w-full items-center justify-center rounded-md bg-brand-600 text-[10px] font-bold text-white">
                       OLP
                     </span>
                   </span>
@@ -694,7 +694,7 @@ export function PaymentQrOverlay({
 
   return (
     <div
-      className="animate-fade-in fixed inset-0 z-50 overflow-y-auto bg-navy-950/70 px-4 py-6 backdrop-blur-sm sm:px-6"
+      className="animate-fade-in fixed inset-0 z-50 overflow-y-auto bg-warm-900/45 px-4 py-6 backdrop-blur-sm sm:px-6"
       role="dialog"
       aria-modal="true"
       aria-label="Thanh toán bằng mã QR"
@@ -705,7 +705,7 @@ export function PaymentQrOverlay({
             <button
               type="button"
               onClick={onClose}
-              className="press rounded-lg px-3 py-1.5 text-sm font-medium text-white/80 transition-colors hover:bg-white/10 hover:text-white"
+              className="press rounded-lg px-3 py-1.5 text-sm font-medium text-white/90 transition-colors hover:bg-white/10 hover:text-white"
             >
               Đóng
             </button>

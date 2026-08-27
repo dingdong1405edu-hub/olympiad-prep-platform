@@ -13,77 +13,135 @@
  * Số liệu ở đây là MINH HỌA, chọn sao cho giống một hồ sơ có thật: có mảng
  * mạnh, có mảng hổng, tiến bộ không đều. Một biểu đồ toàn màu xanh đi lên
  * thẳng tắp là thứ khiến phụ huynh nghi ngờ chứ không phải tin tưởng.
+ *
+ * BẢNG MÀU: các khối này nằm trên trang bán hàng nền kem nên dùng thang lửa
+ * (đỏ → cam → hổ phách) chứ không dùng thang tier bốn màu của khu học tập.
+ * Ở đây mức độ đọc được bằng CHIỀU DÀI thanh, màu chỉ đi kèm cho dễ quét mắt;
+ * còn trong app thì màu phải tự nó mang nghĩa nên mới cần bốn màu tách bạch.
  */
 import { cx } from '@/components/ui';
+
+/** Ba nấc của thang lửa, xếp theo mức thành thạo từ thấp tới cao. */
+const RAMP = {
+  hot: 'from-brand-600 to-brand-400',
+  warm: 'from-brand-400 to-gold-400',
+  good: 'from-gold-400 to-gold-300',
+} as const;
+
+type RampKey = keyof typeof RAMP;
+
+function MeterRow({
+  name,
+  value,
+  ramp,
+  suffix = '%',
+}: {
+  name: string;
+  value: number;
+  ramp: RampKey;
+  /** Bản đồ kỹ năng hiện "34%", báo cáo phụ huynh hiện "+38". */
+  suffix?: string;
+}) {
+  return (
+    <div className="grid grid-cols-[1fr_auto] items-center gap-2.5 border-t border-warm-200 py-2.5 first:border-t-0">
+      <div>
+        <p className="text-[13px] font-semibold text-warm-800">{name}</p>
+        <div className="mt-[7px] h-[7px] overflow-hidden rounded-full bg-warm-100">
+          <div
+            className={cx('bar-fill h-full rounded-full bg-gradient-to-r', RAMP[ramp])}
+            style={{ width: `${value}%` }}
+          />
+        </div>
+      </div>
+      <span className="min-w-[38px] text-right text-[12.5px] font-bold text-brand-700 tabular-nums">
+        {suffix === '%' ? `${value}%` : suffix}
+      </span>
+    </div>
+  );
+}
+
+function CardHead({
+  title,
+  sub,
+  chip,
+}: {
+  title: string;
+  sub: string;
+  chip: string;
+}) {
+  return (
+    <div className="mb-4 flex items-center justify-between gap-3">
+      <div className="min-w-0">
+        <p className="truncate text-[14px] font-bold text-warm-900">{title}</p>
+        <p className="mt-0.5 text-[11.5px] text-warm-400">{sub}</p>
+      </div>
+      <span className="shrink-0 rounded-full bg-warm-100 px-2.5 py-1.5 text-[10.5px] font-bold tracking-wide text-brand-700 uppercase shadow-[inset_0_0_0_1px_var(--color-warm-200)]">
+        {chip}
+      </span>
+    </div>
+  );
+}
 
 // ---------------------------------------------------------------------------
 // Bản đồ kỹ năng
 // ---------------------------------------------------------------------------
 
-const TIERS = {
-  strong: { label: 'Mạnh', color: '#1c5cab', bg: 'bg-[#1c5cab]' },
-  ok: { label: 'Ổn', color: '#6da7ec', bg: 'bg-[#6da7ec]' },
-  warn: { label: 'Cần củng cố', color: '#eda100', bg: 'bg-[#eda100]' },
-  gap: { label: 'Hổng', color: '#d03b3b', bg: 'bg-[#d03b3b]' },
-} as const;
-
-type TierKey = keyof typeof TIERS;
-
-const SKILL_ROWS: { name: string; value: number; tier: TierKey }[] = [
-  { name: 'Số học & chia hết', value: 88, tier: 'strong' },
-  { name: 'Phân số, tỉ lệ', value: 74, tier: 'ok' },
-  { name: 'Biểu thức đại số', value: 61, tier: 'ok' },
-  { name: 'Hình học phẳng', value: 38, tier: 'warn' },
-  { name: 'Toán chuyển động', value: 21, tier: 'gap' },
-  { name: 'Suy luận logic', value: 46, tier: 'warn' },
+const SKILL_ROWS: { name: string; value: number; ramp: RampKey }[] = [
+  { name: 'Quy đồng & so sánh phân số', value: 34, ramp: 'hot' },
+  { name: 'Tỉ lệ thức và bài toán tỉ lệ', value: 46, ramp: 'hot' },
+  { name: 'Ước chung lớn nhất, bội chung', value: 68, ramp: 'warm' },
+  { name: 'Suy luận logic, tìm quy luật', value: 81, ramp: 'good' },
+  { name: 'Hình học phẳng cơ bản', value: 90, ramp: 'good' },
 ];
 
 export function SkillMapVisual({ className }: { className?: string }) {
   return (
-    <figure className={cx('overflow-hidden rounded-2xl bg-white', className)}>
-      <figcaption className="flex items-center justify-between gap-3 border-b border-ink-100 px-5 py-3.5">
-        <div>
-          <p className="text-[13px] font-semibold text-ink-900">Bản đồ kỹ năng</p>
-          <p className="text-[11px] text-ink-500">Cập nhật sau mỗi câu trả lời</p>
-        </div>
-        <span className="rounded-full bg-ink-100 px-2.5 py-1 text-[10px] font-semibold tracking-wide text-ink-600 uppercase">
-          Khối B · Toán
-        </span>
-      </figcaption>
+    <figure className={cx('p-6', className)}>
+      <CardHead
+        title="Bản đồ kỹ năng · Toán khối 6"
+        sub="Cập nhật sau mỗi câu con làm"
+        chip="Cập nhật 2 phút trước"
+      />
+      {SKILL_ROWS.map((row) => (
+        <MeterRow key={row.name} name={row.name} value={row.value} ramp={row.ramp} />
+      ))}
+    </figure>
+  );
+}
 
-      <div className="space-y-3 px-5 py-4">
-        {SKILL_ROWS.map((row) => (
-          <div key={row.name}>
-            <div className="flex items-baseline justify-between gap-3">
-              <span className="truncate text-[12.5px] font-medium text-ink-700">{row.name}</span>
-              <span
-                className="shrink-0 text-[12px] font-bold tabular-nums"
-                style={{ color: TIERS[row.tier].color }}
-              >
-                {row.value}
-              </span>
-            </div>
-            <div className="mt-1.5 h-[7px] w-full overflow-hidden rounded-full bg-ink-100">
-              <div
-                className="h-full rounded-full"
-                style={{ width: `${row.value}%`, backgroundColor: TIERS[row.tier].color }}
-              />
-            </div>
-          </div>
-        ))}
-      </div>
+// ---------------------------------------------------------------------------
+// Báo cáo gửi phụ huynh — cùng dạng thanh, nhưng đọc là mức TĂNG sau 14 ngày
+// ---------------------------------------------------------------------------
 
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 border-t border-ink-100 bg-ink-50/60 px-5 py-3">
-        {(Object.keys(TIERS) as TierKey[]).map((key) => (
-          <span key={key} className="flex items-center gap-1.5 text-[11px] text-ink-600">
-            <span
-              className="h-2 w-2 rounded-full"
-              style={{ backgroundColor: TIERS[key].color }}
-              aria-hidden
-            />
-            {TIERS[key].label}
-          </span>
-        ))}
+const REPORT_ROWS: { name: string; value: number; ramp: RampKey; delta: string }[] = [
+  { name: 'Quy đồng & so sánh phân số', value: 72, ramp: 'hot', delta: '+38' },
+  { name: 'Tỉ lệ thức và bài toán tỉ lệ', value: 65, ramp: 'warm', delta: '+19' },
+  { name: 'Suy luận logic, tìm quy luật', value: 88, ramp: 'good', delta: '+7' },
+];
+
+export function ParentReportVisual({ className }: { className?: string }) {
+  return (
+    <figure className={cx('p-6', className)}>
+      <CardHead
+        title="Báo cáo gửi phụ huynh · chu kỳ 4"
+        sub="Gửi tự động sau mỗi lần đo"
+        chip="14 ngày"
+      />
+      {REPORT_ROWS.map((row) => (
+        <MeterRow
+          key={row.name}
+          name={row.name}
+          value={row.value}
+          ramp={row.ramp}
+          suffix={row.delta}
+        />
+      ))}
+
+      <div className="mt-4 rounded-2xl bg-warm-50 p-3.5 shadow-[inset_0_0_0_1px_var(--color-warm-200)]">
+        <p className="text-[12.5px] leading-relaxed text-warm-700">
+          <strong className="font-bold text-brand-700">Diễn giải:</strong> lỗi quy đồng mẫu đã gần
+          như hết. Còn lặp ở bước rút gọn sau khi cộng — hai tuần tới sẽ tập trung vào đây.
+        </p>
       </div>
     </figure>
   );
@@ -94,71 +152,166 @@ export function SkillMapVisual({ className }: { className?: string }) {
 // ---------------------------------------------------------------------------
 
 const TODAY_ITEMS = [
-  { title: 'Vá lỗ hổng: toán chuyển động', meta: '4 câu · dễ → vừa', reason: 'Sai 5/6 câu ở bài đo gần nhất', tone: 'gap' as const, done: true },
-  { title: 'Củng cố: hình học phẳng', meta: '5 câu · vừa', reason: 'Đúng nhưng chậm hơn chuẩn 40%', tone: 'warn' as const, done: true },
-  { title: 'Thử thách: biểu thức đại số', meta: '3 câu · khó', reason: 'Đã vững mức vừa, nâng độ khó', tone: 'ok' as const, done: false },
+  {
+    title: 'Quy đồng mẫu số — 6 câu',
+    meta: 'Vá lỗ hổng · mức 2/5',
+    time: '12 phút',
+    tone: 'from-brand-600 to-brand-500',
+  },
+  {
+    title: 'Bài toán tỉ lệ nghịch — 5 câu',
+    meta: 'Củng cố · mức 3/5',
+    time: '14 phút',
+    tone: 'from-brand-500 to-brand-400',
+  },
+  {
+    title: 'Tìm quy luật dãy số — 2 câu',
+    meta: 'Thử thách · mức 4/5',
+    time: '6 phút',
+    tone: 'from-brand-400 to-gold-400',
+  },
 ];
-
-const TONE_DOT = { gap: '#d03b3b', warn: '#eda100', ok: '#6da7ec' };
 
 export function TodayPlanVisual({ className }: { className?: string }) {
   return (
-    <figure className={cx('overflow-hidden rounded-2xl bg-white', className)}>
-      <figcaption className="flex items-center justify-between gap-3 border-b border-ink-100 px-5 py-3.5">
-        <div>
-          <p className="text-[13px] font-semibold text-ink-900">Việc hôm nay</p>
-          <p className="text-[11px] text-ink-500">Thứ Ba · khoảng 35 phút</p>
-        </div>
-        <span className="rounded-full bg-accent-50 px-2.5 py-1 text-[10px] font-bold text-accent-700">
-          2/3 xong
-        </span>
-      </figcaption>
+    <figure className={cx('p-6', className)}>
+      <CardHead title="Việc hôm nay · Thứ Ba" sub="Ước tính 32 phút" chip="3 việc" />
 
-      <ul className="divide-y divide-ink-100">
-        {TODAY_ITEMS.map((item) => (
-          <li key={item.title} className="flex gap-3 px-5 py-3.5">
+      <ol className="space-y-2.5">
+        {TODAY_ITEMS.map((item, index) => (
+          <li
+            key={item.title}
+            className="flex gap-3.5 rounded-2xl bg-warm-50 p-3.5 shadow-[inset_0_0_0_1px_var(--color-warm-200)]"
+          >
             <span
               aria-hidden
               className={cx(
-                'mt-0.5 flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full border-2',
-                item.done ? 'border-accent-600 bg-accent-600' : 'border-ink-300 bg-white',
+                'flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br text-[14px] font-extrabold text-white',
+                item.tone,
               )}
             >
-              {item.done ? (
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="none">
-                  <path
-                    d="M5 12.5 10 17.5 19 7"
-                    stroke="white"
-                    strokeWidth="4"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              ) : null}
+              {index + 1}
             </span>
-
-            <div className="min-w-0 flex-1">
-              <p
-                className={cx(
-                  'text-[12.5px] font-semibold',
-                  item.done ? 'text-ink-400 line-through' : 'text-ink-900',
-                )}
-              >
-                {item.title}
-              </p>
-              <p className="mt-0.5 text-[11px] text-ink-500">{item.meta}</p>
-              <p className="mt-1.5 flex items-start gap-1.5 text-[11px] leading-snug text-ink-600">
-                <span
-                  className="mt-[5px] h-1.5 w-1.5 shrink-0 rounded-full"
-                  style={{ backgroundColor: TONE_DOT[item.tone] }}
-                  aria-hidden
-                />
-                <span className="italic">Vì sao: {item.reason}</span>
-              </p>
+            <div className="min-w-0">
+              <p className="text-[13.5px] font-bold text-warm-900">{item.title}</p>
+              <p className="mt-0.5 text-[11.5px] text-warm-400">{item.meta}</p>
             </div>
+            <span className="ml-auto self-center text-[10.5px] font-bold whitespace-nowrap text-brand-700">
+              {item.time}
+            </span>
           </li>
         ))}
-      </ul>
+      </ol>
+    </figure>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Đồng hồ độ khó
+// ---------------------------------------------------------------------------
+
+/**
+ * Chuỗi kết quả gần nhất. Có hai câu sai xen giữa: một dãy toàn dấu đúng trông
+ * như quảng cáo, còn đây là thứ khách sẽ thật sự thấy trên màn hình của con.
+ */
+const RECENT = ['ok', 'ok', 'ok', 'no', 'ok', 'ok', 'no', 'ok', 'na', 'na'] as const;
+
+export function DifficultyDialVisual({ className }: { className?: string }) {
+  return (
+    <figure className={cx('p-6', className)}>
+      <CardHead title="Độ khó đang áp dụng" sub="Tự chỉnh sau từng câu" chip="Mức 3 / 5" />
+
+      <div className="flex flex-col items-start gap-5 sm:flex-row sm:items-center sm:gap-7">
+        <svg
+          viewBox="0 0 180 108"
+          width="180"
+          height="108"
+          className="shrink-0"
+          role="img"
+          aria-label="Độ khó đang ở mức 3 trên thang 5 bậc."
+        >
+          <defs>
+            <linearGradient id="dial-ramp" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stopColor="var(--color-gold-300)" />
+              <stop offset="55%" stopColor="var(--color-brand-400)" />
+              <stop offset="100%" stopColor="var(--color-brand-600)" />
+            </linearGradient>
+          </defs>
+
+          <path
+            d="M18 96 A 72 72 0 0 1 162 96"
+            fill="none"
+            stroke="var(--color-warm-200)"
+            strokeWidth="15"
+            strokeLinecap="round"
+          />
+          {/* Cung màu vẽ dần khi khối lọt vào màn hình — xem .check-draw ở globals */}
+          <path
+            d="M18 96 A 72 72 0 0 1 162 96"
+            fill="none"
+            stroke="url(#dial-ramp)"
+            strokeWidth="15"
+            strokeLinecap="round"
+            strokeDasharray="226"
+            strokeDashoffset="0"
+            style={{ animation: 'dial-sweep 1.6s var(--ease-out-expo) both' }}
+          />
+          <circle cx="126" cy="42" r="7" fill="#fff" stroke="var(--color-brand-600)" strokeWidth="4" />
+          <text
+            x="90"
+            y="80"
+            textAnchor="middle"
+            className="font-display"
+            fontSize="34"
+            fontWeight="700"
+            fill="var(--color-warm-900)"
+          >
+            3
+          </text>
+          <text
+            x="90"
+            y="96"
+            textAnchor="middle"
+            fontSize="10"
+            fontWeight="700"
+            fill="var(--color-warm-400)"
+          >
+            TRÊN 5 BẬC
+          </text>
+        </svg>
+
+        <ul className="space-y-2.5">
+          {[
+            { c: 'bg-gold-300', t: 'Bậc 1–2 · xây lại nền' },
+            { c: 'bg-brand-400', t: 'Bậc 3 · vùng vừa sức' },
+            { c: 'bg-brand-600', t: 'Bậc 4–5 · thử thách' },
+          ].map((row) => (
+            <li key={row.t} className="flex items-center gap-2.5 text-[12.5px] text-warm-500">
+              <span aria-hidden className={cx('h-2.5 w-2.5 shrink-0 rounded-full', row.c)} />
+              {row.t}
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div className="mt-5 flex flex-wrap gap-1.5" aria-hidden>
+        {RECENT.map((mark, index) => (
+          <span
+            key={index}
+            className={cx(
+              'flex h-[26px] w-[26px] items-center justify-center rounded-lg text-[11px] font-extrabold',
+              mark === 'ok' && 'bg-gradient-to-br from-gold-400 to-gold-300 text-[#8a4212]',
+              mark === 'no' && 'bg-gradient-to-br from-brand-600 to-brand-500 text-white',
+              mark === 'na' && 'bg-warm-100 text-warm-300 shadow-[inset_0_0_0_1px_var(--color-warm-200)]',
+            )}
+          >
+            {mark === 'ok' ? '✓' : mark === 'no' ? '✕' : '·'}
+          </span>
+        ))}
+      </div>
+      <p className="mt-3 text-[12px] text-warm-400">
+        3 đúng liên tiếp → nâng bậc · 2 sai liên tiếp → hạ bậc
+      </p>
     </figure>
   );
 }
@@ -167,102 +320,143 @@ export function TodayPlanVisual({ className }: { className?: string }) {
 // Đường tiến bộ
 // ---------------------------------------------------------------------------
 
-/** Điểm đo qua 5 chu kỳ 14 ngày. Có một nhịp chững ở giữa cho thật. */
-const PROGRESS = [32, 44, 51, 49, 63, 71];
-const CYCLE_LABELS = ['T0', 'T2', 'T4', 'T6', 'T8', 'T10'];
+/** Điểm đo qua các chu kỳ 14 ngày. Có một nhịp chững ở giữa cho thật. */
+const PROGRESS = [32, 44, 51, 68, 84];
+const CYCLE_LABELS = ['Đầu vào', 'Chu kỳ 1', 'Chu kỳ 2', 'Chu kỳ 3', 'Chu kỳ 4'];
 
 export function ProgressChartVisual({ className }: { className?: string }) {
-  const width = 320;
-  const height = 132;
-  const padX = 8;
-  const padY = 12;
+  const width = 460;
+  const height = 210;
+  const left = 60;
+  const right = 440;
+  const top = 20;
+  const bottom = 180;
 
-  const stepX = (width - padX * 2) / (PROGRESS.length - 1);
-  const scaleY = (value: number) => height - padY - (value / 100) * (height - padY * 2);
+  const stepX = (right - left) / (PROGRESS.length - 1);
+  const scaleY = (value: number) => bottom - (value / 100) * (bottom - top);
 
-  const points = PROGRESS.map((value, index) => ({
-    x: padX + index * stepX,
-    y: scaleY(value),
-    value,
-  }));
-
-  const line = points.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(' ');
-  const area = `${line} L${points[points.length - 1]!.x.toFixed(1)} ${height - padY} L${padX} ${height - padY} Z`;
+  const points = PROGRESS.map((value, index) => ({ x: left + index * stepX, y: scaleY(value) }));
+  const line = points.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x} ${p.y.toFixed(0)}`).join(' ');
+  const area = `${line} L${right} ${bottom} L${left} ${bottom} Z`;
   const last = points[points.length - 1]!;
 
   return (
-    <figure className={cx('overflow-hidden rounded-2xl bg-white', className)}>
-      <figcaption className="flex items-end justify-between gap-3 border-b border-ink-100 px-5 py-3.5">
-        <div>
-          <p className="text-[13px] font-semibold text-ink-900">Mastery trung bình</p>
-          <p className="text-[11px] text-ink-500">Đo bằng câu neo, 5 chu kỳ</p>
-        </div>
-        <p className="text-right">
-          <span className="text-xl font-bold text-navy-900 tabular-nums">71</span>
-          <span className="ml-1.5 text-[11px] font-bold text-accent-700">+39</span>
-        </p>
-      </figcaption>
+    <figure className={cx('p-6', className)}>
+      <CardHead
+        title="Mastery trung bình · 5 chu kỳ"
+        sub="Đo bằng câu neo cùng độ khó"
+        chip="+52 điểm"
+      />
 
-      <div className="px-4 pt-3 pb-2">
-        <svg
-          viewBox={`0 0 ${width} ${height}`}
-          className="h-auto w-full"
-          role="img"
-          aria-label="Mastery trung bình tăng từ 32 lên 71 qua 5 chu kỳ đánh giá, có một nhịp chững ở chu kỳ thứ ba."
-        >
-          <defs>
-            <linearGradient id="progress-fill" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="var(--color-navy-500)" stopOpacity="0.22" />
-              <stop offset="100%" stopColor="var(--color-navy-500)" stopOpacity="0" />
-            </linearGradient>
-          </defs>
+      <svg
+        viewBox={`0 0 ${width} ${height}`}
+        className="h-auto w-full"
+        role="img"
+        aria-label="Mastery trung bình tăng từ 32 lên 84 qua bốn chu kỳ đo, có một nhịp chững ở chu kỳ thứ hai."
+      >
+        <defs>
+          <linearGradient id="progress-line" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stopColor="var(--color-gold-400)" />
+            <stop offset="60%" stopColor="var(--color-brand-400)" />
+            <stop offset="100%" stopColor="var(--color-brand-600)" />
+          </linearGradient>
+          <linearGradient id="progress-fill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="var(--color-brand-400)" stopOpacity="0.2" />
+            <stop offset="100%" stopColor="var(--color-brand-400)" stopOpacity="0" />
+          </linearGradient>
+        </defs>
 
-          {[25, 50, 75].map((tick) => (
-            <line
-              key={tick}
-              x1={padX}
-              x2={width - padX}
-              y1={scaleY(tick)}
-              y2={scaleY(tick)}
-              stroke="var(--color-ink-100)"
-              strokeWidth="1"
-            />
-          ))}
-
-          <path d={area} fill="url(#progress-fill)" />
-          <path
-            d={line}
-            fill="none"
-            stroke="var(--color-navy-700)"
-            strokeWidth="2.4"
-            strokeLinecap="round"
-            strokeLinejoin="round"
+        {[0, 25, 50, 75, 100].map((tick) => (
+          <line
+            key={tick}
+            x1="34"
+            x2="450"
+            y1={scaleY(tick)}
+            y2={scaleY(tick)}
+            stroke="var(--color-warm-200)"
+            strokeWidth="1"
           />
+        ))}
+        {[
+          { v: 100, y: 24 },
+          { v: 50, y: 104 },
+          { v: 0, y: 184 },
+        ].map((tick) => (
+          <text
+            key={tick.v}
+            x="26"
+            y={tick.y}
+            textAnchor="end"
+            fontSize="10"
+            fill="var(--color-warm-300)"
+          >
+            {tick.v}
+          </text>
+        ))}
 
-          {points.map((point) => (
-            <circle
-              key={point.x}
-              cx={point.x}
-              cy={point.y}
-              r="3"
-              fill="#fff"
-              stroke="var(--color-navy-700)"
-              strokeWidth="2"
-            />
-          ))}
+        <path d={area} fill="url(#progress-fill)" />
+        <path
+          d={line}
+          fill="none"
+          stroke="url(#progress-line)"
+          strokeWidth="4"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeDasharray="420"
+          strokeDashoffset="0"
+          style={{ animation: 'line-draw 1.6s var(--ease-out-expo) both' }}
+        />
 
-          <circle cx={last.x} cy={last.y} r="5.5" fill="var(--color-gold-400)" />
-          <circle cx={last.x} cy={last.y} r="5.5" fill="none" stroke="#fff" strokeWidth="2" />
-        </svg>
+        {points.map((point, index) => (
+          <circle
+            key={point.x}
+            cx={point.x}
+            cy={point.y}
+            r={index === points.length - 1 ? 6.5 : 5.5}
+            fill="#fff"
+            stroke={
+              index === points.length - 1 ? 'var(--color-brand-600)' : 'var(--color-brand-400)'
+            }
+            strokeWidth="3.5"
+          />
+        ))}
 
-        <div className="mt-1 flex justify-between px-1">
-          {CYCLE_LABELS.map((label) => (
-            <span key={label} className="text-[10px] font-medium text-ink-400 tabular-nums">
-              {label}
-            </span>
-          ))}
-        </div>
-      </div>
+        {CYCLE_LABELS.map((label, index) => (
+          <text
+            key={label}
+            x={left + index * stepX}
+            y="202"
+            textAnchor="middle"
+            fontSize="10"
+            fontWeight="600"
+            fill="var(--color-warm-400)"
+          >
+            {label}
+          </text>
+        ))}
+
+        {/* Nhãn cho nhịp chững — thứ mà một biểu đồ quảng cáo sẽ giấu đi */}
+        <rect
+          x={points[2]!.x - 46}
+          y={points[2]!.y + 12}
+          width="92"
+          height="20"
+          rx="6"
+          fill="var(--color-warm-100)"
+        />
+        <text
+          x={points[2]!.x}
+          y={points[2]!.y + 26}
+          textAnchor="middle"
+          fontSize="10"
+          fontWeight="700"
+          fill="var(--color-brand-700)"
+        >
+          chững 1 chu kỳ
+        </text>
+
+        <circle cx={last.x} cy={last.y} r="11" fill="var(--color-brand-500)" opacity="0.16" />
+      </svg>
     </figure>
   );
 }
@@ -275,68 +469,20 @@ export function WhyThisItemCard({ className }: { className?: string }) {
   return (
     <div
       className={cx(
-        'w-[248px] rounded-xl bg-white p-4 shadow-[0_18px_38px_-14px_rgb(13_27_49/0.4),0_0_0_1px_rgb(13_27_49/0.06)]',
+        'w-[262px] rounded-2xl bg-white p-4 shadow-[0_26px_50px_-26px_rgb(150_80_50/0.5),inset_0_0_0_1px_var(--color-warm-200)]',
         className,
       )}
     >
-      <div className="flex items-center gap-2">
-        <span className="flex h-6 w-6 items-center justify-center rounded-full bg-gold-100 text-[11px] font-bold text-gold-700">
-          ?
-        </span>
-        <p className="text-[11.5px] font-bold tracking-wide text-ink-800 uppercase">
-          Vì sao bài này
-        </p>
-      </div>
-      <p className="mt-2.5 text-[12.5px] leading-relaxed text-ink-600">
-        Em sai <strong className="font-semibold text-ink-900">5/6 câu</strong> dạng chuyển động
-        ngược chiều ở bài đo gần nhất. Bốn câu hôm nay đi từ dễ lên vừa để dựng lại nền.
+      <p className="flex items-center gap-2 text-[10.5px] font-extrabold tracking-[0.12em] text-brand-700 uppercase">
+        <span aria-hidden>◆</span> Vì sao bài này
       </p>
-    </div>
-  );
-}
-
-// ---------------------------------------------------------------------------
-// Bảng so sánh mức khó — dùng ở mục tính năng
-// ---------------------------------------------------------------------------
-
-export function DifficultyDialVisual({ className }: { className?: string }) {
-  const steps = [
-    { label: 'Dễ', active: false },
-    { label: 'Vừa', active: false },
-    { label: 'Khó', active: true },
-    { label: 'Rất khó', active: false },
-  ];
-
-  return (
-    <div className={cx('rounded-2xl bg-white p-5', className)}>
-      <p className="text-[13px] font-semibold text-ink-900">Độ khó tự điều chỉnh</p>
-      <p className="mt-0.5 text-[11px] text-ink-500">Ba câu đúng liên tiếp → nâng một bậc</p>
-
-      <div className="mt-4 flex items-end gap-1.5">
-        {steps.map((step, index) => (
-          <div key={step.label} className="flex-1 text-center">
-            <div
-              className={cx(
-                'rounded-t-md transition-all',
-                step.active ? 'bg-navy-800' : 'bg-navy-100',
-              )}
-              style={{ height: `${22 + index * 14}px` }}
-            />
-            <p
-              className={cx(
-                'mt-1.5 text-[10.5px] font-medium',
-                step.active ? 'text-navy-900' : 'text-ink-400',
-              )}
-            >
-              {step.label}
-            </p>
-          </div>
-        ))}
-      </div>
-
-      <p className="mt-3 rounded-lg bg-navy-50 px-3 py-2 text-[11.5px] leading-snug text-navy-700">
-        Đang ở mức <strong className="font-semibold">Khó</strong> — em đã đúng 3 câu liền ở mức Vừa.
+      <p className="mt-2.5 text-[13px] leading-relaxed text-warm-700">
+        Con sai <strong className="font-bold text-warm-900">4/5 câu</strong> quy đồng mẫu trong 7
+        ngày qua, và thời gian làm mỗi câu gấp đôi trung bình.
       </p>
+      <span className="mt-3 inline-block rounded-lg bg-warm-100 px-2.5 py-1.5 text-[11px] font-bold text-brand-700">
+        Vá lỗ hổng · ưu tiên cao nhất
+      </span>
     </div>
   );
 }
