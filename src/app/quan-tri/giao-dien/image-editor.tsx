@@ -60,6 +60,20 @@ function formatSize(bytes: number): string {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
+/**
+ * Tỉ lệ của Ô XEM TRƯỚC, dùng chung cho MỌI thẻ.
+ *
+ * Trước đây mỗi ô xem trước lấy tỉ lệ riêng của chính nó. Nghe thì hợp lý,
+ * nhưng danh sách có cả 21/9 lẫn 3/4 — chênh nhau hơn ba lần chiều cao — nên
+ * lưới hai cột thành ra so le, nút bấm của thẻ này nằm ngang phần chữ của thẻ
+ * kia, và mắt không còn quét dọc được nữa.
+ *
+ * Nay ô xem trước luôn là 16/10, còn tỉ lệ thật của từng vị trí được vẽ bằng
+ * KHUNG NÉT ĐỨT nằm gọn bên trong. Vẫn nhìn ra ảnh sẽ bị cắt thế nào — thứ đắt
+ * giá nhất của màn hình này — mà mọi thẻ vẫn cao bằng nhau.
+ */
+const PREVIEW_RATIO = 16 / 10;
+
 /** Tỉ lệ khai báo dạng 'rộng / cao' thành một số, để so với ảnh thật. */
 function ratioOf(aspect: string): number | null {
   const [w, h] = aspect.split('/').map((part) => Number.parseFloat(part.trim()));
@@ -147,7 +161,13 @@ export function ImageEditor({ groups }: { groups: ImageGroupView[] }) {
             <p className="mt-1 text-sm text-ink-500">{group.description}</p>
           </div>
 
-          <div className="grid gap-5 px-5 py-5 sm:grid-cols-2">
+          {/*
+            `auto-rows-fr` ép MỌI hàng cao bằng hàng cao nhất, nên thẻ nào cũng
+            một khổ dù phần mô tả dài ngắn khác nhau. Cách còn lại là cắt bớt
+            chữ mô tả cho đều — nhưng đó đúng là phần dặn người dùng nên chụp ảnh
+            gì, cắt đi thì thẻ đẹp mà mất thứ cần đọc nhất.
+          */}
+          <div className="grid auto-rows-fr gap-5 px-5 py-5 sm:grid-cols-2">
             {group.slots.map((slot) => (
               <SlotCard
                 key={slot.key}
@@ -210,8 +230,22 @@ function SlotCard({
     }
   }
 
+  /*
+   * Khung tỉ lệ thật bám theo chiều nào của ô xem trước.
+   *
+   * Ô rộng hơn 16/10 thì chạm hai mép trái phải trước, nên bám chiều NGANG;
+   * ô cao hơn thì chạm trên dưới trước, nên bám chiều DỌC. Tính ở đây được vì
+   * cả hai tỉ lệ đều biết trước — để CSS tự xoay xở bằng max-width/max-height
+   * thì trình duyệt phá vỡ tỉ lệ chứ không thu nhỏ khung.
+   */
+  const ratio = ratioOf(slot.aspect) ?? PREVIEW_RATIO;
+  const fitClass = ratio >= PREVIEW_RATIO ? 'w-full' : 'h-full';
+
   return (
-    <div className="rounded-xl border border-ink-100 p-4">
+    // `h-full` + cột co giãn: các thẻ cùng hàng cao bằng nhau, và khối thao tác
+    // bị đẩy xuống đáy nên nút bấm của mọi thẻ nằm trên cùng một đường ngang dù
+    // phần mô tả bên trên dài ngắn khác nhau.
+    <div className="flex h-full flex-col rounded-xl border border-ink-100 p-4">
       <div className="mb-2 flex flex-wrap items-center gap-2">
         <p className="text-sm font-medium text-ink-700">{slot.label}</p>
         {slot.url ? <Badge tone="brand">Đã có ảnh</Badge> : null}
@@ -231,19 +265,29 @@ function SlotCard({
           if (!disabled && !busy) pick(event.dataTransfer.files);
         }}
         className={cx(
-          'relative overflow-hidden rounded-lg border border-dashed transition-colors',
-          dragging ? 'border-brand-500 bg-brand-50' : 'border-ink-200 bg-ink-50/60',
+          'relative flex w-full items-center justify-center overflow-hidden rounded-lg p-2 transition-colors',
+          dragging ? 'bg-brand-50 ring-1 ring-brand-500' : 'bg-ink-50/60',
         )}
-        style={{ aspectRatio: slot.aspect }}
+        style={{ aspectRatio: '16 / 10' }}
       >
-        {slot.url ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={slot.url} alt="" className="h-full w-full object-cover" />
-        ) : (
-          <span className="absolute inset-0 flex items-center justify-center px-4 text-center text-xs text-ink-400">
-            Kéo ảnh vào đây hoặc bấm nút bên dưới
-          </span>
-        )}
+        {/* Khung nét đứt = đúng tỉ lệ ảnh sẽ nằm vào trên trang thật. */}
+        <div
+          className={cx(
+            'relative overflow-hidden rounded-md border border-dashed',
+            fitClass,
+            dragging ? 'border-brand-500' : 'border-ink-300',
+          )}
+          style={{ aspectRatio: slot.aspect }}
+        >
+          {slot.url ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={slot.url} alt="" className="h-full w-full object-cover" />
+          ) : (
+            <span className="absolute inset-0 flex items-center justify-center px-3 text-center text-[11px] leading-snug text-ink-400">
+              Kéo ảnh vào đây
+            </span>
+          )}
+        </div>
 
         {busy ? (
           <span className="absolute inset-0 flex items-center justify-center bg-white/80 text-sm font-medium text-ink-700">
@@ -269,7 +313,7 @@ function SlotCard({
       {slot.url ? null : <p className="mt-1.5 text-xs text-ink-500">{slot.fallbackNote}</p>}
 
       {/* --- Chữ thay ảnh: chỉ viết đúng được khi đang nhìn thấy ảnh --- */}
-      <div className="mt-3">
+      <div className="mt-auto pt-3">
         <label
           htmlFor={`alt-${slot.key}`}
           className="mb-1 flex flex-wrap items-center gap-2 text-xs font-medium text-ink-600"
