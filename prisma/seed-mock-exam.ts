@@ -19,7 +19,23 @@ import { PrismaClient, type MockGradingMode, type MockPart, type Prisma } from '
 import { z } from 'zod';
 
 /** Các file đề sẽ được nạp, theo thứ tự hiển thị. */
-const EXAM_FILES = ['exam-asmopss-12.json'] as const;
+const EXAM_FILES = [
+  'exam-asmopss-12.json',
+  'exam-asmopss-2019-math-primary.json',
+  'exam-asmopss-2019-math-secondary.json',
+  'exam-asmopss-2019-science-primary.json',
+  'exam-asmopss-2019-science-secondary.json',
+  'exam-asmopss-2022-math-primary.json',
+  'exam-asmopss-2022-math-secondary.json',
+  'exam-asmopss-2022-science-primary.json',
+  'exam-asmopss-2022-science-secondary.json',
+  'exam-asmopss-2020-math-primary.json',
+  'exam-asmopss-2020-math-secondary.json',
+  'exam-asmopss-2020-science-primary.json',
+  'exam-asmopss-2020-science-secondary.json',
+  'exam-final-asmopss-x-science-primary.json',
+  'exam-final-asmopss-x-science-secondary.json',
+] as const;
 
 const PART: Record<string, MockPart> = {
   mcq: 'MCQ',

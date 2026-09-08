@@ -1,0 +1,387 @@
+{
+  "exam": {
+    "slug": "asmopss-2020-math-primary",
+    "title": "Road to ASMOPSS X (2020) — Mathematics Primary",
+    "subject": "math",
+    "grade_level": "primary",
+    "duration_min": 60,
+    "total_points": 100,
+    "instructions": "20 câu trắc nghiệm, 5 điểm mỗi câu (tổng 100 điểm). Mỗi câu chọn đúng một phương án (A–E). Không dùng máy tính. Hình vẽ không theo tỉ lệ, chỉ để minh họa. LƯU Ý: đề gốc cho 4 điểm mỗi câu đúng, trừ 1 điểm mỗi câu sai và tính từ mốc 20 điểm. Ở đây đề được quy về thang 100 điểm, câu sai không bị trừ điểm."
+  },
+  "_notes": {
+    "source": "Road to ASMOPSS X Mathematics Primary.docx + Answer Key Road to ASMOPSS X.xlsx (cột Primary / Math). Thư mục gốc: 'Road to ASMOPSS X English Problems'.",
+    "mapping": "Đề gốc không bỏ câu nào: 20 dòng trong bảng đề = 20 câu, số thứ tự trùng khít bản gốc nên đáp án map 1:1 với cột Math/Primary của file đáp án.",
+    "reconstructed": [
+      "Công thức trong Word là đối tượng OMML, bóc thẳng ra bị làm phẳng. Đã dựng lại bằng LaTeX và giải lại từng câu để đối chiếu với đáp án chính thức.",
+      "Câu 11, 12, 16: hình là OLE .emf, đã convert sang PNG bằng GDI+ ở tỷ lệ 3×. Câu 12 gốc có hai hình rời (nhìn từ trước / nhìn từ bên); đã ghép thành một ảnh có nhãn 'Front view' và 'Side view' vì mỗi câu chỉ gắn được một ảnh."
+    ],
+    "flags": [
+      "Câu 16: đáp án chính thức là C (1934), nhưng giải lại thì ra 1932 tức phương án A. Hình tam giác số có hàng k gồm 2k−1 số, kết thúc ở k²; 2020 nằm hàng 45 (1937–2025) ở vị trí 84, số ngay phía trên là vị trí 83 của hàng 44 (1850–1936) = 1932. Vẫn giữ đáp án chính thức C, cần đối chiếu bản in gốc trước khi dùng chấm điểm thật."
+    ]
+  },
+  "questions": [
+    {
+      "number": 1,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 5,
+      "prompt_md": "Right angled triangle $PQR$ has perimeter 24 cm and area $24$ cm². Find the length of its longest side.",
+      "options": [
+        "5",
+        "7",
+        "9",
+        "10",
+        "None of the above"
+      ],
+      "answer_key": {
+        "value": "D"
+      },
+      "solution_md": "Let the legs be $a,b$ and the hypotenuse $c$. Then $a+b+c=24$ and $\\frac{ab}{2}=24$, so $ab=48$.\n\n$$(a+b)^2 = a^2+b^2+2ab = c^2+96,\\qquad a+b = 24-c.$$\n\nSo $(24-c)^2 = c^2+96 \\Rightarrow 576-48c = 96 \\Rightarrow c = 10$.\n\nThe longest side is the hypotenuse: **10 cm**."
+    },
+    {
+      "number": 2,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 5,
+      "prompt_md": "There are 12 red balls, 8 blue balls, and 6 yellow balls in a bag. What is the minimum number of balls Fibo must take out from the bag to ensure he gets at least 3 balls of the same color?\n\nNote that he has only one chance to take the balls and he does not allow to see the balls that he takes.",
+      "options": [
+        "6",
+        "7",
+        "8",
+        "9",
+        "None of the above"
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "Worst case: Fibo takes 2 balls of every colour — $2+2+2 = 6$ balls and still no colour has three. The very next ball must be the third of some colour, so **7** balls are enough, and 6 are not."
+    },
+    {
+      "number": 3,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 5,
+      "prompt_md": "At a party attended by 2020 people, some handshakes took place. Each person shouted out the number of hands they shook. The host counted all these numbers. What is the possible number he can get?",
+      "options": [
+        "2202019",
+        "2192019",
+        "2039187",
+        "4078374",
+        "4078375"
+      ],
+      "answer_key": {
+        "value": "D"
+      },
+      "solution_md": "Every handshake is counted by both people, so the total the host adds up equals $2 \\times (\\text{number of handshakes})$ — it must be **even**.\n\nOf the five choices only $4078374$ is even. It is also possible: the largest total is $2020 \\times 2019 = 4078380$, and $4078374$ is below that."
+    },
+    {
+      "number": 4,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 5,
+      "prompt_md": "Points $P,Q,R,S$ are located on a straight line in a certain order (not necessarily in that order). It is known that $PQ=15$ units, $QR=12$ units, $RS=16$ units, $SP=13$ units. What is the pair of points which has shortest distance?",
+      "options": [
+        "$QR$",
+        "$QS$",
+        "$PR$",
+        "$PS$",
+        "$PQ$"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "Put $P$ at $0$ on the line. From $SP=13$ and $PQ=15$, take $S=13$ and $Q=-15$. Then $R$ must satisfy $|R-Q|=12$ and $|R-S|=16$, which gives $R=-3$.\n\nSo the four points sit at $Q(-15),\\ R(-3),\\ P(0),\\ S(13)$ and the distances are $PR=3$, $QR=12$, $SP=13$, $PQ=15$, $QS=28$.\n\nThe shortest is $PR = 3$."
+    },
+    {
+      "number": 5,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 5,
+      "prompt_md": "A family has three children. Their ages in 2020 were in the ratio of $3:4:5$. The sum of the years in which they were born is 6012\n\nDetermine the sum of the children’s age in the year 2016",
+      "options": [
+        "24",
+        "30",
+        "36",
+        "48",
+        "None of the above"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "If $S$ is the sum of the three ages in 2020, the sum of the birth years is $3 \\times 2020 - S = 6012$, so $S = 6060-6012 = 48$.\n\n(Check: $48$ split as $3:4:5$ gives ages $12, 16, 20$.)\n\nIn 2016 every child is 4 years younger, so the sum is $48 - 3\\times 4 = 36$."
+    },
+    {
+      "number": 6,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 5,
+      "prompt_md": "How many 4 digit numbers are there in which the sum of the first two digits is the same as the sum of the last two digits?",
+      "options": [
+        "500",
+        "575",
+        "600",
+        "615",
+        "None of the above"
+      ],
+      "answer_key": {
+        "value": "D"
+      },
+      "solution_md": "Let $N(s)$ be the number of digit pairs $(c,d)$ with $c+d=s$ and $c,d \\in \\{0,\\dots,9\\}$: $N(s)=s+1$ for $s\\le 9$ and $N(s)=19-s$ for $s\\ge 9$. The first pair may not start with 0, so it has $N(s)-1$ choices when $s\\le 9$ and $N(s)$ choices when $s\\ge 10$.\n\n$$\\sum_{s=1}^{9}(N(s)-1)N(s) + \\sum_{s=10}^{18} N(s)^2 = 330 + 285 = 615.$$"
+    },
+    {
+      "number": 7,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 5,
+      "prompt_md": "There are 5 kids play some games. At the beginning, every kid has some number of candies. After every game, the loser doubles every body’s candies. They played 5 games and everybody lost once. After 5 games everybody has 128 candies. How many candies did all 5 kids have before the games?",
+      "options": [
+        "572",
+        "616",
+        "640",
+        "724",
+        "None of the above"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "When the loser doubles everybody else's candies he pays for it out of his own pile, so the **total number of candies never changes**.\n\nAfter the games the total is $5 \\times 128 = 640$, so it was 640 before them as well."
+    },
+    {
+      "number": 8,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 5,
+      "prompt_md": "Two teams, each consist of 5 runners, compete in a running competition. The runner who finishes of the nth place gets $n$ points. The team with the least total number of points won. Every runner finished on a different place. How many different total numbers of points could the winner team have?",
+      "options": [
+        "10",
+        "11",
+        "12",
+        "13",
+        "None of the above"
+      ],
+      "answer_key": {
+        "value": "D"
+      },
+      "solution_md": "The ten places give $1+2+\\dots+10 = 55$ points in total. If the winning team scores $T$, the other scores $55-T$, and winning needs $T < 55-T$, i.e. $T \\le 27$.\n\nThe smallest possible total is $1+2+3+4+5 = 15$, and every value from 15 to 27 can be reached.\n\nThat is $27-15+1 = 13$ different totals."
+    },
+    {
+      "number": 9,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 5,
+      "prompt_md": "An 8 digit number $202020xy$ is divisible by 12. What is the smallest possible 2 digit number $xy$ among the following choices?",
+      "options": [
+        "10",
+        "12",
+        "16",
+        "20",
+        "30"
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "A number is divisible by 12 exactly when it is divisible by both 4 and 3.\n\n- Divisible by 4: the last two digits $xy$ must be a multiple of 4 — this rules out 10, 30.\n- Divisible by 3: the digit sum $2+0+2+0+2+0+x+y = 6+x+y$ must be a multiple of 3, so $x+y$ must be. For 16 the sum is 7 and for 20 it is 2 — both fail.\n\n$xy=12$ passes both tests ($12 = 4\\times 3$, $1+2=3$), so the answer is **12**."
+    },
+    {
+      "number": 10,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 5,
+      "prompt_md": "Consider the following sum $125678+256781+567812+678125+781256+812567$.\n\nIt is known that the sum is the product of $n$ different prime numbers. What is the value of $n$?",
+      "options": [
+        "2",
+        "3",
+        "4",
+        "5",
+        "6"
+      ],
+      "answer_key": {
+        "value": "E"
+      },
+      "solution_md": "The six numbers are cyclic shifts of the same six digits $1,2,5,6,7,8$, so each digit appears exactly once in each place value:\n\n$$(1+2+5+6+7+8)\\times 111111 = 29 \\times 111111 = 3222219.$$\n\nSince $111111 = 3\\times 7\\times 11\\times 13\\times 37$, the sum is $3\\times 7\\times 11\\times 13\\times 29\\times 37$ — **6** different primes."
+    },
+    {
+      "number": 11,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 5,
+      "prompt_md": "In the following figure, triangles $PQR$ and triangle $RST$ are identical equilateral triangle.\n\nThe measure of angle $\\angle PRS=70^{\\circ}$. Find the measure of angle $\\angle PSQ$",
+      "image_url": "/exam-images/asmopss-2020/math-primary/q11.png",
+      "options": [
+        "$25^{\\circ}$",
+        "$30^{\\circ}$",
+        "$35^{\\circ}$",
+        "$40^{\\circ}$",
+        "$45^{\\circ}$"
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "Write $s$ for the common side length, so $RP = RQ = RS = RT = s$.\n\nIn triangle $PRS$: $RP = RS = s$ and $\\angle PRS = 70^{\\circ}$, so $\\angle RSP = \\frac{180^{\\circ}-70^{\\circ}}{2} = 55^{\\circ}$.\n\nIn triangle $QRS$: $RQ = RS = s$ and $\\angle QRS = \\angle QRP + \\angle PRS = 60^{\\circ}+70^{\\circ} = 130^{\\circ}$, so $\\angle RSQ = \\frac{180^{\\circ}-130^{\\circ}}{2} = 25^{\\circ}$.\n\n$$\\angle PSQ = \\angle RSP - \\angle RSQ = 55^{\\circ}-25^{\\circ} = 30^{\\circ}.$$"
+    },
+    {
+      "number": 12,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 5,
+      "prompt_md": "Fibo constructs a monument from equally sized cubes on a table. Looking at the construction from the front and from the side, you see the two figures below.\n\nThe least and the most number of cubes that Fibo used to build this structure is….",
+      "image_url": "/exam-images/asmopss-2020/math-primary/q12.png",
+      "options": [
+        "The least 9, the most 35",
+        "The least 10, the most 20",
+        "The least 13, the most 22",
+        "The least 9, the most 40",
+        "The least 7, the most 20"
+      ],
+      "answer_key": {
+        "value": "A"
+      },
+      "solution_md": "Set the monument on a $5\\times 5$ grid of columns. The front view fixes the tallest column in each of the 5 left-right positions: $1,2,3,2,1$. The side view fixes the tallest column in each of the 5 front-back positions: $2,1,3,2,1$.\n\n**Most.** A column at position $(x,y)$ may be as tall as $\\mathrm{min}(f_x, s_y)$, and taking every column that tall still matches both views. Adding $\\mathrm{min}(f_x,s_y)$ over all 25 cells gives $5+8+9+8+5 = 35$ cubes.\n\n**Least.** Every one of the five front columns must actually be built, which already costs $1+2+3+2+1 = 9$ cubes. Nine is enough: put the stacks at $(1,2),(2,1),(3,3),(4,4),(5,5)$ with heights $1,2,3,2,1$ — the side view then reads $2,1,3,2,1$, exactly as required.\n\nSo the least is 9 and the most is 35."
+    },
+    {
+      "number": 13,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 5,
+      "prompt_md": "Consider the following sequence\n\n$2020, 8, 64, 52, …$\n\nIn this sequence, the next element is formed by adding the squares of the digits of the last number. What is the 100th term of this sequence?",
+      "options": [
+        "8",
+        "16",
+        "37",
+        "89",
+        "None of the above"
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "Each term is the sum of the squares of the digits of the previous one:\n\n$2020, 8, 64, 52, 29, 85, 89, 145, 42, 20, 4, 16, 37, 58, 89, \\dots$\n\nFrom the 7th term the sequence repeats with period 8: $89, 145, 42, 20, 4, 16, 37, 58$.\n\n$100 - 7 = 93$ and $93 \\equiv 5 (\\mathrm{mod}\\ 8)$, so the 100th term is the 6th member of the cycle counting from $89$, which is $16$."
+    },
+    {
+      "number": 14,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 5,
+      "prompt_md": "How many 3 digit numbers $xyz$ such that $xy+yz+zx=xyz$?",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "answer_key": {
+        "value": "A"
+      },
+      "solution_md": "Here $xy, yz, zx$ are two-digit numbers and $xyz$ is the three-digit number, so\n\n$$(10x+y)+(10y+z)+(10z+x) = 100x+10y+z,$$\n\nthat is $11(x+y+z) = 100x+10y+z$, or $89x = y+10z$.\n\nSince $y+10z \\le 9+90 = 99$, we need $x=1$ and $y+10z = 89$, giving $z=8,\\ y=9$.\n\nThe only number is $198$ (check: $19+98+81 = 198$), so there is exactly **1**."
+    },
+    {
+      "number": 15,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 5,
+      "prompt_md": "How many 4 digit numbers of the form $xyxz$ that are divisible by 11, 12, and 13?",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "answer_key": {
+        "value": "D"
+      },
+      "solution_md": "A number divisible by 11, 12 and 13 is a multiple of $\\mathrm{lcm}(11,12,13) = 1716$.\n\nThe four-digit multiples are $1716, 3432, 5148, 6864, 8580$. The form $xyxz$ asks for the 1st and 3rd digits to be equal:\n\n- $1716$: $1,7,1,6$ ✓\n- $3432$: $3,4,3,2$ ✓\n- $5148$: $5,1,4,8$ ✗\n- $6864$: $6,8,6,4$ ✓\n- $8580$: $8,5,8,0$ ✓\n\nSo there are **4** of them."
+    },
+    {
+      "number": 16,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 5,
+      "prompt_md": "Consider the following number configuration\n\nWhat number is directly above 2020?",
+      "image_url": "/exam-images/asmopss-2020/math-primary/q16.png",
+      "options": [
+        "1932",
+        "1933",
+        "1934",
+        "1846",
+        "None of the above"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "Row $k$ holds $2k-1$ numbers and ends at $k^2$, so row $k$ runs from $(k-1)^2+1$ to $k^2$.\n\nRow 45 runs from $1937$ to $2025$, and $2020$ sits at position $2020-1937+1 = 84$.\n\nEach row sticks out one place further on each side than the row above, so the number directly above position $p$ of row $k$ is at position $p-1$ of row $k-1$. Row 44 starts at $1850$, so position 83 of that row is $1850+83-1 = 1932$.\n\n**Lưu ý:** đáp án chính thức của ban tổ chức là **C (1934)**, lệch với kết quả tính ở trên ($1932$, phương án A). Cần đối chiếu bản in gốc."
+    },
+    {
+      "number": 17,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 5,
+      "prompt_md": "Find the value of: $123455×67891-123456×67890$",
+      "options": [
+        "55465",
+        "55565",
+        "55225",
+        "51355",
+        "50565"
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "Write $a = 123456$ and $b = 67890$. Then the expression is\n\n$$(a-1)(b+1) - ab = ab + a - b - 1 - ab = a-b-1.$$\n\n$$123456 - 67890 - 1 = 55565.$$"
+    },
+    {
+      "number": 18,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 5,
+      "prompt_md": "Kinan, Leiti, Metta, and Naro are sitting in a row of chairs labelled 1, 2, 3, and 4. Kinan is sitting between two of her friends. Kinan is not sitting beside Leiti Metta’s seat number plus Leiti’s seat number is equal to Kinan’s seat number and Naro seat’s number.\n\nHow many different seat arrangements are possible according those rules?",
+      "options": [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "The four seat numbers add up to $1+2+3+4 = 10$. The rule $M+L = K+N$ therefore forces both sides to equal 5.\n\nKinan sits between two friends, so her seat is 2 or 3, and $K+N=5$ gives $(K,N) = (2,3)$ or $(3,2)$. In both cases $\\{M,L\\} = \\{1,4\\}$.\n\n- $K=2$: seat 2 is next to seats 1 and 3, so Leiti cannot take seat 1 → Leiti 4, Metta 1.\n- $K=3$: seat 3 is next to seats 2 and 4, so Leiti cannot take seat 4 → Leiti 1, Metta 4.\n\nBoth work, so there are **2** arrangements."
+    },
+    {
+      "number": 19,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 5,
+      "prompt_md": "A book has its pages numbered in the usual way. When Noether open the front cover, the page facing her is page 1. She open the book at random and notice that the product of the two page numbers seen is 3906. What is the sum of the digits of the two page number that she can see?",
+      "options": [
+        "13",
+        "14",
+        "15",
+        "16",
+        "17"
+      ],
+      "answer_key": {
+        "value": "E"
+      },
+      "solution_md": "The two facing pages are consecutive numbers $n$ and $n+1$ with $n(n+1) = 3906$. Since $62 \\times 63 = 3906$, the pages are 62 and 63.\n\n$6+2+6+3 = 17$."
+    },
+    {
+      "number": 20,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 5,
+      "prompt_md": "Yosu’s calculator is broken. It can not display the digit 5. If he type in the number 2567, only the number 267 is displayed on screen. He typed a six digit number into his calculator, but now only 2020 appeared on the display. How many different numbers could Yosu have typed?",
+      "options": [
+        "13",
+        "14",
+        "15",
+        "16",
+        "17"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "The number he typed has six digits; the screen drops every 5 and leaves $2,0,2,0$, so exactly two of the six digits are 5 and the other four spell out $2,0,2,0$ in order.\n\nSo the answer is just the number of ways to choose which two of the six positions hold the fives: $C(6,2) = 15$. (No choice makes the number start with 0, since the first non-five digit is 2.)"
+    }
+  ]
+}

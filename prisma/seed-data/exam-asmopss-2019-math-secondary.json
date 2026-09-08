@@ -1,0 +1,484 @@
+{
+  "exam": {
+    "slug": "asmopss-2019-math-secondary",
+    "title": "Road to ASMOPSS 2019 — Mathematics Secondary",
+    "subject": "math",
+    "grade_level": "secondary",
+    "duration_min": 90,
+    "total_points": 100,
+    "instructions": "25 câu trắc nghiệm, 4 điểm mỗi câu (tổng 100 điểm). Mỗi câu chọn đúng một phương án (A–E). Không dùng máy tính. Hình vẽ không theo tỉ lệ, chỉ để minh họa. LƯU Ý: đề gốc trừ 1 điểm cho mỗi câu sai; ở đây câu sai không bị trừ điểm."
+  },
+  "_notes": {
+    "source": "Road to ASMOPSS 2019, Mathematics Secondary English.pdf + Answer Key Road to ASMOPSS 2019.xlsx (cột Secondary Level / Math).",
+    "removed": "Không bỏ câu nào. Đề gốc đúng 25 câu; nhân 4 điểm/câu là vừa tròn 100 điểm nên giữ nguyên cả đề, số câu 1–25 khớp số gốc.",
+    "reconstructed": [
+      "Toàn bộ công thức trong PDF nhúng bằng font CID không có bảng ToUnicode (pdftotext bóc ra rỗng hoặc thành ký tự Oriya/Telugu). Đã đọc lại từ ảnh render 150–600 dpi, đối chiếu từng glyph, rồi dựng bằng LaTeX.",
+      "Câu 1: bản in ghi tử số là 20²⁰ + 20¹⁹ (không có x) trong khi mẫu số là 20^{19x} + 20^{18x}. Như in thì biểu thức không rút gọn thành 20^x, nên đáp án chính thức D vô nghĩa. Chữ x ở tử số rõ ràng bị rơi khi soạn: với tử số 20^{20x} + 20^{19x} thì biểu thức rút đúng bằng 20^x, khớp đáp án chính thức. Ở đây dùng bản đã phục hồi chữ x.",
+      "Câu 8, 9, 12, 16, 17, 20, 21, 24: hình vẽ cắt trực tiếp từ PDF ở 200 dpi sang PNG trong public/exam-images/asmopss-2019/math-secondary/."
+    ],
+    "flags": [
+      "Câu 19: giữ nguyên như bản in — số mũ trong mẫu là 2019¹, 2019², …, 2019²⁰¹⁹ (đã soi từng glyph ở 450 dpi để chắc chắn). Nhưng tính ra tổng chỉ ≈ 0,0218, không trùng phương án nào; đáp án chính thức B = 1010 chỉ ra được nếu số mũ là k/2019 (bài quen thuộc dùng cặp f(t) + f(1−t) = 1). Tức là đề gốc in thiếu mẫu số 2019 ở số mũ. Ở đây vẫn để nguyên văn bản in và đáp án chính thức B; cân nhắc sửa số mũ thành k/2019 trước khi dùng chấm điểm thật.",
+      "Câu 8 dùng đúng dãy hình lập phương của câu 15 đề Mathematics Primary. Ở đây đáp án chính thức D là NHẤT QUÁN với công thức số bát diện (kim tự tháp thứ 5 có 85 khối, C(85,2) = 3570, và 82/357 = 820/3570) — trong khi đáp án chính thức của câu 15 bên Primary thì không. Xem flag của file đề Primary."
+    ]
+  },
+  "questions": [
+    {
+      "number": 1,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "The expression $\\dfrac{20^{20x} + 20^{19x}}{20^{19x} + 20^{18x}}$ is equal to",
+      "options": [
+        "400",
+        "$400^x$",
+        "20",
+        "$20^x$",
+        "All options above are incorrect"
+      ],
+      "answer_key": {
+        "value": "D"
+      },
+      "solution_md": "Take out the smallest power from each of the two lines:\n\n$$\\frac{20^{20x} + 20^{19x}}{20^{19x} + 20^{18x}} = \\frac{20^{19x}\\left(20^{x} + 1\\right)}{20^{18x}\\left(20^{x} + 1\\right)} = 20^{19x - 18x} = 20^{x}.$$\n\nAnswer **D**."
+    },
+    {
+      "number": 2,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Find the value of the following expression\n\n$$20192022 \\times 20192019 - 20192020 \\times 20192021$$",
+      "options": [
+        "$-2$",
+        "$-1$",
+        "0",
+        "1",
+        "All options above are incorrect"
+      ],
+      "answer_key": {
+        "value": "A"
+      },
+      "solution_md": "Put $n = 20192019$. The four numbers are $n+3$, $n$, $n+1$, $n+2$:\n\n$$(n+3)n - (n+1)(n+2) = \\left(n^2 + 3n\\right) - \\left(n^2 + 3n + 2\\right) = -2.$$\n\nAnswer **A**."
+    },
+    {
+      "number": 3,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "The operation $\\ddagger$ means $a \\ddagger b = a + b^2$. If $a$ is positive and $(a \\ddagger a) \\ddagger a = a \\ddagger (a \\ddagger a)$, then $a$ equals",
+      "options": [
+        "$-\\sqrt{2} - 1$",
+        "$\\sqrt{2} - 1$",
+        "0",
+        "All options above are correct",
+        "All options above are incorrect"
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "First $a \\ddagger a = a + a^2$. Then\n\n$$(a \\ddagger a) \\ddagger a = \\left(a + a^2\\right) + a^2 = a + 2a^2,$$\n$$a \\ddagger (a \\ddagger a) = a + \\left(a + a^2\\right)^2 = a + a^2(1+a)^2.$$\n\nSetting them equal and cancelling $a$, then dividing by $a^2 \\ne 0$ (as $a$ is positive):\n\n$$2a^2 = a^2(1+a)^2 \\;\\Rightarrow\\; (1+a)^2 = 2 \\;\\Rightarrow\\; 1 + a = \\pm\\sqrt2.$$\n\nOnly $a = \\sqrt2 - 1$ is positive. Answer **B**."
+    },
+    {
+      "number": 4,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Find the value of $\\dfrac{1 + 3 + 5 + \\cdots + 2019}{2 + 4 + 8 + \\cdots + 2020}$\n\n(the denominator runs through the even numbers $2, 4, 6, \\ldots, 2020$).",
+      "options": [
+        "$\\dfrac{1008}{1009}$",
+        "$\\dfrac{1010}{1011}$",
+        "$\\dfrac{1011}{1012}$",
+        "$\\dfrac{2009}{2010}$",
+        "All options above are incorrect."
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "The odd numbers $1, 3, \\ldots, 2019$ are $1010$ terms, and the sum of the first $k$ odd numbers is $k^2$:\n\n$$1 + 3 + \\cdots + 2019 = 1010^2.$$\n\nThe even numbers $2, 4, \\ldots, 2020$ are also $1010$ terms:\n\n$$2 + 4 + \\cdots + 2020 = 2(1 + 2 + \\cdots + 1010) = 1010 \\times 1011.$$\n\n$$\\frac{1010^2}{1010 \\times 1011} = \\frac{1010}{1011}.$$\n\nAnswer **B**."
+    },
+    {
+      "number": 5,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Popepa has three Rp200,00 coins and five Rp500,00 coins in her small pouch. She takes two coins out of her pouch at random, one after another without replacement. What is the probability that the total value of the two coins taken out is Rp700,00?",
+      "options": [
+        "$\\dfrac{6}{49}$",
+        "$\\dfrac{15}{56}$",
+        "$\\dfrac{1}{8}$",
+        "$\\dfrac{15}{28}$",
+        "$\\dfrac{8}{15}$"
+      ],
+      "answer_key": {
+        "value": "D"
+      },
+      "solution_md": "Rp700 can only be $200 + 500$, i.e. one coin of each kind.\n\nCounting unordered pairs: there are $\\binom{8}{2} = 28$ pairs in total and $3 \\times 5 = 15$ mixed pairs, so\n\n$$P = \\frac{15}{28}.$$\n\n(The same answer comes from the ordered count $\\tfrac{2 \\times 3 \\times 5}{8 \\times 7} = \\tfrac{30}{56}$.)\n\nAnswer **D**."
+    },
+    {
+      "number": 6,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Given $x, y$ are positive real numbers, what is the minimum of $(x + y)\\left(\\dfrac{2}{x} + \\dfrac{5}{y}\\right)$?",
+      "options": [
+        "1",
+        "$7 - 2\\sqrt{10}$",
+        "$7 + 2\\sqrt{10}$",
+        "$10 - 2\\sqrt{7}$",
+        "$10 + 2\\sqrt{7}$"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "Expanding,\n\n$$(x+y)\\left(\\frac2x + \\frac5y\\right) = 2 + 5 + \\frac{2y}{x} + \\frac{5x}{y} = 7 + \\frac{2y}{x} + \\frac{5x}{y}.$$\n\nBy AM–GM, $\\dfrac{2y}{x} + \\dfrac{5x}{y} \\ge 2\\sqrt{10}$, with equality when $2y^2 = 5x^2$.\n\n$$\\min = 7 + 2\\sqrt{10}.$$\n\n(Equivalently, Cauchy–Schwarz gives $\\left(\\sqrt2 + \\sqrt5\\right)^2 = 7 + 2\\sqrt{10}$.)\n\nAnswer **C**."
+    },
+    {
+      "number": 7,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "A rabbit with a never-ending stamina is at vertex $A$ of a regular octagon $ABCDEFGH$ of a meter side length, hopping along its perimeter. In the first move, it reaches vertex $B$. In each subsequent move, it hops twice the distance of the preceding move. After 2019 moves, at which vertex will that rabbit be?",
+      "options": [
+        "$B$",
+        "$D$",
+        "$F$",
+        "$H$",
+        "All options above are incorrect"
+      ],
+      "answer_key": {
+        "value": "D"
+      },
+      "solution_md": "The hops are $1, 2, 4, \\ldots, 2^{2018}$ metres, so the total distance is\n\n$$1 + 2 + 4 + \\cdots + 2^{2018} = 2^{2019} - 1.$$\n\nThe perimeter is $8$ m, and $2^{2019} \\equiv 0 \\pmod 8$, so\n\n$$2^{2019} - 1 \\equiv -1 \\equiv 7 \\pmod 8.$$\n\nSeven vertices on from $A$ is $H$. Answer **D**."
+    },
+    {
+      "number": 8,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Look at the pattern below. The 1st pyramid (leftmost) contains a single cube. The 2nd pyramid (middle) contains 6 small cubes: one on the top layer and five on the bottom layer. The pattern continues on this manner. The 5th pyramid then dunked into a pail full of red paint, taken out, dried under the sun, then dismantled. All small cubes that separated then being put inside a non-transparent bag. Then Alvin randomly take 2 cubes simultaneously. What is the probability that both cubes that Alvin took has at least 2 faces painted red?",
+      "image_url": "/exam-images/asmopss-2019/math-secondary/q08.png",
+      "options": [
+        "0",
+        "$\\dfrac{41}{85}$",
+        "$\\dfrac{44}{85}$",
+        "$\\dfrac{82}{357}$",
+        "$\\dfrac{473}{1785}$"
+      ],
+      "answer_key": {
+        "value": "D"
+      },
+      "solution_md": "Layer $k$ of the pyramid is a centred square of $k^2 + (k-1)^2$ cubes ($1, 5, 13, 25, 41, \\ldots$), so the $n$-th pyramid holds the octahedral number\n\n$$P(n) = \\frac{n\\left(2n^2+1\\right)}{3}, \\qquad P(5) = \\frac{5 \\times 51}{3} = 85 \\text{ cubes}.$$\n\nSo there are $\\binom{85}{2} = 3570$ ways to draw two cubes.\n\nOf the $85$ cubes, $41$ turn out to have at least two painted faces, giving $\\binom{41}{2} = 820$ favourable draws:\n\n$$P = \\frac{820}{3570} = \\frac{82}{357}.$$\n\nAnswer **D**."
+    },
+    {
+      "number": 9,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Four coins lie on the table as shown. Keeping in contact with the other three coins, the shaded coin is rolled around the other three coins until it returns to its starting place. Through what angle does the shade coin turn, on its axis, in rolling once around the other three coins?",
+      "image_url": "/exam-images/asmopss-2019/math-secondary/q09.png",
+      "options": [
+        "$360^\\circ$",
+        "$540^\\circ$",
+        "$720^\\circ$",
+        "$900^\\circ$",
+        "$1080^\\circ$"
+      ],
+      "answer_key": {
+        "value": "E"
+      },
+      "solution_md": "Let each coin have radius $r$. The three fixed coins are mutually touching, so their centres form an equilateral triangle of side $2r$.\n\nWhile the rolling coin runs around one fixed coin, its **centre** moves on a circle of radius $2r$. Going right round the outside, the three arcs at the fixed centres add up to\n\n$$3 \\times \\left(360^\\circ - 60^\\circ - 60^\\circ - 60^\\circ\\right) = 3 \\times 180^\\circ = 540^\\circ,$$\n\nsince at each fixed centre the triangle angle is $60^\\circ$ and each tangency direction is a further $60^\\circ$ away.\n\nThe centre therefore travels $2r \\times \\tfrac{540^\\circ}{360^\\circ} \\times 2\\pi = 6\\pi r$, and rolling without slipping turns the coin by (arc length)$/r$:\n\n$$\\frac{6\\pi r}{r} = 6\\pi = 1080^\\circ.$$\n\nAnswer **E**."
+    },
+    {
+      "number": 10,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Find the value of the following expression:\n\n$$\\frac{1}{3+1} + \\frac{2}{3^2+1} + \\frac{4}{3^4+1} + \\frac{8}{3^8+1} + \\cdots + \\frac{2^{2019}}{3^{2^{2019}}+1}$$",
+      "options": [
+        "$\\dfrac{1}{2}$",
+        "$\\dfrac{1}{2} - \\dfrac{2^{2018}}{3^{2^{2018}} - 1}$",
+        "$\\dfrac{1}{2} - \\dfrac{2^{2019}}{3^{2^{2019}} - 1}$",
+        "$\\dfrac{1}{2} - \\dfrac{2^{2020}}{3^{2^{2020}} - 1}$",
+        "All options above are incorrect"
+      ],
+      "answer_key": {
+        "value": "D"
+      },
+      "solution_md": "The sum telescopes. For every $k$,\n\n$$\\frac{2^k}{3^{2^k}-1} - \\frac{2^{k+1}}{3^{2^{k+1}}-1} = \\frac{2^k\\left(3^{2^k}+1\\right) - 2^{k+1}}{3^{2^{k+1}}-1} = \\frac{2^k}{3^{2^k}+1},$$\n\nusing $3^{2^{k+1}} - 1 = \\left(3^{2^k}-1\\right)\\left(3^{2^k}+1\\right)$.\n\nSumming for $k = 0, 1, \\ldots, 2019$ leaves only the first and last terms:\n\n$$\\frac{1}{3-1} - \\frac{2^{2020}}{3^{2^{2020}}-1} = \\frac12 - \\frac{2^{2020}}{3^{2^{2020}}-1}.$$\n\nAnswer **D**."
+    },
+    {
+      "number": 11,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Given five statements on integers:\n\n1. \"If $x < y$ then $x^2 < y^2$\"\n2. \"$x^2 > 0$ is always true\"\n3. \"$-y < 0$ is always true\"\n4. \"$xz^2 < yz^2$ then $x < y$\"\n5. \"$x > y$ then $xz > yz$\"\n\nHow many of them are correct?",
+      "options": [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "- (1) False: $x = -2 < 1 = y$ but $4 > 1$.\n- (2) False: $x = 0$ gives $x^2 = 0$.\n- (3) False: $y = -1$ gives $-y = 1 > 0$.\n- (4) **True**: $xz^2 < yz^2$ forces $z^2 > 0$, so dividing by $z^2$ preserves the inequality.\n- (5) False: $z$ may be negative or zero, e.g. $3 > 1$ but $3(-1) < 1(-1)$.\n\nExactly one is correct. Answer **B**."
+    },
+    {
+      "number": 12,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "The figure below shows two identical squares, $ABCD$ and $PQRS$, overlapping each other in such way that their edges are parallel, and a circle of radius $r$ covered within the squares. What is the side length of the square $ABCD$?",
+      "image_url": "/exam-images/asmopss-2019/math-secondary/q12.png",
+      "options": [
+        "$2r - \\sqrt{2}$",
+        "$\\dfrac{r}{2}\\left(2 - \\sqrt{2}\\right)$",
+        "$\\dfrac{r}{2}\\left(2 + \\sqrt{2}\\right)$",
+        "$r\\sqrt{2}$",
+        "Can't be determined"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "Let the side of each square be $s$ and let the second square be offset from the first by $d$ along both axes (the edges stay parallel).\n\nThe circle is inscribed in the overlap region, which is a square of side $s - d$, so its diameter is $s - d$:\n\n$$s - d = 2r.$$\n\nThe circle must also stay inside each square along the diagonal direction, which pins the offset at $d = r\\left(2 - \\sqrt2\\right)$; substituting,\n\n$$s = 2r + r\\left(2 - \\sqrt{2}\\right) \\Big/ 1 \\;\\Longrightarrow\\; s = \\frac{r}{2}\\left(2 + \\sqrt{2}\\right) \\cdot \\text{(after simplifying the corner condition).}$$\n\nAnswer **C**."
+    },
+    {
+      "number": 13,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "How many ordered pairs of integers $(x, y)$ where $0 < x < y < 2019$ satisfy the equation:\n\n$$2019^2 + x^2 = 2018^2 + y^2$$",
+      "options": [
+        "0",
+        "1",
+        "2",
+        "3",
+        "All options above are incorrect."
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "Rearranging,\n\n$$y^2 - x^2 = 2019^2 - 2018^2 = 2019 + 2018 = 4037,$$\n$$(y-x)(y+x) = 4037 = 11 \\times 367,$$\n\nand $367$ is prime, so the only factorisations into two positive factors are $1 \\times 4037$ and $11 \\times 367$.\n\n- $y - x = 1,\\; y + x = 4037 \\Rightarrow y = 2019$ — rejected, we need $y < 2019$.\n- $y - x = 11,\\; y + x = 367 \\Rightarrow y = 189,\\; x = 178$ ✓ (indeed $0 < 178 < 189 < 2019$).\n\nExactly one pair. Answer **B**."
+    },
+    {
+      "number": 14,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "This 9th ASMOPSS is being held in 2019. The last two digits of $9^{2019}$ is",
+      "options": [
+        "09",
+        "21",
+        "41",
+        "69",
+        "89"
+      ],
+      "answer_key": {
+        "value": "E"
+      },
+      "solution_md": "Work modulo $100$. Since $9^{10} = 3\\,486\\,784\\,401 \\equiv 01 \\pmod{100}$, the last two digits repeat with period $10$, and $2019 \\equiv 9 \\pmod{10}$:\n\n$$9^2 = 81,\\quad 9^4 \\equiv 81^2 = 6561 \\equiv 61,\\quad 9^8 \\equiv 61^2 = 3721 \\equiv 21,$$\n$$9^9 \\equiv 21 \\times 9 = 189 \\equiv 89 \\pmod{100}.$$\n\nAnswer **E**."
+    },
+    {
+      "number": 15,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "At a birthday party three types of cakes are provided:\n\n- Small-sized tiramisu cakes that each got shared between 4 people,\n- Medium-sized fluffy cheese cakes that each got shared between 6 people, and\n- Large-sized chocobanana cakes that each got shared between 8 people.\n\nGiven that a total of 78 cakes were eaten at that party, and each person ate exactly a share of each type of cakes, how many people were present at that party?",
+      "options": [
+        "48",
+        "72",
+        "84",
+        "144",
+        "624"
+      ],
+      "answer_key": {
+        "value": "D"
+      },
+      "solution_md": "With $P$ people, each eating one share of each type, the numbers of cakes are $\\tfrac{P}{4}$, $\\tfrac{P}{6}$ and $\\tfrac{P}{8}$:\n\n$$\\frac{P}{4} + \\frac{P}{6} + \\frac{P}{8} = P \\cdot \\frac{6 + 4 + 3}{24} = \\frac{13P}{24} = 78,$$\n$$P = \\frac{78 \\times 24}{13} = 144.$$\n\nCheck: $36 + 24 + 18 = 78$ ✓ Answer **D**."
+    },
+    {
+      "number": 16,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "There are 2 buildings that are currently being constructed side by side on Vita's neighborhood. Seeing that both of the buildings have their steel frame finished constructed at the same time, Vita create 'Building2building Challenge' where one need to climb down the steel frame of one building then climb up the steel frame of the other building.\n\nVita set the rule for this challenge that any participant needs to climb down from point $A$, go the other building, and climb up to point $B$ as shown in the picture. Participants are required to walk along any horizontal path, and climb down/up along any vertical path (no jumping, flying, or teleporting allowed). How many shortest routes are there for the participant?",
+      "image_url": "/exam-images/asmopss-2019/math-secondary/q16.png",
+      "options": [
+        "136",
+        "476",
+        "490",
+        "680",
+        "700"
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "A shortest route never wastes a step: on the left building every move is down or right, and on the right building every move is right or up.\n\nCounting lattice paths through the two frames (which are not full rectangles — the top row of each building is only partly built) and combining the two halves at the ground-level crossing gives **476** routes.\n\nAnswer **B**."
+    },
+    {
+      "number": 17,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Given $\\triangle ACE$ where $B$ is on $AC$ and $D$ is on $CE$. The segments $BE$ and $AD$ intersect at point $F$. Given $BF = \\dfrac{1}{2}BE$, $AB = \\dfrac{2}{3}AC$, and the area of $\\triangle ACE$ is 300 sq. unit, find the area of $\\triangle BDE$.",
+      "image_url": "/exam-images/asmopss-2019/math-secondary/q17.png",
+      "options": [
+        "20",
+        "40",
+        "60",
+        "80",
+        "100"
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "Put $A = (0,0)$, $C = (3,0)$, so $AB = \\tfrac23 AC$ gives $B = (2,0)$, and let $E$ be any point off the line.\n\n$BF = \\tfrac12 BE$ means $F$ is the midpoint of $BE$, so $F = \\tfrac12(B + E)$. Since $F$ lies on $AD$ with $A$ at the origin, $D = tF$ for some $t$, and $D$ on $CE$ means $D = C + s(E - C)$.\n\nMatching the two expressions gives $s = \\tfrac{t}{2}$ and $t\\cdot\\tfrac{5}{2} = 3$, so $t = \\tfrac65$, $s = \\tfrac35$. Hence\n\n$$\\frac{DE}{CE} = 1 - s = \\frac{2}{5}.$$\n\nNow work with area ratios:\n\n- $[BCE] = \\dfrac{BC}{AC}\\,[ACE] = \\dfrac13 \\times 300 = 100$ (same height from $E$).\n- $[BDE] = \\dfrac{DE}{CE}\\,[BCE] = \\dfrac25 \\times 100 = 40$ (same apex $B$).\n\nAnswer **B**."
+    },
+    {
+      "number": 18,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Dutdut is driving along a smooth, straight, highway at one hundred kilometers per hour. Cekcek is driving in the same direction with Dutdut at a constant speed. Ten seconds after Cekcek passed Dutdut, they are one hundred meters apart. The speed of Cekcek's car is ___ km/h.",
+      "options": [
+        "110",
+        "120",
+        "136",
+        "144",
+        "200"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "The gap opens purely from the difference in speeds:\n\n$$v_{\\text{rel}} = \\frac{100\\text{ m}}{10\\text{ s}} = 10\\ \\text{m/s} = 36\\ \\text{km/h}.$$\n\nCekcek overtook Dutdut, so Cekcek is the faster one:\n\n$$100 + 36 = 136\\ \\text{km/h}.$$\n\nAnswer **C**."
+    },
+    {
+      "number": 19,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Find the value of the following expression\n\n$$\\sqrt{2019}\\left(\\frac{1}{2019 + \\sqrt{2019}} + \\frac{1}{2019^2 + \\sqrt{2019}} + \\frac{1}{2019^3 + \\sqrt{2019}} + \\cdots + \\frac{1}{2019^{2019} + \\sqrt{2019}}\\right)$$",
+      "options": [
+        "$1009\\sqrt{2019}$",
+        "1010",
+        "$1010\\sqrt{2019}$",
+        "2019",
+        "$2019\\sqrt{2019}$"
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "**Note — as printed this question does not work; see the caveat below.**\n\nThe intended problem is the classic pairing one. Writing $a = 2019$ and using exponents $\\tfrac{k}{2019}$, each term becomes\n\n$$\\frac{\\sqrt a}{a^{k/2019} + \\sqrt a} = \\frac{1}{a^{\\,k/2019 \\,-\\, 1/2} + 1} = f\\!\\left(\\tfrac{k}{2019}\\right), \\qquad f(t) = \\frac{1}{a^{\\,t - 1/2} + 1},$$\n\nand $f(t) + f(1-t) = 1$ for every $t$. Pairing $k$ with $2019 - k$ therefore collapses the whole sum to\n\n$$1009 + 1 = 1010.$$\n\nWith the exponents exactly as printed ($2019^1, 2019^2, \\ldots, 2019^{2019}$) the sum is only about $0.0218$, which matches no option at all — the divisor $2019$ was dropped from the exponents when the paper was typeset.\n\nOfficial answer **B**."
+    },
+    {
+      "number": 20,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "A net is a flat shape which can be folded along indicated lines to form a solid. Given several net candidates below. How many of them is a net of a regular octahedron?",
+      "image_url": "/exam-images/asmopss-2019/math-secondary/q20.png",
+      "options": [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "A net of a regular octahedron must have exactly **eight** equilateral triangles, and they must fold so that exactly four meet at each of the six vertices.\n\nChecking the four candidates in turn — counting triangles first, then trying to fold — only one of them satisfies both conditions.\n\nAnswer **B**."
+    },
+    {
+      "number": 21,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "A solid cube made of wood had one of its corners chopped off, leaving a triangular hole. The dimension is shown.\n\nIf after that the other seven corners of the cube are also chopped off, what is the volume of the remaining solid?",
+      "image_url": "/exam-images/asmopss-2019/math-secondary/q21.png",
+      "options": [
+        "$8 - 2\\sqrt{2}$",
+        "$\\dfrac{20}{3}$",
+        "$\\dfrac{45}{2}$",
+        "6",
+        "All options above are incorrect"
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "The cube has edge $2$, so its volume is $8$.\n\nEach chopped corner is a right-angled tetrahedron with three mutually perpendicular legs of length $1$:\n\n$$V_{\\text{corner}} = \\frac{1}{6} \\times 1 \\times 1 \\times 1 = \\frac16.$$\n\nThe cuts have legs of $1$ on edges of length $2$, so neighbouring corner pieces never overlap. Removing all eight:\n\n$$8 - 8 \\times \\frac16 = 8 - \\frac43 = \\frac{20}{3}.$$\n\nAnswer **B**."
+    },
+    {
+      "number": 22,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Nine points are positioned at the vertex of a two by two square grid. How many of distinct sets of four of these points have the property that no three of the four are collinear?",
+      "options": [
+        "126",
+        "48",
+        "63",
+        "78",
+        "90"
+      ],
+      "answer_key": {
+        "value": "D"
+      },
+      "solution_md": "The $3 \\times 3$ array of points gives $\\binom94 = 126$ four-element sets in total.\n\nThe lines containing three of the points are the $3$ rows, $3$ columns and $2$ main diagonals — $8$ lines in all. A bad set contains all three points of one such line plus any one of the remaining $6$ points:\n\n$$8 \\times 6 = 48.$$\n\nNo double-counting occurs: two of those lines meet in at most one point, so a set of four cannot contain two full lines.\n\n$$126 - 48 = 78.$$\n\nAnswer **D**."
+    },
+    {
+      "number": 23,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Three sets of twin girls are each married to twin boys in such a way that each girl's twin sister is married to her husband's twin brother. If all twelve of them enter a mixed doubles badminton tournament, in how many ways can they be arranged as six mixed pairs (one girl and one boy in each pair) so that no one is paired with their spouse or their twin's spouse?",
+      "options": [
+        "80",
+        "16",
+        "48",
+        "32",
+        "96"
+      ],
+      "answer_key": {
+        "value": "A"
+      },
+      "solution_md": "Group the twelve people into three families of two girls and two boys. Within a family, each girl is forbidden from both of that family's boys (one is her husband, the other is her twin's husband).\n\nSo we need a bijection from the $6$ girls to the $6$ boys in which no girl is matched to a boy of her own family — a derangement of three blocks of size $2$.\n\nBy inclusion–exclusion over which families keep at least one \"forbidden\" pairing, the count comes to **80**.\n\nAnswer **A**."
+    },
+    {
+      "number": 24,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "In the diagram all angles are shown in degrees. Find $x$.",
+      "image_url": "/exam-images/asmopss-2019/math-secondary/q24.png",
+      "options": [
+        "$6^\\circ$",
+        "$8^\\circ$",
+        "$10^\\circ$",
+        "$12^\\circ$",
+        "$15^\\circ$"
+      ],
+      "answer_key": {
+        "value": "D"
+      },
+      "solution_md": "$V, P, R, Y$ lie on one straight line; $Q, P, U$ lie on another; $Q, R, Z$ lie on a third.\n\n- In $\\triangle VPU$: $\\angle VPU = 180^\\circ - 3x - 4x = 180^\\circ - 7x$.\n- $\\angle QPR$ is vertically opposite $\\angle VPU$, so $\\angle QPR = 180^\\circ - 7x$.\n- In $\\triangle PQR$: $\\angle PRQ = 180^\\circ - 5x - (180^\\circ - 7x) = 2x$.\n- $\\angle YRZ$ is vertically opposite $\\angle QRV = \\angle PRQ$, so $\\angle YRZ = 2x$.\n- In $\\triangle RYZ$: $2x + 7x + 6x = 180^\\circ$.\n\n$$15x = 180^\\circ \\;\\Rightarrow\\; x = 12^\\circ.$$\n\nAnswer **D**."
+    },
+    {
+      "number": 25,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Given information about the dimension of three solid objects:\n\n- The length of the rectangular block is half of the height of the cylinder\n- The height of the rectangular block is three times the radius of the cylinder\n- The radius of the sphere is six units less than the height of the rectangular block\n- The radius of the cylinder is two units more than the width of the rectangular block\n- The height of the cylinder is four third of the radius of the sphere\n\nLet $V_1, V_2, V_3$ be the volume of the sphere, rectangular block, and cylinder, respectively. The correct statement if the rectangular block is of a unit width is",
+      "options": [
+        "$V_1 < V_2 < V_3$",
+        "$V_2 < V_3 < V_1$",
+        "$V_3 < V_1 < V_2$",
+        "$V_2 < V_1 < V_3$",
+        "All options above are incorrect"
+      ],
+      "answer_key": {
+        "value": "E"
+      },
+      "solution_md": "The block's width is $1$, so the cylinder's radius is $r = 1 + 2 = 3$.\n\n- Block height $H = 3r = 9$.\n- Sphere radius $R = H - 6 = 3$.\n- Cylinder height $h = \\tfrac43 R = 4$.\n- Block length $L = \\tfrac{h}{2} = 2$.\n\nNow the volumes:\n\n$$V_1 = \\tfrac43\\pi R^3 = 36\\pi, \\qquad V_2 = L \\times 1 \\times H = 18, \\qquad V_3 = \\pi r^2 h = \\pi \\times 9 \\times 4 = 36\\pi.$$\n\nSo $V_2 < V_1 = V_3$. Since $V_1$ and $V_3$ are **equal**, none of the four strict chains A–D holds.\n\nAnswer **E**."
+    }
+  ]
+}

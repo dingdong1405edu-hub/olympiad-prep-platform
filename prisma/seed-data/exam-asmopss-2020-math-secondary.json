@@ -1,0 +1,382 @@
+{
+  "exam": {
+    "slug": "asmopss-2020-math-secondary",
+    "title": "Road to ASMOPSS X (2020) — Mathematics Secondary",
+    "subject": "math",
+    "grade_level": "secondary",
+    "duration_min": 60,
+    "total_points": 100,
+    "instructions": "20 câu trắc nghiệm, 5 điểm mỗi câu (tổng 100 điểm). Mỗi câu chọn đúng một phương án (A–E). Không dùng máy tính. Hình vẽ không theo tỉ lệ, chỉ để minh họa. LƯU Ý: đề gốc cho 4 điểm mỗi câu đúng, trừ 1 điểm mỗi câu sai và tính từ mốc 20 điểm. Ở đây đề được quy về thang 100 điểm, câu sai không bị trừ điểm."
+  },
+  "_notes": {
+    "source": "Road to ASMOPSS X Mathematics Secondary.docx + Answer Key Road to ASMOPSS X.xlsx (cột Secondary / Math).",
+    "mapping": "20 câu, không bỏ câu nào, số thứ tự trùng khít bản gốc nên đáp án map 1:1.",
+    "reconstructed": [
+      "Công thức OMML đã dựng lại bằng LaTeX. Đã giải lại cả 20 câu, tất cả đều khớp đáp án chính thức.",
+      "Câu 8: hình là OLE .emf, đã convert sang PNG bằng GDI+ ở tỷ lệ 3×."
+    ]
+  },
+  "questions": [
+    {
+      "number": 1,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 5,
+      "prompt_md": "Given Triangle $PQR,$ points $K$, $M,$ $N$ are on $PR$, $RQ$, and $PQ$ respectively such that $PK=PN$ and $RK=RM$. The measure of angle $\\angle PQR=42^{\\circ}$. Find the measure of angle $\\angle NKM$.",
+      "options": [
+        "$30^{\\circ}$",
+        "$48^{\\circ}$",
+        "$69^{\\circ}$",
+        "$81^{\\circ}$",
+        "$84^{\\circ}$"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "Triangle $PKN$ is isosceles ($PK=PN$), so $\\angle PKN = \\frac{180^{\\circ}-\\angle P}{2} = 90^{\\circ}-\\frac{\\angle P}{2}$.\n\nTriangle $RKM$ is isosceles ($RK=RM$), so $\\angle RKM = 90^{\\circ}-\\frac{\\angle R}{2}$.\n\nThe three angles at $K$ on line $PR$ add to $180^{\\circ}$:\n\n$$\\angle NKM = 180^{\\circ} - \\angle PKN - \\angle RKM = \\frac{\\angle P + \\angle R}{2} = \\frac{180^{\\circ}-42^{\\circ}}{2} = 69^{\\circ}.$$"
+    },
+    {
+      "number": 2,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 5,
+      "prompt_md": "Seven students join the “Sepak Takraw” extracurricular activity. They want to form groups of 3 persons such that any two groups share exactly one person. What is the greatest number of groups they can create?",
+      "options": [
+        "4",
+        "5",
+        "6",
+        "7",
+        "8"
+      ],
+      "answer_key": {
+        "value": "D"
+      },
+      "solution_md": "Think of the 7 students as points and each group of 3 as a line. \"Any two groups share exactly one person\" is exactly the rule of the Fano plane, which has 7 lines on 7 points and is the largest such configuration.\n\nSo the greatest number of groups is **7**."
+    },
+    {
+      "number": 3,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 5,
+      "prompt_md": "Suppose $x,y,z$ are three different whole numbers taken from the set ${1,2,3,4,5,6,7,8,9}.$ What is the largest possible value of:\n\n$\\frac{x+y+z}{xyz}$",
+      "options": [
+        "3",
+        "2",
+        "1",
+        "$\\frac{1}{2}$",
+        "$\\frac{1}{3}$"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "To make $\\frac{x+y+z}{xyz}$ large the numerator should be small and the denominator small too — so use the smallest numbers available: $x,y,z = 1,2,3$.\n\n$$\\frac{1+2+3}{1\\cdot 2\\cdot 3} = \\frac{6}{6} = 1.$$\n\nAny other choice makes the product grow much faster than the sum, so 1 is the maximum."
+    },
+    {
+      "number": 4,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 5,
+      "prompt_md": "How many pairs of positive integers $(m,n)$ satisfy the condition $GCD(m,n)=5$ and $m+n=65$?\n\n(GCD= Greatest Common Divisor)",
+      "options": [
+        "6",
+        "7",
+        "10",
+        "11",
+        "12"
+      ],
+      "answer_key": {
+        "value": "E"
+      },
+      "solution_md": "Write $m = 5a$, $n = 5b$. Then $a+b = 13$ and $\\mathrm{gcd}(a,b) = 1$.\n\nSince 13 is prime, $\\mathrm{gcd}(a,13-a) = \\mathrm{gcd}(a,13) = 1$ for every $a$ from 1 to 12 — the condition is automatic.\n\nSo all 12 pairs $(a,b) = (1,12),(2,11),\\dots,(12,1)$ work: **12**."
+    },
+    {
+      "number": 5,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 5,
+      "prompt_md": "Tara wrote all positive integers from 1 to 1000. How many times did she write the digit 5?",
+      "options": [
+        "250",
+        "300",
+        "350",
+        "400",
+        "None of the above"
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "Count 5s place by place among $1,2,\\dots,999$ (writing them as three-digit strings $000$–$999$ changes nothing).\n\nIn each of the three positions the digit 5 appears in exactly $\\frac{1000}{10} = 100$ of the strings, giving $3 \\times 100 = 300$. The number 1000 contributes no 5.\n\nSo she wrote the digit 5 **300** times."
+    },
+    {
+      "number": 6,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 5,
+      "prompt_md": "Points $K,M,N$ are three non collinear points which lie on a plane. Fibo wants to draw a line on this plane such that his line equidistant (has the same distance) from $K,M$, and $N$. How many different lines can he draw?",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "A line is the same distance from all three points when the points are split by the line as 1 on one side and 2 on the other (a line through all three is impossible — they are not collinear).\n\nChoosing which point is alone can be done in 3 ways, and each choice gives exactly one line (parallel to the segment joining the other two, halfway between).\n\nSo he can draw **3** lines."
+    },
+    {
+      "number": 7,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 5,
+      "prompt_md": "A sequence is defined as follow\n\n${a}_{0}=2$, ${a}_{1}=3$\n\n${a}_{n+1}=\\frac{{a}_{n}}{{a}_{n-1}}$, for $n≥1$\n\nWhat is the value of ${a}_{2020}$?",
+      "options": [
+        "$\\frac{1}{2}$",
+        "$\\frac{1}{3}$",
+        "$\\frac{2}{3}$",
+        "$\\frac{3}{2}$",
+        "2"
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "$$a_0=2,\\ a_1=3,\\ a_2=\\frac{3}{2},\\ a_3=\\frac{1}{2},\\ a_4=\\frac{1}{3},\\ a_5=\\frac{2}{3},\\ a_6=2,\\ a_7=3,\\dots$$\n\nThe sequence repeats with period 6. Since $2020 = 6\\times 336 + 4$, we get $a_{2020} = a_4 = \\frac{1}{3}$."
+    },
+    {
+      "number": 8,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 5,
+      "prompt_md": "In the following diagram, $O$ is the center of the circle with radius $r$, $KM=r$.\n\nSuppose the measure of angle $\\angle KOM=α$. What is the measure of angle $\\angle PON$?",
+      "image_url": "/exam-images/asmopss-2020/math-secondary/q08.png",
+      "options": [
+        "$\\frac{α}{2}$",
+        "$α$",
+        "$2α$",
+        "$3α$",
+        "$4α$"
+      ],
+      "answer_key": {
+        "value": "D"
+      },
+      "solution_md": "$KM = MO = r$, so triangle $KMO$ is isosceles and $\\angle MKO = \\angle MOK = \\alpha$.\n\n$\\angle OMN$ is the exterior angle of triangle $KMO$ at $M$, so $\\angle OMN = \\alpha + \\alpha = 2\\alpha$.\n\n$MO = NO = r$, so triangle $MON$ is isosceles and $\\angle ONM = \\angle OMN = 2\\alpha$.\n\nFinally $\\angle PON$ is the exterior angle of triangle $KON$ at $O$:\n\n$$\\angle PON = \\angle OKN + \\angle ONK = \\alpha + 2\\alpha = 3\\alpha.$$"
+    },
+    {
+      "number": 9,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 5,
+      "prompt_md": "Given that $x$ is a positive integer such that $x+25$ and $x-66$ are perfect square. In which interval, the value of the greatest $x$ that satisfy the condition, lies?",
+      "options": [
+        "$2000<x<2050$",
+        "$2050<x<2100$",
+        "$2100<x<2150$",
+        "$2150<x<2200$",
+        "$2200<x<2250$"
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "Let $x+25 = a^2$ and $x-66 = b^2$. Subtracting,\n\n$$a^2-b^2 = 91 = (a-b)(a+b).$$\n\n$91 = 1\\times 91 = 7 \\times 13$, giving $(a,b) = (46,45)$ or $(10,3)$.\n\nThe larger one gives $x = 46^2 - 25 = 2116-25 = 2091$, which lies in $2050 < x < 2100$."
+    },
+    {
+      "number": 10,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 5,
+      "prompt_md": "Given that $0<m<1$, $n={m}^{m}$ and $p={m}^{n}$. Arrange the number in decreasing magnitude.",
+      "options": [
+        "$m>n>p$",
+        "$m>p>n$",
+        "$p>n>m$",
+        "$p>m>n$",
+        "$n>p>m$"
+      ],
+      "answer_key": {
+        "value": "E"
+      },
+      "solution_md": "With $0<m<1$ raising to a power **smaller than 1 makes the number bigger**, and raising to a larger power makes it smaller.\n\n- $n = m^m > m$ because the exponent $m<1$.\n- $n<1$, so $p = m^n > m$ as well.\n- $n > m$ and the base is less than 1, so $p = m^n < m^m = n$.\n\nHence $n > p > m$."
+    },
+    {
+      "number": 11,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 5,
+      "prompt_md": "Given triangle $KMN$ on a plane. $P$ is a point inside this triangle such that the area of triangles $KMP, MNP, KNP$ are all equal. How many different points $P$ are possible?",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "answer_key": {
+        "value": "A"
+      },
+      "solution_md": "$[KMP] = [KNP]$ forces $P$ to lie on the median from $K$; $[KMP] = [MNP]$ forces $P$ to lie on the median from $M$.\n\nThe medians meet in a single point — the centroid — and there the three areas really are equal (each is a third of the triangle). So there is exactly **1** such point."
+    },
+    {
+      "number": 12,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 5,
+      "prompt_md": "Suppose $m,n$ are real numbers that satisfy ${m}^{2}+{n}^{2}=5.$\n\nWhat is the maximum value of ${m}^{2}+2{n}^{2}+6m-7$?",
+      "options": [
+        "9",
+        "10",
+        "11",
+        "12",
+        "None of the above"
+      ],
+      "answer_key": {
+        "value": "E"
+      },
+      "solution_md": "Use $n^2 = 5-m^2$:\n\n$$m^2+2n^2+6m-7 = m^2 + 2(5-m^2) + 6m - 7 = -m^2+6m+3.$$\n\nThis parabola peaks at $m=3$, but $m^2 \\le 5$ forces $m \\le \\sqrt5 < 3$, so the largest value is at $m = \\sqrt5$:\n\n$$-5 + 6\\sqrt5 + 3 = 6\\sqrt5 - 2 \\approx 11.42.$$\n\nThat is none of 9, 10, 11, 12 — the answer is **None of the above**."
+    },
+    {
+      "number": 13,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 5,
+      "prompt_md": "Suppose $m=123456789$. How many digits does ${m}^{2}$ have in its decimal representation?",
+      "options": [
+        "14",
+        "16",
+        "17",
+        "18",
+        "20"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "$123456789 \\approx 1.2346 \\times 10^{8}$, so $m^2 \\approx 1.524 \\times 10^{16}$.\n\nA number of the form $1.5\\times 10^{16}$ has 17 digits (it lies between $10^{16}$ and $10^{17}$).\n\nSo $m^2$ has **17** digits."
+    },
+    {
+      "number": 14,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 5,
+      "prompt_md": "In the list of “Jajan Pasar” snacks, there are klepon, onde-onde, nagasari, kue mangkok, apem, and kue putu. Aci is creating a menu consisting 4 types of snacks. She insists that klepon is in her list. She also wants either kue apem or kue mangkok but not both because they have similar ingredients. How many different menus can she have?\n\n(note: her menu should include either apem or kue mangkok)",
+      "options": [
+        "9",
+        "10",
+        "11",
+        "12",
+        "None of the above"
+      ],
+      "answer_key": {
+        "value": "E"
+      },
+      "solution_md": "Klepon is fixed. Exactly one of $\\{$apem, kue mangkok$\\}$ is chosen: 2 ways.\n\nThat leaves 2 more snacks to pick from the remaining three (onde-onde, nagasari, kue putu): $C(3,2) = 3$ ways.\n\n$$2 \\times 3 = 6 \\text{ menus},$$\n\nwhich is not 9, 10, 11 or 12 — the answer is **None of the above**."
+    },
+    {
+      "number": 15,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 5,
+      "prompt_md": "Suppose $m$ and $n$ are non zero real numbers. How many different values can the expression:\n\n$\\frac{m}{|m| }+\\frac{n}{|n| }$\n\nhave?",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "For a non-zero real, $\\frac{m}{|m|}$ is $+1$ if $m>0$ and $-1$ if $m<0$.\n\nSo the sum is $1+1 = 2$, $1-1 = 0$, or $-1-1 = -2$ — **3** different values."
+    },
+    {
+      "number": 16,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 5,
+      "prompt_md": "Prof Yosu has three different sizes of bags. He has 12 large bags. Some of them contains 6 medium bags each. Some medium bags contain 6 small bags each. Each small bag is empty. In total there are 197 empty bags.\n\nHow many bags does Prof Yosu have?",
+      "options": [
+        "120",
+        "184",
+        "234",
+        "348",
+        "None of the above"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "Let $a$ be the number of large bags that hold medium bags and $b$ the number of medium bags that hold small bags. Then there are $6a$ medium bags and $6b$ small bags.\n\nEmpty bags: $(12-a)$ large $+\\ (6a-b)$ medium $+\\ 6b$ small, so\n\n$$12 + 5a + 5b = 197 \\Rightarrow a+b = 37.$$\n\nTotal number of bags:\n\n$$12 + 6a + 6b = 12 + 6\\times 37 = 234.$$"
+    },
+    {
+      "number": 17,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 5,
+      "prompt_md": "Given that x is a positive number. This value of one of the following expressions is always less than 1. Which one is it?",
+      "options": [
+        "${x}^{2}$",
+        "$\\frac{x}{x+1}$",
+        "$\\frac{1-x}{x}$",
+        "$\\frac{1+x}{x}$",
+        "$\\frac{1}{x}$"
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "For every $x>0$ we have $x < x+1$, so\n\n$$\\frac{x}{x+1} < 1.$$\n\nEach of the others can be at least 1: $x^2 \\ge 1$ when $x\\ge 1$; $\\frac{1-x}{x}\\ge 1$ for small $x$; $\\frac{1+x}{x} > 1$ always; $\\frac1x \\ge 1$ when $x \\le 1$."
+    },
+    {
+      "number": 18,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 5,
+      "prompt_md": "Suppose $F$ is a function defined for the set of all real numbers and for any $m,n$. It satisfies the equation\n\n$f(m\\cdot n)=f(m)+f(n)$\n\nWhat is the value of $f(2020)$?",
+      "options": [
+        "0",
+        "1",
+        "2",
+        "Cannot be uniquely determined",
+        "There are no function f satisfying the equation."
+      ],
+      "answer_key": {
+        "value": "A"
+      },
+      "solution_md": "Put $m=0$: $f(0) = f(0)+f(n)$ for every $n$, so $f(n) = 0$ for **all** real $n$.\n\n(The zero function does satisfy the equation, so it exists and is the only one.)\n\nTherefore $f(2020) = 0$."
+    },
+    {
+      "number": 19,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 5,
+      "prompt_md": "Point $K(-3,-2)$, $M(2,4)$, $P(t,1)$ lie on a plane. Find $t$ such that the sum of the distance $|KP|$ and $|PM|$ is the smallest",
+      "options": [
+        "-1",
+        "$-\\frac{1}{2}$",
+        "$0$",
+        "$\\frac{1}{2}$",
+        "1"
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "$P$ runs along the line $y=1$. Point $K(-3,-2)$ is below that line and $M(2,4)$ is above it, so the shortest path is the straight segment $KM$ and $P$ is where it crosses $y=1$.\n\nLine $KM$ has slope $\\frac{4-(-2)}{2-(-3)} = \\frac{6}{5}$, so $y = -2 + \\frac{6}{5}(x+3)$.\n\nSetting $y=1$: $3 = \\frac{6}{5}(x+3) \\Rightarrow x+3 = \\frac52 \\Rightarrow t = -\\frac{1}{2}$."
+    },
+    {
+      "number": 20,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 5,
+      "prompt_md": "How many different ways are there to put 4 different colored balls into 4 identical empty boxes?",
+      "options": [
+        "10",
+        "12",
+        "15",
+        "20",
+        "24"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "The boxes are identical and may stay empty, so this counts the ways to **partition** 4 distinct balls into non-empty groups — the Bell number $B_4$:\n\n- 1 group of 4: 1 way\n- $3+1$: 4 ways\n- $2+2$: 3 ways\n- $2+1+1$: 6 ways\n- $1+1+1+1$: 1 way\n\n$$1+4+3+6+1 = 15.$$"
+    }
+  ]
+}

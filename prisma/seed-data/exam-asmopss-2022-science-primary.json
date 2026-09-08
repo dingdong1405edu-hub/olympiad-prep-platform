@@ -1,0 +1,475 @@
+{
+  "exam": {
+    "slug": "asmopss-2022-science-primary",
+    "title": "Road to ASMOPSS 2022 — Science Primary",
+    "subject": "science",
+    "grade_level": "primary",
+    "duration_min": 90,
+    "total_points": 100,
+    "instructions": "25 câu trắc nghiệm, 4 điểm mỗi câu (tổng 100 điểm). Mỗi câu chọn đúng một phương án (A–E). Không dùng máy tính. Hình vẽ không theo tỉ lệ, chỉ để minh họa. LƯU Ý: đề gốc có 30 câu (câu 1–20 mỗi câu 3 điểm, câu 21–30 mỗi câu 4 điểm) và trừ 1 điểm cho mỗi câu sai. Năm câu đã được bỏ, các câu còn lại được quy lại điểm để giữ đề ở thang 100 điểm; ở đây câu sai không bị trừ điểm."
+  },
+  "_notes": {
+    "source": "Science Primary.docx (bản trùng nội dung với Road to ASMOPSS 2022 - Science Primary (Eng).docx nhưng ảnh đều là PNG) + Road to ASMOPSS 2022 - Answer Key - English.xlsx (cột Science / Primary).",
+    "removed": "Đề gốc ghi chú cuối trang: BỎ CÂU 1; 2; 6; 10; 30. Năm câu đó đã bỏ, 25 câu còn lại đánh số lại 1–25; đáp án lấy theo SỐ GỐC nên không lệch.",
+    "number_map": "new→orig: 1→3, 2→4, 3→5, 4→7, 5→8, 6→9, 7→11, 8→12, 9→13, 10→14, 11→15, 12→16, 13→17, 14→18, 15→19, 16→20, 17→21, 18→22, 19→23, 20→24, 21→25, 22→26, 23→27, 24→28, 25→29.",
+    "scoring_note": "Bảng INSTRUCTION của bản gốc ghi Part 1 được 4 điểm/câu, nhưng thân đề ghi 3 điểm/câu. Chỉ mức 3 điểm mới cho tổng đúng 100 (20×3 + 10×4), nên bảng INSTRUCTION là chỗ in sai. Ở đây mọi câu đều 4 điểm sau khi chia lại.",
+    "flags": [
+      "Câu 14 (gốc 18 — bốn vật thả trong dầu/nước/mật ong): đáp án chính thức là E (không vật nào), nhưng vật A có khối lượng riêng 1,1 kg/l nằm giữa nước (1000 g/l) và mật ong (1200 g/l), tức đúng là vật nổi trên mật ong và chìm dưới nước → phương án A. Câu song sinh bên đề Science Secondary (gốc 17) có cùng cách dựng và đáp án chính thức của nó KHỚP với suy luận này. Ở đây vẫn giữ nguyên đáp án chính thức E để trung thành với bản gốc — cân nhắc đổi sang A trước khi dùng chấm điểm thật."
+    ]
+  },
+  "questions": [
+    {
+      "number": 1,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "The diagram below shows living things in their habitat.\n\nBased on the diagram, which of the following is correct?",
+      "image_url": "/exam-images/asmopss-2022/science-primary/q01.png",
+      "options": [
+        "The group of kangaroos above form a population.",
+        "The rabbit and the fox form two communities.",
+        "There are only animal populations in the habitat.",
+        "All the living things in the picture form an ecosystem.",
+        "The plants in the picture above form a population."
+      ],
+      "answer_key": {
+        "value": "A"
+      },
+      "solution_md": "A **population** is all the organisms of the *same species* living in the same place — the kangaroos qualify.\n\nThe other options mix up the levels of organisation: two species do not make two communities, the habitat also contains plants, an ecosystem needs the non-living surroundings as well, and the plants in the picture are of more than one species."
+    },
+    {
+      "number": 2,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Which of these is a correct statement about hormones?",
+      "options": [
+        "They always produce short-term changes.",
+        "They are carried by neurons.",
+        "They are transported in the plasma.",
+        "They always produce a rapid response.",
+        "They are transported through ducts."
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "Hormones are released by endocrine (ductless) glands straight into the bloodstream and travel dissolved in the **plasma**. Their effects are typically slower and longer-lasting than nerve impulses, which rules out the other options."
+    },
+    {
+      "number": 3,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Fibrinogen is a plasma protein which is important for blood clotting.\n\nWhich organ produces fibrinogen?",
+      "options": [
+        "Bone marrow",
+        "Liver",
+        "Kidney",
+        "Pancreas",
+        "Skin"
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "The **liver** manufactures most plasma proteins, including fibrinogen, albumin and prothrombin."
+    },
+    {
+      "number": 4,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "A student investigates the sugar content of four different fruit juices. This is the student's method:\n\n1. Add 5 cm³ of fruit juice to a boiling tube.\n2. Add 5 cm³ of Benedict's solution to the boiling tube.\n3. Place the boiling tube in a water bath at 70 °C for three minutes.\n4. Remove the boiling tube and record the colour of the solution.\n\nThe student uses this method for each of the four fruit juices. The table shows the results.\n\n| Fruit juice | Colour of solution after heating for three minutes |\n| --- | --- |\n| A | blue |\n| B | brick red |\n| C | yellow |\n| D | green |\n\nWhich of the following shows the order of the juices from the lowest to the highest sugar concentration?",
+      "options": [
+        "A – B – C – D",
+        "A – D – C – B",
+        "B – C – D – A",
+        "B – D – C – A",
+        "A – C – D – B"
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "With Benedict's solution the colour runs blue → green → yellow → orange → brick red as the reducing-sugar concentration rises.\n\nSo the order from lowest to highest is blue (A), green (D), yellow (C), brick red (B): **A – D – C – B**."
+    },
+    {
+      "number": 5,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "The picture shows a type of fish called salmon.\n\nSome humans eat salmon as a source of protein. Protein is a component of a balanced diet.\n\nWhich statement describes what happens to salmon protein in the human stomach?",
+      "image_url": "/exam-images/asmopss-2022/science-primary/q05.png",
+      "options": [
+        "It is digested into nucleotides.",
+        "Its surface area is increased by bile.",
+        "Its digestion is facilitated by hydrochloric acid.",
+        "It is absorbed by villi.",
+        "It is digested by pepsinogen."
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "Hydrochloric acid in the stomach gives the low pH that pepsin needs to work. Note that pepsinogen is only the *inactive* precursor, bile emulsifies fats rather than protein, villi are in the small intestine, and protein is digested into amino acids, not nucleotides."
+    },
+    {
+      "number": 6,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Which substance is coded for by a length of DNA?",
+      "options": [
+        "Fat",
+        "Fatty acid",
+        "Glycerol",
+        "Lipase",
+        "Lactic acid"
+      ],
+      "answer_key": {
+        "value": "D"
+      },
+      "solution_md": "DNA codes for proteins. Of the five substances listed, only **lipase** is a protein — it is an enzyme. The others are lipids or small metabolites, which are made by enzyme-catalysed reactions rather than being coded for directly."
+    },
+    {
+      "number": 7,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Adi and Andi are taking part in a running competition. Five minutes after the start, Adi is 60 meters behind Andi.\n\nWhat is the difference between Andi's speed and Adi's speed?",
+      "options": [
+        "12 m/s",
+        "5 m/s",
+        "0.5 m/s",
+        "0.2 m/s",
+        "Cannot determine the value"
+      ],
+      "answer_key": {
+        "value": "D"
+      },
+      "solution_md": "The gap grows at a rate equal to the difference in speed:\n\n$$Δv = \\frac{60\\text{ m}}{5 \\times 60\\text{ s}} = \\frac{60}{300} = 0.2 \\text{ m/s}.$$"
+    },
+    {
+      "number": 8,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Which pair gives a correct quantity and its unit?",
+      "options": [
+        "Water buoyancy force – pascal",
+        "Air pressure – atmosphere",
+        "Speed of sound – decibel",
+        "Vibration period – hertz",
+        "Electric current – watt"
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "The atmosphere (atm) is a genuine unit of pressure. The others are all mismatched: force is measured in newtons, speed in m/s, period in seconds, and current in amperes."
+    },
+    {
+      "number": 9,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Which statements are correct about displacement and distance?\n\n1. Both have the same unit.\n2. Both have direction and magnitude.\n3. The magnitude of displacement cannot be greater than the distance.\n4. The distance travelled by an object does not depend on the trajectory.\n5. If an object moves and comes back to its initial position, the displacement is 0.",
+      "options": [
+        "(1), (2), (4)",
+        "(1), (3), (5)",
+        "(1), (4), (5)",
+        "(2), (3), (4)",
+        "(2), (3), (5)"
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "Statements 1, 3 and 5 are correct. Statement 2 is wrong because distance is a scalar — only displacement has direction. Statement 4 is wrong because distance depends on the whole path taken; it is displacement that does not."
+    },
+    {
+      "number": 10,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "A fuse is one of the safety devices in an electric circuit.\n\nHow does the fuse protect the circuit?",
+      "options": [
+        "The fuse breaks the circuit when the current is too high.",
+        "The fuse breaks the circuit when the voltage rises.",
+        "The fuse reduces the current when the current is too high.",
+        "The fuse is made from fireproof material, so it is safe from fire.",
+        "The fuse cools the electric components so they become more fire resistant."
+      ],
+      "answer_key": {
+        "value": "A"
+      },
+      "solution_md": "A fuse contains a thin wire that melts when the current through it exceeds the rated value, breaking the circuit. It responds to current, not voltage, and it cannot limit or reduce a current while staying intact."
+    },
+    {
+      "number": 11,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Besides planets, there are asteroids orbiting the Sun. The Asteroid Belt in the solar system is located …",
+      "options": [
+        "between the Sun and Mercury's orbit.",
+        "between Mars' and Jupiter's orbits.",
+        "between Jupiter's and Saturn's orbits.",
+        "at Saturn's ring.",
+        "outside Neptune's orbit."
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "The main Asteroid Belt lies between the orbits of Mars and Jupiter. (The region beyond Neptune is the Kuiper Belt.)"
+    },
+    {
+      "number": 12,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Sound waves are classified as infrasonic, audiosonic and ultrasonic.\n\nWhich statement is correct about these sound waves?",
+      "options": [
+        "Ultrasonic has the fastest wave propagation.",
+        "Infrasonic has the longest period.",
+        "Audiosonic has the shortest wavelength.",
+        "Ultrasonic has the greatest amplitude.",
+        "Infrasonic has the highest frequency."
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "Infrasound has the lowest frequency, and period is the reciprocal of frequency, so infrasound has the **longest period**.\n\nSpeed depends on the medium, not the frequency; ultrasound has the shortest wavelength; and amplitude is independent of frequency altogether."
+    },
+    {
+      "number": 13,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Andri stands 50 cm in front of a plane mirror and sees his image in the mirror. Then Andri moves forward or backward so that the distance between Andri and his image is 50 cm.\n\nHow far should Andri move from his initial position?",
+      "options": [
+        "Move forward 25 cm.",
+        "Move forward 40 cm.",
+        "Move backward 25 cm.",
+        "Move backward 40 cm.",
+        "Stand at the initial position."
+      ],
+      "answer_key": {
+        "value": "A"
+      },
+      "solution_md": "A plane mirror puts the image as far behind the mirror as the object is in front, so the object–image distance is twice the object distance.\n\nTo make that 50 cm, Andri must stand 25 cm from the mirror — that is, 25 cm **forward** from his initial 50 cm."
+    },
+    {
+      "number": 14,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Budi makes liquid layers in a container. He uses 3 kinds of liquid: vegetable oil, water and honey. The densities of vegetable oil, water and honey are 800 g/l, 1000 g/l and 1200 g/l respectively.\n\nBudi has four small solid objects of known density:\n\n| Object | Density (kg/l) |\n| --- | --- |\n| A | 1.10 |\n| B | 0.90 |\n| C | 0.85 |\n| D | 1.25 |\n\nWhich object lies on the honey surface and below the water?",
+      "options": [
+        "Object A",
+        "Object B and C",
+        "Object A and D",
+        "Object D",
+        "No object is in that position"
+      ],
+      "answer_key": {
+        "value": "E"
+      }
+    },
+    {
+      "number": 15,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Which source of energy comes from the Earth and does not produce CO₂ gas?",
+      "options": [
+        "Natural gas",
+        "Coal",
+        "Geothermal",
+        "Crude oil",
+        "All the sources of energy above produce CO₂ gas."
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "Geothermal energy taps heat from the Earth's interior and involves no combustion, so no carbon dioxide is released. Natural gas, coal and crude oil are all fossil fuels that release CO₂ when burned."
+    },
+    {
+      "number": 16,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Put an aluminium can on a flat table. Then rub an inflated balloon with dry hair and hold it near the can (see the picture below).\n\nWhat will happen to the can?",
+      "image_url": "/exam-images/asmopss-2022/science-primary/q16.png",
+      "options": [
+        "The can will be attracted to the balloon, because of the electric force.",
+        "The can will be attracted to the balloon, because of the gravitational force.",
+        "The can will move away from the balloon, because of the electric charge.",
+        "The can will move away from the balloon, because of the magnetic force.",
+        "The can stays at rest, because the balloon is made from rubber, not metal."
+      ],
+      "answer_key": {
+        "value": "A"
+      },
+      "solution_md": "Rubbing charges the balloon. The charged balloon polarises the charges in the metal can — unlike charges are pulled to the near side — so the attraction on the near side beats the repulsion on the far side and the can rolls **towards** the balloon. This is an electrostatic effect, not a magnetic or gravitational one."
+    },
+    {
+      "number": 17,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "The graph below shows how the number of fish in a pond changed over a period of 6 months. The fish in the pond feed on the water plants.\n\nWhat are the likely reasons for the change in the number of fish in the pond?",
+      "image_url": "/exam-images/asmopss-2022/science-primary/q17.png",
+      "options": [
+        "From A to B, the birth rate of the fish was equal to its death rate.",
+        "From A to B, the number of animals feeding on the fish increased.",
+        "From A to B, the dissolved oxygen in the pond decreased.",
+        "From B to C, water plants were added to the pond.",
+        "From B to C, food competitors were added to the pond."
+      ],
+      "answer_key": {
+        "value": "E"
+      }
+    },
+    {
+      "number": 18,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "A student investigates the oxygen absorbed by germinating seeds at different temperatures. The diagram shows some of the student's apparatus.\n\nWhat is the function of the soda lime?",
+      "image_url": "/exam-images/asmopss-2022/science-primary/q18.png",
+      "options": [
+        "It absorbs carbon dioxide.",
+        "It absorbs oxygen.",
+        "It releases carbon dioxide.",
+        "It releases oxygen.",
+        "It absorbs water vapour."
+      ],
+      "answer_key": {
+        "value": "A"
+      },
+      "solution_md": "Soda lime absorbs the carbon dioxide the seeds give out. Removing it means the only change in gas volume is the oxygen the seeds take up, so the volume change measures respiration directly."
+    },
+    {
+      "number": 19,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Wati wanted to investigate whether light intensity affects the rate at which plants photosynthesize. She placed an equal mass of water plant under an inverted funnel in two set-ups, A and B. She added a lamp to set-up A. After that, she left them for 2 hours. The diagram below shows set-ups A and B.\n\nWhich of the following should she measure in order to draw a conclusion from the experiment?\n\n1. The temperature of the water in the beaker\n2. The distance between the lamp and the set-up\n3. The height of the column of gas at the top of the test tube\n4. The size of the water plant",
+      "image_url": "/exam-images/asmopss-2022/science-primary/q19.png",
+      "options": [
+        "1 and 2 only",
+        "1 and 3 only",
+        "2 and 3 only",
+        "3 and 4 only",
+        "1 and 4 only"
+      ],
+      "answer_key": {
+        "value": "C"
+      }
+    },
+    {
+      "number": 20,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "This is a three-dimensional diagram of a plant cell.\n\nThe structure which allows carbon dioxide to diffuse is marked by the letter…",
+      "image_url": "/exam-images/asmopss-2022/science-primary/q20.png",
+      "options": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E"
+      ],
+      "answer_key": {
+        "value": "D"
+      }
+    },
+    {
+      "number": 21,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "How do our eyes accommodate to see an object 20 cm from our eyes?\n\n1. Eye lens thickens\n2. Eye lens thins\n3. Ciliary muscle contracts\n4. Ciliary muscle relaxes\n5. Suspensory ligaments tense\n6. Suspensory ligaments slacken",
+      "options": [
+        "4 – 6 – 1",
+        "3 – 6 – 1",
+        "4 – 5 – 2",
+        "4 – 5 – 1",
+        "4 – 6 – 2"
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "20 cm is a near object. The ciliary muscle **contracts**, which slackens the suspensory ligaments, and the elastic lens is then free to bulge and **thicken**, increasing its refractive power.\n\nThat is the sequence 3 – 6 – 1."
+    },
+    {
+      "number": 22,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Randy has three thermometers with different scales: Celsius, Fahrenheit and Réaumur. He found that two thermometers can show the same number:\n\n1. When the Celsius and Fahrenheit scales show the same number.\n2. When the Celsius and Réaumur scales show the same number.\n3. When the Réaumur and Fahrenheit scales show the same number.\n\nArrange the conditions from the lowest temperature to the highest temperature.",
+      "options": [
+        "(1), (2), (3)",
+        "(1), (3), (2)",
+        "(2), (1), (3)",
+        "(2), (3), (1)",
+        "(3), (1), (2)"
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "Using $R = 0.8\\,C$ and $F = 1.8\\,C + 32$:\n\n- Condition 1: $C = 1.8C + 32 \\Rightarrow C = -40°$\n- Condition 2: $C = 0.8C \\Rightarrow C = 0°$\n- Condition 3: $0.8C = 1.8C + 32 \\Rightarrow C = -32°$\n\nFrom lowest to highest: $-40 < -32 < 0$, i.e. **(1), (3), (2)**."
+    },
+    {
+      "number": 23,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Charles wants to lift an object with a mass of 50 kg. Charles can apply a maximum force of 200 N to the object. He has several tools:\n\n1. Fixed pulley\n2. Movable pulley\n3. Inclined plane with a ratio between the vertical and the inclined plane of 1 : 3\n4. Inclined plane with a ratio between the vertical and the inclined plane of 1 : 2\n\nWhich tools can Charles use to lift the object?",
+      "options": [
+        "2) and 3)",
+        "3) and 4)",
+        "2), 3) and 4)",
+        "Only 3)",
+        "1), 2), 3) and 4)"
+      ],
+      "answer_key": {
+        "value": "D"
+      },
+      "solution_md": "The weight is $W = 50 \\times 10 = 500$ N. The force needed with each tool:\n\n- Fixed pulley: $500$ N — too much\n- Movable pulley: $500 / 2 = 250$ N — too much\n- Incline 1 : 3: $500 / 3 ≈ 167$ N — within reach\n- Incline 1 : 2: $500 / 2 = 250$ N — too much\n\nOnly tool 3 works."
+    },
+    {
+      "number": 24,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Initially, an object is 9 meters above the ground. Then the object is dropped without initial speed.\n\nWhen the object is 3 meters above the ground, what is the ratio between its kinetic and potential energy?",
+      "options": [
+        "1 : 3",
+        "1 : 2",
+        "1 : 1",
+        "2 : 1",
+        "3 : 1"
+      ],
+      "answer_key": {
+        "value": "D"
+      },
+      "solution_md": "The object has fallen $9 - 3 = 6$ m, so the kinetic energy gained is proportional to 6, while the remaining potential energy is proportional to the height 3.\n\n$$KE : PE = 6 : 3 = 2 : 1$$"
+    },
+    {
+      "number": 25,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "A razor blade can float on a water surface if it is put down slowly.\n\nWhich statement is correct about this phenomenon?",
+      "options": [
+        "The buoyancy force on the razor blade is equal to its weight.",
+        "The weight of the razor blade is very small, so it can be neglected.",
+        "The surface tension force is equal to the razor blade's weight.",
+        "The buoyancy force on the razor blade is greater than its weight.",
+        "The density of the razor blade is less than the water's density."
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "Steel is denser than water, so buoyancy alone cannot hold the blade up. What supports it is the **surface tension** of the water film, which balances the blade's weight — which is why the blade sinks the moment the surface is broken."
+    }
+  ]
+}

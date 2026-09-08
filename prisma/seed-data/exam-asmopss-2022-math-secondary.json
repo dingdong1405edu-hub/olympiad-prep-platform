@@ -1,0 +1,471 @@
+{
+  "exam": {
+    "slug": "asmopss-2022-math-secondary",
+    "title": "Road to ASMOPSS 2022 — Mathematics Secondary",
+    "subject": "math",
+    "grade_level": "secondary",
+    "duration_min": 90,
+    "total_points": 100,
+    "instructions": "25 câu trắc nghiệm, 4 điểm mỗi câu (tổng 100 điểm). Mỗi câu chọn đúng một phương án (A–E). Không dùng máy tính. Hình vẽ không theo tỉ lệ, chỉ để minh họa. LƯU Ý: đề gốc trừ 1 điểm cho mỗi câu sai; ở đây câu sai không bị trừ điểm."
+  },
+  "_notes": {
+    "source": "Road to ASMOPSS 2022 - Math Secondary (Eng).docx + Road to ASMOPSS 2022 - Answer Key - English.xlsx (cột Math / Secondary).",
+    "removed": "File này KHÔNG có ghi chú bỏ câu — giữ nguyên đủ 25 câu, số thứ tự trùng khít bản gốc nên đáp án map 1:1.",
+    "reconstructed": [
+      "Câu 16, 17, 18, 19, 21, 22: công thức/tọa độ trong Word là đối tượng OMML, bóc ra bị làm phẳng (ví dụ câu 18 thành 102022-41011, câu 22 thành 2<x-22<22). Đã dựng lại bằng LaTeX rồi giải lại để đối chiếu với đáp án chính thức — cả sáu câu đều khớp.",
+      "Câu 3, 7, 23: hình vẽ là OLE .emf, đã convert sang PNG bằng GDI+ ở tỷ lệ 3×."
+    ]
+  },
+  "questions": [
+    {
+      "number": 1,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Suppose $S$ is the product of three consecutive integers and $S$ is divisible by 7.\n\nWhich of the following is **not necessarily** a factor of $S$?",
+      "options": [
+        "6",
+        "14",
+        "21",
+        "28",
+        "42"
+      ],
+      "answer_key": {
+        "value": "D"
+      },
+      "solution_md": "Among any three consecutive integers one is divisible by 2 and one by 3, so $6 | S$; combined with $7 | S$ this forces $42 | S$, hence also $14$ and $21$.\n\nBut $28 = 4 \\times 7$ needs $4 | S$, which is not guaranteed: $5 \\times 6 \\times 7 = 210$ is divisible by 7 but not by 28."
+    },
+    {
+      "number": 2,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "How many positive integers not greater than 2022 are divisible by 3 or 4, but not divisible by 5?",
+      "options": [
+        "775",
+        "776",
+        "809",
+        "911",
+        "944"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "Divisible by 3 or 4:\n\n$$⌊\\tfrac{2022}{3}⌋ + ⌊\\tfrac{2022}{4}⌋ - ⌊\\tfrac{2022}{12}⌋ = 674 + 505 - 168 = 1011.$$\n\nOf those, the ones also divisible by 5:\n\n$$⌊\\tfrac{2022}{15}⌋ + ⌊\\tfrac{2022}{20}⌋ - ⌊\\tfrac{2022}{60}⌋ = 134 + 101 - 33 = 202.$$\n\nAnswer: $1011 - 202 = 809$."
+    },
+    {
+      "number": 3,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Triangle $KMN$ is divided into four smaller triangles and three quadrilaterals by three straight line segments $KP$, $NQ$ and $MR$, as shown below.\n\nThe sum of the perimeters of the three quadrilaterals is 30 cm. The sum of the perimeters of the four triangles is 24 cm. The perimeter of triangle $KMN$ is 20 cm.\n\nWhat is the value of $KP + NQ + MR$?",
+      "image_url": "/exam-images/asmopss-2022/math-secondary/q03.png",
+      "options": [
+        "14",
+        "15",
+        "17",
+        "19",
+        "20"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "Adding the perimeters of all seven pieces counts every side of triangle $KMN$ once and every part of the three cevians exactly twice:\n\n$$30 + 24 = 20 + 2(KP + NQ + MR).$$\n\nSo $KP + NQ + MR = \\dfrac{54 - 20}{2} = 17$ cm."
+    },
+    {
+      "number": 4,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "A 3×3 grid with a black center square (left figure) contains a collection of squares of various sizes: 1×1 (middle figure), 2×2 (right figure), and 3×3 (itself). Out of all these squares, all but 8 contain the black center square.\n\nNow suppose you are given an 11×11 grid with a black center square and white squares everywhere else. It contains a collection of squares of sizes from 1×1 up to 11×11.\n\nHow many of these squares do **not** contain the black center square?",
+      "image_url": "/exam-images/asmopss-2022/math-secondary/q04.png",
+      "options": [
+        "120",
+        "146",
+        "360",
+        "386",
+        "506"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "The total number of squares in an 11×11 grid is\n\n$$\\sum_{k=1}^{11} (12-k)^2 = 1^2 + 2^2 + \\ldots + 11^2 = 506.$$\n\nCounting the squares that *do* contain the centre cell gives 146, so the ones that do not number $506 - 146 = 360$."
+    },
+    {
+      "number": 5,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Fibo and Aci run in opposite directions on a running track, starting from opposite points of the track, as shown below.\n\nThey run at constant speed the whole time and pass each other for the first time after Fibo has run 120 meters. They meet for the second time after Aci has run 200 m past their first meeting point.\n\nWhat is the length of the track, in meters?",
+      "image_url": "/exam-images/asmopss-2022/math-secondary/q05.png",
+      "options": [
+        "220",
+        "320",
+        "440",
+        "520",
+        "660"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "Let the track have length $L$. Starting from opposite points, the runners together cover $\\tfrac{L}{2}$ before the first meeting, so Fibo's share is $\\dfrac{f}{f+a} = \\dfrac{120}{L/2} = \\dfrac{240}{L}$.\n\nBetween the first and second meeting they together cover a full lap $L$, and Aci's share is $\\dfrac{a}{f+a} = \\dfrac{200}{L}$.\n\nThe two shares add to 1:\n\n$$\\frac{240}{L} + \\frac{200}{L} = 1 \\Rightarrow L = 440\\text{ m}.$$"
+    },
+    {
+      "number": 6,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Let $P = 123456789101112\\ldots997998999$ be the number obtained by writing the numbers 1 to 999 in order.\n\nWhat is the 2022nd digit of $P$?",
+      "options": [
+        "0",
+        "1",
+        "4",
+        "7",
+        "9"
+      ],
+      "answer_key": {
+        "value": "A"
+      },
+      "solution_md": "The numbers 1–9 contribute 9 digits and 10–99 contribute $90 \\times 2 = 180$, so 189 digits are used before the three-digit numbers begin.\n\n$2022 - 189 = 1833 = 3 \\times 611$, so the 2022nd digit is the **last** digit of the 611th three-digit number, which is $100 + 611 - 1 = 710$.\n\nThat digit is $0$."
+    },
+    {
+      "number": 7,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Square $PQRS$ with area 60 cm² is divided into regions as in the picture below (not drawn to scale). The area of triangle $PQE$ is 8 cm², of triangle $PFS$ is 10 cm², of triangle $QRG$ is 11 cm², and of triangle $HRS$ is 4 cm².\n\nWhich segment is the longest?",
+      "image_url": "/exam-images/asmopss-2022/math-secondary/q07.png",
+      "options": [
+        "$PE$",
+        "$EF$",
+        "$FG$",
+        "$GH$",
+        "$HR$"
+      ],
+      "answer_key": {
+        "value": "C"
+      }
+    },
+    {
+      "number": 8,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "What is the remainder of $7^{2022}$ when divided by 48?",
+      "options": [
+        "0",
+        "1",
+        "3",
+        "6",
+        "All other answers are incorrect"
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "$7^2 = 49 \\equiv 1 (\\text{mod } 48)$, and 2022 is even, so\n\n$$7^{2022} = \\left(7^2\\right)^{1011} \\equiv 1^{1011} = 1 (\\text{mod } 48).$$"
+    },
+    {
+      "number": 9,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "A 7-digit phone number $ABCDEFG$ is called a **yippee number** if either $ABC = DEF$, or $ABC = EFG$, or $ABC = DEF = EFG$. Note that $A, B, C, D, E, F$ and $G$ can be any digit from 0 to 9 and are not necessarily different from one another.\n\nHow many yippee numbers are there?",
+      "options": [
+        "20000",
+        "19990",
+        "2010",
+        "2000",
+        "1990"
+      ],
+      "answer_key": {
+        "value": "B"
+      }
+    },
+    {
+      "number": 10,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "On a 6×5 rectangle, 2 lines are drawn where their endpoints are 2 units away from the corners as shown in the figure below.\n\nWhat is the difference between the area of the shaded and the unshaded region?",
+      "image_url": "/exam-images/asmopss-2022/math-secondary/q10.png",
+      "options": [
+        "6",
+        "8",
+        "10",
+        "11",
+        "12"
+      ],
+      "answer_key": {
+        "value": "B"
+      }
+    },
+    {
+      "number": 11,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "In how many ways can 2022 be written as a sum of 2s and 3s, if order is ignored (so that $2+2+3 = 2+3+2 = 3+2+2 = 2 \\cdot 2 + 1 \\cdot 3$ all count as one way)?\n\nFor example, $2022 = 1011 \\cdot 2 + 0 \\cdot 3$ and $2022 = 3 \\cdot 2 + 672 \\cdot 3$ are two such ways.",
+      "options": [
+        "333",
+        "337",
+        "338",
+        "674",
+        "675"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "We need $2a + 3b = 2022$ with $a, b \\ge 0$. Since $2a$ and $2022$ are even, $b$ must be even; write $b = 2k$.\n\n$$2a + 6k = 2022 \\Rightarrow a = 1011 - 3k \\ge 0 \\Rightarrow 0 \\le k \\le 337.$$\n\nThat is $338$ values of $k$, hence 338 ways."
+    },
+    {
+      "number": 12,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Farrel has 32 regular fair 6-sided dice. He tosses all the dice. Any die that shows an odd number on top gets tossed again. Dice that show an odd number on the second toss are tossed a third time.\n\nWhat is the expected number of dice that are now showing an even number on top?",
+      "options": [
+        "4",
+        "18",
+        "24",
+        "28",
+        "32"
+      ],
+      "answer_key": {
+        "value": "D"
+      },
+      "solution_md": "A single die ends up odd only if it shows odd three times in a row, with probability $\\left(\\tfrac{1}{2}\\right)^3 = \\tfrac{1}{8}$. So it ends up even with probability $\\tfrac{7}{8}$.\n\n$$32 \\times \\tfrac{7}{8} = 28$$"
+    },
+    {
+      "number": 13,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "How many 3-digit numbers have the property that their tens digit is the average of the other two digits?",
+      "options": [
+        "10",
+        "12",
+        "20",
+        "25",
+        "45"
+      ],
+      "answer_key": {
+        "value": "E"
+      },
+      "solution_md": "Write the number as $abc$. We need $b = \\tfrac{a+c}{2}$, so $a$ and $c$ must have the same parity (and then $b$ is automatically a digit).\n\n- Both odd: $a \\in \\{1,3,5,7,9\\}$, $c \\in \\{1,3,5,7,9\\}$ — $5 \\times 5 = 25$\n- Both even: $a \\in \\{2,4,6,8\\}$, $c \\in \\{0,2,4,6,8\\}$ — $4 \\times 5 = 20$\n\nTotal $= 45$."
+    },
+    {
+      "number": 14,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Two circular discs touch each other. The radius of the smaller circle is half the radius of the larger circle. The smaller disc has an arrow drawn on it, and the arrow points vertically upward when the smaller circle is right on top of the larger circle.\n\nNext, the smaller disc rolls clockwise around the larger disc one and a half times, ending its journey right below the larger disc.\n\nDuring this rolling journey, how many times was the arrow pointing vertically upward (starting position included)?",
+      "options": [
+        "3",
+        "4",
+        "5",
+        "6",
+        "7"
+      ],
+      "answer_key": {
+        "value": "C"
+      }
+    },
+    {
+      "number": 15,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "In triangle $PQR$, points $K$, $M$, $N$ lie on sides $PQ$, $QR$, and $RP$ respectively. Draw the circumcircles of triangles $PKN$ and $NMR$. These two circles intersect at $S$ inside triangle $PQR$.\n\nGiven that $\\angle QPR = 70^\\circ$ and $\\angle PRQ = 50^\\circ$, what is the measure of angle $\\angle KSM$?",
+      "options": [
+        "$100^\\circ$",
+        "$110^\\circ$",
+        "$130^\\circ$",
+        "Not enough information to answer this question",
+        "All other options are incorrect"
+      ],
+      "answer_key": {
+        "value": "E"
+      }
+    },
+    {
+      "number": 16,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "A regular octagon has vertices $P, Q, R, S, T, U, V, W$. One of the vertices $R, S, T, U, V, W$ is chosen at random and a line segment is drawn from the chosen point to point $P$. Then one of the vertices $R, S, T, U, V, W$ is chosen at random again, and we draw a line segment connecting that chosen point to point $Q$.\n\nWhat is the probability that the octagon is cut into exactly three regions by these two line segments?",
+      "options": [
+        "$\\dfrac{1}{3}$",
+        "$\\dfrac{1}{4}$",
+        "$\\dfrac{1}{6}$",
+        "$\\dfrac{4}{9}$",
+        "All other options are incorrect"
+      ],
+      "answer_key": {
+        "value": "E"
+      }
+    },
+    {
+      "number": 17,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "For nonzero real numbers $m$ and $n$,\n\n$$\\frac{\\dfrac{1}{m} - \\dfrac{1}{n}}{\\dfrac{1}{m} + \\dfrac{1}{n}} = 2022.$$\n\nWhat is $\\dfrac{m+n}{m-n}$?",
+      "options": [
+        "$-2022$",
+        "$-\\dfrac{1}{2022}$",
+        "$\\dfrac{1}{2022}$",
+        "$1$",
+        "$2022$"
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "Multiply numerator and denominator by $mn$:\n\n$$\\frac{n - m}{n + m} = 2022 \\Rightarrow \\frac{m-n}{m+n} = -2022.$$\n\nTaking the reciprocal,\n\n$$\\frac{m+n}{m-n} = -\\frac{1}{2022}.$$"
+    },
+    {
+      "number": 18,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Which one of the following is the greatest power of 2 that divides $10^{2022} - 4^{1011}$?",
+      "options": [
+        "$2^{2022}$",
+        "$2^{2023}$",
+        "$2^{2024}$",
+        "$2^{2025}$",
+        "$2^{2026}$"
+      ],
+      "answer_key": {
+        "value": "D"
+      },
+      "solution_md": "$4^{1011} = 2^{2022}$, so\n\n$$10^{2022} - 4^{1011} = 2^{2022}\\left(5^{2022} - 1\\right).$$\n\nBy lifting the exponent for $p = 2$ with an even exponent,\n\n$$v_2\\!\\left(5^{2022} - 1\\right) = v_2(5-1) + v_2(5+1) + v_2(2022) - 1 = 2 + 1 + 1 - 1 = 3.$$\n\nHence the answer is $2^{2022+3} = 2^{2025}$."
+    },
+    {
+      "number": 19,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Given a square of side length 4, inside it 8 identical semicircles are drawn as shown in the figure below. A circle is then drawn in the middle such that it is tangent to all the semicircles.\n\nWhat is the area of this centre circle?",
+      "image_url": "/exam-images/asmopss-2022/math-secondary/q19.png",
+      "options": [
+        "$(\\sqrt{5}-1)\\pi$",
+        "$(2\\sqrt{5}-2)\\pi$",
+        "$4\\pi$",
+        "$5\\pi$",
+        "$(6-2\\sqrt{5})\\pi$"
+      ],
+      "answer_key": {
+        "value": "E"
+      },
+      "solution_md": "Put the square at $(0,0)$–$(4,4)$. Two semicircles sit on each side, each of radius 1, so one of them has centre $(1,0)$. The centre circle is centred at $(2,2)$ and touches it externally, so if its radius is $r$,\n\n$$r + 1 = \\sqrt{(2-1)^2 + (2-0)^2} = \\sqrt{5} \\Rightarrow r = \\sqrt{5}-1.$$\n\nIts area is\n\n$$\\pi r^2 = \\pi\\left(\\sqrt5 - 1\\right)^2 = \\left(6 - 2\\sqrt{5}\\right)\\pi.$$"
+    },
+    {
+      "number": 20,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Tektek and Dungdung play a game where Tektek first says “1”, Dungdung says “2, 1”, then Tektek says “3, 2, 1”, and so on.\n\nWhat is the 2022nd number said between the two of them? (For example, the 4th number said between the two of them is 3, and the 7th is 4.)",
+      "options": [
+        "64",
+        "63",
+        "61",
+        "59",
+        "58"
+      ],
+      "answer_key": {
+        "value": "D"
+      },
+      "solution_md": "After $n$ rounds, $\\tfrac{n(n+1)}{2}$ numbers have been said. For $n = 63$ that is 2016 numbers, so the 2022nd number is the 6th one of round 64.\n\nRound 64 counts down $64, 63, 62, 61, 60, 59, \\ldots$, so the 6th number is $59$."
+    },
+    {
+      "number": 21,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "A triangle with vertices $A(5,6)$, $B(-3,7)$ and $C(8,1)$ is reflected about the line $x = 2$, then shifted down 2 units, before lastly being reflected about the $x$-axis.\n\nWhat are the coordinates of the new triangle?",
+      "options": [
+        "$(1,4), (-7,5), (4,-1)$",
+        "$(-3,-6), (5,-7), (-6,-1)$",
+        "$(-1,-4), (7,-5), (-4,1)$",
+        "$(5,4), (-3,5), (8,-1)$",
+        "All other options are incorrect"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "Reflecting about $x = 2$ sends $(x,y) ↦ (4-x, y)$:\n\n$$A(5,6) \\to (-1,6), \\quad B(-3,7) \\to (7,7), \\quad C(8,1) \\to (-4,1).$$\n\nShifting down 2: $(-1,4)$, $(7,5)$, $(-4,-1)$.\n\nReflecting about the $x$-axis sends $(x,y) ↦ (x,-y)$:\n\n$$(-1,-4), \\; (7,-5), \\; (-4,1).$$"
+    },
+    {
+      "number": 22,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "What is the sum of all integer solutions to\n\n$$2 < (x-2)^2 < 22\\,?$$",
+      "options": [
+        "10",
+        "12",
+        "15",
+        "19",
+        "25"
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "The condition means $\\sqrt2 < |x-2| < \\sqrt{22}$, i.e. $1.41\\ldots < |x-2| < 4.69\\ldots$, so $|x-2| \\in \\{2, 3, 4\\}$.\n\nThat gives $x \\in \\{4, 5, 6, 0, -1, -2\\}$, and\n\n$$4+5+6+0-1-2 = 12.$$"
+    },
+    {
+      "number": 23,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "In triangle $KMN$, we draw segments $KP$ and $NQ$ as in the figure below. Consider the nine angles indicated by dots: $\\angle NKP$, $\\angle PKM$, $\\angle KMP$, $\\angle MPK$, $\\angle NPK$, $\\angle MNQ$, $\\angle KNQ$, $\\angle KQN$ and $\\angle NQP$.\n\nWhat is the smallest number of different values that these nine angles could take?",
+      "image_url": "/exam-images/asmopss-2022/math-secondary/q23.png",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "answer_key": {
+        "value": "C"
+      }
+    },
+    {
+      "number": 24,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "A recent record heat wave hit the United States, passing $104^\\circ\\text{F} = 40^\\circ\\text{C}$ in many cities for weeks. Professor S told her students that **if it is at least 104°F on Monday or the city issues a heatstroke warning, then she will cancel the scheduled final exam.**\n\nOn Monday, the final exam was not cancelled. What can be concluded about the temperature that day?",
+      "options": [
+        "The temperature was less than 104°F or the city didn’t issue a heatstroke warning.",
+        "The temperature was less than 104°F and the city didn’t issue a heatstroke warning.",
+        "The temperature was more than 104°F, but the city issued a heatstroke warning.",
+        "The city issued a heatstroke warning, but the temperature was less than 104°F.",
+        "Nothing can be concluded from the given information."
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "The exam was not cancelled, so the hypothesis “temperature ≥ 104°F **or** a warning was issued” must be false.\n\nThe negation of a disjunction is the conjunction of the negations: the temperature was below 104°F **and** no warning was issued."
+    },
+    {
+      "number": 25,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Given a partially built cuboid (leftmost) and the possible remaining pieces shown below.\n\nWhich of the following pieces will complete the cuboid?",
+      "image_url": "/exam-images/asmopss-2022/math-secondary/q25.png",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "answer_key": {
+        "value": "B"
+      }
+    }
+  ]
+}

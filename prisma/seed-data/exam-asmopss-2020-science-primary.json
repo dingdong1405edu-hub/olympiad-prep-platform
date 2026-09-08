@@ -1,0 +1,481 @@
+{
+  "exam": {
+    "slug": "asmopss-2020-science-primary",
+    "title": "Road to ASMOPSS X (2020) — Science Primary",
+    "subject": "science",
+    "grade_level": "primary",
+    "duration_min": 60,
+    "total_points": 100,
+    "instructions": "25 câu trắc nghiệm, 4 điểm mỗi câu (tổng 100 điểm). Mỗi câu chọn đúng một phương án (A–E). Không dùng máy tính. Hình vẽ không theo tỉ lệ, chỉ để minh họa. LƯU Ý: đề gốc cho 3 điểm mỗi câu đúng, trừ 1 điểm mỗi câu sai và tính từ mốc 25 điểm. Ở đây đề được quy về thang 100 điểm, câu sai không bị trừ điểm."
+  },
+  "_notes": {
+    "source": "Road to ASMOPSS X Science Primary.docx + Answer Key Road to ASMOPSS X.xlsx (cột Primary / Science).",
+    "mapping": "Bảng đề có 44 dòng cho 25 câu (câu có hình/bảng bị tách thành nhiều dòng). Đã gộp lại đúng 25 câu theo thứ tự gốc nên đáp án map 1:1.",
+    "reconstructed": [
+      "Câu 5, 6, 12, 13, 14, 15: ảnh lấy thẳng từ word/media và cắt đúng theo srcRect mà Word ghi trong đề (bản gốc là ảnh chụp màn hình có kèm cả đề cũ, phải cắt bỏ).",
+      "Câu 6 gốc có hai hình (bộ thí nghiệm và đồ thị); đã ghép dọc thành một ảnh vì mỗi câu chỉ gắn được một ảnh.",
+      "Câu 2 (sơ đồ phát tán hạt) và câu 23 (bập bênh) vẽ bằng shape của Word, không có file ảnh; đã xuất đề sang PDF rồi render vùng hình ở 300 DPI.",
+      "Bảng số liệu (câu 8, 9, 13) và bảng phương án A–E (câu 3, 11, 12, 14) là bảng Word; đã chuyển thành bảng markdown / thành 5 phương án dạng 'cột: giá trị'."
+    ]
+  },
+  "questions": [
+    {
+      "number": 1,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Living things and non-living things may share things in common. Which of the following characteristics of living things that a cellphone has?",
+      "options": [
+        "movement",
+        "reproduction",
+        "growth",
+        "excretion",
+        "sensitivity"
+      ],
+      "answer_key": {
+        "value": "E"
+      },
+      "solution_md": "**Sensitivity** — a phone reacts to stimuli (a touch, a sound, light on its sensor).\n\nIt cannot move by itself, reproduce, grow, or excrete waste from chemical reactions inside it."
+    },
+    {
+      "number": 2,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Study the classification chart below.\n\nWhich of the following organisms cannot be placed in the classification chart above?",
+      "image_url": "/exam-images/asmopss-2020/science-primary/q02.png",
+      "options": [
+        "Mango tree",
+        "Bird’s nest fern",
+        "Rubber plant",
+        "Mimosa plant",
+        "Mangrove"
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "The chart sorts plants by how their **seeds** are dispersed.\n\nA bird's nest fern is a fern: it reproduces by **spores**, not seeds, so it has no place in the chart. Mango, rubber, mimosa and mangrove all produce seeds."
+    },
+    {
+      "number": 3,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Using the binomial naming system, the date palm is called Phoenix dactylifera. Which row is correct?",
+      "options": [
+        "Phoenix: Genus / dactylifera: kingdom",
+        "Phoenix: Genus / dactylifera: species",
+        "Phoenix: Family / dactylifera: genus",
+        "Phoenix: Species / dactylifera: genus",
+        "Phoenix: Order / dactylifera: species"
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "In the binomial (two-word) naming system the first word is the **genus** and the second the **species**.\n\nSo *Phoenix* is the genus and *dactylifera* is the species."
+    },
+    {
+      "number": 4,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "What is a characteristic of both annelids and arthropods?",
+      "options": [
+        "jointed legs",
+        "have wings",
+        "segmented body",
+        "have antennae",
+        "six legs"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "Annelids (earthworms) and arthropods (insects, crabs) both have **segmented bodies**.\n\nJointed legs, antennae, wings and six legs belong only to arthropods (and not even to all of them)."
+    },
+    {
+      "number": 5,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "The diagram shows the human heart and some of the blood vessels connected to it.\n\nBefore blood in W reaches Z it must",
+      "image_url": "/exam-images/asmopss-2020/science-primary/q05.png",
+      "options": [
+        "gain oxygen.",
+        "give up heat to the skin.",
+        "pass through vena cava",
+        "travel to the head.",
+        "pass through aorta."
+      ],
+      "answer_key": {
+        "value": "A"
+      },
+      "solution_md": "W is on the right side of the heart, Z on the left. Blood leaving the right side is pumped to the **lungs**, where it picks up oxygen, and only then returns to the left side.\n\nSo before blood in W reaches Z it must **gain oxygen**."
+    },
+    {
+      "number": 6,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Tuti set up an experiment as shown below. She repeated the same experiment several times, each with a different distance of light source from the plant.\n\nThe results from the experiment are shown in the following graph.\n\nWhich one of the following statements correctly state the conclusion of the experiment?",
+      "image_url": "/exam-images/asmopss-2020/science-primary/q06.png",
+      "options": [
+        "The higher the water concentration, the faster the photosynthesis.",
+        "Rate of photosynthesis increase as the decrease of CO2 concentration.",
+        "Plants do photosynthesis if there is enough light.",
+        "Rate of photosynthesis increases as the increase of light intensity.",
+        "The further the distance of light from the plant, the faster the photosynthesis."
+      ],
+      "answer_key": {
+        "value": "D"
+      },
+      "solution_md": "The only thing Tuti changed between runs is the **distance of the lamp**, so the only variable being tested is light intensity — the water and CO₂ around the plant were the same every time.\n\nThe graph shows less gas collected as $d$ grows. A lamp further away means dimmer light, so less light gives a slower rate: **the rate of photosynthesis increases as light intensity increases**."
+    },
+    {
+      "number": 7,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Which of the following trait is NOT inherited genetically?",
+      "options": [
+        "gender",
+        "eye color",
+        "curly hair",
+        "ability to speak Japanese",
+        "blood type"
+      ],
+      "answer_key": {
+        "value": "D"
+      },
+      "solution_md": "Gender, eye colour, curly hair and blood type are all carried by genes.\n\n**Speaking Japanese is learned**, not inherited — a child of Japanese parents raised elsewhere does not speak it automatically."
+    },
+    {
+      "number": 8,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "The table shows the condition of 5 different habitats, V, W, X, Y, and Z.\n\n| Condition | V | W | X | Y | Z |\n|---|---|---|---|---|---|\n| Light | bright | dim | dim | bright | bright |\n| Temperature | high | low | low | high | low |\n| Moisture of the surrounding | moderate | low | moderate | none | moderate |\n| Presence of the dead matter | plenty | little | plenty | little | plenty |\n\nAndi found organism A in one of the habitats. He observed it and recorded the characteristics of the organism as shown below.\n\n- **(1)** It feeds on dead matter.\n- **(2)** It can move easily in the dark.\n- **(3)** It breathes through its moist skin.\n\nIn which habitat was the organism A most likely to be found?",
+      "options": [
+        "V",
+        "W",
+        "X",
+        "Y",
+        "Z"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "Match each clue to a column:\n\n- feeds on dead matter → the habitat needs **plenty of dead matter**: V, X or Z\n- moves easily in the dark → **dim** light: W or X\n- breathes through moist skin → needs **moisture**: not Y\n\nOnly **X** satisfies all three (dim, plenty of dead matter, moderate moisture)."
+    },
+    {
+      "number": 9,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "A group of pupils listed the animals and plants they found in a field and recorded the data in the table below.\n\n| Animals | Number | Plants | Number |\n|---|---|---|---|\n| ants | 15 | Rain trees | 4 |\n| spiders | 1 | Angsana trees | 2 |\n| butterflies | 3 | Bird's nest fern | 3 |\n| caterpillars | 6 | | |\n| grasshoppers | 2 | | |\n| grasshopper nymphs | 3 | | |\n\nBased on the table above, which of the following statement(s) is/are true about this community?\n\n- **(1)** There are fifteen ant populations.\n- **(2)** There are three plant populations.\n- **(3)** There are nine populations in total.",
+      "options": [
+        "1 and 2",
+        "2 and 3",
+        "1 only",
+        "2 only",
+        "All 1, 2, and 3"
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "A population is all the individuals of **one species** in the area.\n\n- (1) is false: the 15 ants are one ant population, not fifteen.\n- (2) is true: rain trees, angsana trees and bird's nest fern → 3 plant populations.\n- (3) is true: 6 animal populations (ants, spiders, butterflies, caterpillars, grasshoppers, grasshopper nymphs) $+ 3$ plant populations $= 9$.\n\nSo **2 and 3**."
+    },
+    {
+      "number": 10,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Which one of the following about digestive system is correct?",
+      "options": [
+        "Water is absorbed only in the large intestine.",
+        "Villi maximize the absorption of food molecules.",
+        "Pancreas produces pepsin.",
+        "Bile helps protein digestion.",
+        "Amylase is produced in the stomach."
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "**Villi** (and microvilli) give the small intestine a huge surface area, which is what makes absorption fast.\n\nThe others are wrong: most water is absorbed in the small intestine; pepsin comes from the stomach, not the pancreas; bile emulsifies **fat**, not protein; amylase comes from the salivary glands and the pancreas, not the stomach."
+    },
+    {
+      "number": 11,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Which one of the following correctly shows what happen when we exercise?",
+      "options": [
+        "Oxygen required: increases / Carbon dioxide released: decreases / Digested food required: decreases / Heartbeat Rate: increases",
+        "Oxygen required: decreases / Carbon dioxide released: increases / Digested food required: increases / Heartbeat Rate: increases",
+        "Oxygen required: increase / Carbon dioxide released: decreases / Digested food required: increases / Heartbeat Rate: remind the same",
+        "Oxygen required: increases / Carbon dioxide released: remind the same / Digested food required: remind the same / Heartbeat Rate: increases",
+        "Oxygen required: increases / Carbon dioxide released: increases / Digested food required: increases / Heartbeat Rate: increases"
+      ],
+      "answer_key": {
+        "value": "E"
+      },
+      "solution_md": "Exercise makes the muscles respire faster. They need **more oxygen** and **more digested food** (glucose), they release **more carbon dioxide**, and the heart beats **faster** to carry all of it around.\n\nAll four increase."
+    },
+    {
+      "number": 12,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "The diagram below shows the flow of blood in our body.\n\nWhich one of the following correctly shows A, B, and C?",
+      "image_url": "/exam-images/asmopss-2020/science-primary/q12.png",
+      "options": [
+        "A: Other parts of the body / B: heart / C: lungs",
+        "A: Other parts of the body / B: lungs / C: heart",
+        "A: lungs / B: heart / C: Other parts of the body",
+        "A: heart / B: Other parts of the body / C: lungs",
+        "A: lungs / B: Other parts of the body / C: heart"
+      ],
+      "answer_key": {
+        "value": "D"
+      },
+      "solution_md": "Follow the labels on the arrows. C receives blood **poor** in oxygen and sends back blood **rich** in oxygen — only the **lungs** do that.\n\nThe box that pumps blood both to the lungs and out to the rest of the body, and receives it back from both, is A — the **heart**.\n\nB receives oxygen-rich blood and returns oxygen-poor blood: the **other parts of the body**."
+    },
+    {
+      "number": 13,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Madona set up an experiment using 4 similar leaves of the same mass, A, B, C, and D of plant X. She coated some surfaces of the leaves with oil as shown in the table below (✓ = that surface is coated).\n\n| Leaf | Underside coated with oil | Upper side coated with oil |\n|---|---|---|\n| A | ✓ | ✓ |\n| B | | |\n| C | ✓ | |\n| D | | ✓ |\n\nAfter a few hours, Madona weighed each leaf and recorded the mass. Which one of the following shows the correct order of the mass of the leaves, from the heaviest to the lightest?",
+      "image_url": "/exam-images/asmopss-2020/science-primary/q13.png",
+      "options": [
+        "A, C, D, B",
+        "D, C, B, A",
+        "A, D, C, B",
+        "B, C, D, A",
+        "B, D, C, A"
+      ],
+      "answer_key": {
+        "value": "A"
+      },
+      "solution_md": "Leaves lose water by transpiration through the **stomata**, which are mostly on the **underside**. Oil blocks them, so the more stomata are covered the less water is lost and the heavier the leaf stays.\n\n- A: both surfaces coated → almost no loss → **heaviest**\n- C: underside coated (most stomata blocked) → small loss\n- D: only the upper side coated, the busy underside open → large loss\n- B: nothing coated → **lightest**\n\nOrder: **A, C, D, B**."
+    },
+    {
+      "number": 14,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "The diagram below shows the movement of food and water in a plant.\n\nWhich one of the following is correct?",
+      "image_url": "/exam-images/asmopss-2020/science-primary/q14.png",
+      "options": [
+        "A: Fruit / B: Leaves / C: Stem / D: Roots",
+        "A: Fruit / B: Roots / C: Stem / D: Leaves",
+        "A: Leaves / B: Stem / C: Roots / D: Fruit",
+        "A: Roots / B: Stem / C: Leaves / D: Fruit",
+        "A: Leaves / B: Roots / C: Stem / D: Fruit"
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "Read the key. The thick (water) arrows run $B \\to C$, $C \\to A$ and $C \\to D$, so water enters at B and is carried up through C: **B = roots, C = stem**.\n\nThe thin (food) arrows start at D and run $D \\to C$, then $C \\to B$ and $C \\to A$. Food is made where photosynthesis happens, so **D = leaves**, and A, which only receives, is the **fruit**."
+    },
+    {
+      "number": 15,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Plant A produces male and female flowers. The diagram below shows the different flowers of plant A that can be produced on each plant.\n\nBased on the diagram above, which of the following statements are true?\n\n- **(1)** Both male and female flowers must be red to produce plants that have red flowers.\n- **(2)** Both male and female flowers must be white to produce plants that have white flowers.\n- **(3)** Female sex cell of the red flower and the male sex cell of the red flower can produce red flowers.\n- **(4)** Male sex cell of the red flower and the female sex cell of the red flower can produce white flowers.",
+      "image_url": "/exam-images/asmopss-2020/science-primary/q15.png",
+      "options": [
+        "1 and 2 only",
+        "1 and 4 only",
+        "2 and 3 only",
+        "3 and 4 only",
+        "2 and 4 only"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "Red is dominant and white is recessive here.\n\n- (1) false — two red parents can be carriers, so red parents are not *required*; red offspring appear in the pedigree from mixed pairings too.\n- (2) true — white is recessive, so a white plant needs a white allele from each parent; two white parents can only give white.\n- (3) true — the pedigree shows red × red producing red offspring.\n- (4) false — that is the same cross as (3) written the other way round; it is not what produces white here.\n\nSo **2 and 3 only**."
+    },
+    {
+      "number": 16,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Thermogun is an instrument to measure the object or human temperature. Which statement is not true about the advantage of using thermogun compared to mercury/ethanol thermometer?",
+      "options": [
+        "Using thermogun is more accurate.",
+        "Response to get the temperature is faster.",
+        "No need to touch the object.",
+        "Digital display, easier to read.",
+        "Some thermogun able to measure an object with extremely high or extremely low temperature."
+      ],
+      "answer_key": {
+        "value": "A"
+      },
+      "solution_md": "A thermogun reads the **surface** temperature from a distance, and the reading is affected by distance, sweat, wind and the surroundings. It is faster and contact-free, but it is generally **less** accurate than a mercury/ethanol thermometer held in place.\n\nSo \"more accurate\" is the statement that is **not** true."
+    },
+    {
+      "number": 17,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "A mosquito makes the sound when it flies by flapping its wings. If the frequency of the sound is 3000 Hz, then a mosquito flaps its wings … times, in one minute.",
+      "options": [
+        "50",
+        "900",
+        "3000",
+        "18000",
+        "180000"
+      ],
+      "answer_key": {
+        "value": "E"
+      },
+      "solution_md": "Frequency 3000 Hz means 3000 wingbeats **every second**.\n\n$$3000 \\times 60 = 180000 \\text{ beats per minute.}$$"
+    },
+    {
+      "number": 18,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Luki lives in the equatorial region. Luki stuck a stick on the ground and observe the length of its shadows when the sun lights the stick. From the following answers, when are the shadows the longest?",
+      "options": [
+        "At 9.00 in June.",
+        "At 9.00 in September",
+        "At 12.00 in December.",
+        "At 12.00 in March",
+        "At 15.00 in March"
+      ],
+      "answer_key": {
+        "value": "A"
+      },
+      "solution_md": "A shadow is longest when the Sun is **lowest** in the sky.\n\nAt the equator the Sun is nearly overhead at 12:00 all year, so noon shadows are the shortest ones — that rules out C and D. Of the morning/afternoon choices, the Sun is furthest from being overhead in **June**, when it is over the Tropic of Cancer, so at 9:00 in June it is lowest and the shadow is longest."
+    },
+    {
+      "number": 19,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "What energy conversion happened in Geothermal power plant?",
+      "options": [
+        "Heat → Mechanics → Electrical",
+        "Potential → Heat →Electrical",
+        "Potential → Chemical → Electrical",
+        "Heat → Potential → Chemical",
+        "Heat → Electrical → Chemical."
+      ],
+      "answer_key": {
+        "value": "A"
+      },
+      "solution_md": "A geothermal plant takes **heat** from underground, uses the steam to spin a turbine (**mechanical** energy), and the generator turns that into **electrical** energy.\n\nHeat → Mechanics → Electrical."
+    },
+    {
+      "number": 20,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Why do in chicken hatchery machine, we use an incandescent light bulb, not a LED light bulb?",
+      "options": [
+        "Because the incandescent light bulb is used less energy.",
+        "Because the incandescent light bulb has more lights so it will be brighter.",
+        "Because the incandescent light bulb can be used at high power electricity.",
+        "Because the incandescent light bulb produces more yellow light.",
+        "Because the incandescent light bulb produces more heat energy"
+      ],
+      "answer_key": {
+        "value": "E"
+      },
+      "solution_md": "Eggs in a hatchery have to be kept warm.\n\nAn incandescent bulb turns most of its electrical energy into **heat** — usually treated as waste, but here it is exactly what is wanted. An LED is efficient and stays cool, so it would not keep the eggs warm."
+    },
+    {
+      "number": 21,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "This year (2020) is a leap year, there is an additional 1 days in February so it has 29 days. Why does this happen?",
+      "options": [
+        "Because of the distance between the Sun and the Earth is not always the same.",
+        "Because the Earth revolution period is not exact 365 days.",
+        "Because earth speed is not always the same when orbiting the Sun.",
+        "Because to adjust the calendar with the Lunar calendar.",
+        "Because the moon revolution is not exactly 30 days."
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "The Earth takes about **365.25 days** to go once round the Sun, not exactly 365.\n\nThe leftover quarter-day is saved up and added as one extra day (29 February) every four years, so the calendar does not drift away from the seasons."
+    },
+    {
+      "number": 22,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Tanto usually rides the bike in the afternoon. He rides it for one hour. If Tanto’s average speed is 3 m/s, what is the distance that he covers for 5 days?",
+      "options": [
+        "5 km",
+        "15 km",
+        "36 km",
+        "54 km",
+        "72 km"
+      ],
+      "answer_key": {
+        "value": "D"
+      },
+      "solution_md": "One hour of riding at 3 m/s:\n\n$$3 \\times 3600 = 10800\\ \\text{m} = 10.8\\ \\text{km per day.}$$\n\n$$10.8 \\times 5 = 54\\ \\text{km.}$$"
+    },
+    {
+      "number": 23,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "There are 2 boxes, A and B. They have the same volume and shape, put on a seesaw which stays balanced. See the picture:\n\nWhich statement is true?",
+      "image_url": "/exam-images/asmopss-2020/science-primary/q23.png",
+      "options": [
+        "Box A has more density than box B.",
+        "Box B has more density than box A.",
+        "Both boxes have the same mass.",
+        "Both boxes have the same weight but different mass.",
+        "Both boxes have a smaller mass than the seesaw mass."
+      ],
+      "answer_key": {
+        "value": "A"
+      },
+      "solution_md": "The seesaw balances, so the turning effects match:\n\n$$m_A \\times 40 = m_B \\times 60 \\Rightarrow m_A = 1.5\\, m_B.$$\n\nBox A is heavier, and the two boxes have the **same volume**, so\n\n$$ρ = \\frac{m}{V} \\Rightarrow ρ_A = 1.5\\,ρ_B.$$\n\nBox A has the greater density."
+    },
+    {
+      "number": 24,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Nowadays, there are hundreds of artificial satellites orbiting the Earth.\n\nThe following statements are about the artificial satellites:\n\n- **(1)** Artificial satellites have the same speed as the Moon's speed when orbiting the Earth.\n- **(2)** Earth gravity does not affect the artificial satellites so they stay at the orbit.\n- **(3)** Artificial satellites orbit has a lower altitude than the Moon.\n- **(4)** Weather and telecommunication satellites are the artificial satellites.\n\nWhich statements are correct?",
+      "options": [
+        "(1), (2), (3), and (4)",
+        "(1) and (4)",
+        "(1), (3), and (4)",
+        "(3), and (4)",
+        "(1), (2) and (4)"
+      ],
+      "answer_key": {
+        "value": "D"
+      },
+      "solution_md": "- (1) false — satellites orbit much closer to Earth, so they go round far faster than the Moon.\n- (2) false — Earth's gravity is precisely the force that holds them in orbit.\n- (3) true — they orbit hundreds to tens of thousands of km up; the Moon is about 384 000 km away.\n- (4) true — weather and telecommunication satellites are man-made.\n\nSo **(3) and (4)**."
+    },
+    {
+      "number": 25,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Which statement is not correct about heat?",
+      "options": [
+        "When water is boiling, water receives heat.",
+        "When water is evaporating, water receives heat.",
+        "When water is boiling, the temperature is not increasing.",
+        "When water is freezing, water release heat.",
+        "Water vapor temperature is not possible higher than the boiling temperature."
+      ],
+      "answer_key": {
+        "value": "E"
+      },
+      "solution_md": "Statements A–D are all correct: boiling and evaporating both absorb heat, the temperature stays at the boiling point while water boils, and freezing releases heat.\n\n**E is wrong**: once all the water has turned to vapour, the vapour can keep absorbing heat and rise well above 100 °C — that is superheated steam.\n\nThe question asks which is **not** correct, so the answer is E."
+    }
+  ]
+}

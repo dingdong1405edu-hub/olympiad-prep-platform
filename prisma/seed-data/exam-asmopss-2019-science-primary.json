@@ -1,0 +1,580 @@
+{
+  "exam": {
+    "slug": "asmopss-2019-science-primary",
+    "title": "Road to ASMOPSS 2019 — Science Primary",
+    "subject": "science",
+    "grade_level": "primary",
+    "duration_min": 90,
+    "total_points": 100,
+    "instructions": "30 câu trắc nghiệm chia hai phần: phần 1 (câu 1–20) mỗi câu 3 điểm, phần 2 (câu 21–30) mỗi câu 4 điểm, tổng 100 điểm. Mỗi câu chọn đúng một phương án (A–E). Không dùng máy tính. Hình vẽ không theo tỉ lệ, chỉ để minh họa. LƯU Ý: đề gốc trừ 1 điểm cho mỗi câu sai; ở đây câu sai không bị trừ điểm."
+  },
+  "_notes": {
+    "source": "Road to ASMOPSS 2019 - Science Primary Level.pdf + Answer Key Road to ASMOPSS 2019.xlsx (cột Primary Level / Science).",
+    "removed": "Không bỏ câu nào. Thang điểm in ngay trong đề (Part 1 = 3 điểm/câu, Part 2 = 4 điểm/câu) đã cho đúng 100 điểm nên giữ nguyên cả 30 câu, số câu 1–30 khớp số gốc.",
+    "reconstructed": [
+      "Các bảng phương án (câu 4, 7, 12, 20, 22, 26) bị pdftotext trộn cột thành một khối chữ; đã đọc lại từ ảnh render và dựng lại bằng bảng Markdown.",
+      "Câu 3, 5, 7, 8, 10, 11, 12, 13, 15, 21, 22, 23, 24, 25, 26: hình vẽ cắt trực tiếp từ PDF ở 200 dpi sang PNG trong public/exam-images/asmopss-2019/science-primary/."
+    ],
+    "flags": [
+      "Câu 1 (đặc điểm chung của MỌI sinh vật): đáp án chính thức là E — ingestion (lấy thức ăn vào cơ thể). Nhưng thực vật tự dưỡng không ingest, còn excretion (thải chất thải trao đổi chất) mới đúng là đặc điểm của mọi sinh vật, tức phương án A. Ở đây vẫn giữ đáp án chính thức E để trung thành với bản gốc; cân nhắc đổi sang A trước khi dùng chấm điểm thật.",
+      "Câu 16 (sóng nào tần số thấp nhất): đáp án chính thức là E — ultrasound. Trong 5 phương án thì radio wave (C) mới là loại phủ dải tần thấp nhất (xuống tới vài Hz), còn siêu âm bắt đầu từ khoảng 20 kHz. Câu này phụ thuộc cách hiểu dải tần mà đề muốn nói; giữ nguyên đáp án chính thức, nên rà lại trước khi dùng chấm điểm thật."
+    ]
+  },
+  "questions": [
+    {
+      "number": 1,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 3,
+      "prompt_md": "What is a characteristic of **all** living things?",
+      "options": [
+        "excretion",
+        "locomotion",
+        "breathing",
+        "egestion",
+        "ingestion"
+      ],
+      "answer_key": {
+        "value": "E"
+      },
+      "solution_md": "**Note — this question's official answer is disputed.**\n\nEvery living thing carries out **excretion**: metabolism always produces waste that must be removed (plants get rid of oxygen and excess water, animals of carbon dioxide and urea). Locomotion, breathing and egestion are not universal, and *ingestion* — taking food into the body — is exactly what autotrophic plants do **not** do.\n\nOn that reasoning the answer should be **A**. The official answer key records **E**, which is what is stored here."
+    },
+    {
+      "number": 2,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 3,
+      "prompt_md": "Which of the following statements are true for both fungi and bacteria?\n\n1. Some are decomposers.\n2. They reproduce from spores.\n3. They can only be seen with a microscope.\n4. They feed on living as well as dead organisms.",
+      "options": [
+        "1 and 2 only",
+        "2 and 3 only",
+        "3 and 4 only",
+        "1 and 4 only",
+        "2 and 4 only"
+      ],
+      "answer_key": {
+        "value": "D"
+      },
+      "solution_md": "- (1) ✓ Both groups contain decomposers.\n- (2) ✗ Fungi reproduce from spores, but bacteria divide by binary fission (endospores are for survival, not reproduction).\n- (3) ✗ Many fungi — mushrooms, bread mould — are plainly visible.\n- (4) ✓ Both include parasites (feeding on living hosts) and saprophytes (feeding on dead matter).\n\nSo 1 and 4 only. Answer **D**."
+    },
+    {
+      "number": 3,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 3,
+      "prompt_md": "The diagram below shows the cross-section of a tomato. The fruit is fleshy and juicy but contains many seeds. Which of the following statements about the tomato flower are correct?\n\n1. The flower has many ovaries.\n2. The ovary of the flower contained many ovules.\n3. The flower went through pollination before fertilization.\n4. Fertilization occurred when pollen landed on the stigma.",
+      "image_url": "/exam-images/asmopss-2019/science-primary/q03.png",
+      "options": [
+        "1 and 2 only",
+        "2 and 3 only",
+        "1 and 3 only",
+        "3 and 4 only",
+        "2 and 4 only"
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "- (1) ✗ One fruit develops from **one** ovary; many seeds mean many ovules, not many ovaries.\n- (2) ✓ Each seed came from one ovule, so the single ovary held many ovules.\n- (3) ✓ Pollination always comes before fertilisation.\n- (4) ✗ Pollen landing on the stigma **is** pollination; fertilisation happens later, inside the ovule.\n\nAnswer **B**."
+    },
+    {
+      "number": 4,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 3,
+      "prompt_md": "Anto studied and made some observations on two animals, A and B. He recorded his observations in the table below.\n\n| | Animal A | Animal B |\n|---|---|---|\n| Can the adult fly? | Yes | Yes |\n| Does it lay its egg on water? | Yes | No |\n| Does the young look like its adult? | No | No |\n| Does it have a larval stage in its life cycle? | Yes | Yes |\n\nWhich of the following pair of animals can be animal A and animal B?",
+      "options": [
+        "A: Ostrich — B: Grasshopper",
+        "A: Mosquito — B: Beetle",
+        "A: Cockroach — B: Mosquito",
+        "A: Butterfly — B: Mosquito",
+        "A: Cockroach — B: Ostrich"
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "Animal A flies, lays its eggs **on water** and has a larval stage — that is the mosquito.\n\nAnimal B flies and has a larval stage (complete metamorphosis) but does **not** lay eggs on water — the beetle fits.\n\nThe others fail: ostriches cannot fly, grasshoppers and cockroaches have no larval stage (incomplete metamorphosis, they hatch as nymphs), and butterflies do not lay eggs on water.\n\nAnswer **B**."
+    },
+    {
+      "number": 5,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 3,
+      "prompt_md": "Ida carried out an experiment for 3 sunny days as shown below. She placed two identical type of plants in the boxes covered with black paper. She covered the leaves of the plant in Set-up B and placed both sets in a garden. She watered both plants with the same amount of water every day.\n\nWhat can you conclude from Ida's experiment?",
+      "image_url": "/exam-images/asmopss-2019/science-primary/q05.png",
+      "options": [
+        "Plants need water for photosynthesis.",
+        "Plants need carbon dioxide to survive.",
+        "Plants need oxygen to produce energy.",
+        "Plants respond to changes around them.",
+        "Plants need light to release energy from their food."
+      ],
+      "answer_key": {
+        "value": "D"
+      },
+      "solution_md": "Both boxes are dark except for one small opening. After three days the plant in Set-up A has bent towards that opening, while the plant in Set-up B — whose leaves are wrapped in black paper — has not.\n\nWhat the experiment demonstrates is **phototropism**: the plant detects light coming from one side and grows towards it. That is a response to a change in its surroundings.\n\nAnswer **D**."
+    },
+    {
+      "number": 6,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 3,
+      "prompt_md": "Which of the following substance(s) is/are present in the plant transport system?\n\n1. water\n2. sugar\n3. blood\n4. minerals",
+      "options": [
+        "1, 2, 3, and 4",
+        "1, 2, and 3 only",
+        "3 and 4 only",
+        "1 and 4 only",
+        "1, 2, and 4"
+      ],
+      "answer_key": {
+        "value": "E"
+      },
+      "solution_md": "Xylem carries **water** and dissolved **minerals** upward from the roots; phloem carries dissolved **sugar** made in the leaves.\n\nPlants have no blood, so (3) is out.\n\nAnswer **E**."
+    },
+    {
+      "number": 7,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 3,
+      "prompt_md": "The diagram below shows the human digestive system.\n\nWhich of the following correctly identifies the function(s) of M, N, P, Q, and R?\n\n| | Produces digestive juices | Where digestion is completed | Remove water from undigested food |\n|---|---|---|---|\n| A | M, N, Q | Q, R | Q, R |\n| B | M, P, Q | P, Q | R |\n| C | M, N, P | Q | Q, R |\n| D | M, P, Q | Q | Q, R |\n| E | M, Q, R | Q, R | Q, R |",
+      "image_url": "/exam-images/asmopss-2019/science-primary/q07.png",
+      "options": [
+        "Row A",
+        "Row B",
+        "Row C",
+        "Row D",
+        "Row E"
+      ],
+      "answer_key": {
+        "value": "D"
+      },
+      "solution_md": "From the labels: $M$ = mouth, $N$ = oesophagus, $P$ = stomach, $Q$ = small intestine, $R$ = large intestine.\n\n- **Produces digestive juices**: mouth (saliva), stomach (gastric juice) and small intestine (intestinal juice) — $M, P, Q$. The oesophagus only pushes food along.\n- **Digestion completed**: in the small intestine — $Q$.\n- **Removes water from undigested food**: mainly the large intestine, with the small intestine also absorbing water — $Q, R$.\n\nAnswer **D**."
+    },
+    {
+      "number": 8,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 3,
+      "prompt_md": "A student split the stalk of a white flower and placed both ends into two different containers of colored water as shown below.\n\nAfter one day, the student observed that there was a change in the color of the flower. Based on the given information, which of the following statement(s) is/are true?\n\n1. The white flower turned partially blue and red.\n2. The plant could not take in the colored water because it has no root.\n3. Phloem transported the colored water to the flower.\n4. Xylem transported the colored water to the flower.",
+      "image_url": "/exam-images/asmopss-2019/science-primary/q08.png",
+      "options": [
+        "1 and 2 only",
+        "1 and 4 only",
+        "2 and 3 only",
+        "2 and 4 only",
+        "1 only"
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "Each half of the split stalk draws up its own colour, so the petals end up partly red and partly blue — statement (1) is true.\n\nWater and dissolved dye travel in the **xylem**, so (4) is true and (3) is false. A cut stem still takes up water by transpiration pull, so (2) is false.\n\nAnswer **B**."
+    },
+    {
+      "number": 9,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 3,
+      "prompt_md": "Which of the following statement(s) about inhaled air is/are correct?\n\n1. It contains only oxygen.\n2. It contains oxygen and carbon dioxide.\n3. It is usually cooler than exhaled air.\n4. It contains less water vapor than exhaled air.",
+      "options": [
+        "1, 3, and 4 only",
+        "2 and 4 only",
+        "2, 3, and 4 only",
+        "1 and 3 only",
+        "1 and 4 only"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "- (1) ✗ Air is mostly nitrogen, so it is never *only* oxygen.\n- (2) ✓ Inhaled air contains about 21 % oxygen and a small amount (≈ 0.04 %) of carbon dioxide.\n- (3) ✓ Exhaled air has been warmed to body temperature.\n- (4) ✓ Exhaled air is saturated with water vapour from the moist lung surfaces.\n\nAnswer **C**."
+    },
+    {
+      "number": 10,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 3,
+      "prompt_md": "The diagram below shows the growth of a bean plant. At which point of its growth does the bean plant needs sunlight?",
+      "image_url": "/exam-images/asmopss-2019/science-primary/q10.png",
+      "options": [
+        "1 and 3 only",
+        "2 and 4 only",
+        "1, 2, and 3 only",
+        "1, 2, 3, and 4",
+        "2 only"
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "Stages 1 and 3 are the germinating seed and the seed just splitting open: at that point the seedling lives off the food stored in the cotyledons, and germination does not need light at all.\n\nStages 2 and 4 show a seedling with green leaves. Once the food store runs out the plant has to make its own by photosynthesis, which needs sunlight.\n\nAnswer **B**."
+    },
+    {
+      "number": 11,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 3,
+      "prompt_md": "The diagram below shows the human circulatory system. The arrows W, X, Y, and Z represent the flow of blood.\n\nWhich arrow(s) represent(s) the transport of blood rich in carbon dioxide in the human circulatory system?",
+      "image_url": "/exam-images/asmopss-2019/science-primary/q11.png",
+      "options": [
+        "Z and Y",
+        "Y and X",
+        "X and W",
+        "W and Z",
+        "Y and W"
+      ],
+      "answer_key": {
+        "value": "A"
+      },
+      "solution_md": "Follow the arrowheads:\n\n- $Y$: heart → lungs. This blood has just come back from the body, so it is loaded with carbon dioxide ✓\n- $X$: lungs → heart. Freshly oxygenated.\n- $Z$: other parts of the body → heart. The body cells have used the oxygen and released carbon dioxide ✓\n- $W$: heart → body. Oxygen-rich.\n\nAnswer **A**."
+    },
+    {
+      "number": 12,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 3,
+      "prompt_md": "A science poster contains the following information (an insect with its head, spiracle and exoskeleton labelled, and a plant cell with parts A–E labelled).\n\nWhich of the following parts of the plant cell below are similar in function to the labeled parts of the insect?\n\n| | Head | Spiracle | Exoskeleton |\n|---|---|---|---|\n| A | B | C | E |\n| B | D | E | A |\n| C | A | C | A |\n| D | D | E | C |\n| E | B | E | D |",
+      "image_url": "/exam-images/asmopss-2019/science-primary/q12.png",
+      "options": [
+        "Row A",
+        "Row B",
+        "Row C",
+        "Row D",
+        "Row E"
+      ],
+      "answer_key": {
+        "value": "D"
+      },
+      "solution_md": "Match each insect part to the cell part that does the same job:\n\n- **Head** — \"controls all functions in the insect\" → the **nucleus**, labelled $D$.\n- **Spiracle** — \"allows gases into and out of the body\" → the **cell membrane**, labelled $E$, which controls what enters and leaves the cell.\n- **Exoskeleton** — \"supports external structure\" → the **cell wall**, labelled $C$.\n\nAnswer **D**."
+    },
+    {
+      "number": 13,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 3,
+      "prompt_md": "The diagram below shows a cockroach.\n\nWhich of the following are **not** stages in the life cycle of a cockroach?\n\n1. egg\n2. pupa\n3. larva\n4. adult\n5. nymph",
+      "image_url": "/exam-images/asmopss-2019/science-primary/q13.png",
+      "options": [
+        "1 and 4",
+        "4 and 5",
+        "2 and 3",
+        "2 and 4",
+        "1 and 3"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "A cockroach goes through **incomplete metamorphosis**: egg → nymph → adult. The nymph already looks like a small wingless adult, so it simply moults its way up in size.\n\nThe pupa and the larva belong to *complete* metamorphosis (butterflies, beetles, mosquitoes) and never occur in a cockroach.\n\nAnswer **C**."
+    },
+    {
+      "number": 14,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 3,
+      "prompt_md": "Which of the following statements about the heart is/are true?\n\n1. The heart receives blood rich in oxygen from the lungs.\n2. The heart stops beating when we are tired.\n3. The left ventricle of our heart has thinner wall.\n4. The heart beats at the different rate when we sleep and run.",
+      "options": [
+        "1, 2, 3, and 4",
+        "1, 2, and 3 only",
+        "1 and 4 only",
+        "2 and 4 only",
+        "1 and 3 only"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "- (1) ✓ The pulmonary veins bring oxygen-rich blood from the lungs into the left atrium.\n- (2) ✗ The heart never stops while we are alive.\n- (3) ✗ The left ventricle has the **thicker** wall — it has to pump blood all round the body.\n- (4) ✓ The heart rate drops during sleep and rises during exercise.\n\nAnswer **C**."
+    },
+    {
+      "number": 15,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 3,
+      "prompt_md": "Doni wanted to find out if the presence of roots would affect the amount of water absorbed by a plant. He recorded the amount of water in each set-up for five days. Based on the results, he plotted a line graph to represent his findings.\n\nWhich of the following graph is likely to represent the result of the experiment?",
+      "image_url": "/exam-images/asmopss-2019/science-primary/q15.png",
+      "options": [
+        "Graph A",
+        "Graph B",
+        "Graph C",
+        "Graph D",
+        "Graph E"
+      ],
+      "answer_key": {
+        "value": "D"
+      },
+      "solution_md": "The layer of oil stops evaporation, so any fall in the water level is water taken up by the plant.\n\nBoth plants transpire, so the water in **both** flasks goes down — that rules out the graphs where a line stays flat or rises. But Set-up C has roots, giving a far larger absorbing surface, so its line must fall more steeply than B's.\n\nGraph **D** is the only one where both lines fall and C falls faster.\n\nAnswer **D**."
+    },
+    {
+      "number": 16,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 3,
+      "prompt_md": "From this following wave, which wave have lowest frequency?",
+      "options": [
+        "Infrared wave",
+        "Micro wave",
+        "Radio wave",
+        "Light wave",
+        "Ultrasound wave"
+      ],
+      "answer_key": {
+        "value": "E"
+      },
+      "solution_md": "**Note — this question's official answer is disputed.**\n\nOn the electromagnetic spectrum the order from low to high frequency is radio → microwave → infrared → visible light, so among the four electromagnetic options the **radio wave** (C) has the lowest frequency.\n\nUltrasound is a *sound* wave, and the paper appears to treat it as the lowest of the five; but ultrasound is by definition above the human hearing limit, i.e. above about 20 kHz, whereas radio waves reach down to a few hertz.\n\nThe official answer key records **E**, which is what is stored here."
+    },
+    {
+      "number": 17,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 3,
+      "prompt_md": "If we want to measure the density of a coin. What is the best instrument that should we use?",
+      "options": [
+        "Vernier caliper and weighing balance.",
+        "Measuring cup and ruler.",
+        "Ruler and Vernier caliper.",
+        "Weighing balance and stopwatch.",
+        "Measuring cup and stopwatch."
+      ],
+      "answer_key": {
+        "value": "A"
+      },
+      "solution_md": "Density $= \\dfrac{\\text{mass}}{\\text{volume}}$, so we need one instrument for each.\n\n- **Mass**: the weighing balance.\n- **Volume**: a coin is a thin disc, and its diameter and thickness are far too small for a ruler to read accurately — a **Vernier caliper** is the right tool, giving $V = \\pi r^2 t$.\n\nAnswer **A**."
+    },
+    {
+      "number": 18,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 3,
+      "prompt_md": "When an object placed in front of an optical object A, an image will be formed. The image is virtual, upright and same size. What is object A?",
+      "options": [
+        "Convex mirror",
+        "Concave mirror",
+        "Plane mirror",
+        "Concave lens",
+        "Convex lens"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "Only a **plane mirror** always gives an image that is virtual, upright **and** exactly the same size as the object.\n\nA convex mirror and a concave lens also give virtual upright images, but always *diminished*; a concave mirror or convex lens gives a magnified virtual image only when the object is inside the focal length.\n\nAnswer **C**."
+    },
+    {
+      "number": 19,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 3,
+      "prompt_md": "Venus and Mars are the Earth's neighbor planet. Which statement is **not correct** about both planets (Venus and Mars)?",
+      "options": [
+        "Mars have more satellite than Venus.",
+        "Average temperature on Venus surface is higher than Mars.",
+        "Venus revolution period is shorter than Mars.",
+        "Venus rotation period is shorter than Mars.",
+        "Venus has bigger size than Mars."
+      ],
+      "answer_key": {
+        "value": "D"
+      },
+      "solution_md": "- A ✓ Mars has two moons (Phobos, Deimos); Venus has none.\n- B ✓ Venus averages about 464 °C thanks to its runaway greenhouse; Mars is about −60 °C.\n- C ✓ Venus orbits in 225 days, Mars in 687 days.\n- **D ✗** Venus rotates once in about **243 days**, Mars in about 24.6 hours — Venus's rotation is far *longer*, not shorter.\n- E ✓ Venus's diameter is about 12 100 km against Mars's 6 800 km.\n\nAnswer **D**."
+    },
+    {
+      "number": 20,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 3,
+      "prompt_md": "Which statement is the different properties between Iron and Copper?\n\n| | Iron | Copper |\n|---|---|---|\n| A | Electric isolator | Electric conductor |\n| B | Heat conductor | Heat insulator |\n| C | Can corrode | Cannot corrode |\n| D | Metal | Not metal |\n| E | Attract to magnet | Not attract to magnet |",
+      "options": [
+        "Row A",
+        "Row B",
+        "Row C",
+        "Row D",
+        "Row E"
+      ],
+      "answer_key": {
+        "value": "E"
+      },
+      "solution_md": "Iron and copper are both metals, both conduct electricity and heat, and both corrode (iron rusts, copper forms a green patina) — so rows A to D are all wrong about one or both metals.\n\nThe genuine difference is magnetism: iron is **ferromagnetic** and is attracted to a magnet, while copper is not.\n\nAnswer **E**."
+    },
+    {
+      "number": 21,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Adi set up an experiment with 5 set ups, V, W, X, Y, and Z, as shown in the diagram below.\n\nIn which of the following set-up(s) will the seed germinate after a week?",
+      "image_url": "/exam-images/asmopss-2019/science-primary/q21.png",
+      "options": [
+        "V and W only",
+        "V and X only",
+        "Y and Z only",
+        "V, W, and Y",
+        "V, X, and Y only"
+      ],
+      "answer_key": {
+        "value": "A"
+      },
+      "solution_md": "Germination needs water, air and a suitable temperature — but **not** light.\n\n- V: damp cotton, live seeds ✓\n- W: damp cotton, live seeds — the cupboard's darkness does not matter ✓\n- X: damp cotton but **boiled** seeds — boiling kills the embryo ✗\n- Y and Z: **dry** cotton, no water ✗\n\nAnswer **A**."
+    },
+    {
+      "number": 22,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "An experiment using one of leaves on a plant was set up as shown below. After 3 days in the sun, the leaf was cut into three sections P, Q, and R and tested for starch.\n\nWhich one of the following shows the result of the iodine test on the parts of the leaf labelled P, Q, and R respectively?\n\n| | P | Q | R |\n|---|---|---|---|\n| A | Dark blue | Yellowish brown | Dark blue |\n| B | Dark blue | Dark blue | Dark blue |\n| C | Yellowish brown | Yellowish brown | Yellowish brown |\n| D | Yellowish brown | Yellowish brown | Dark blue |\n| E | Dark blue | Yellowish brown | Yellowish brown |",
+      "image_url": "/exam-images/asmopss-2019/science-primary/q22.png",
+      "options": [
+        "Row A",
+        "Row B",
+        "Row C",
+        "Row D",
+        "Row E"
+      ],
+      "answer_key": {
+        "value": "E"
+      },
+      "solution_md": "Only the part of the leaf still outside the flask has all three requirements for photosynthesis — light, water and carbon dioxide — so only that part makes starch and turns iodine dark blue.\n\nSection $P$ lies outside the flask ✓ dark blue.\n\nSections $Q$ and $R$ are sealed inside the flask with a chemical that absorbs carbon dioxide. With no $\\mathrm{CO_2}$ there is no photosynthesis and no starch, so iodine stays yellowish brown.\n\nAnswer **E**."
+    },
+    {
+      "number": 23,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "The diagram below shows the female human reproductive system.\n\nWhich of the following statement(s) is/are correct?\n\n1. Fertilisation happens at B\n2. The developing baby grows at D\n3. The unfertilized eggs produced at C\n4. The sperm meets the ovum at A",
+      "image_url": "/exam-images/asmopss-2019/science-primary/q23.png",
+      "options": [
+        "1 and 2 only",
+        "2 and 4 only",
+        "1 and 3 only",
+        "1, 2, and 3 only",
+        "1, 2, 3, and 4"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "From the labels: $A$ = uterus (womb), $B$ = oviduct / fallopian tube, $C$ = ovary, $D$ = vagina.\n\n- (1) ✓ Fertilisation takes place in the oviduct, $B$.\n- (2) ✗ The baby develops in the uterus ($A$), not the vagina ($D$).\n- (3) ✓ Eggs are produced in the ovary, $C$.\n- (4) ✗ Sperm meets the ovum in the oviduct, not in the uterus.\n\nAnswer **C**."
+    },
+    {
+      "number": 24,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "The graph below shows the trophic level of an ecosystem.\n\nBased on the above diagram, which statement is correct?",
+      "image_url": "/exam-images/asmopss-2019/science-primary/q24.png",
+      "options": [
+        "Producers release the least energy",
+        "Primary and secondary consumers receive the same ammount of energy",
+        "The higher the tropic level, the more energy they receive",
+        "Tertiary consumers have the least energy",
+        "Primary producers transfer less energy than primary consumers"
+      ],
+      "answer_key": {
+        "value": "D"
+      },
+      "solution_md": "The bars get shorter as you go up the pyramid because roughly 90 % of the energy is lost at each transfer — used for respiration, movement and heat, or never eaten at all.\n\nSo the tertiary consumers, sitting at the top, have the **least** energy available to them.\n\nAnswer **D**."
+    },
+    {
+      "number": 25,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "The diagram below shows a plant cell. The pictures below show parts of plants where the cell could have been taken from (A = carrot root, B = seeds, C = rose leaf/stem).\n\nWhich part(s) could the cell be taken from?",
+      "image_url": "/exam-images/asmopss-2019/science-primary/q25.png",
+      "options": [
+        "A, B, and C",
+        "A and B only",
+        "A and C only",
+        "B and C only",
+        "B only"
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "The drawn cell has a cell wall, a large vacuole and a nucleus, but **no chloroplasts**.\n\n- $A$ carrot — a root, underground, so no chloroplasts ✓\n- $B$ seeds — storage tissue, no chloroplasts ✓\n- $C$ the green leaves and stem of the rose are packed with chloroplasts ✗\n\nAnswer **B**."
+    },
+    {
+      "number": 26,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Zaza wants to make an electric circuit using 3 lamps (red, blue and green) and using a battery like shown below.\n\nWhen red and blue lamp is removed, the green lamp is still on. When red and green lamp is removed, blue lamp is off. How should Zaza put all the lamp on the circuit?\n\n| | Lamp A | Lamp B | Lamp C |\n|---|---|---|---|\n| A | Blue | Red | Green |\n| B | Blue | Green | Red |\n| C | Red | Green | Blue |\n| D | Red | Blue | Green |\n| E | Green | Red | Blue |",
+      "image_url": "/exam-images/asmopss-2019/science-primary/q26.png",
+      "options": [
+        "Row A",
+        "Row B",
+        "Row C",
+        "Row D",
+        "Row E"
+      ],
+      "answer_key": {
+        "value": "E"
+      },
+      "solution_md": "In the circuit, lamp $A$ sits alone in its own branch, while $B$ and $C$ are in series with each other in the parallel branch.\n\n- \"Remove red and blue, green still on\" — the surviving lamp still has a complete circuit of its own, so it must be the one in the single branch: **green is $A$**.\n- \"Remove red and green, blue is off\" — with green ($A$) gone, blue only works if its own branch is complete, but it is in series with red, which has been removed. ✓ consistent.\n\nSo $A$ = green, and red and blue fill $B$ and $C$. Row **E** (green, red, blue) is the match.\n\nAnswer **E**."
+    },
+    {
+      "number": 27,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Caca has 3 containers, each filled with oil, water and glycerin. The density of oil is 0.9 g/ml, water is 1 g/ml and glycerin is 1.2 g/ml. Caca put a ball in container with water inside, and the ball is floating on water. Which statement is true according to the experiment?",
+      "options": [
+        "Ball will sink if put in oil.",
+        "Ball will sink if put in glycerin.",
+        "Ball will float if put in oil.",
+        "Ball will float if put in glycerin.",
+        "Ball will suspend in the middle of oil."
+      ],
+      "answer_key": {
+        "value": "D"
+      },
+      "solution_md": "The ball floats on water, so its density is **less than 1 g/ml**.\n\nGlycerin is denser still (1.2 g/ml), so the ball is certainly less dense than glycerin and must float in it — statement D is guaranteed.\n\nIn oil (0.9 g/ml) we cannot say: the ball's density could be anywhere below 1, so it might float or sink. Only D is always true.\n\nAnswer **D**."
+    },
+    {
+      "number": 28,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "High-speed train will be built between Jakarta and Bandung. By using this train, Jakarta-Bandung will take only 45 minutes. What is the average speed of this high-speed train, if distance between Bandung and Jakarta is 120 km?",
+      "options": [
+        "120 km/hour",
+        "150 km/hour",
+        "160 km/hour",
+        "165 km/hour",
+        "240 km/hour"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "$45$ minutes $= \\tfrac34$ hour, so\n\n$$v = \\frac{120\\ \\text{km}}{0.75\\ \\text{h}} = 160\\ \\text{km/h}.$$\n\nAnswer **C**."
+    },
+    {
+      "number": 29,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Which object has the greatest mechanical energy? (take $g = 10\\ \\mathrm{m/s^2}$)",
+      "options": [
+        "An Eagle (1 kg) flying with 2 m/s speed at 10 meters above land.",
+        "A Durian (3 kg) at rest at 10 meters tree.",
+        "A Cat (2 kg) running with 4 m/s on land.",
+        "A Human (60 kg) sitting on the floor.",
+        "A Bullet (10 g) shot from a gun, with 100 m/s speed and 1 m above land."
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "Mechanical energy $= \\tfrac12 mv^2 + mgh$:\n\n| | KE (J) | PE (J) | total (J) |\n|---|---|---|---|\n| A eagle | $\\tfrac12(1)(2^2) = 2$ | $1 \\times 10 \\times 10 = 100$ | 102 |\n| B durian | 0 | $3 \\times 10 \\times 10 = 300$ | **300** |\n| C cat | $\\tfrac12(2)(4^2) = 16$ | 0 | 16 |\n| D human | 0 | 0 | 0 |\n| E bullet | $\\tfrac12(0.01)(100^2) = 50$ | $0.01 \\times 10 \\times 1 = 0.1$ | 50.1 |\n\nThe durian wins. Answer **B**."
+    },
+    {
+      "number": 30,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Lala wants to make thermometer by using straw and some liquid. She put the thermometer into melting ice and the height of the liquid in the straw is 4 cm. When she put the thermometer into boiling water, the height of the liquid in the straw is become 10 cm. What is the height of liquid in straw, when she put the thermometer to 25 °C tap water?",
+      "options": [
+        "2.5 cm",
+        "5 cm",
+        "5.5 cm",
+        "7.5 cm",
+        "8 cm"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "Melting ice is $0\\,^\\circ\\mathrm{C}$ (4 cm) and boiling water is $100\\,^\\circ\\mathrm{C}$ (10 cm), so the scale is linear over $6$ cm per $100$ degrees:\n\n$$h = 4 + \\frac{10 - 4}{100 - 0} \\times 25 = 4 + 0.06 \\times 25 = 5.5\\ \\text{cm}.$$\n\nAnswer **C**."
+    }
+  ]
+}

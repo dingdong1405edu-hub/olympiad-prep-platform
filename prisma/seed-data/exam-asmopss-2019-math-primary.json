@@ -1,0 +1,479 @@
+{
+  "exam": {
+    "slug": "asmopss-2019-math-primary",
+    "title": "Road to ASMOPSS 2019 — Mathematics Primary",
+    "subject": "math",
+    "grade_level": "primary",
+    "duration_min": 90,
+    "total_points": 100,
+    "instructions": "25 câu trắc nghiệm, 4 điểm mỗi câu (tổng 100 điểm). Mỗi câu chọn đúng một phương án (A–E). Không dùng máy tính. Hình vẽ không theo tỉ lệ, chỉ để minh họa. LƯU Ý: đề gốc trừ 1 điểm cho mỗi câu sai; ở đây câu sai không bị trừ điểm."
+  },
+  "_notes": {
+    "source": "Road to ASMOPSS 2019, Mathematics Primary English.pdf + Answer Key Road to ASMOPSS 2019.xlsx (cột Primary Level / Math).",
+    "removed": "Không bỏ câu nào. Đề gốc đúng 25 câu; nhân 4 điểm/câu là vừa tròn 100 điểm nên giữ nguyên cả đề, số câu 1–25 khớp số gốc.",
+    "reconstructed": [
+      "Câu 3, 8, 12, 13, 14, 17, 19: công thức trong PDF nhúng bằng font CID không có bảng ToUnicode nên pdftotext bóc ra rỗng. Đã đọc lại từ ảnh render 150–600 dpi và dựng bằng LaTeX; mọi câu đều kiểm chứng lại khớp đáp án chính thức.",
+      "Câu 13, 15, 16, 22, 24: hình vẽ cắt trực tiếp từ PDF ở 200 dpi sang PNG trong public/exam-images/asmopss-2019/math-primary/."
+    ],
+    "flags": [
+      "Câu 15 (xếp hình lập phương): đáp án chính thức là C (897), nhưng dãy hình là số bát diện (octahedral number) — kim tự tháp thứ n có n(2n²+1)/3 khối, đúng với 1 khối ở hình 1 và 6 khối ở hình 2 như đề mô tả. Hình 9 vì thế có 489 khối, không nằm trong bốn phương án A–D, tức đáp án đúng phải là E. Bằng chứng chéo: câu 8 đề Mathematics Secondary dùng ĐÚNG dãy hình này, nói về kim tự tháp thứ 5, và đáp án chính thức D = 82/357 = 820/3570 chỉ đúng khi tổng số khối là 85 = 5(2·25+1)/3 — tức chính là công thức bát diện. Ở đây vẫn giữ đáp án chính thức C để trung thành với bản gốc; cân nhắc đổi sang E trước khi dùng chấm điểm thật."
+    ]
+  },
+  "questions": [
+    {
+      "number": 1,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "What is the value of $2011 + 2012 + 2013 + \\cdots + 2019$?",
+      "options": [
+        "18 135",
+        "18 150",
+        "20 135",
+        "20 150",
+        "All options above are incorrect"
+      ],
+      "answer_key": {
+        "value": "A"
+      },
+      "solution_md": "Nine consecutive integers, so the sum is nine times the middle one:\n\n$$2011 + \\cdots + 2019 = 9 \\times 2015 = 18\\,135.$$\n\nAnswer **A**."
+    },
+    {
+      "number": 2,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "In the number sentence:\n\n$$40 \\times 40 \\times 40 = 20 \\times 20 \\times 20 \\times \\blacksquare$$\n\nWhat number do we put in the place of $\\blacksquare$ to make the number sentence true?",
+      "options": [
+        "2",
+        "4",
+        "8",
+        "16",
+        "All options above are incorrect"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "Each factor of $40$ is twice the matching factor of $20$, and there are three of them:\n\n$$\\frac{40^3}{20^3} = 2^3 = 8.$$\n\nAnswer **C**."
+    },
+    {
+      "number": 3,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "A farmer uses the water from the water tank to irrigate her farm. At 06:00 the tank was full, and started to irrigate her farm. At 09:00 the tank was only $\\tfrac{1}{3}$ full. At what time the pool was only $\\tfrac{1}{9}$ full?",
+      "options": [
+        "09:30",
+        "09:45",
+        "10:00",
+        "10:15",
+        "10:30"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "The tap runs at a constant rate. From 06:00 to 09:00 the tank drops from $1$ to $\\tfrac13$, i.e. it loses $\\tfrac23$ of a tank in $3$ hours, so the rate is $\\tfrac29$ of a tank per hour.\n\nGoing from $\\tfrac13$ down to $\\tfrac19$ is a further $\\tfrac13 - \\tfrac19 = \\tfrac29$ of a tank, which takes exactly one more hour.\n\n$09{:}00 + 1\\text{ h} = $ **10:00**, answer **C**."
+    },
+    {
+      "number": 4,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Papipu has many family members, and they often gathered for family dinner. One day they had dinner on a round table that fits everyone, as seven of the family members were absent. The seat around that table are numbered consecutively $1, 2, 3, \\ldots$ and so on around the table. After everyone sat down, Papipu — who sat on seat number 15 — noticed that he was directly opposite one of his cousins, who sat on seat number 3. How many family members that Papipu has?",
+      "options": [
+        "23",
+        "24",
+        "30",
+        "31",
+        "All options above are incorrect"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "Seats $3$ and $15$ are directly opposite, so half a turn is $15 - 3 = 12$ seats, and the table has $2 \\times 12 = 24$ seats — all of them occupied.\n\nSeven members were absent, so the family has $24 + 7 = 31$ people **including Papipu**. The question asks how many family members Papipu *has*, i.e. excluding himself:\n\n$$31 - 1 = 30.$$\n\nAnswer **C**."
+    },
+    {
+      "number": 5,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Emi is teaching a class of 10 students: Andi, Budi, Cardi, Dadi, Edi, Fendi, Gondi, Hadi, Indi, Jodi. She told his students to queue in one line according the alphabetical order of the first letter of their name, then count 1 to 2019 one student per count, starting from Andi, Budi, …, Indi, Jodi, then go back to the other direction to Indi, Hadi, … Budi, Andi, Budi, Cardi, …, and so on (So Andi will count 1, Budi count 2, …, Hadi count 8, Indi count 9, Jodi count 10, Indi count 11, Hadi count 12, …, and so on). Who will count the number 2019?",
+      "options": [
+        "Andi",
+        "Cardi",
+        "Edi",
+        "Gondi",
+        "All options above are incorrect"
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "The zig-zag repeats with period $2 \\times 10 - 2 = 18$: counts $1$ and $19$ both land on Andi.\n\n$$2019 = 18 \\times 112 + 3,$$\n\nso count $2019$ lands where count $3$ does — the third student, **Cardi**.\n\nAnswer **B**."
+    },
+    {
+      "number": 6,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Ten soccer teams played each other exactly once in a season of competition. Each winning team was awarded 3 points. Teams that had a draw were awarded 1 point each, and losing teams awarded no points. The season ended with Bali United with 22 points, Madura United with 18 points, Arema with 15 points, Bhayangkara and Borneo with 13 points each, Persebaya and PSIS with 12 points each, PSM and Persib with 10 points each, and Persija with 6 points. How many matches ended in a draw?",
+      "options": [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "answer_key": {
+        "value": "E"
+      },
+      "solution_md": "Ten teams playing each other once gives $\\binom{10}{2} = 45$ matches.\n\nA decisive match puts $3$ points into the table; a drawn match puts only $1 + 1 = 2$. So each draw costs the total one point:\n\n$$\\text{total} = 3 \\times 45 - (\\text{number of draws}).$$\n\nThe actual total is\n$22+18+15+13+13+12+12+10+10+6 = 131$, so the number of draws is $135 - 131 = 4$.\n\nAnswer **E**."
+    },
+    {
+      "number": 7,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Surya received some money from Vivi to buy office supplies. He spent half of that money to buy blank paper. Then he used two third of what remains to buy board markers. After that Surya use one third of the leftover money to buy paper clips, \\$2 to buy coffee and \\$4 to pay taxi ride home. He then reported to Vivi that he already spent all the money Vivi gave him. How much money Vivi gave Surya?",
+      "options": [
+        "$108",
+        "$81",
+        "$54",
+        "$27",
+        "All options above are incorrect"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "Let the money be $M$.\n\n- After the paper: $\\tfrac12 M$ left.\n- After the markers ($\\tfrac23$ of that): $\\tfrac13 \\times \\tfrac12 M = \\tfrac16 M$ left.\n- After the paper clips ($\\tfrac13$ of that): $\\tfrac23 \\times \\tfrac16 M = \\tfrac19 M$ left.\n\nThat last $\\tfrac19 M$ went on coffee and the taxi:\n\n$$\\tfrac19 M = 2 + 4 = 6 \\;\\Rightarrow\\; M = 54.$$\n\nAnswer **C**."
+    },
+    {
+      "number": 8,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "The fraction $\\dfrac{1}{9}$ is tripled by adding the same number to both numerator and denominator. What is that number?",
+      "options": [
+        "2",
+        "3",
+        "5",
+        "8",
+        "There is no such number"
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "Tripling $\\tfrac19$ gives $\\tfrac13$. Adding $x$ to both parts:\n\n$$\\frac{1+x}{9+x} = \\frac{1}{3} \\;\\Rightarrow\\; 3 + 3x = 9 + x \\;\\Rightarrow\\; x = 3.$$\n\nCheck: $\\tfrac{4}{12} = \\tfrac13$. Answer **B**."
+    },
+    {
+      "number": 9,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Elia told her students that in order to pass her exam, students have to complete Part A, then choose between completing Part B or Part C. Part A consists of 5 True-or-False questions. Part B consists of 3 multiple choice problems, each with 4 answer choices. Part C consists of 4 matching questions, where student have to match 4 questions with 4 possible answers. The students are forced to leave no problems empty in any parts that they have chosen to do. How many different possible answer sheets are there for Elia's exam?",
+      "options": [
+        "2 200",
+        "2 625",
+        "2 816",
+        "3 360",
+        "49 125"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "Part A is compulsory: $2^5 = 32$ ways.\n\nThen the student picks exactly one of the other two parts:\n\n- Part B: $4^3 = 64$ ways.\n- Part C: a matching of 4 with 4, i.e. $4! = 24$ ways.\n\n$$32 \\times (64 + 24) = 32 \\times 88 = 2816.$$\n\nAnswer **C**."
+    },
+    {
+      "number": 10,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "John tells the truth on Monday, Tuesday, Wednesday and Thursday. He lies on all other days. Peter tells the truth on Monday, Friday, Saturday and Sunday. He lies on all other days. One day they both said, \"Yesterday I lied\". What day was that?",
+      "options": [
+        "Monday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday"
+      ],
+      "answer_key": {
+        "value": "D"
+      },
+      "solution_md": "Take **Friday**.\n\n- John lies on Friday, so his sentence is false: he did *not* lie yesterday. Thursday is one of John's truthful days ✓.\n- Peter tells the truth on Friday, so his sentence is true: he *did* lie yesterday. Thursday is one of Peter's lying days ✓.\n\nBoth are consistent, and no other listed day works. Answer **D**."
+    },
+    {
+      "number": 11,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "A rectangle has its length 16 times its width. What is the ratio of its perimeter to the perimeter of the square of the same area?",
+      "options": [
+        "$17 : 8$",
+        "$17 : 16$",
+        "$4 : 1$",
+        "$9 : 8$",
+        "$9 : 4$"
+      ],
+      "answer_key": {
+        "value": "A"
+      },
+      "solution_md": "Let the width be $w$, so the length is $16w$.\n\n- Rectangle: perimeter $= 2(w + 16w) = 34w$, area $= 16w^2$.\n- Square of the same area: side $= \\sqrt{16w^2} = 4w$, perimeter $= 16w$.\n\n$$34w : 16w = 17 : 8.$$\n\nAnswer **A**."
+    },
+    {
+      "number": 12,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "A rabbit with a never-ending stamina is at vertex $A$ of a regular pentagon $ABCDE$ of a meter side length, hopping along its perimeter. In the first move, it reaches vertex $B$. In each subsequent move, it hops one more meter compared to the preceding move. After 2019 moves, at which vertex will that rabbit be?",
+      "options": [
+        "$A$",
+        "$B$",
+        "$C$",
+        "$D$",
+        "$E$"
+      ],
+      "answer_key": {
+        "value": "A"
+      },
+      "solution_md": "The hops are $1, 2, 3, \\ldots, 2019$ metres, so the total distance travelled is\n\n$$1 + 2 + \\cdots + 2019 = \\frac{2019 \\times 2020}{2} = 2\\,039\\,190 \\text{ m}.$$\n\nThe perimeter is $5$ m, and $2\\,039\\,190 = 5 \\times 407\\,838$ exactly, so the rabbit is back at the start.\n\nAnswer **A**."
+    },
+    {
+      "number": 13,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "$PQRS$ is a trapezium in which $PQ = 3$ units and $SR = 5$ units. What fraction of the trapezium is shaded?",
+      "image_url": "/exam-images/asmopss-2019/math-primary/q13.png",
+      "options": [
+        "$\\dfrac{1}{4}$",
+        "$\\dfrac{3}{5}$",
+        "$\\dfrac{3}{8}$",
+        "$\\dfrac{5}{8}$",
+        "All option above is incorrect"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "Let $h$ be the distance between the two parallel sides.\n\n- Whole trapezium: $\\tfrac12 (3 + 5) h = 4h$.\n- Shaded triangle $PQS$: it sits on $PQ = 3$ and its apex $S$ is on the opposite parallel side, so its height is also $h$, giving $\\tfrac12 \\times 3 \\times h = 1.5h$.\n\n$$\\frac{1.5h}{4h} = \\frac{3}{8}.$$\n\nAnswer **C**."
+    },
+    {
+      "number": 14,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "If both $n$ and $\\dfrac{2019}{n}$ are integers, how many possible values of $n$ are there?",
+      "options": [
+        "4",
+        "5",
+        "6",
+        "7",
+        "8"
+      ],
+      "answer_key": {
+        "value": "E"
+      },
+      "solution_md": "$2019 = 3 \\times 673$ and $673$ is prime, so the **positive** divisors are $1, 3, 673, 2019$ — four of them.\n\nNothing in the question says $n$ is positive, and a negative divisor also makes $\\tfrac{2019}{n}$ an integer, so the negatives $-1, -3, -673, -2019$ count too:\n\n$$4 + 4 = 8.$$\n\nAnswer **E**."
+    },
+    {
+      "number": 15,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Look at the pattern below. The 1st pyramid (leftmost) contains a single cube. The 2nd pyramid (middle) contains 6 small cubes: one on the top layer and five on the bottom layer. The pattern continues on this manner. How many cubes are there in the 9th pyramid?",
+      "image_url": "/exam-images/asmopss-2019/math-primary/q15.png",
+      "options": [
+        "624",
+        "729",
+        "897",
+        "1240",
+        "All options above are incorrect"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "**Note — this question's official answer is disputed; see the reasoning below.**\n\nThe layers of the $n$-th pyramid are the centred squares $1, 5, 13, 25, \\ldots$, i.e. layer $k$ holds $k^2 + (k-1)^2$ cubes. That matches the picture: pyramid 1 has $1$ cube, pyramid 2 has $1 + 5 = 6$, pyramid 3 has $1 + 5 + 13 = 19$.\n\nSumming gives the **octahedral numbers**\n\n$$P(n) = \\sum_{k=1}^{n}\\left(k^2 + (k-1)^2\\right) = \\frac{n(2n^2+1)}{3},$$\n\nso $P(9) = \\dfrac{9 \\times 163}{3} = 489$ — which is none of A–D, i.e. **E**.\n\nThe same pattern is reused in question 8 of the *Mathematics Secondary* paper, where the official answer $\\tfrac{82}{357} = \\tfrac{820}{3570}$ only works if the 5th pyramid has $\\binom{85}{2} = 3570$ pairs, i.e. $P(5) = 85$ cubes — confirming this formula.\n\nThe official answer key nevertheless records **C** (897), which is what is stored here."
+    },
+    {
+      "number": 16,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Consider the following $4 \\times 4$ squares with a $1 \\times 1$ square deleted (shown in black). Consider tiling the remaining squares of $P, Q, R$ using the tiles shape like the one below (an L-shaped tromino, which may be rotated).\n\nWhich of the following statements is true?",
+      "image_url": "/exam-images/asmopss-2019/math-primary/q16.png",
+      "options": [
+        "Only $P$ and $Q$ can be tiled this way",
+        "Only $P$ and $R$ can be tiled this way",
+        "Only $Q$ and $R$ can be tiled this way",
+        "$P, Q, R$ can all be tiled this way",
+        "All options above are incorrect"
+      ],
+      "answer_key": {
+        "value": "D"
+      },
+      "solution_md": "Removing one cell from a $4 \\times 4$ board leaves $15$ cells, exactly $5$ trominoes' worth.\n\nBy Golomb's theorem, **any** $2^n \\times 2^n$ board with a single square removed can be tiled by L-trominoes: cut the board into four $2 \\times 2$ quadrants, place one tromino on the three centre cells of the quadrants that do not contain the hole, and each quadrant is then a $2\\times 2$ block with one cell already covered — i.e. one more tromino apiece.\n\nA $4 \\times 4$ board is the case $n = 2$, so the position of the hole never matters: $P$, $Q$ and $R$ can all be tiled.\n\nAnswer **D**."
+    },
+    {
+      "number": 17,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "ASMOPSS started in 2011. This year is 2019. If we write $\\dfrac{2019}{2011}$ as a continued fraction\n\n$$a + \\cfrac{1}{b + \\cfrac{1}{c + \\cfrac{1}{d + \\cfrac{1}{e}}}}$$\n\nWhich one has the largest value?",
+      "options": [
+        "$b$",
+        "$c$",
+        "$d$",
+        "$e$",
+        "Can't be determined"
+      ],
+      "answer_key": {
+        "value": "A"
+      },
+      "solution_md": "Run the Euclidean algorithm on $\\tfrac{2019}{2011}$:\n\n$$\\frac{2019}{2011} = 1 + \\frac{8}{2011}, \\quad \\frac{2011}{8} = 251 + \\frac{3}{8}, \\quad \\frac{8}{3} = 2 + \\frac{2}{3}, \\quad \\frac{3}{2} = 1 + \\frac{1}{2}.$$\n\nSo $a = 1$, $b = 251$, $c = 2$, $d = 1$, $e = 2$.\n\nThe largest of $b, c, d, e$ is $b = 251$. Answer **A**."
+    },
+    {
+      "number": 18,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "In a group of athletes, 24 plays badminton, 20 plays soccer, 11 plays both, but 13 plays neither. How many students are in that group?",
+      "options": [
+        "35",
+        "46",
+        "57",
+        "59",
+        "68"
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "By inclusion–exclusion the number playing at least one sport is\n\n$$24 + 20 - 11 = 33.$$\n\nAdding the $13$ who play neither:\n\n$$33 + 13 = 46.$$\n\nAnswer **B**."
+    },
+    {
+      "number": 19,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "What is the remainder when $9^{2019} - 3 \\cdot 9^{2019} + 9 \\cdot 9^{2019}$ is divided by 10?",
+      "options": [
+        "1",
+        "3",
+        "5",
+        "7",
+        "9"
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "Factor out the common power:\n\n$$9^{2019}(1 - 3 + 9) = 7 \\cdot 9^{2019}.$$\n\nThe last digit of $9^k$ alternates $9, 1, 9, 1, \\ldots$, and $2019$ is odd, so $9^{2019} \\equiv 9 \\pmod{10}$.\n\n$$7 \\times 9 = 63 \\equiv 3 \\pmod{10}.$$\n\nAnswer **B**."
+    },
+    {
+      "number": 20,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "ASMOPSS organizer want to rent some busses to transport 267 ASMOPSS participants. There are two types of bus: BUGE, each with the capacity of 39 seats; and BUCIL, with the capacity of 30 seats. The rental cost is Rp1500000 for one BUGE and Rp800000 for one BUCIL. If all participants got seated and there is no empty seat on any busses, how much does the organizer need to pay to rent those busses?",
+      "options": [
+        "Rp6900000",
+        "Rp7200000",
+        "Rp8500000",
+        "Rp9300000",
+        "Rp9900000"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "We need $39a + 30b = 267$ with $a, b \\ge 0$ integers. Dividing by $3$:\n\n$$13a + 10b = 89.$$\n\nSo $13a \\equiv 89 \\equiv 9 \\pmod{10}$, i.e. $3a \\equiv 9 \\pmod{10}$, giving $a = 3$ (the only value with $13a \\le 89$). Then $10b = 89 - 39 = 50$, so $b = 5$.\n\nCheck: $3 \\times 39 + 5 \\times 30 = 117 + 150 = 267$ ✓\n\n$$3 \\times 1\\,500\\,000 + 5 \\times 800\\,000 = 4\\,500\\,000 + 4\\,000\\,000 = \\text{Rp}8\\,500\\,000.$$\n\nAnswer **C**."
+    },
+    {
+      "number": 21,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "What time is it 20192019 minutes after 20:19?",
+      "options": [
+        "01:58",
+        "02:24",
+        "05:39",
+        "06:05",
+        "All options above are incorrect"
+      ],
+      "answer_key": {
+        "value": "A"
+      },
+      "solution_md": "A day is $1440$ minutes, so only the remainder matters:\n\n$$20\\,192\\,019 = 1440 \\times 14\\,022 + 339.$$\n\n$339$ minutes $= 5$ h $39$ min.\n\n$$20{:}19 + 5{:}39 = 25{:}58 \\equiv \\textbf{01:58}.$$\n\nAnswer **A**."
+    },
+    {
+      "number": 22,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "The figure below shows three circles with radius 9. If each circle goes through the centers of the other two circles, what is the total area of region $A$, $B$, $C$?",
+      "image_url": "/exam-images/asmopss-2019/math-primary/q22.png",
+      "options": [
+        "$\\dfrac{3}{2}\\pi$",
+        "$\\dfrac{9}{2}\\pi$",
+        "$\\dfrac{81}{2}\\pi$",
+        "Can't be determined",
+        "All options above are incorrect"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "Each circle passes through the other two centres, so the three centres form an equilateral triangle of side $r = 9$.\n\n$A$, $B$ and $C$ are the three regions lying inside exactly **two** of the circles, i.e. each is a lens minus the central triple overlap.\n\n- Lens of two circles at distance $r$: $\\;2r^2 \\arccos\\!\\left(\\tfrac12\\right) - \\tfrac{r}{2}\\sqrt{3r^2} = \\tfrac{2\\pi r^2}{3} - \\tfrac{\\sqrt3}{2}r^2.$\n- Triple overlap (the Reuleaux-triangle region): $\\;\\tfrac{r^2}{2}\\left(\\pi - \\sqrt3\\right).$\n\nSubtracting,\n\n$$\\text{one region} = \\frac{2\\pi r^2}{3} - \\frac{\\sqrt3}{2}r^2 - \\frac{\\pi r^2}{2} + \\frac{\\sqrt3}{2}r^2 = \\frac{\\pi r^2}{6},$$\n\nand the three together give $\\tfrac{\\pi r^2}{2} = \\tfrac{81\\pi}{2}$.\n\nAnswer **C**."
+    },
+    {
+      "number": 23,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "From 19 to 2019 inclusive, how many natural numbers that are multipliers of 20 or 19 are there?",
+      "options": [
+        "201",
+        "206",
+        "209",
+        "211",
+        "219"
+      ],
+      "answer_key": {
+        "value": "A"
+      },
+      "solution_md": "Inside $[19, 2019]$:\n\n- multiples of $20$: $20, 40, \\ldots, 2000$ — that is $100$ numbers;\n- multiples of $19$: $19, 38, \\ldots, 2014 = 19 \\times 106$ — that is $106$ numbers;\n- multiples of both, i.e. of $380$: $380, 760, 1140, 1520, 1900$ — that is $5$ numbers.\n\n$$100 + 106 - 5 = 201.$$\n\nAnswer **A**."
+    },
+    {
+      "number": 24,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "A container is filled from a tap in which water flows in constant speed. The graph shows the level of the water in the container at any time while the container is being filled. The segment $OP$ is a concave up curve while $PQ$ is a straight line. The shape of the container which corresponds to this graph is (choose from the four containers drawn below the graph):",
+      "image_url": "/exam-images/asmopss-2019/math-primary/q24.png",
+      "options": [
+        "Container A (see figure)",
+        "Container B (see figure)",
+        "Container C (see figure)",
+        "Container D (see figure)",
+        "All options above are incorrect"
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "The water flows in at a constant rate, so the level rises fast where the container is narrow and slowly where it is wide.\n\n- $OP$ **concave up** — the level rises faster and faster, so the container must keep getting narrower as you go up.\n- $PQ$ **straight** — a constant rate of rise, so the top part has a constant cross-section: a straight vertical section.\n\nOnly container **B** does both: a wide base tapering upwards, finished with a straight narrow neck.\n\nAnswer **B**."
+    },
+    {
+      "number": 25,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Consider the sentence:\n\n> THIS IS ONE AWESOME MATHEMATICS COMPETITION\n\nEvery minute, the first letter of each word is moved to the other end of the word. After how many minutes will the original sentence reappear?",
+      "options": [
+        "462",
+        "924",
+        "1848",
+        "20328",
+        "All options are incorrect"
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "A word of $k$ letters returns to its original form after exactly $k$ rotations, so the whole sentence returns after the least common multiple of the word lengths.\n\nThe lengths are\n\n| word | letters |\n|---|---|\n| THIS | 4 |\n| IS | 2 |\n| ONE | 3 |\n| AWESOME | 7 |\n| MATHEMATICS | 11 |\n| COMPETITION | 11 |\n\n$$\\operatorname{lcm}(4, 2, 3, 7, 11, 11) = 4 \\times 3 \\times 7 \\times 11 = 924.$$\n\nAnswer **B**."
+    }
+  ]
+}

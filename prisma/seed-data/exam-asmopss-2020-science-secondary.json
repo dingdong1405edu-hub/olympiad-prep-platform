@@ -1,0 +1,476 @@
+{
+  "exam": {
+    "slug": "asmopss-2020-science-secondary",
+    "title": "Road to ASMOPSS X (2020) — Science Secondary",
+    "subject": "science",
+    "grade_level": "secondary",
+    "duration_min": 60,
+    "total_points": 100,
+    "instructions": "25 câu trắc nghiệm, 4 điểm mỗi câu (tổng 100 điểm). Mỗi câu chọn đúng một phương án (A–E). Không dùng máy tính. Hình vẽ không theo tỉ lệ, chỉ để minh họa. LƯU Ý: đề gốc cho 3 điểm mỗi câu đúng, trừ 1 điểm mỗi câu sai và tính từ mốc 25 điểm. Ở đây đề được quy về thang 100 điểm, câu sai không bị trừ điểm."
+  },
+  "_notes": {
+    "source": "Road to ASMOPSS X Science Secondary.docx + Answer Key Road to ASMOPSS X.xlsx (cột Secondary / Science). File 'Bài tập Secondary.docx' trong cùng thư mục là bản trùng của chính đề này (chỉ thiếu dòng tiêu đề), không phải đề riêng.",
+    "mapping": "Bảng đề có 29 dòng cho 25 câu; đã gộp lại đúng 25 câu theo thứ tự gốc, đáp án map 1:1.",
+    "reconstructed": [
+      "Câu 8, 15: ảnh gốc là ảnh chụp màn hình đề Cambridge, đã cắt đúng theo srcRect của Word để bỏ phần chữ và phương án cũ dính trong ảnh.",
+      "Câu 19 (sơ đồ xe buýt) vẽ bằng shape của Word; đã xuất sang PDF rồi render vùng hình ở 300 DPI.",
+      "Câu 16: ký hiệu ohm trong bản gốc là glyph font Symbol (F057), đã thay bằng Ω."
+    ]
+  },
+  "questions": [
+    {
+      "number": 1,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Where can we find ribosomes?",
+      "options": [
+        "Only in the nucleus.",
+        "In the cytoplasm.",
+        "Attached to the smooth endoplasmic reticulum.",
+        "Only in eukaryotic cells.",
+        "Both B and C."
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "Ribosomes are found free **in the cytoplasm** and bound to the **rough** endoplasmic reticulum.\n\nOption C says *smooth* ER, which is wrong, so \"both B and C\" is wrong too. They are not only in the nucleus, and prokaryotes have them as well."
+    },
+    {
+      "number": 2,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "In the photosynthesis, what is the donor of electrons that are passed along during the light dependent reactions?",
+      "options": [
+        "Water",
+        "Hydrogen",
+        "Carbon",
+        "Photons",
+        "Oxygen"
+      ],
+      "answer_key": {
+        "value": "A"
+      },
+      "solution_md": "In the light-dependent reactions **water** is split (photolysis):\n\n$$2\\text{H}_2\\text{O} \\rightarrow 4\\text{H}^+ + 4e^- + \\text{O}_2.$$\n\nThose electrons replace the ones lost by chlorophyll; the oxygen is the waste product."
+    },
+    {
+      "number": 3,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Part of photosynthetic tissues that is responsible for gas exchange is …",
+      "options": [
+        "mesophyll",
+        "epidermis",
+        "stomata",
+        "guard cells",
+        "aerophiles"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "The **stomata** are the pores that let CO₂ in and O₂ out.\n\nGuard cells only open and close them, the mesophyll is where photosynthesis happens, and the epidermis is the covering layer."
+    },
+    {
+      "number": 4,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "After boiling a sample of milk with Benedict’s solution, a yellow colour is observed. Which conclusion about the sample of milk is correct?",
+      "options": [
+        "Reducing sugars are not present.",
+        "Reducing sugars are present.",
+        "There is a high concentration of fructose.",
+        "There is a low concentration of sucrose.",
+        "There is a trace of glucose"
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "Benedict's solution goes blue → green → yellow → orange → brick red as more reducing sugar is present.\n\nA **yellow** colour therefore means reducing sugars **are** present (a moderate amount). Sucrose is not a reducing sugar, so the test says nothing about it."
+    },
+    {
+      "number": 5,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "The following advice was given to a person travelling to a country where there had been an outbreak of an infectious disease.\n\n- **(1)** cook food well and eat it hot\n- **(2)** peel fruit and vegetables\n- **(3)** drink only cool, boiled water\n- **(4)** wash hands often with soap and cool, boiled water\n\nWhich infectious disease would this advice help to protect against?",
+      "options": [
+        "cholera",
+        "malaria",
+        "measles",
+        "tuberculosis",
+        "sleeping sickness"
+      ],
+      "answer_key": {
+        "value": "A"
+      },
+      "solution_md": "Every piece of advice is about **food and water hygiene** — cooking food, peeling produce, drinking boiled water, washing hands.\n\n**Cholera** spreads through contaminated food and water. Malaria and sleeping sickness are spread by insect bites; measles and tuberculosis travel through the air."
+    },
+    {
+      "number": 6,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Which of the following statement is correct about DNA?",
+      "options": [
+        "A-G base pairs are more stable than A-C pairs.",
+        "G-C base pairs are probably more durable than A-T pairs.",
+        "Adenine is more common than guanine in an RNA molecule.",
+        "Only DNA uses an alternation of pentose and phosphate in its backbone.",
+        "Nitrogenous bases are hidden from the aqueous environment of the cell in RNA molecules."
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "A **G–C** pair is held by **three** hydrogen bonds while an **A–T** pair has only **two**, so G–C pairs are more stable and DNA rich in G–C needs more energy to separate.\n\nThe other statements are false: A pairs with T (or U), not G or C; RNA also has a sugar–phosphate backbone; and the bases are tucked inside the helix in DNA."
+    },
+    {
+      "number": 7,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "What happens if cytokinesis does not take place in a mitotic division?",
+      "options": [
+        "The cells die.",
+        "The cells will lose some of their chromosomes",
+        "A new species can arise",
+        "A multinucleate situation occurs",
+        "Cancer is a likely result due to the excessive numbers of genes in the cell."
+      ],
+      "answer_key": {
+        "value": "D"
+      },
+      "solution_md": "Mitosis divides the **nucleus**; cytokinesis divides the **cytoplasm**.\n\nIf the nucleus keeps dividing but the cytoplasm never splits, you end up with one cell containing several nuclei — a **multinucleate** cell."
+    },
+    {
+      "number": 8,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "The diagram shows three routes, X, Y and Z, through which substances can pass across a cell surface membrane.\n\nWhich correctly shows the routes for vitamin D, which is fat soluble, and vitamin C, which is water soluble?",
+      "image_url": "/exam-images/asmopss-2020/science-secondary/q08.png",
+      "options": [
+        "Vitamin D: Y / Vitamin C: X",
+        "Vitamin D: X / Vitamin C: Y",
+        "Vitamin D: X / Vitamin C: Z",
+        "Vitamin D: Z / Vitamin C: Y",
+        "Vitamin D: Y / Vitamin C: Z"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "Vitamin D is **fat soluble**, so it dissolves straight into the phospholipid bilayer and diffuses through it — route **X**.\n\nVitamin C is **water soluble** and cannot cross the lipid interior, so it must go through a protein channel — route **Z**."
+    },
+    {
+      "number": 9,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "The pulmonary semilunar valve prevents a back-flow of blood into the...",
+      "options": [
+        "pulmonary artery",
+        "left ventricle",
+        "right ventricle",
+        "right atrium",
+        "lungs"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "The pulmonary semilunar valve sits where the pulmonary artery leaves the **right ventricle**. When the ventricle relaxes the valve shuts, so blood in the artery cannot fall back into the right ventricle."
+    },
+    {
+      "number": 10,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "The peripheral nervous system includes mixed nerves that ….",
+      "options": [
+        "serve the muscular and skeletal system",
+        "serve the sympathetic system",
+        "serve the parasympathetic system",
+        "contain both sensory and motor fibers",
+        "do not always know how to respond"
+      ],
+      "answer_key": {
+        "value": "D"
+      },
+      "solution_md": "A **mixed** nerve is one that carries both **sensory** fibres (towards the CNS) and **motor** fibres (away from it) in the same bundle."
+    },
+    {
+      "number": 11,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "The sense of smell is dependent on … cells.",
+      "options": [
+        "optic",
+        "auditory",
+        "olfactory",
+        "proprioceptor",
+        "odiferous"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "Smell is detected by the **olfactory** cells in the lining of the nasal cavity.\n\nOptic cells are for sight, auditory cells for hearing, proprioceptors for body position."
+    },
+    {
+      "number": 12,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Because only about ten percent of the energy of one trophic level is converted into organisms at the next trophic level, ….",
+      "options": [
+        "food chains are rarely longer than 4 or 5 links",
+        "there are far fewer big fierce animals",
+        "a lot of tissue is available to decomposers",
+        "there will nearly always be more herbivore tissues than carnivore tissues",
+        "all of the answers above are true"
+      ],
+      "answer_key": {
+        "value": "E"
+      },
+      "solution_md": "Only about a tenth of the energy passes to the next level, so all three consequences follow: the energy runs out after 4–5 links, there is little energy left to support large predators, and the 90% that is not passed on ends up as heat and as dead tissue for decomposers. Herbivore biomass also exceeds carnivore biomass for the same reason.\n\nSo **all of the answers above are true**."
+    },
+    {
+      "number": 13,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "… occurs when one species resembles another that possess an antipredator defense.",
+      "options": [
+        "Predation",
+        "Speciation",
+        "Succession",
+        "Mutualism",
+        "Mimicry"
+      ],
+      "answer_key": {
+        "value": "E"
+      },
+      "solution_md": "**Mimicry** is when a harmless (or another) species evolves to resemble one that predators already avoid."
+    },
+    {
+      "number": 14,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "What of the following activities would be hard to do if a person had an injured cerebellum?",
+      "options": [
+        "talking and listening to friends",
+        "singing a song",
+        "dancing",
+        "recognizing colors",
+        "controlling emotions"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "The **cerebellum** coordinates balance, posture and smooth movement.\n\nOf the choices, **dancing** is the one that depends most on that coordination. Speech, colour vision and emotions are handled elsewhere in the brain."
+    },
+    {
+      "number": 15,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "The diagram shows a kidney and its blood vessels.\n\nIn healthy person, which structure(s) transport glucose?",
+      "image_url": "/exam-images/asmopss-2020/science-secondary/q15.png",
+      "options": [
+        "artery only",
+        "artery and ureter",
+        "artery and vein",
+        "ureter and vein",
+        "vein only"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "Glucose arrives at the kidney in the renal **artery**. In a healthy person all of it is filtered and then completely reabsorbed back into the blood, so it leaves in the renal **vein**.\n\nNone reaches the ureter — healthy urine contains no glucose."
+    },
+    {
+      "number": 16,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Zorro has a 12 V battery and three resistors, with resistances 2 Ω, 3 Ω and 6 Ω. He arranged the resistors in parallel.\n\nAfter that, he measured the voltage and the current of the resistors and the battery by using a voltmeter and an ammeter. Which numbers could he get from the voltmeter and the ammeter?",
+      "options": [
+        "Voltmeter: 12 V / Amperemeter: 12 A",
+        "Voltmeter: 12 V / Amperemeter: 1 A",
+        "Voltmeter: 6 V / Amperemeter: 1 A",
+        "Voltmeter: 6 V / Amperemeter: 4 A",
+        "Voltmeter: 2 V / Amperemeter: 2 A"
+      ],
+      "answer_key": {
+        "value": "A"
+      },
+      "solution_md": "In **parallel** every resistor is connected straight across the battery, so a voltmeter reads the full **12 V**.\n\n$$\\frac{1}{R} = \\frac12+\\frac13+\\frac16 = 1 \\Rightarrow R = 1\\ Ω.$$\n\n$$I = \\frac{V}{R} = \\frac{12}{1} = 12\\ \\text{A}.$$\n\nSo 12 V and 12 A."
+    },
+    {
+      "number": 17,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Which statement is correct about the electrical property of material?",
+      "options": [
+        "All electrical conductor always in solid-state.",
+        "All electrical conductor should be metal.",
+        "Salt crystal is an electrical conductor.",
+        "Gold has better in electrical conducting than iron.",
+        "Neon gas at atmospheric pressure is an electrical conductor."
+      ],
+      "answer_key": {
+        "value": "D"
+      },
+      "solution_md": "**Gold conducts electricity better than iron** — that is why it is used to plate contacts.\n\nThe others are false: mercury is a liquid conductor; graphite conducts but is not a metal; a dry salt crystal does not conduct (only molten or dissolved salt does); neon at atmospheric pressure is an insulator until it is ionised at low pressure and high voltage."
+    },
+    {
+      "number": 18,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Ambulance’s siren has 1 kHz frequency. An observer hears the siren with 1.1 kHz frequency. The possible condition why he can hear the higher frequency is ….",
+      "options": [
+        "The observer is moving closer to the ambulance and the ambulance is moving closer to the observer.",
+        "The observer is moving away from the ambulance and the ambulance is moving away from the observer.",
+        "The ambulance is moving away from the observer and the observer is at rest.",
+        "The ambulance is at rest and the observer is moving away from the ambulance.",
+        "It is impossible to happen."
+      ],
+      "answer_key": {
+        "value": "A"
+      },
+      "solution_md": "The pitch heard rises only when the **gap between source and observer is closing**.\n\nBoth moving towards each other closes it fastest, which is the one case here that raises the frequency from 1 kHz to 1.1 kHz. Every other option keeps the gap the same or widens it, which would lower the pitch."
+    },
+    {
+      "number": 19,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Charly throws and catches the ball with Donny inside a bus. When the bus stops, the ball needs 2 seconds when Charly throws to Donny. And it also needs 2 seconds when Donny throws to Charly.\n\nWhen the bus is moving, with the same power, the time the ball that Charly throws to Donny is more than 2 seconds. And the time the ball that Donny throws to Charly is less than 2 seconds.\n\nHow does the bus move?",
+      "image_url": "/exam-images/asmopss-2020/science-secondary/q19.png",
+      "options": [
+        "The bus is moving forward.",
+        "The bus is moving backwards.",
+        "The bus is moving forward with constant speed.",
+        "The bus is moving forward with constant acceleration.",
+        "The bus is moving forward with constant deceleration (braking)"
+      ],
+      "answer_key": {
+        "value": "D"
+      },
+      "solution_md": "Once the ball leaves a hand it keeps the speed the bus had **at that moment**, while the bus and the people in it keep changing speed.\n\nCharly (back) → Donny (front) takes **longer**, so Donny is moving away from the ball: the bus is speeding up. Donny → Charly takes **less** time for the same reason — Charly is catching up to the ball.\n\nA constant speed would change nothing at all, so the bus is **moving forward with constant acceleration**."
+    },
+    {
+      "number": 20,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "In the new normal Covid-19 situation, some public facilities treat a high standard for health. One of the standards is a visitor with a temperature higher than 38.5 °C will not be allowed to enter the public facilities.\n\nThree students measure their temperature on a different scale.\n\n- **(1)** Antony 100 °F\n- **(2)** Rudolf 310 K\n- **(3)** Lisa 30 °R\n\nWhich students are allowed to enter?",
+      "options": [
+        "All of them",
+        "Only Anthony and Rudolf",
+        "Only Lisa",
+        "Only Rudolf and Lisa",
+        "No one can enter."
+      ],
+      "answer_key": {
+        "value": "A"
+      },
+      "solution_md": "Convert everything to °C:\n\n- Antony: $\\frac{5}{9}(100-32) = 37.8\\ ^{\\circ}\\text{C}$\n- Rudolf: $310 - 273 = 37\\ ^{\\circ}\\text{C}$\n- Lisa: $30 \\times \\frac{5}{4} = 37.5\\ ^{\\circ}\\text{C}$\n\nAll three are below 38.5 °C, so **all of them** may enter."
+    },
+    {
+      "number": 21,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Keke and Lala are lifting boxes into the truck. Keke lifts a box directly upward, and Lala using an inclined plane to move the boxes into the truck. Both of them lift the box at the same time.\n\nWho gives more Force, Work and Power according to the statement above?",
+      "options": [
+        "Force: Keke / Work: Lala / Power: Lala",
+        "Force: Keke / Work: same / Power: same",
+        "Force: same / Work: Keke / Power: Keke",
+        "Force: Lala / Work: Lala / Power: same",
+        "Force: Keke / Work: same / Power: Lala"
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "The inclined plane is a machine that trades distance for force, so Lala pushes with a **smaller** force than Keke, who lifts the whole weight — **Keke gives more force**.\n\nIgnoring friction, both raise the same box to the same height, so the **work is the same**; and they do it in the same time, so the **power is the same**."
+    },
+    {
+      "number": 22,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "A simple manometer is used to measure gas pressure in the container, based on the picture.\n\nWhat can we say about the gas pressure in the container?",
+      "image_url": "/exam-images/asmopss-2020/science-secondary/q22.png",
+      "options": [
+        "Greater than atmospheric pressure.",
+        "Its relative pressure is negative.",
+        "Its absolute pressure is negative.",
+        "There is no gas inside the container (vacuum)",
+        "Its pressure is the same with atmospheric pressure."
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "Compare the two mercury levels. The mercury on the **container side is higher** than on the open side A, which means the gas is pushing down less than the atmosphere:\n\n$$P_{\\text{gas}} = P_{\\text{atm}} - ρ g h < P_{\\text{atm}}.$$\n\nIts **relative (gauge) pressure is negative**. The absolute pressure is still positive, and there is gas inside — otherwise the difference in levels would be the full barometric height."
+    },
+    {
+      "number": 23,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Which object has the fastest final velocity?",
+      "options": [
+        "A car which moves in the constant velocity of 100 km/hour.",
+        "A car initially at rest, then accelerated 2 m/s² for 10 seconds.",
+        "A car with an initial speed of 40 km/hour, then accelerated 3 m/s² for 5 seconds.",
+        "A car with an initial speed of 120 km/hour, then decelerated 5 m/s² for 2 seconds.",
+        "A car with an initial speed of 40 m/s then decelerated 2 m/s² for 10 seconds."
+      ],
+      "answer_key": {
+        "value": "A"
+      },
+      "solution_md": "Work out each final speed in m/s ($100\\ \\text{km/h} = 27.8\\ \\text{m/s}$):\n\n- A: $27.8$ m/s (constant)\n- B: $0 + 2\\times 10 = 20$ m/s\n- C: $11.1 + 3\\times 5 = 26.1$ m/s\n- D: $33.3 - 5\\times 2 = 23.3$ m/s\n- E: $40 - 2\\times 10 = 20$ m/s\n\nThe fastest is **A**."
+    },
+    {
+      "number": 24,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "A magnifying glass is used to see an object 10 cm from it. If the image size is 4 times bigger than the object, what is the focal length of the magnifying glass?",
+      "options": [
+        "8 cm",
+        "10 cm",
+        "40/3 cm",
+        "20 cm",
+        "80/3 cm"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "A magnifying glass makes a **virtual** image, so with $m=4$ the image distance is $d_i = -4 \\times 10 = -40$ cm.\n\n$$\\frac{1}{f} = \\frac{1}{d_o}+\\frac{1}{d_i} = \\frac{1}{10}-\\frac{1}{40} = \\frac{3}{40}.$$\n\n$$f = \\frac{40}{3}\\ \\text{cm} \\approx 13.3\\ \\text{cm}.$$"
+    },
+    {
+      "number": 25,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Which statement is correct about Archimedes Force (Buoyance Force):",
+      "options": [
+        "When an object floats, Buoyance Force is more than Weight.",
+        "When an object sinks, Buoyance Force is less than Weight.",
+        "Buoyance force is always the same as Weight, either it floats or sinks.",
+        "Either object floats or sinks, its total force is not zero.",
+        "Buoyance force is greater when the object near the surface."
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "An object **sinks** exactly when its weight is greater than the buoyant force — so B is correct.\n\nA floating object has buoyancy **equal** to its weight, not more; buoyancy depends on the volume of fluid displaced, not on how close to the surface the object is; and a floating or resting object has zero net force."
+    }
+  ]
+}

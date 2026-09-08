@@ -1,0 +1,574 @@
+{
+  "exam": {
+    "slug": "asmopss-2019-science-secondary",
+    "title": "Road to ASMOPSS 2019 — Science Secondary",
+    "subject": "science",
+    "grade_level": "secondary",
+    "duration_min": 90,
+    "total_points": 100,
+    "instructions": "30 câu trắc nghiệm chia hai phần: phần 1 (câu 1–20) mỗi câu 3 điểm, phần 2 (câu 21–30) mỗi câu 4 điểm, tổng 100 điểm. Mỗi câu chọn đúng một phương án (A–E). Không dùng máy tính. Hình vẽ không theo tỉ lệ, chỉ để minh họa. LƯU Ý: đề gốc trừ 1 điểm cho mỗi câu sai; ở đây câu sai không bị trừ điểm."
+  },
+  "_notes": {
+    "source": "Road to ASMOPSS 2019 - Science Secondary Level.pdf + Answer Key Road to ASMOPSS 2019.xlsx (cột Secondary Level / Science).",
+    "removed": "Không bỏ câu nào. Thang điểm in ngay trong đề (Part 1 = 3 điểm/câu, Part 2 = 4 điểm/câu) đã cho đúng 100 điểm nên giữ nguyên cả 30 câu, số câu 1–30 khớp số gốc.",
+    "reconstructed": [
+      "Các bảng phương án (câu 3, 6, 12, 22, 23) và bảng số liệu (câu 26) bị pdftotext trộn cột thành một khối chữ; đã đọc lại từ ảnh render và dựng lại bằng bảng Markdown.",
+      "Câu 7, 11, 13, 15, 17, 22, 25, 28, 29: hình vẽ cắt trực tiếp từ PDF ở 200 dpi sang PNG trong public/exam-images/asmopss-2019/science-secondary/."
+    ],
+    "flags": [
+      "Câu 12 (ăn một bát cơm to thì insulin / glucagon / glycogen thay đổi ra sao): đáp án chính thức là C — cả ba đều giảm. Sinh lý học thì ngược lại: đường huyết tăng → tụy tiết insulin (TĂNG), glucagon bị ức chế (GIẢM), và gan chuyển glucose thừa thành glycogen dự trữ (TĂNG) — tức hàng B của bảng. Ở đây vẫn giữ đáp án chính thức C để trung thành với bản gốc; cân nhắc đổi sang B trước khi dùng chấm điểm thật.",
+      "Câu 29: đáp án chính thức A (hai ampe kế chỉ cùng số) đúng vì R1 và R2 mắc nối tiếp trên cùng một nhánh, nên A1 và A2 đo cùng dòng. Cần nhìn hình để thấy điều đó — chỉ đọc chữ dễ tưởng hai điện trở mắc song song, khi đó B cũng sẽ đúng và câu hỏi thành hai đáp án."
+    ]
+  },
+  "questions": [
+    {
+      "number": 1,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 3,
+      "prompt_md": "A steel bicycle which had been left outdoors for several months was starting to rust. What would **not** reduce the rate of corrosion?",
+      "options": [
+        "Remove the rust and paint the bicycle.",
+        "Remove the rust and store the bicycle in a dry shed.",
+        "Remove the rust and wipe the bicycle with a clean, damp cloth.",
+        "Remove the rust and wipe the bicycle with an oily cloth.",
+        "Remove the rust and avoid water and oxygen"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "Rusting needs both water and oxygen, so every effective measure removes one of them: paint and oil form a barrier, a dry shed and \"avoid water and oxygen\" remove the water.\n\nWiping with a **damp** cloth leaves a film of water on bare steel — that speeds corrosion up rather than slowing it down.\n\nAnswer **C**."
+    },
+    {
+      "number": 2,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 3,
+      "prompt_md": "When a substance is added to tofu, amino acids are produced. What is this substance?",
+      "options": [
+        "water",
+        "oil",
+        "a hormone",
+        "an enzyme",
+        "sugar"
+      ],
+      "answer_key": {
+        "value": "D"
+      },
+      "solution_md": "Tofu is rich in protein, and protein is broken down into amino acids by hydrolysis — a reaction catalysed by **protease enzymes**.\n\nWater alone is far too slow, and oil, hormones and sugar do not digest protein.\n\nAnswer **D**."
+    },
+    {
+      "number": 3,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 3,
+      "prompt_md": "The structure of antibodies, DNA molecules, and enzymes are specific to their actions. Which features of each molecule makes it specific?\n\n| | antibody | DNA | Enzyme |\n|---|---|---|---|\n| A | active site | binding site | base order |\n| B | base order | active site | binding site |\n| C | base order | binding site | active site |\n| D | binding site | base order | active site |\n| E | active site | base order | binding site |",
+      "options": [
+        "Row A",
+        "Row B",
+        "Row C",
+        "Row D",
+        "Row E"
+      ],
+      "answer_key": {
+        "value": "D"
+      },
+      "solution_md": "- **Antibody** — its specificity comes from the **binding site** (the variable region) that fits one particular antigen.\n- **DNA** — its information, and so its specificity, is the **base order**.\n- **Enzyme** — its specificity comes from the **active site** that fits one particular substrate.\n\nAnswer **D**."
+    },
+    {
+      "number": 4,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 3,
+      "prompt_md": "Which part of the cell is often continuous with the rough endoplasmic reticulum?",
+      "options": [
+        "Cell surface membrane",
+        "Golgi apparatus",
+        "Mitochondrion",
+        "Nuclear envelope",
+        "Lysosomes"
+      ],
+      "answer_key": {
+        "value": "D"
+      },
+      "solution_md": "The rough ER is a network of membrane sacs that is **physically joined** to the outer membrane of the **nuclear envelope**, so newly made mRNA reaches the ribosomes directly.\n\nThe Golgi receives vesicles from the ER but is not continuous with it.\n\nAnswer **D**."
+    },
+    {
+      "number": 5,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 3,
+      "prompt_md": "Tay-Sachs disease is a rare inherited disorder that progressively destroys nerve cells in the brain and spinal cord. It happens when an organelle in nerve cells are unable to destroy certain fatty substance.\n\nWhich cell structure would not function correctly, resulting in the disease?",
+      "options": [
+        "Golgi apparatus",
+        "Lysosome",
+        "Mitochondrion",
+        "Smooth endoplasmic reticulum",
+        "Cell membrane"
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "The **lysosome** is the organelle that contains digestive enzymes for breaking down unwanted material inside the cell.\n\nIn Tay-Sachs the enzyme hexosaminidase A is missing, so a fatty substance (GM2 ganglioside) accumulates in the lysosomes of nerve cells.\n\nAnswer **B**."
+    },
+    {
+      "number": 6,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 3,
+      "prompt_md": "The table shows the conditions in four test-tubes containing equal amounts of starch and salivary amylase. In which test-tube is the starch broken down the fastest?\n\n| | pH | Temperature / °C |\n|---|---|---|\n| A | 2 | 27 |\n| B | 2 | 37 |\n| C | 7 | 37 |\n| D | 7 | 27 |\n| E | 7 | 45 |",
+      "options": [
+        "Test-tube A",
+        "Test-tube B",
+        "Test-tube C",
+        "Test-tube D",
+        "Test-tube E"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "Salivary amylase works best at the conditions found in the mouth: about **pH 7** and **37 °C** (body temperature).\n\npH 2 denatures it, 27 °C is too cool to be optimal, and 45 °C starts to denature it.\n\nAnswer **C**."
+    },
+    {
+      "number": 7,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 3,
+      "prompt_md": "The diagram shows part of the alimentary canal and associated organs.\n\nWhich structures that produce substances that neutralize chyme when it gets into the duodenum?",
+      "image_url": "/exam-images/asmopss-2019/science-secondary/q07.png",
+      "options": [
+        "U and T",
+        "V and T",
+        "W and T",
+        "U and W",
+        "V and W"
+      ],
+      "answer_key": {
+        "value": "D"
+      },
+      "solution_md": "Chyme leaving the stomach is strongly acidic and has to be neutralised before the intestinal enzymes can work.\n\nFrom the labels, $U$ is the liver, $T$ the gall bladder, $V$ the stomach and $W$ the pancreas.\n\n- The **liver** ($U$) makes alkaline bile (the gall bladder only stores it).\n- The **pancreas** ($W$) secretes pancreatic juice containing sodium hydrogencarbonate.\n\nAnswer **D**."
+    },
+    {
+      "number": 8,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 3,
+      "prompt_md": "Which of the following diseases is caused by fungi?",
+      "options": [
+        "ringworm",
+        "anthrax",
+        "typhoid fever",
+        "malaria",
+        "smallpox"
+      ],
+      "answer_key": {
+        "value": "A"
+      },
+      "solution_md": "**Ringworm** (tinea) is a fungal skin infection — the name is misleading, no worm is involved.\n\nAnthrax and typhoid fever are bacterial, malaria is caused by a protozoan (*Plasmodium*), and smallpox is viral.\n\nAnswer **A**."
+    },
+    {
+      "number": 9,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 3,
+      "prompt_md": "Which of the following cell structure belong to *Escherichia coli*?",
+      "options": [
+        "Mitochondrion",
+        "Peroxisomes",
+        "Lysosomes",
+        "Ribosomes",
+        "Nucleus"
+      ],
+      "answer_key": {
+        "value": "D"
+      },
+      "solution_md": "*E. coli* is a **prokaryote**, so it has none of the membrane-bound organelles: no nucleus, mitochondria, lysosomes or peroxisomes.\n\nIt does have **ribosomes** (of the smaller 70S type) — every living cell needs them to make proteins.\n\nAnswer **D**."
+    },
+    {
+      "number": 10,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 3,
+      "prompt_md": "What helps oxygen to be absorbed rapidly into the blood in the lungs?",
+      "options": [
+        "Air breathed in has less oxygen than air breathed out.",
+        "Alveoli have thick walls and a large surface area.",
+        "Alveoli have thin walls and a large surface area.",
+        "The concentration of oxygen in the blood is higher than in the alveoli.",
+        "The concentration of oxygen in the blood is the same as in the alveoli."
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "Fast diffusion needs a **short distance** and a **large area**: the alveolar wall is one cell thick and the millions of alveoli together give roughly 70 m² of surface.\n\nIt also needs a steep concentration gradient — oxygen is *higher* in the alveoli than in the blood arriving from the body, which rules out D and E.\n\nAnswer **C**."
+    },
+    {
+      "number": 11,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 3,
+      "prompt_md": "The graph shows the concentration of maltose in different parts of the alimentary canal.\n\nWhat causes the change in concentration at X?",
+      "image_url": "/exam-images/asmopss-2019/science-secondary/q11.png",
+      "options": [
+        "absorption of maltose",
+        "action of amylase",
+        "action of maltase",
+        "assimilation of maltose",
+        "breakdown of maltase"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "The maltose concentration rises through the small intestine as amylase digests starch, then **falls sharply at X**.\n\nThat fall is the enzyme **maltase**, in the small intestine wall, splitting maltose into glucose. Maltose itself is not absorbed — it must be digested to glucose first, which rules out A and D.\n\nAnswer **C**."
+    },
+    {
+      "number": 12,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 3,
+      "prompt_md": "A person eats a large bowl of rice. What happens to the amounts of insulin, glucagon and glycogen in their body?\n\n| | Insulin | Glucagon | Glycogen |\n|---|---|---|---|\n| A | decrease | increases | decreases |\n| B | increases | decreases | increases |\n| C | decreases | decreases | decreases |\n| D | increases | increases | increases |\n| E | increases | increases | decreases |",
+      "options": [
+        "Row A",
+        "Row B",
+        "Row C",
+        "Row D",
+        "Row E"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "**Note — this question's official answer is disputed.**\n\nRice is digested to glucose, so blood glucose rises. The pancreas responds by secreting more **insulin** (increases) and less **glucagon** (decreases), and the insulin makes the liver store the surplus glucose as **glycogen** (increases).\n\nThat is row **B**. The official answer key records **C** (all three decreasing), which is what is stored here."
+    },
+    {
+      "number": 13,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 3,
+      "prompt_md": "The common Mormon butterflies have the same features as rose swallowtail butterflies when they live at the same habitat. The rose swallowtail butterflies are poisonous while the common Mormon butterflies are not. This phenomenon is called ….",
+      "image_url": "/exam-images/asmopss-2019/science-secondary/q13.png",
+      "options": [
+        "mimicry",
+        "camouflage",
+        "imprinting",
+        "autophagy",
+        "autotomy"
+      ],
+      "answer_key": {
+        "value": "A"
+      },
+      "solution_md": "A harmless species evolving to look like a harmful one is **Batesian mimicry** — predators that have learned to avoid the poisonous rose swallowtail also avoid the harmless common Mormon.\n\nCamouflage means blending into the background, not copying another animal; imprinting is a learning behaviour; autophagy is a cell recycling its own parts; autotomy is shedding a body part to escape.\n\nAnswer **A**."
+    },
+    {
+      "number": 14,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 3,
+      "prompt_md": "Which statements are true about myopia?\n\n1. People with this condition are difficult to see close objects clearly.\n2. People with this condition are difficult to see far objects clearly.\n3. The objects are focused in front of the retina.\n4. The objects are focused behind the retina.\n5. Concave lens is needed to correct vision.\n6. Convex lens is needed to correct the vision.",
+      "options": [
+        "1, 2, 5",
+        "2, 3, 5",
+        "4, 5, 6",
+        "1, 3, 4",
+        "1, 4, 6"
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "Myopia is short-sightedness: the eyeball is too long (or the lens too strong), so light from distant objects converges **in front of** the retina.\n\n- (2) ✓ distant objects look blurred; close objects are fine.\n- (3) ✓ the image forms in front of the retina.\n- (5) ✓ a diverging **concave** lens pushes the focus back onto the retina.\n\nAnswer **B**."
+    },
+    {
+      "number": 15,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 3,
+      "prompt_md": "The diagram shows two food tests carried out on solution X.\n\nWhich nutrients are present in solution X?",
+      "image_url": "/exam-images/asmopss-2019/science-secondary/q15.png",
+      "options": [
+        "protein and starch",
+        "protein and reducing sugar",
+        "starch and fat",
+        "starch and sugar",
+        "protein and non-reducing sugar"
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "- **Test 1** — biuret solution turns **purple** ⇒ protein is present.\n- **Test 2** — Benedict's solution turns **red** on heating ⇒ a reducing sugar is present.\n\nA non-reducing sugar would give no colour change with Benedict's unless it were boiled with acid first, and starch would need iodine, which was not used.\n\nAnswer **B**."
+    },
+    {
+      "number": 16,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 3,
+      "prompt_md": "From the numbers below, which one is correct according to scientific notation?",
+      "options": [
+        "100.00",
+        "0.50",
+        "$0.5 \\times 10^{3}$",
+        "$1.0 \\times 10^{6}$",
+        "21.50"
+      ],
+      "answer_key": {
+        "value": "D"
+      },
+      "solution_md": "Scientific notation is $a \\times 10^{n}$ with $1 \\le |a| < 10$ and $n$ an integer.\n\n- 100.00, 0.50 and 21.50 have no power of ten at all.\n- $0.5 \\times 10^3$ has $a = 0.5 < 1$ — it should be written $5 \\times 10^2$.\n- $1.0 \\times 10^6$ ✓ $a = 1.0$ is in range.\n\nAnswer **D**."
+    },
+    {
+      "number": 17,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 3,
+      "prompt_md": "Dino runs alongside the perimeter of the football field with constant speed 5 m/s. The size of the football field is 120 m × 80 m.\n\nAfter running for 3 minutes, how does the magnitude of displacement and distance?",
+      "image_url": "/exam-images/asmopss-2019/science-secondary/q17.png",
+      "options": [
+        "Displacement 100 m and distance 900 m",
+        "Displacement 900 m and distance 100 m",
+        "Displacement 200 m and distance 900 m",
+        "Displacement 900 m and distance 200 m",
+        "Displacement 900 m and distance 900 m"
+      ],
+      "answer_key": {
+        "value": "A"
+      },
+      "solution_md": "Distance run:\n\n$$d = 5\\ \\text{m/s} \\times 180\\ \\text{s} = 900\\ \\text{m}.$$\n\nThe perimeter is $2(120 + 80) = 400$ m, so $900 = 2 \\times 400 + 100$: Dino completes **two full laps** and then runs a further $100$ m along the $120$ m side.\n\nTwo full laps bring him back to the start, so the displacement is just that last leg — a straight $100$ m from his starting corner.\n\nAnswer **A**."
+    },
+    {
+      "number": 18,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 3,
+      "prompt_md": "Fanny push the table with mass 20 kg that lies on the frictionless floor. Table initially at rest. After she pushed for 10 seconds, table moves at 2 m/s. What is the Work that Fanny give to the table?",
+      "options": [
+        "4 Joule",
+        "40 Joule",
+        "100 Joule",
+        "200 Joule",
+        "400 Joule"
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "The floor is frictionless, so all the work goes into kinetic energy (work–energy theorem):\n\n$$W = \\Delta KE = \\tfrac12 m v^2 - 0 = \\tfrac12 \\times 20 \\times 2^2 = 40\\ \\text{J}.$$\n\nThe 10 seconds is a distractor — it only tells us the force was small and the push long.\n\nAnswer **B**."
+    },
+    {
+      "number": 19,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 3,
+      "prompt_md": "Edi's weight is 500 N. When Edi is in elevator that moving upward with constant speed, how does Edi's Weight?",
+      "options": [
+        "Less than 500 N.",
+        "500 N.",
+        "More than 500 N.",
+        "Edi has no weight.",
+        "Cannot be determined."
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "Weight is $W = mg$, and neither Edi's mass nor $g$ changes inside the lift, so his weight stays **500 N**.\n\nAt *constant speed* the acceleration is zero, so the normal force from the floor also equals 500 N — he does not even *feel* heavier. Only during acceleration would the reading on a scale differ.\n\nAnswer **B**."
+    },
+    {
+      "number": 20,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 3,
+      "prompt_md": "An electric heater with 1500 Watt can heat 1 liter of water from 25 °C until it boils at 2 minutes. How much time does 1 kW electric heater need to boil 500 ml of water from 25 °C until it boils? (Assumed efficiency of both electric heaters are 100 %)",
+      "options": [
+        "1 minute",
+        "1 minute 30 seconds",
+        "2 minutes",
+        "3 minutes",
+        "4 minutes 30 seconds"
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "Energy needed for the first job:\n\n$$E_1 = 1500\\ \\text{W} \\times 120\\ \\text{s} = 180\\,000\\ \\text{J}.$$\n\nHalf the water over the same temperature rise needs half the energy:\n\n$$E_2 = 90\\,000\\ \\text{J}.$$\n\nAt $1000$ W:\n\n$$t = \\frac{90\\,000}{1000} = 90\\ \\text{s} = 1\\ \\text{minute } 30\\ \\text{seconds}.$$\n\nAnswer **B**."
+    },
+    {
+      "number": 21,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "What is the pathway taken by water as it travels through a plant?",
+      "options": [
+        "mesophyll cells → xylem → root cortex cells → root hair cells",
+        "root cortex cells → root hair cells → mesophyll cells → xylem",
+        "root hair cells → root cortex cells → xylem → mesophyll cells",
+        "xylem cells → mesophyll cells → root cortex cells → root hair cells",
+        "root hair cells → xylem → root cortex cells → mesophyll cells"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "Water enters through the **root hair cells** by osmosis, crosses the **root cortex** to reach the **xylem**, is pulled up the xylem by the transpiration stream, and finally passes into the **mesophyll cells** of the leaf, where it evaporates.\n\nAnswer **C**."
+    },
+    {
+      "number": 22,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "The diagram shows a section through part of a vein.\n\nWhat could be the first organs found in the directions 1 and 2?\n\n| | 1 | 2 |\n|---|---|---|\n| A | brain | heart |\n| B | intestine | liver |\n| C | kidney | heart |\n| D | lung | heart |\n| E | heart | kidney |",
+      "image_url": "/exam-images/asmopss-2019/science-secondary/q22.png",
+      "options": [
+        "Row A",
+        "Row B",
+        "Row C",
+        "Row D",
+        "Row E"
+      ],
+      "answer_key": {
+        "value": "E"
+      },
+      "solution_md": "Read the valve. The two cusps are pockets whose openings face **direction 2**: blood pushing that way would fill them and snap the valve shut, while blood moving the other way folds them flat against the wall.\n\nSo the flow this valve permits is towards **direction 1**, and since valves in veins always point the blood back to the **heart**, direction 1 leads to the heart.\n\nDirection 2 is then upstream — the organ the blood has just drained from. Of the rows that put the heart at position 1, row **E** gives kidney at position 2: this is the renal vein, carrying blood from the kidney back to the heart.\n\nAnswer **E**."
+    },
+    {
+      "number": 23,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "The list shows the absorption of three different substances by organisms.\n\n1. uptake of glucose by epithelial cells in the villi of the small intestine\n2. mineral ions entering a root hair cell from the soil\n3. water entering guard cells\n\nIn each case, what is the mechanism of absorption?\n\n| | Glucose | mineral ions | water |\n|---|---|---|---|\n| A | active transport | diffusion | osmosis |\n| B | diffusion | diffusion | osmosis |\n| C | active transport | active transport | osmosis |\n| D | diffusion | active transport | diffusion |\n| E | osmosis | diffusion | osmosis |",
+      "options": [
+        "Row A",
+        "Row B",
+        "Row C",
+        "Row D",
+        "Row E"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "- **Glucose** in the villi is absorbed right down to the last molecule, i.e. against its concentration gradient — **active transport**.\n- **Mineral ions** are far more concentrated inside the root hair cell than in the soil water, so they too must move against the gradient — **active transport**.\n- **Water** always moves down its water potential gradient through a partially permeable membrane — **osmosis**.\n\nAnswer **C**."
+    },
+    {
+      "number": 24,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "The careless use of nitrogenous fertilizer near rivers and lakes can cause eutrophication. This results in the death of fish.\n\nWhat is the direct cause of the death of the fish?",
+      "options": [
+        "Decomposers reduce the amount of dissolved oxygen in the water",
+        "Nitrates are toxic to plants.",
+        "The rapid growth of producers uses up all the available nutrients.",
+        "The sudden increase in the number of bacteria increases the spread of disease.",
+        "The nitrogen fertilizer limits the amount of nutrients for the fish"
+      ],
+      "answer_key": {
+        "value": "A"
+      },
+      "solution_md": "The chain is: fertiliser runs off → algae bloom → the bloom blocks light and the algae die → **decomposing bacteria multiply on the dead algae and respire aerobically**, stripping the oxygen out of the water → the fish suffocate.\n\nSo the *direct* cause is the loss of dissolved oxygen to the decomposers.\n\nAnswer **A**."
+    },
+    {
+      "number": 25,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "The diagram shows part of the nitrogen cycle. At which stage is denitrification occurring?",
+      "image_url": "/exam-images/asmopss-2019/science-secondary/q25.png",
+      "options": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E"
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "**Denitrification** is the step where denitrifying bacteria convert nitrates in the soil back into nitrogen gas.\n\nIn the diagram that is the arrow running from *nitrates* to *nitrogen in the atmosphere* — labelled **B**.\n\n(Arrow A is nitrogen fixation, C is nitrification, D is death and decay, E is feeding.)\n\nAnswer **B**."
+    },
+    {
+      "number": 26,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Asep do the experiment using spring and the load and write the length of the spring on the table below:\n\n| Load (gram) | Length (cm) |\n|---|---|\n| 0 | 10 |\n| 100 | 12 |\n| 200 | 14 |\n| 300 | 16 |\n| 400 | 18 |\n| 500 | 20 |\n\nThen Asep hang a stone on that spring and the length become 17.5 cm. How does the mass of the stone?",
+      "options": [
+        "Less than 100 grams",
+        "350 grams",
+        "375 grams",
+        "450 grams",
+        "More than 450 grams"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "The spring obeys Hooke's law: the natural length is $10$ cm and every $100$ g adds $2$ cm.\n\nAt $17.5$ cm the extension is\n\n$$17.5 - 10 = 7.5\\ \\text{cm},$$\n\nso the mass is\n\n$$\\frac{7.5}{2} \\times 100 = 375\\ \\text{g}.$$\n\nAnswer **C**."
+    },
+    {
+      "number": 27,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Roni wants to investigate a bug using magnifying glass. The actual height of the bug is 2 cm. Distance of bug to the magnifying glass is 8 cm. If the focal length of the magnifying glass is 12 cm, What is the bug height's image?",
+      "options": [
+        "6 cm",
+        "16 cm",
+        "24 cm",
+        "36 cm",
+        "48 cm"
+      ],
+      "answer_key": {
+        "value": "A"
+      },
+      "solution_md": "The object is inside the focal length ($u = 8 < f = 12$), so the lens acts as a magnifier and gives a virtual, upright, enlarged image.\n\n$$\\frac{1}{v} = \\frac{1}{f} - \\frac{1}{u} = \\frac{1}{12} - \\frac{1}{8} = -\\frac{1}{24} \\;\\Rightarrow\\; v = -24\\ \\text{cm}.$$\n\nMagnification:\n\n$$m = \\left|\\frac{v}{u}\\right| = \\frac{24}{8} = 3 \\;\\Rightarrow\\; h' = 3 \\times 2 = 6\\ \\text{cm}.$$\n\nAnswer **A**."
+    },
+    {
+      "number": 28,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "A Child is in between two cliffs. The distance of two cliff is 500 meters. Then he shouts and he listen two reflected sounds. The second reflected sound is heard 1.5 second after the first reflected sound. If the speed of sound in the air is 320 m/s, where is the child position?",
+      "image_url": "/exam-images/asmopss-2019/science-secondary/q28.png",
+      "options": [
+        "20 meters from the left cliff",
+        "80 meters from the left cliff",
+        "130 meters from the left cliff",
+        "160 meters from the left cliff",
+        "240 meters from the left cliff"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "Let the child stand $d$ metres from the nearer (left) cliff, so the far cliff is $500 - d$ away. Each echo travels there and back:\n\n$$t_1 = \\frac{2d}{320}, \\qquad t_2 = \\frac{2(500-d)}{320}.$$\n\nThe gap between them is 1.5 s:\n\n$$\\frac{2(500-d) - 2d}{320} = 1.5 \\;\\Rightarrow\\; 1000 - 4d = 480 \\;\\Rightarrow\\; d = 130\\ \\text{m}.$$\n\nAnswer **C**."
+    },
+    {
+      "number": 29,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "See the electric circuit below.\n\nIf Resistance $R_1 < R_2$, which statement is true with that circuit?",
+      "image_url": "/exam-images/asmopss-2019/science-secondary/q29.png",
+      "options": [
+        "Amperemeter A1 and Amperemeter A2 exactly show the same number.",
+        "Voltmeter V1 and Voltmeter V2 exactly show the same number.",
+        "Current at Amperemeter 1 is bigger than Amperemeter A2.",
+        "Potential different at Voltmeter V1 is bigger than Voltmeter V2.",
+        "Amperemeter A1 and Voltmeter V1 exactly show the same number."
+      ],
+      "answer_key": {
+        "value": "A"
+      },
+      "solution_md": "The two resistors sit one after the other in a **single loop**, with $A_1$ above them and $A_2$ below — so both ammeters measure the same series current.\n\n$$I_{A_1} = I_{A_2}.$$\n\nThat also kills C. And since $V = IR$ with the same $I$, the smaller resistor drops the smaller voltage: $V_1 < V_2$, so B and D are both wrong. E compares an ampere with a volt, which is meaningless.\n\nAnswer **A**."
+    },
+    {
+      "number": 30,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Mariana Trench is the deepest surface of Earth. Its depth is about 11,000 meters from sea surface. If the density of seawater is 1000 kg/m³, how much is the hydrostatic pressure on the bottom of Mariana Trench? ($g = 10\\ \\mathrm{m/s^2}$)",
+      "options": [
+        "11 kPa",
+        "110 kPa",
+        "1.1 MPa",
+        "11 MPa",
+        "110 MPa"
+      ],
+      "answer_key": {
+        "value": "E"
+      },
+      "solution_md": "$$P = \\rho g h = 1000 \\times 10 \\times 11\\,000 = 1.1 \\times 10^{8}\\ \\text{Pa}.$$\n\n$$1.1 \\times 10^{8}\\ \\text{Pa} = 110 \\times 10^{6}\\ \\text{Pa} = 110\\ \\text{MPa}.$$\n\nAnswer **E**."
+    }
+  ]
+}
