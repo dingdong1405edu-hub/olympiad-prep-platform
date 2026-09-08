@@ -226,6 +226,67 @@ export const IMAGE_SLOT_BY_KEY: Record<string, ImageSlot> = Object.fromEntries(
 
 export const IMAGE_SLOT_KEYS: string[] = Object.keys(IMAGE_SLOT_BY_KEY);
 
+// ---------------------------------------------------------------------------
+// Ô ảnh của KHÓA HỌC — họ ô duy nhất không khai báo được sẵn trong mã nguồn
+// ---------------------------------------------------------------------------
+
+/**
+ * Ảnh đại diện của từng khóa học.
+ *
+ * Mọi ô phía trên là ô CỐ ĐỊNH: một vị trí trên trang, khai một dòng ở đây, hết.
+ * Khóa học thì không — nó là dữ liệu, admin thêm một khóa mới lúc nào cũng được
+ * (đúng điều kiện nghiệm thu "thêm kỳ thi = thêm bản ghi"), nên không có cách
+ * nào liệt kê trước tất cả ô ảnh của chúng trong một mảng tĩnh.
+ *
+ * Vì vậy họ ô này được nhận diện bằng KHUÔN KHÓA thay vì bằng danh sách:
+ *
+ *     course.<mã kỳ thi>-<khối>-<môn>.cover      ví dụ: course.olp-a-math.cover
+ *
+ * Khóa dựng từ ba thứ định danh một khóa học trong lược đồ (`@@unique([programId,
+ * gradeBand, subject])`) chứ không phải từ `id`. Nhờ vậy ảnh vẫn đúng chỗ sau khi
+ * seed lại ở môi trường mới — nơi `id` là chuỗi cuid hoàn toàn khác.
+ *
+ * Đổi lại, hai điều phải giữ: mọi chỗ kiểm khóa hợp lệ đều gọi
+ * `resolveImageSlot()` chứ không tra `IMAGE_SLOT_BY_KEY`, và đổi mã kỳ thi thì
+ * ảnh của các khóa thuộc kỳ thi đó thành ô mồ côi — hệt như khi đổi tên một ô
+ * trong `SITE_IMAGE_GROUPS`.
+ */
+const COURSE_COVER_PATTERN = /^course\.[a-z0-9]+(?:-[a-z0-9]+)*\.cover$/;
+
+/** Bản mô tả dùng chung cho mọi ô ảnh khóa học. */
+export const COURSE_COVER_SLOT: Omit<ImageSlot, 'key'> = {
+  label: 'Ảnh đại diện khóa học',
+  hint: 'Hiện trên thẻ khóa học ở trang danh mục và ở đầu trang giới thiệu khóa. Ảnh ngang, chủ thể nằm giữa — hai bên có thể bị cắt trên máy điện thoại.',
+  aspect: '16 / 9',
+  recommended: '1200×675',
+  fallback: 'gradient',
+  fallbackNote: 'Chưa tải thì thẻ khóa học giữ nền chuyển màu theo màu nhận diện của kỳ thi.',
+  defaultAlt: '',
+};
+
+/** Khóa ô ảnh đại diện của một khóa học. Chỉ nhận ba thứ định danh khóa đó. */
+export function courseCoverSlot(programCode: string, gradeBand: string, subject: string): string {
+  return `course.${programCode}-${gradeBand}-${subject}`.toLowerCase() + '.cover';
+}
+
+/** Ô này có phải ảnh đại diện khóa học không. */
+export function isCourseCoverSlot(slot: string): boolean {
+  return COURSE_COVER_PATTERN.test(slot);
+}
+
+/**
+ * Bản mô tả của một ô bất kỳ, hoặc `null` khi khóa không thuộc ô nào.
+ *
+ * Đây là CỬA DUY NHẤT để hỏi "khóa này có hợp lệ không". Dùng nó thay cho
+ * `slot in IMAGE_SLOT_BY_KEY` ở mọi chỗ nhận dữ liệu từ ngoài vào.
+ */
+export function resolveImageSlot(slot: string): ImageSlot | null {
+  const fixed = IMAGE_SLOT_BY_KEY[slot];
+  if (fixed) return fixed;
+  if (isCourseCoverSlot(slot)) return { key: slot, ...COURSE_COVER_SLOT };
+  return null;
+}
+
 /** Khóa chữ chứa alt của một ô ảnh. */
 export function altKey(slot: string): string {
   return `${slot}.alt`;

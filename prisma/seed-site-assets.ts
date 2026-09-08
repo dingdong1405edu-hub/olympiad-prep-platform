@@ -21,7 +21,7 @@
  */
 import { readFileSync } from 'node:fs';
 import type { PrismaClient } from '@prisma/client';
-import { IMAGE_SLOT_BY_KEY } from '../src/lib/copy/images';
+import { resolveImageSlot } from '../src/lib/copy/images';
 
 interface SeedAsset {
   /** Khóa ô ảnh; phải khớp `SITE_IMAGE_GROUPS` trong `src/lib/copy/images.ts`. */
@@ -53,6 +53,20 @@ const SEED_ASSETS: SeedAsset[] = [
   { slot: 'home.parents.report', file: 'home.parents.report.webp', mimeType: 'image/webp', width: 1341, height: 894 },
   { slot: 'home.cta.image', file: 'home.cta.image.webp', mimeType: 'image/webp', width: 1341, height: 894 },
   { slot: 'site.og.image', file: 'site.og.image.webp', mimeType: 'image/webp', width: 870, height: 580 },
+
+  /*
+   * Ảnh đại diện bốn khóa Toán Olympic.
+   *
+   * Đây là họ ô ĐỘNG (`course.<mã>-<khối>-<môn>.cover`, xem images.ts), nên khác
+   * mọi dòng phía trên: khóa ô không có trong `SITE_IMAGE_GROUPS` mà được nhận
+   * diện bằng khuôn. Ảnh vẽ bằng mã, không phải ảnh chụp — chọn vậy vì bộ dữ
+   * liệu demo phải đi kèm repo mà không kéo theo vấn đề bản quyền ảnh người thật.
+   * Admin thay bằng ảnh thật ngay trong biểu mẫu sửa khóa học.
+   */
+  { slot: 'course.olp-a-math.cover', file: 'course.olp-a-math.cover.png', mimeType: 'image/png', width: 1200, height: 675 },
+  { slot: 'course.olp-b-math.cover', file: 'course.olp-b-math.cover.png', mimeType: 'image/png', width: 1200, height: 675 },
+  { slot: 'course.olp-c-math.cover', file: 'course.olp-c-math.cover.png', mimeType: 'image/png', width: 1200, height: 675 },
+  { slot: 'course.olp-d-math.cover', file: 'course.olp-d-math.cover.png', mimeType: 'image/png', width: 1200, height: 675 },
 ];
 
 export interface SeedSiteAssetsResult {
@@ -70,7 +84,7 @@ export async function seedSiteAssets(prisma: PrismaClient): Promise<SeedSiteAsse
    * không bao giờ hiện lên trang — mọi bước đều báo thành công. Ném lỗi ngay
    * lúc seed là chỗ duy nhất phát hiện được điều đó.
    */
-  const unknown = SEED_ASSETS.filter((asset) => !(asset.slot in IMAGE_SLOT_BY_KEY));
+  const unknown = SEED_ASSETS.filter((asset) => !resolveImageSlot(asset.slot));
   if (unknown.length > 0) {
     throw new Error(
       `Ảnh mẫu trỏ tới ô không còn tồn tại trong src/lib/copy/images.ts: ` +

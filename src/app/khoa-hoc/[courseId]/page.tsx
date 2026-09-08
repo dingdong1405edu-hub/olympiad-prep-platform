@@ -3,9 +3,12 @@ import { notFound } from 'next/navigation';
 import { getCourse } from '@/server/catalog/service';
 import { getSession } from '@/lib/auth';
 import { getCopy } from '@/lib/copy';
+import { getImages } from '@/lib/copy/assets';
+import { courseCoverSlot } from '@/lib/copy/images';
 import { routes } from '@/lib/routes';
 import { formatVnd } from '@/lib/domain';
 import { SiteShell } from '@/components/site-shell';
+import { SiteImage } from '@/components/site-image';
 import { IntroVideo } from '@/components/video';
 import { Reveal } from '@/components/motion';
 
@@ -43,7 +46,7 @@ export default async function CourseDetailPage({
   params: Promise<{ courseId: string }>;
 }) {
   const { courseId } = await params;
-  const [session, t] = await Promise.all([getSession(), getCopy()]);
+  const [session, t, img] = await Promise.all([getSession(), getCopy(), getImages()]);
 
   let course;
   try {
@@ -52,7 +55,13 @@ export default async function CourseDetailPage({
     notFound();
   }
 
-  const hasIntro = Boolean(course.longDescription || course.introVideoUrl);
+  /*
+   * Ảnh đại diện đứng ở đúng chỗ của video khi khóa chưa có video: cột trái của
+   * khối giới thiệu. Không có cả hai thì khối vẫn mở nếu có bài giới thiệu dài,
+   * và cột trái khép lại — lưới một cột, không để lại ô trống.
+   */
+  const cover = img(courseCoverSlot(course.program.code, course.gradeBand, course.subject));
+  const hasIntro = Boolean(course.longDescription || course.introVideoUrl || cover);
   const buyHref = routes.checkout(course.id);
 
   return (
@@ -149,9 +158,22 @@ export default async function CourseDetailPage({
                     className="shadow-[0_24px_60px_-30px_rgb(120_70_45/0.6)]"
                   />
                 </Reveal>
+              ) : cover ? (
+                <Reveal>
+                  <SiteImage
+                    image={cover}
+                    // Trang trí: tên khóa nằm ngay cạnh ảnh trong thẻ h2, nên
+                    // trình đọc màn hình không cần nghe lại lần nữa.
+                    alt=""
+                    aspect="16 / 9"
+                    className="w-full rounded-2xl object-cover shadow-[0_24px_60px_-30px_rgb(120_70_45/0.6)]"
+                    priority
+                    sizes="(min-width: 1024px) 560px, 100vw"
+                  />
+                </Reveal>
               ) : null}
 
-              <Reveal delay={course.introVideoUrl ? 110 : 0}>
+              <Reveal delay={course.introVideoUrl || cover ? 110 : 0}>
                 <span className="gold-rule block" aria-hidden />
                 <h2 className="font-display mt-5 text-[26px] leading-[1.15] font-bold tracking-tight text-warm-900 sm:text-[34px]">
                   {course.introVideoUrl ? t('course.video.title') : course.name}

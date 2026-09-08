@@ -16,6 +16,8 @@ import type { CourseSummary, EffectivePricing, ProgramDetail, ProgramSummary } f
 import type { CouponRow } from '@/server/commerce/service';
 import { apiPost } from '@/lib/client';
 import { API, routes } from '@/lib/routes';
+import { courseCoverSlot } from '@/lib/copy/images';
+import { CourseCoverField } from './course-cover';
 import {
   GRADE_BANDS,
   GRADE_BAND_LABEL,
@@ -63,6 +65,8 @@ interface Props {
   hiddenCourses: CourseSummary[];
   coupons: CouponRow[];
   canEdit: boolean;
+  /** URL ảnh đại diện theo khóa ô, trang cha đọc sẵn từ bảng SiteAsset. */
+  coverUrlBySlot: Record<string, string>;
   defaultPrice: number;
   defaultCurrency: string;
   defaultAccessDays: number;
@@ -96,6 +100,7 @@ export function ProgramManager({
   hiddenCourses,
   coupons,
   canEdit,
+  coverUrlBySlot,
   defaultPrice,
   defaultCurrency,
   defaultAccessDays,
@@ -366,6 +371,18 @@ export function ProgramManager({
                 key={panel.course?.id ?? 'tao-moi'}
                 course={panel.course}
                 programId={selected.id}
+                programCode={selected.code}
+                coverUrl={
+                  panel.course
+                    ? (coverUrlBySlot[
+                        courseCoverSlot(
+                          selected.code,
+                          panel.course.gradeBand,
+                          panel.course.subject,
+                        )
+                      ] ?? null)
+                    : null
+                }
                 saving={saving}
                 error={formError}
                 onCancel={() => setPanel(null)}
@@ -917,6 +934,8 @@ function ProgramForm({
 function CourseForm({
   course,
   programId,
+  programCode,
+  coverUrl,
   saving,
   error,
   onCancel,
@@ -924,6 +943,9 @@ function CourseForm({
 }: {
   course: CourseSummary | null;
   programId: string;
+  /** Mã kỳ thi — cùng với khối và môn tạo nên khóa ô ảnh đại diện của khóa. */
+  programCode: string;
+  coverUrl: string | null;
   saving: boolean;
   error: string | null;
   onCancel: () => void;
@@ -1010,6 +1032,17 @@ function CourseForm({
         title="Trang giới thiệu khóa học"
         description="Hiển thị ở /khoa-hoc/<mã khóa> — khách xem trước khi bấm thanh toán."
       />
+
+      {/* Chỉ khi SỬA khóa đã có: khóa mới chưa chốt cặp khối–môn nên chưa có ô
+          ảnh nào để ghi vào. Khóa ô lấy theo khối/môn ĐÃ LƯU chứ không theo giá
+          trị đang chọn trên biểu mẫu — đổi khối/môn rồi lưu thì ảnh thành ô mồ
+          côi, đúng như khi đổi tên một ô trong images.ts. */}
+      {course ? (
+        <CourseCoverField
+          slot={courseCoverSlot(programCode, course.gradeBand, course.subject)}
+          initialUrl={coverUrl}
+        />
+      ) : null}
 
       <FormField label="Câu chốt" hint="một dòng, hiện dưới tên khóa" wide>
         <Input

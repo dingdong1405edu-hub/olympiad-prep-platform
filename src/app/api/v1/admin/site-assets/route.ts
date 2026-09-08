@@ -2,7 +2,7 @@ import { requireRole } from '@/lib/auth';
 import { ApiError, handle, ok } from '@/lib/http';
 import { AUDIT_ACTIONS, writeAudit } from '@/lib/audit';
 import { listAssets, saveAsset } from '@/lib/copy/assets';
-import { IMAGE_SLOT_BY_KEY } from '@/lib/copy/images';
+import { resolveImageSlot } from '@/lib/copy/images';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -56,7 +56,7 @@ export const POST = handle(async (request: Request) => {
   }
 
   const slot = form.get('slot');
-  if (typeof slot !== 'string' || !(slot in IMAGE_SLOT_BY_KEY)) {
+  if (typeof slot !== 'string' || !resolveImageSlot(slot)) {
     throw ApiError.badRequest('Không có ô ảnh nào mang khóa này.');
   }
 

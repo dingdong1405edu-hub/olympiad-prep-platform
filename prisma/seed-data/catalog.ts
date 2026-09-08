@@ -82,6 +82,23 @@ export interface ProgramSeed {
   introVideoUrl?: string;
   sections?: { title: string; body: string }[];
   faqs?: { question: string; answer: string }[];
+
+  /**
+   * Giới hạn phạm vi khóa học của kỳ thi này. Bỏ trống = mở đủ mọi khối và mọi
+   * môn hợp lệ với khối, đúng như bốn kỳ thi lớn.
+   *
+   * Có kỳ thi chỉ thi một môn (Toán Olympic), có kỳ thi chỉ dành cho một vài
+   * khối. Trước đây `buildCourses` luôn sinh đủ 14 khóa nên kiểu kỳ thi đó
+   * không khai báo được bằng dữ liệu — phải sửa mã, đúng thứ specs §3.1 cấm.
+   */
+  bands?: GradeBand[];
+  subjects?: Subject[];
+
+  /**
+   * Tên khóa đặt theo kỳ thi này thay vì khuôn "MÃ – Khối – Môn".
+   * Kỳ thi một môn thì nhắc lại tên môn trong tên khóa là dư.
+   */
+  courseNamePrefix?: string;
 }
 
 export const PROGRAMS: ProgramSeed[] = [
@@ -226,6 +243,60 @@ export const PROGRAMS: ProgramSeed[] = [
     active: false,
     order: 5,
   },
+  {
+    /*
+     * KỲ THI MỘT MÔN — bộ dữ liệu dùng để demo.
+     *
+     * Khai `subjects: ['MATH']` nên chỉ sinh 4 khóa Toán cho 4 khối, thay vì 14
+     * khóa đủ môn như bốn kỳ thi lớn. Bốn khóa này KHÔNG cần kho câu hỏi riêng:
+     * Chapter và Skill gắn theo cặp (môn, khối) chứ không theo kỳ thi, nên khóa
+     * Toán khối 3–4–5 ở đây dùng đúng cây kiến thức và đúng kho câu Toán khối
+     * 3–4–5 mà các kỳ thi khác đang dùng. Thêm kỳ thi không nhân bản học liệu.
+     */
+    code: 'OLP',
+    name: 'Toán Olympic — Vòng luyện chuyên sâu',
+    shortName: 'Toán Olympic',
+    logoEmoji: '➗',
+    colorHex: '#0f766e',
+    description:
+      'Vòng luyện Toán Olympic dành cho học sinh đã qua vòng trường và cần một lộ trình riêng theo đúng chỗ mình còn hổng. Chỉ một môn Toán, bốn khối lớp, mỗi khối một khóa.',
+    highlights: [
+      'Chỉ Toán — không dàn mỏng sang môn khác',
+      'Dùng chung cây kiến thức Toán đã kiểm duyệt của hệ thống',
+      'Bốn khối lớp, mỗi khối một lộ trình riêng',
+    ],
+    season: '2026',
+    active: true,
+    order: 6,
+    subjects: ['MATH'],
+    courseNamePrefix: 'Toán Olympic',
+    tagline: 'Một môn, làm cho tới: đo từng kỹ năng Toán rồi vá đúng chỗ hổng.',
+    longDescription: [
+      'Toán Olympic không hỏi lại những gì con đã làm đúng ở trường. Nó hỏi những bước suy luận mà đề trên lớp ít khi yêu cầu: đặt lại bài toán theo cách khác, tìm quy luật trước khi tính, và kiểm tra lại kết quả bằng một con đường thứ hai.',
+      'Vì vậy vòng luyện này bắt đầu bằng một bài đo 15 câu rải đúng tỷ trọng các chương trong đề thật. Xong bài là có bản đồ kỹ năng: kỹ năng nào đã vững, kỹ năng nào mới chỉ làm được khi có gợi ý, kỹ năng nào chưa chạm tới.',
+      'Từ bản đồ đó, lộ trình theo ngày được dựng vừa với quỹ thời gian gia đình khai báo, và tự dàn lại khi con học không kịp. Mỗi 14 ngày có một bài đo tiến bộ dùng câu neo, kèm 20 phút tư vấn với giáo viên đã đọc trước hồ sơ.',
+    ].join('\n\n'),
+    sections: [
+      {
+        title: 'Ai nên vào vòng này',
+        body: 'Học sinh đã đi thi ít nhất một vòng và muốn biết mình còn thiếu gì, thay vì luyện thêm đề một cách chung chung. Con chưa từng thi cũng vào được — bài đo đầu vào sẽ nói rõ nên bắt đầu từ đâu.',
+      },
+      {
+        title: 'Khác gì với việc mua thêm một bộ đề',
+        body: 'Bộ đề cho con nhiều câu để làm. Vòng này cho con biết nên làm câu nào trước, vì sao, và dừng khi nào — dựa trên chính những gì con vừa làm sai.',
+      },
+    ],
+    faqs: [
+      {
+        question: 'Con đang học khối 6 nhưng làm được đề khối 8, nên chọn khóa nào?',
+        answer: 'Chọn đúng khối con đang học. Độ khó trong lộ trình tự nâng lên khi con làm đúng ba câu liên tiếp, nên con sẽ nhanh chóng gặp câu ở mức thật của mình mà không bỏ sót phần nền.',
+      },
+      {
+        question: 'Vòng này có đề thi thử không?',
+        answer: 'Có. Khu Thi thử dùng chung cho mọi kỳ thi, hiện đã có 15 đề Toán và Khoa học các mùa trước, chấm tự động kèm nhận xét từng câu.',
+      },
+    ],
+  },
 ];
 
 // ---------------------------------------------------------------------------
@@ -298,19 +369,34 @@ export function buildCourses(programs: ProgramSeed[] = PROGRAMS): CourseSeed[] {
   const out: CourseSeed[] = [];
   for (const program of programs) {
     if (!program.active) continue; // program tắt thì không mở khóa học
-    for (const band of GRADE_BANDS) {
-      for (const subject of SUBJECTS_BY_BAND[band]) {
+    const bands = program.bands ?? GRADE_BANDS;
+    for (const band of bands) {
+      // Giao của "môn hợp lệ với khối" và "môn kỳ thi này thi". Thứ tự lấy theo
+      // SUBJECTS_BY_BAND để danh sách khóa không đổi chỗ giữa hai lần seed.
+      const subjects = SUBJECTS_BY_BAND[band].filter(
+        (subject) => !program.subjects || program.subjects.includes(subject),
+      );
+      for (const subject of subjects) {
         const subjectName = SUBJECT_LABEL[subject];
         const bandName = GRADE_BAND_LABEL[band].toLowerCase();
+        // Tên gọi kỳ thi trong phần chữ bán hàng. Bốn kỳ thi lớn có shortName
+        // trùng code nên chữ của chúng không đổi; kỳ thi một môn thì đọc thành
+        // "cấu trúc đề Toán Olympic" chứ không phải "cấu trúc đề OLP".
+        const programLabel = program.shortName || program.code;
+        const single = subjects.length === 1 && (program.subjects?.length ?? 0) === 1;
         out.push({
           programCode: program.code,
           gradeBand: band,
           subject,
-          name: courseName(program.code, band, subject),
-          description: `Lộ trình ôn luyện ${subjectName} cho ${bandName} theo cấu trúc đề ${program.code} mùa ${program.season}.`,
+          name: program.courseNamePrefix
+            ? single
+              ? `${program.courseNamePrefix} — ${GRADE_BAND_LABEL[band]}`
+              : `${program.courseNamePrefix} — ${GRADE_BAND_LABEL[band]} — ${subjectName}`
+            : courseName(program.code, band, subject),
+          description: `Lộ trình ôn luyện ${subjectName} cho ${bandName} theo cấu trúc đề ${programLabel} mùa ${program.season}.`,
           tagline: `Đo năng lực theo từng kỹ năng ${subjectName.toLowerCase()}, rồi giao đúng bài con cần hôm nay.`,
           longDescription: [
-            `Khóa ${subjectName} ${bandName} bám theo cấu trúc đề ${program.code}: tỷ trọng từng chương, thang độ khó và kiểu câu hỏi đều lấy từ đề các mùa trước chứ không dùng chung một kho cho mọi kỳ thi.`,
+            `Khóa ${subjectName} ${bandName} bám theo cấu trúc đề ${programLabel}: tỷ trọng từng chương, thang độ khó và kiểu câu hỏi đều lấy từ đề các mùa trước chứ không dùng chung một kho cho mọi kỳ thi.`,
             'Con bắt đầu bằng bài kiểm tra đầu vào 15 câu. Xong bài là có ngay bản đồ kỹ năng: mạnh ở đâu, hổng ở đâu, nên sửa theo thứ tự nào. Từ đó hệ thống dựng lộ trình theo ngày vừa với quỹ thời gian gia đình khai báo.',
             'Mỗi 14 ngày có một bài kiểm tra tiến bộ dùng câu neo để đo mức tiến bộ thật, kèm buổi tư vấn 20 phút với giáo viên đã đọc trước toàn bộ hồ sơ của con.',
           ].join('\n\n'),

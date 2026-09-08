@@ -2,7 +2,7 @@ import { requireRole } from '@/lib/auth';
 import { ApiError, handle, ok } from '@/lib/http';
 import { AUDIT_ACTIONS, writeAudit } from '@/lib/audit';
 import { deleteAsset } from '@/lib/copy/assets';
-import { IMAGE_SLOT_BY_KEY } from '@/lib/copy/images';
+import { resolveImageSlot } from '@/lib/copy/images';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -20,7 +20,7 @@ export const DELETE = handle(async (_request: Request, context: Ctx) => {
   const { slot: raw } = await context.params;
   const slot = decodeURIComponent(raw);
 
-  if (!(slot in IMAGE_SLOT_BY_KEY)) {
+  if (!resolveImageSlot(slot)) {
     throw ApiError.badRequest('Không có ô ảnh nào mang khóa này.');
   }
 

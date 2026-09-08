@@ -20,7 +20,7 @@
  * route phục vụ ảnh, mỗi lần một ô.
  */
 import { prisma } from '@/lib/prisma';
-import { IMAGE_SLOT_BY_KEY } from './images';
+import { resolveImageSlot } from './images';
 
 const CACHE_TTL_MS = 20_000;
 
@@ -52,7 +52,7 @@ export async function getImageMap(): Promise<Record<string, SiteImage>> {
       select: { slot: true, version: true, width: true, height: true },
     });
     for (const row of rows) {
-      if (!(row.slot in IMAGE_SLOT_BY_KEY)) continue;
+      if (!resolveImageSlot(row.slot)) continue;
       map[row.slot] = {
         slot: row.slot,
         url: urlFor(row.slot, row.version),
@@ -99,7 +99,7 @@ export async function listAssets(): Promise<AssetRow[]> {
     },
   });
   return rows
-    .filter((row) => row.slot in IMAGE_SLOT_BY_KEY)
+    .filter((row) => resolveImageSlot(row.slot) !== null)
     .map((row) => ({
       slot: row.slot,
       mimeType: row.mimeType,
@@ -182,7 +182,7 @@ export async function deleteAsset(slot: string): Promise<boolean> {
 export async function readAssetBytes(
   slot: string,
 ): Promise<{ mimeType: string; data: Buffer } | null> {
-  if (!(slot in IMAGE_SLOT_BY_KEY)) return null;
+  if (!resolveImageSlot(slot)) return null;
   const row = await prisma.siteAsset.findUnique({
     where: { slot },
     select: { mimeType: true, data: true },
