@@ -19,6 +19,7 @@
  * THÊM CHỮ MỚI: khai báo ở đây kèm nhãn tiếng Việt dễ hiểu; trang quản trị tự
  * mọc thêm ô nhập, không phải sửa gì bên đó.
  */
+import { SITE_IMAGE_GROUPS } from './images';
 
 export interface CopyField {
   key: string;
@@ -631,6 +632,58 @@ const COURSE_PAGE_GROUP: CopyGroup = {
 };
 
 // ---------------------------------------------------------------------------
+// NHÓM 10 — Dải ảnh giữa trang chủ
+//
+// Khối này chỉ hiện khi admin đã tải ít nhất một ảnh trong nhóm "Dải ảnh giữa
+// trang" ở tab Ảnh. Chữ vẫn khai báo sẵn ở đây để lúc tải ảnh lên là khối hiện
+// ra hoàn chỉnh, không phải sửa hai chỗ.
+// ---------------------------------------------------------------------------
+
+const HOME_GALLERY_GROUP: CopyGroup = {
+  key: 'home.gallery',
+  label: 'Trang chủ — Dải ảnh giữa trang',
+  description:
+    'Chữ của khối ảnh nằm giữa phần "Cho phụ huynh" và phần câu hỏi. Ảnh của khối tải lên ở tab Ảnh.',
+  fields: [
+    f('home.gallery.eyebrow', 'Dòng nhỏ phía trên tiêu đề', 'Hình ảnh thật'),
+    f('home.gallery.title', 'Tiêu đề khối', 'Lớp học và những buổi luyện đề'),
+    f(
+      'home.gallery.body',
+      'Mô tả khối',
+      'Không phải ảnh minh họa mua sẵn. Đây là lớp học, bài làm và những buổi chữa đề của học sinh đang theo chương trình.',
+      { multiline: true },
+    ),
+  ],
+};
+
+// ---------------------------------------------------------------------------
+// NHÓM 11 — Chữ thay ảnh (alt)
+//
+// Sinh thẳng từ danh sách ô ảnh trong `images.ts` để hai nơi không bao giờ lệch
+// nhau: thêm một ô ảnh là tự có ô nhập alt tương ứng, không phải nhớ sửa file
+// này. Alt là CHỮ nên nó thuộc về kho chữ, hưởng nguyên cơ chế ghi đè và khôi
+// phục bản gốc; ô ảnh chỉ lo phần bytes.
+//
+// Ô để TRỐNG là chủ ý hợp lệ, không phải thiếu sót: ảnh thuần trang trí (nền,
+// hoa văn) cần `alt=""` để trình đọc màn hình bỏ qua thay vì đọc to một câu vô
+// nghĩa giữa dòng.
+// ---------------------------------------------------------------------------
+
+const IMAGE_ALT_GROUP: CopyGroup = {
+  key: 'image.alt',
+  label: 'Chữ thay ảnh (cho người khiếm thị)',
+  description:
+    'Câu mô tả từng ảnh, dành cho trình đọc màn hình và hiện ra khi ảnh lỗi không tải được. Để trống nếu ảnh chỉ để trang trí.',
+  fields: SITE_IMAGE_GROUPS.flatMap((group) =>
+    group.slots.map((slot) =>
+      f(`${slot.key}.alt`, `${group.label} — ${slot.label}`, slot.defaultAlt, {
+        hint: 'Tả nội dung ảnh trong một câu ngắn. Để trống nếu ảnh chỉ để trang trí.',
+      }),
+    ),
+  ),
+};
+
+// ---------------------------------------------------------------------------
 // Tổng hợp
 // ---------------------------------------------------------------------------
 
@@ -643,11 +696,13 @@ export const COPY_GROUPS: CopyGroup[] = [
   HOME_STEPS_GROUP,
   HOME_FEATURES_GROUP,
   HOME_PARENTS_GROUP,
+  HOME_GALLERY_GROUP,
   HOME_FAQ_GROUP,
   HOME_CTA_GROUP,
   CATALOG_GROUP,
   PROGRAM_PAGE_GROUP,
   COURSE_PAGE_GROUP,
+  IMAGE_ALT_GROUP,
 ];
 
 /** Bản đồ khóa → nội dung gốc, dựng từ chính khai báo ở trên. */

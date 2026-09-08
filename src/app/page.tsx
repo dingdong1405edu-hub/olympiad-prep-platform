@@ -5,7 +5,10 @@ import { getSession } from '@/lib/auth';
 import { routes } from '@/lib/routes';
 import { formatVnd } from '@/lib/domain';
 import { getCopy } from '@/lib/copy';
+import { getImages } from '@/lib/copy/assets';
 import { SiteShell } from '@/components/site-shell';
+import { SiteImage, VisualSlot } from '@/components/site-image';
+import { cx } from '@/components/ui';
 import { Reveal } from '@/components/motion';
 import {
   DifficultyDialVisual,
@@ -46,9 +49,20 @@ const ACCENTS = [
 ] as const;
 
 export default async function HomePage() {
-  const [programs, session, t] = await Promise.all([getCatalogTree(), getSession(), getCopy()]);
+  const [programs, session, t, img] = await Promise.all([
+    getCatalogTree(),
+    getSession(),
+    getCopy(),
+    getImages(),
+  ]);
   const openPrograms = programs.filter((program) => program.active);
   const primaryCta = session ? routes.myCourses() : routes.register();
+
+  // Ảnh của dải giữa trang. Ô nào admin chưa tải thì biến mất khỏi danh sách,
+  // và danh sách rỗng thì cả khối bị ẩn — trang không bao giờ hở một ô xám.
+  const gallery = [1, 2, 3, 4]
+    .map((n) => ({ image: img(`home.gallery.${n}`), alt: t(`home.gallery.${n}.alt`) }))
+    .filter((entry) => entry.image !== null);
 
   // Các khối lặp lại được dựng từ kho chữ theo chỉ số, nên admin thêm/bớt nội
   // dung bằng cách sửa chữ chứ không phải sửa mã.
@@ -75,6 +89,25 @@ export default async function HomePage() {
     <SiteShell signedIn={Boolean(session)}>
       {/* ================= Hero ================= */}
       <section className="relative isolate overflow-hidden pt-16 pb-40 sm:pt-20 lg:pt-24 lg:pb-48">
+        {/*
+          Ảnh nền tùy chọn, nằm dưới cùng (-z-20) để mọi lớp màu bên dưới vẫn
+          phủ lên trên nó. Độ mờ thấp và lớp làm mềm là bắt buộc: khách phải đọc
+          được tiêu đề màu nâu đậm trên bất kỳ ảnh nào admin tải lên, kể cả ảnh
+          tối và nhiều chi tiết.
+        */}
+        {img('home.hero.background') ? (
+          <div aria-hidden className="pointer-events-none absolute inset-0 -z-20 overflow-hidden">
+            <SiteImage
+              image={img('home.hero.background')}
+              alt=""
+              aspect="16 / 9"
+              priority
+              sizes="100vw"
+              className="h-full w-full opacity-[0.16] [mask-image:linear-gradient(180deg,#000_0%,#000_55%,transparent_92%)]"
+            />
+          </div>
+        ) : null}
+
         {/* Nền: hai quầng kem đào chồng lên nhau, sáng dần về phía dưới */}
         <div
           aria-hidden
@@ -151,8 +184,36 @@ export default async function HomePage() {
 
             {/* --- Ảnh sản phẩm --- */}
             <div className="animate-fade-up delay-3 relative lg:pl-6">
-              <SkillMapVisual className="artifact-frame relative z-10" />
+              <VisualSlot
+                image={img('home.hero.skillmap')}
+                alt={t('home.hero.skillmap.alt')}
+                aspect="16 / 10"
+                className="artifact-frame relative z-10"
+                priority
+                sizes="(min-width: 1024px) 48vw, 92vw"
+              >
+                <SkillMapVisual className="artifact-frame relative z-10" />
+              </VisualSlot>
               <WhyThisItemCard className="animate-float absolute -bottom-11 -left-9 z-20 hidden sm:block" />
+
+              {/*
+                Ảnh thật nép ở góc trên phải, cân với thẻ "vì sao câu này" đang
+                nằm ở góc dưới trái. Chỉ hiện từ lg trở lên: dưới ngưỡng đó cột
+                này đã xếp xuống dưới phần chữ, thêm một tấm ảnh đè lên nữa là
+                bản đồ kỹ năng không còn đọc được trên điện thoại.
+              */}
+              {img('home.hero.portrait') ? (
+                <div className="animate-float absolute -top-10 -right-4 z-20 hidden w-32 overflow-hidden rounded-2xl bg-white p-1.5 shadow-[0_24px_50px_-30px_rgb(150_80_50/0.75)] [animation-delay:1.1s] lg:block xl:w-40">
+                  <SiteImage
+                    image={img('home.hero.portrait')}
+                    alt={t('home.hero.portrait.alt')}
+                    aspect="3 / 4"
+                    priority
+                    sizes="160px"
+                    className="rounded-xl"
+                  />
+                </div>
+              ) : null}
             </div>
           </div>
         </div>
@@ -461,7 +522,15 @@ export default async function HomePage() {
                   </p>
                 </div>
                 <div className="lg:order-1">
-                  <TodayPlanVisual className="artifact-frame" />
+                  <VisualSlot
+                    image={img('home.features.1.image')}
+                    alt={t('home.features.1.image.alt')}
+                    aspect="16 / 10"
+                    className="artifact-frame"
+                    sizes="(min-width: 1024px) 46vw, 92vw"
+                  >
+                    <TodayPlanVisual className="artifact-frame" />
+                  </VisualSlot>
                 </div>
               </div>
             </Reveal>
@@ -483,7 +552,15 @@ export default async function HomePage() {
                     {t('home.features.2.body2')}
                   </p>
                 </div>
-                <DifficultyDialVisual className="artifact-frame" />
+                <VisualSlot
+                  image={img('home.features.2.image')}
+                  alt={t('home.features.2.image.alt')}
+                  aspect="16 / 10"
+                  className="artifact-frame"
+                  sizes="(min-width: 1024px) 46vw, 92vw"
+                >
+                  <DifficultyDialVisual className="artifact-frame" />
+                </VisualSlot>
               </div>
             </Reveal>
 
@@ -505,7 +582,15 @@ export default async function HomePage() {
                   </p>
                 </div>
                 <div className="lg:order-1">
-                  <ProgressChartVisual className="artifact-frame" />
+                  <VisualSlot
+                    image={img('home.features.3.image')}
+                    alt={t('home.features.3.image.alt')}
+                    aspect="16 / 10"
+                    className="artifact-frame"
+                    sizes="(min-width: 1024px) 46vw, 92vw"
+                  >
+                    <ProgressChartVisual className="artifact-frame" />
+                  </VisualSlot>
                 </div>
               </div>
             </Reveal>
@@ -545,7 +630,27 @@ export default async function HomePage() {
             </Reveal>
 
             <Reveal delay={120}>
-              <ParentReportVisual className="artifact-frame" />
+              <VisualSlot
+                image={img('home.parents.report')}
+                alt={t('home.parents.report.alt')}
+                aspect="16 / 10"
+                className="artifact-frame"
+                sizes="(min-width: 1024px) 46vw, 92vw"
+              >
+                <ParentReportVisual className="artifact-frame" />
+              </VisualSlot>
+
+              {img('home.parents.photo') ? (
+                <div className="mt-5.5 overflow-hidden rounded-3xl bg-white p-2 shadow-[0_24px_50px_-34px_rgb(180_100_60/0.5),inset_0_0_0_1px_rgb(228_87_46/0.14)]">
+                  <SiteImage
+                    image={img('home.parents.photo')}
+                    alt={t('home.parents.photo.alt')}
+                    aspect="4 / 3"
+                    sizes="(min-width: 1024px) 44vw, 92vw"
+                    className="rounded-[20px]"
+                  />
+                </div>
+              ) : null}
 
               <div className="relative mt-5.5 overflow-hidden rounded-3xl bg-gradient-to-br from-warm-100 via-[#ffe2d0] to-[#ffd6be] p-7 shadow-[0_24px_50px_-34px_rgb(180_100_60/0.5),inset_0_0_0_1px_rgb(228_87_46/0.14)]">
                 <span
@@ -563,6 +668,77 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* ================= Dải ảnh ================= */}
+      {/*
+        Khối duy nhất trên trang có thể KHÔNG tồn tại. Chưa ai tải ảnh thì nó
+        biến mất hẳn cùng tiêu đề, và trang chạy đúng như trước khi có tính năng
+        này — chứ không để lại một hàng ô xám chờ ảnh.
+
+        Bố cục: một ảnh lớn bên trái, các ảnh còn lại xếp đôi bên phải. Cách này
+        đứng vững với bất kỳ số ảnh nào từ 1 đến 4, nên admin xóa bớt một tấm
+        cũng không làm thủng lưới.
+
+        Nền dùng `tint-panel` chứ không phải `paper`: khối này nằm giữa mục phụ
+        huynh (nền trắng) và mục câu hỏi (nền kem `paper`). Dùng `paper` ở đây là
+        hai mảng kem dính liền thành một, mất nhịp sáng-tối mà cả trang đang giữ.
+      */}
+      {gallery.length > 0 ? (
+        <section className="tint-panel py-24 lg:py-28">
+          <div className={SHELL}>
+            <Reveal>
+              <span className="gold-rule block" aria-hidden />
+              <p className="mt-5 text-[11px] font-extrabold tracking-[0.16em] text-brand-700 uppercase">
+                {t('home.gallery.eyebrow')}
+              </p>
+              <h2 className="font-display mt-3 max-w-[20ch] text-[30px] leading-[1.12] font-bold tracking-tight text-warm-900 text-balance sm:text-4xl lg:text-[44px]">
+                {t('home.gallery.title')}
+              </h2>
+              <p className="mt-5 max-w-[62ch] text-[17px] leading-relaxed text-warm-500 text-pretty">
+                {t('home.gallery.body')}
+              </p>
+            </Reveal>
+
+            <Reveal delay={120}>
+              <div
+                className={cx(
+                  'mt-12 grid gap-5',
+                  gallery.length > 1 && 'lg:grid-cols-[1.5fr_1fr]',
+                )}
+              >
+                <figure className="overflow-hidden rounded-[28px] bg-white p-2 shadow-[0_28px_60px_-40px_rgb(180_100_60/0.6),inset_0_0_0_1px_rgb(228_87_46/0.12)]">
+                  <SiteImage
+                    image={gallery[0].image}
+                    alt={gallery[0].alt}
+                    aspect="4 / 3"
+                    sizes="(min-width: 1024px) 58vw, 92vw"
+                    className="rounded-[22px]"
+                  />
+                </figure>
+
+                {gallery.length > 1 ? (
+                  <div className="grid grid-cols-2 gap-5 lg:content-start">
+                    {gallery.slice(1).map((entry) => (
+                      <figure
+                        key={entry.image!.slot}
+                        className="overflow-hidden rounded-3xl bg-white p-1.5 shadow-[0_20px_44px_-34px_rgb(180_100_60/0.6),inset_0_0_0_1px_rgb(228_87_46/0.12)]"
+                      >
+                        <SiteImage
+                          image={entry.image}
+                          alt={entry.alt}
+                          aspect="1 / 1"
+                          sizes="(min-width: 1024px) 20vw, 44vw"
+                          className="rounded-[18px]"
+                        />
+                      </figure>
+                    ))}
+                  </div>
+                ) : null}
+              </div>
+            </Reveal>
+          </div>
+        </section>
+      ) : null}
 
       {/* ================= FAQ ================= */}
       <section id="cau-hoi" className="paper scroll-mt-24 py-24 lg:py-28">
@@ -630,6 +806,18 @@ export default async function HomePage() {
               />
 
               <div className="relative mx-auto max-w-[660px]">
+                {img('home.cta.image') ? (
+                  <div className="mx-auto mb-10 max-w-[560px] overflow-hidden rounded-[28px] bg-white/70 p-1.5 shadow-[0_30px_60px_-40px_rgb(150_80_50/0.7)]">
+                    <SiteImage
+                      image={img('home.cta.image')}
+                      alt={t('home.cta.image.alt')}
+                      aspect="21 / 9"
+                      sizes="(min-width: 640px) 560px, 92vw"
+                      className="rounded-[22px]"
+                    />
+                  </div>
+                ) : null}
+
                 <span className="gold-rule mx-auto block" aria-hidden />
                 <h2 className="font-display mt-6 text-[30px] leading-[1.12] font-bold tracking-tight text-warm-900 text-balance sm:text-[42px]">
                   {t('home.cta.title')}

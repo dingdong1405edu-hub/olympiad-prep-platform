@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { getCopy } from '@/lib/copy';
+import { getImages } from '@/lib/copy/assets';
 import { MarketingShell, type ShellCopy } from '@/components/marketing';
 
 /**
@@ -19,12 +20,13 @@ export async function SiteShell({
   signedIn: boolean;
   children: ReactNode;
 }) {
-  const t = await getCopy();
+  const [t, img] = await Promise.all([getCopy(), getImages()]);
 
   const copy: ShellCopy = {
     topbar: t('nav.topbar'),
     brandName: t('nav.brand.name'),
     brandTagline: t('nav.brand.tagline'),
+    brandLogoUrl: img('nav.brand.logo')?.url,
     links: {
       programs: t('nav.link.programs'),
       courses: t('nav.link.courses'),

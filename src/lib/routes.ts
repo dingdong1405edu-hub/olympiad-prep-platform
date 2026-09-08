@@ -185,6 +185,8 @@ export const API = {
   adminTeacherWorkload: '/api/v1/admin/teachers/workload',
   adminConfig: '/api/v1/admin/config',
   adminSiteCopy: '/api/v1/admin/site-copy',
+  adminSiteAssets: '/api/v1/admin/site-assets',
+  adminSiteAsset: (slot: string) => `/api/v1/admin/site-assets/${encodeURIComponent(slot)}`,
   adminAnalytics: '/api/v1/admin/analytics',
   adminAudit: '/api/v1/admin/audit',
   adminPrograms: '/api/v1/admin/programs',
