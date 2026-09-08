@@ -1042,6 +1042,34 @@ model SiteCopy {
   updatedAt   DateTime @updatedAt
 }
 
+/// Ảnh của các trang bán hàng, do admin tải lên trong `/quan-tri/giao-dien`.
+///
+/// Song song với `SiteCopy` và theo đúng nguyên tắc đó: danh sách ô ảnh nằm
+/// trong mã nguồn (`src/lib/copy/images.ts`), bảng này chỉ chứa những ô admin
+/// ĐÃ tải ảnh lên. Xóa một dòng là ô đó quay về hình mặc định — không có trạng
+/// thái "trang thủng một lỗ".
+///
+/// Bytes nằm trong Postgres cùng lý do đã ghi ở `MockExamUpload`: đĩa Railway bị
+/// xóa mỗi lần deploy, và dự án chưa có object storage. Landing page chỉ có vài
+/// chục ảnh nên bảng này không phải chỗ nghẽn.
+model SiteAsset {
+  /// Khóa ô ảnh, ví dụ 'home.hero.background'. Trùng khóa trong images.ts.
+  slot      String @id
+  mimeType  String
+  sizeBytes Int
+  /// Kích thước thật, đo lúc tải lên. Dùng cho thuộc tính width/height của thẻ
+  /// <img> để trang không giật layout khi ảnh về, và để cảnh báo admin khi ảnh
+  /// lệch hẳn tỉ lệ khuyến nghị.
+  width     Int?
+  height    Int?
+  data      Bytes
+  /// Đổi mỗi lần tải ảnh mới. Đi vào URL dưới dạng `?v=` nên trình duyệt được
+  /// phép cache vĩnh viễn mà admin thay ảnh vẫn thấy đổi ngay.
+  version     String
+  updatedById String?
+  updatedAt   DateTime @updatedAt
+}
+
 // ============================================================================
 // THI THỬ + CHẤM ĐIỂM BẰNG AI  (AI_GRADING_SPEC.md §4)
 //

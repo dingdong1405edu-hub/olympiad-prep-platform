@@ -53,6 +53,8 @@ export interface ShellCopy {
   topbar: string;
   brandName: string;
   brandTagline: string;
+  /** Logo admin tải lên; không có thì khiên vẽ sẵn được dùng. */
+  brandLogoUrl?: string;
   links: {
     programs: string;
     courses: string;
@@ -133,7 +135,11 @@ export function MarketingHeader({ signedIn, copy }: { signedIn: boolean; copy: S
       )}
     >
       <div className="mx-auto flex max-w-7xl items-center gap-8 px-5 py-3.5 lg:px-8">
-        <Wordmark name={copy.brandName} tagline={copy.brandTagline} />
+        <Wordmark
+          name={copy.brandName}
+          tagline={copy.brandTagline}
+          logoUrl={copy.brandLogoUrl}
+        />
 
         <nav className="hidden flex-1 items-center gap-1 lg:flex">
           {sections(copy).map((section) => (
@@ -239,7 +245,11 @@ export function MarketingFooter({ copy }: { copy: ShellCopy }) {
       <div className="mx-auto max-w-7xl px-5 py-16 lg:px-8">
         <div className="grid gap-12 md:grid-cols-[1.4fr_1fr_1.2fr]">
           <div className="max-w-sm">
-            <Wordmark name={copy.brandName} tagline={copy.brandTagline} />
+            <Wordmark
+              name={copy.brandName}
+              tagline={copy.brandTagline}
+              logoUrl={copy.brandLogoUrl}
+            />
             <p className="mt-4 text-sm leading-relaxed whitespace-pre-line text-warm-500">
               {copy.footerTagline}
             </p>

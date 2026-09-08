@@ -65,6 +65,7 @@ export function Wordmark({
   tagline = 'Ôn luyện cá nhân hóa',
   href,
   compact = false,
+  logoUrl,
 }: {
   tone?: 'light' | 'dark';
   name?: string;
@@ -73,13 +74,31 @@ export function Wordmark({
   href?: string;
   /** Chỉ hiện khiên, giấu chữ — dùng khi header chật. */
   compact?: boolean;
+  /**
+   * Logo admin đã tải lên trong `/quan-tri/giao-dien`. Không có thì dùng khiên
+   * vẽ sẵn — khu ứng dụng và các trang phụ không truyền gì nên vẫn như cũ.
+   */
+  logoUrl?: string;
 }) {
   return (
     <Link href={href ?? routes.home()} className="group flex shrink-0 items-center gap-2.5">
-      <Crest
-        className="h-9 w-9 shrink-0 transition-transform duration-300 group-hover:scale-105"
-        tone={tone}
-      />
+      {logoUrl ? (
+        // Kích thước ép cứng bằng class chứ không dựa vào tỉ lệ ảnh: logo lệch
+        // vuông vẫn phải nằm gọn trong ô 36px, không được đẩy cao thanh menu.
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={logoUrl}
+          alt=""
+          width={36}
+          height={36}
+          className="h-9 w-9 shrink-0 object-contain transition-transform duration-300 group-hover:scale-105"
+        />
+      ) : (
+        <Crest
+          className="h-9 w-9 shrink-0 transition-transform duration-300 group-hover:scale-105"
+          tone={tone}
+        />
+      )}
       <span className={cx('leading-none', compact && 'hidden sm:block')}>
         <span
           className={cx(
