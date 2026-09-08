@@ -55,8 +55,17 @@ export default async function CheckoutResultPage({
     return (
       <AppShell user={user}>
         <div className="mx-auto max-w-3xl">
-          <PaymentQrPanel initialSession={payment} />
-          <p className="mt-6 text-center">
+          {/*
+            Chặn chiều cao theo màn hình để panel tự cuộn phần giữa của nó, thay vì
+            đẩy cả trang dài ra. Nhờ vậy số tiền, đồng hồ đếm ngược và nút hủy luôn
+            nằm trong tầm mắt — người dùng không phải lướt lên lướt xuống để đối
+            chiếu với app ngân hàng.
+
+            Chỉ chặn TRẦN, không đặt sàn: màn hình báo "đã nhận thanh toán" vốn
+            ngắn, ép nó cao bằng màn hình chỉ tạo ra một mảng trắng vô nghĩa.
+          */}
+          <PaymentQrPanel initialSession={payment} className="max-h-[calc(100dvh-10rem)]" />
+          <p className="mt-5 text-center">
             <LinkButton href={routes.myCourses()} variant="ghost" size="sm">
               Về khóa học của tôi
             </LinkButton>
