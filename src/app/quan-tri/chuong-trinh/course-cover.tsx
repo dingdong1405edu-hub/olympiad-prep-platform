@@ -3,59 +3,83 @@
 /**
  * Ô ẢNH ĐẠI DIỆN CỦA MỘT KHÓA HỌC.
  *
- * Vì sao không nằm cùng biểu mẫu khóa học: phần còn lại của biểu mẫu gửi JSON
- * qua `/api/v1/admin/courses`, còn ảnh là nhị phân nên phải đi
- * `multipart/form-data` qua `/api/v1/admin/site-assets`. Trộn hai thứ vào một
- * lần bấm "Lưu" nghĩa là có lúc chữ lưu xong mà ảnh thất bại (hoặc ngược lại),
- * và người dùng không có cách nào biết nửa nào đã vào. Ở đây ảnh lưu NGAY khi
- * chọn tệp, độc lập với nút Lưu của biểu mẫu — bấm Hủy cũng không lấy lại ảnh
- * cũ, và điều đó được nói thẳng dưới khung xem trước.
+ * Ô này chạy ở HAI chế độ, vì hai biểu mẫu có hai tình huống khác nhau:
  *
- * Ô này chỉ hiện khi SỬA khóa đã có. Khóa mới chưa có mã khối–môn chốt lại thì
- * chưa có khóa ô để ghi ảnh vào.
+ *   sửa khóa  (`slot` có giá trị)  → chọn tệp là đẩy lên ngay, độc lập với nút
+ *                                    "Lưu khóa học".
+ *   tạo khóa  (`slot` là null)     → giữ tệp lại, chờ khóa học được tạo xong.
+ *
+ * Vì sao tạo khóa không đẩy ngay: khóa ô ảnh dựng từ mã kỳ thi + khối + môn, mà
+ * lúc đang tạo thì khối và môn còn đổi được. Đẩy ngay rồi người dùng đổi khối
+ * hoặc bấm Hủy là bỏ lại một tấm ảnh không thuộc khóa nào, không ai thấy để dọn.
+ *
+ * Vì sao sửa khóa lại đẩy ngay: phần còn lại của biểu mẫu gửi JSON, còn ảnh
+ * phải đi multipart. Gộp vào một lần bấm "Lưu" nghĩa là có lúc chữ lưu xong mà
+ * ảnh thất bại, và người dùng không có cách nào biết nửa nào đã vào.
  */
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Alert, Button } from '@/components/ui';
-
-const MAX_MB = 5;
+import { COVER_MAX_MB, deleteCover, uploadCover } from './cover-api';
 
 export function CourseCoverField({
   slot,
   initialUrl,
+  onPick,
   disabled = false,
 }: {
-  /** Khóa ô ảnh, dựng bằng `courseCoverSlot()` ở phía server. */
-  slot: string;
+  /** Khóa ô ảnh khi sửa khóa đã có; `null` khi đang tạo khóa mới. */
+  slot: string | null;
   initialUrl: string | null;
+  /** Chỉ dùng ở chế độ tạo khóa: giao tệp cho biểu mẫu giữ tới lúc lưu. */
+  onPick?: (file: File | null) => void;
   disabled?: boolean;
 }) {
   const [url, setUrl] = useState(initialUrl);
+  const [pendingName, setPendingName] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [note, setNote] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const previewRef = useRef<string | null>(null);
 
-  async function upload(file: File) {
+  // Ảnh xem trước ở chế độ tạo khóa là blob trong bộ nhớ trình duyệt; không thu
+  // hồi thì mỗi lần chọn lại tệp là rò thêm một khối.
+  useEffect(
+    () => () => {
+      if (previewRef.current) URL.revokeObjectURL(previewRef.current);
+    },
+    [],
+  );
+
+  function showLocalPreview(file: File) {
+    if (previewRef.current) URL.revokeObjectURL(previewRef.current);
+    previewRef.current = URL.createObjectURL(file);
+    setUrl(previewRef.current);
+  }
+
+  async function pick(file: File) {
     setError(null);
     setNote(null);
 
-    if (file.size > MAX_MB * 1024 * 1024) {
-      setError(`Ảnh nặng quá ${MAX_MB}MB. Hãy chọn ảnh nhỏ hơn.`);
+    if (file.size > COVER_MAX_MB * 1024 * 1024) {
+      setError(`Ảnh nặng quá ${COVER_MAX_MB}MB. Hãy chọn ảnh nhỏ hơn.`);
       return;
     }
 
+    // --- Tạo khóa mới: chỉ giữ tệp, chưa gửi đi đâu ---
+    if (!slot) {
+      showLocalPreview(file);
+      setPendingName(file.name);
+      onPick?.(file);
+      setNote('Ảnh sẽ được lưu ngay sau khi khóa học được tạo.');
+      return;
+    }
+
+    // --- Sửa khóa đã có: đẩy lên luôn ---
     setBusy(true);
     try {
-      const body = new FormData();
-      body.set('slot', slot);
-      body.set('file', file);
-      const response = await fetch('/api/v1/admin/site-assets', { method: 'POST', body });
-      const json = await response.json();
-      if (!response.ok || !json?.ok) {
-        throw new Error(json?.error?.message ?? 'Không tải được ảnh lên.');
-      }
-      setUrl(json.data.url as string);
+      setUrl(await uploadCover(slot, file));
       setNote('Đã lưu ảnh đại diện.');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Không tải được ảnh lên.');
@@ -69,15 +93,22 @@ export function CourseCoverField({
   async function remove() {
     setError(null);
     setNote(null);
+
+    if (!slot) {
+      if (previewRef.current) {
+        URL.revokeObjectURL(previewRef.current);
+        previewRef.current = null;
+      }
+      setUrl(null);
+      setPendingName(null);
+      onPick?.(null);
+      if (inputRef.current) inputRef.current.value = '';
+      return;
+    }
+
     setBusy(true);
     try {
-      const response = await fetch(`/api/v1/admin/site-assets/${encodeURIComponent(slot)}`, {
-        method: 'DELETE',
-      });
-      const json = await response.json();
-      if (!response.ok || !json?.ok) {
-        throw new Error(json?.error?.message ?? 'Không gỡ được ảnh.');
-      }
+      await deleteCover(slot);
       setUrl(null);
       setNote('Đã gỡ ảnh. Thẻ khóa học quay về nền chuyển màu.');
     } catch (err) {
@@ -119,17 +150,22 @@ export function CourseCoverField({
             disabled={disabled || busy}
             onChange={(event) => {
               const file = event.target.files?.[0];
-              if (file) void upload(file);
+              if (file) void pick(file);
             }}
             className="block w-full text-sm text-ink-600 file:mr-3 file:rounded-lg file:border-0 file:bg-ink-100 file:px-3 file:py-2 file:text-sm file:font-medium file:text-ink-700 hover:file:bg-ink-200 disabled:opacity-50"
           />
           <p className="mt-2 text-xs text-ink-500">
             Ảnh ngang, khuyến nghị 1200×675. Chủ thể nên nằm giữa — hai bên có thể bị cắt trên máy
-            điện thoại. Nhận JPEG, PNG hoặc WEBP, tối đa {MAX_MB}MB.
+            điện thoại. Nhận JPEG, PNG hoặc WEBP, tối đa {COVER_MAX_MB}MB.
           </p>
           <p className="mt-1 text-xs text-ink-400">
-            Ảnh lưu ngay khi chọn tệp, không chờ nút “Lưu khóa học”.
+            {slot
+              ? 'Ảnh lưu ngay khi chọn tệp, không chờ nút “Lưu khóa học”.'
+              : 'Ảnh được lưu cùng lúc khóa học được tạo. Bấm “Hủy” là bỏ luôn cả ảnh.'}
           </p>
+          {pendingName ? (
+            <p className="mt-1 text-xs text-ink-500">Đã chọn: {pendingName}</p>
+          ) : null}
 
           {url ? (
             <Button
@@ -140,7 +176,7 @@ export function CourseCoverField({
               disabled={disabled || busy}
               onClick={() => void remove()}
             >
-              Gỡ ảnh
+              {slot ? 'Gỡ ảnh' : 'Bỏ ảnh đã chọn'}
             </Button>
           ) : null}
         </div>

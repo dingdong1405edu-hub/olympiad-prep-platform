@@ -18,6 +18,7 @@ import { apiPost } from '@/lib/client';
 import { API, routes } from '@/lib/routes';
 import { courseCoverSlot } from '@/lib/copy/images';
 import { CourseCoverField } from './course-cover';
+import { uploadCover } from './cover-api';
 import {
   GRADE_BANDS,
   GRADE_BAND_LABEL,
@@ -127,6 +128,54 @@ export function ProgramManager({
     } finally {
       setSaving(false);
     }
+  }
+
+  /**
+   * Lưu khóa học, và với khóa MỚI thì đẩy ảnh đại diện lên ngay sau đó.
+   *
+   * Ảnh phải chờ khóa học được tạo xong mới gửi được: khóa ô ảnh dựng từ mã kỳ
+   * thi + khối + môn, mà lúc đang điền biểu mẫu thì khối và môn còn đổi được.
+   *
+   * Ảnh lỗi KHÔNG được báo như khóa học lỗi. Khóa học lúc đó đã nằm trong
+   * database rồi; hiện lỗi đỏ trên biểu mẫu sẽ khiến người dùng bấm lưu lại lần
+   * nữa, và lần đó chắc chắn báo trùng khối–môn. Nên đóng biểu mẫu, nói đúng
+   * một câu là ảnh chưa lưu được, rồi để họ mở lại khóa vừa tạo và thử ảnh lần
+   * nữa — đường đó vẫn còn nguyên.
+   */
+  async function submitCourse(
+    body: Record<string, unknown>,
+    coverFile: File | null,
+    successMessage: string,
+  ) {
+    setSaving(true);
+    setFormError(null);
+    try {
+      await apiPost(API.adminCourses, body);
+    } catch (error) {
+      setFormError(errorMessage(error));
+      setSaving(false);
+      return;
+    }
+
+    let coverError: string | null = null;
+    if (coverFile && selected) {
+      try {
+        await uploadCover(
+          courseCoverSlot(selected.code, String(body.gradeBand), String(body.subject)),
+          coverFile,
+        );
+      } catch (error) {
+        coverError = errorMessage(error);
+      }
+    }
+
+    setPanel(null);
+    show(
+      coverError ? `${successMessage} Nhưng ảnh đại diện chưa lưu được: ${coverError}` : successMessage,
+      coverError ? 'error' : 'success',
+    );
+    router.refresh();
+    setSaving(false);
   }
 
   /**
@@ -386,10 +435,10 @@ export function ProgramManager({
                 saving={saving}
                 error={formError}
                 onCancel={() => setPanel(null)}
-                onSubmit={(body) =>
-                  submit(
-                    API.adminCourses,
+                onSubmit={(body, coverFile) =>
+                  submitCourse(
                     body,
+                    coverFile,
                     panel.course ? 'Đã lưu thay đổi khóa học.' : 'Đã thêm khóa học mới.',
                   )
                 }
@@ -949,8 +998,9 @@ function CourseForm({
   saving: boolean;
   error: string | null;
   onCancel: () => void;
-  onSubmit: (body: Record<string, unknown>) => void;
+  onSubmit: (body: Record<string, unknown>, coverFile: File | null) => void;
 }) {
+  const [coverFile, setCoverFile] = useState<File | null>(null);
   const [gradeBand, setGradeBand] = useState<GradeBand>(course?.gradeBand ?? 'A');
   const [subject, setSubject] = useState<Subject>(course?.subject ?? SUBJECTS_BY_BAND['A'][0]!);
   const [name, setName] = useState(course?.name ?? '');
@@ -981,7 +1031,8 @@ function CourseForm({
       submitLabel={course ? 'Lưu khóa học' : 'Thêm khóa học'}
       onCancel={onCancel}
       onSubmit={() =>
-        onSubmit({
+        onSubmit(
+          {
           id: course?.id,
           programId,
           gradeBand,
@@ -997,7 +1048,9 @@ function CourseForm({
             .map((line) => line.trim())
             .filter((line) => line.length > 0),
           syllabus: cleanPairs(syllabus).map((row) => ({ title: row.title, detail: row.body })),
-        })
+          },
+          coverFile,
+        )
       }
     >
       <FormField label="Khối">
@@ -1033,16 +1086,17 @@ function CourseForm({
         description="Hiển thị ở /khoa-hoc/<mã khóa> — khách xem trước khi bấm thanh toán."
       />
 
-      {/* Chỉ khi SỬA khóa đã có: khóa mới chưa chốt cặp khối–môn nên chưa có ô
-          ảnh nào để ghi vào. Khóa ô lấy theo khối/môn ĐÃ LƯU chứ không theo giá
-          trị đang chọn trên biểu mẫu — đổi khối/môn rồi lưu thì ảnh thành ô mồ
-          côi, đúng như khi đổi tên một ô trong images.ts. */}
-      {course ? (
-        <CourseCoverField
-          slot={courseCoverSlot(programCode, course.gradeBand, course.subject)}
-          initialUrl={coverUrl}
-        />
-      ) : null}
+      {/* Khóa ô lấy theo khối/môn ĐÃ LƯU chứ không theo giá trị đang chọn trên
+          biểu mẫu: đổi khối/môn của một khóa đã có rồi lưu thì ảnh thành ô mồ
+          côi, đúng như khi đổi tên một ô trong images.ts.
+
+          Khóa mới thì chưa có khóa ô nào (`slot={null}`) — ô ảnh giữ tệp lại và
+          biểu mẫu đẩy lên sau khi khóa học được tạo, xem submitCourse. */}
+      <CourseCoverField
+        slot={course ? courseCoverSlot(programCode, course.gradeBand, course.subject) : null}
+        initialUrl={coverUrl}
+        onPick={setCoverFile}
+      />
 
       <FormField label="Câu chốt" hint="một dòng, hiện dưới tên khóa" wide>
         <Input
