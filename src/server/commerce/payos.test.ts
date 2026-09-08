@@ -6,14 +6,14 @@
  * Các mẫu dữ liệu dưới đây lấy từ chính tài liệu PayOS.
  */
 import { createHmac } from 'node:crypto';
-import { describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import {
   payosObjectToQueryString,
   signPayosCreateRequest,
   signPayosData,
   verifyPayosWebhookBody,
 } from './payos';
-import { buildGatewayDescription } from './gateway';
+import { appBaseUrl, buildGatewayDescription, webhookUrlFor } from './gateway';
 
 /**
  * Khóa GIẢ, chỉ dùng trong test. Không bao giờ đặt checksum key thật vào đây:
@@ -159,5 +159,73 @@ describe('buildGatewayDescription', () => {
     expect(buildGatewayDescription('OLP-260812-ABC123')).not.toBe(
       buildGatewayDescription('OLP-260812-XYZ789'),
     );
+  });
+});
+
+describe('appBaseUrl', () => {
+  /**
+   * Hàm này quyết định `returnUrl`/`cancelUrl` GỬI RA NGOÀI cho PayOS và URL
+   * webhook in ra cho người vận hành dán vào cổng. Sai ở đây không báo lỗi ở
+   * đâu cả — chỉ là khách chuyển khoản xong rồi rơi vào một trang chết.
+   */
+  const KEYS = ['APP_URL', 'NEXT_PUBLIC_APP_URL', 'RAILWAY_PUBLIC_DOMAIN'] as const;
+  let saved: Record<string, string | undefined>;
+
+  beforeEach(() => {
+    saved = Object.fromEntries(KEYS.map((key) => [key, process.env[key]]));
+    for (const key of KEYS) delete process.env[key];
+  });
+
+  afterEach(() => {
+    for (const key of KEYS) {
+      if (saved[key] === undefined) delete process.env[key];
+      else process.env[key] = saved[key];
+    }
+  });
+
+  it('dùng APP_URL khi đó là địa chỉ công khai', () => {
+    process.env.APP_URL = 'https://hoc.example.vn';
+    expect(appBaseUrl()).toBe('https://hoc.example.vn');
+  });
+
+  it('cắt dấu / thừa ở cuối để không sinh ra URL hai gạch', () => {
+    process.env.APP_URL = 'https://hoc.example.vn///';
+    expect(webhookUrlFor('payos')).toBe('https://hoc.example.vn/api/v1/webhooks/payment/payos');
+  });
+
+  it('bỏ qua APP_URL trỏ về localhost khi đang chạy trên Railway', () => {
+    // Đây là ca thật: .env phát triển để localhost và bị chép nguyên lên production.
+    process.env.APP_URL = 'http://localhost:3000';
+    process.env.RAILWAY_PUBLIC_DOMAIN = 'web-production-3f0b1.up.railway.app';
+    expect(appBaseUrl()).toBe('https://web-production-3f0b1.up.railway.app');
+  });
+
+  it('bỏ qua cả 127.0.0.1 và ::1, không chỉ chữ "localhost"', () => {
+    process.env.RAILWAY_PUBLIC_DOMAIN = 'web-production-3f0b1.up.railway.app';
+    for (const loopback of ['http://127.0.0.1:3000', 'http://[::1]:3000', 'https://localhost']) {
+      process.env.APP_URL = loopback;
+      expect(appBaseUrl()).toBe('https://web-production-3f0b1.up.railway.app');
+    }
+  });
+
+  it('KHÔNG bỏ qua tên miền chỉ vô tình chứa chữ localhost', () => {
+    process.env.APP_URL = 'https://localhost.hoc.example.vn';
+    process.env.RAILWAY_PUBLIC_DOMAIN = 'web-production-3f0b1.up.railway.app';
+    expect(appBaseUrl()).toBe('https://localhost.hoc.example.vn');
+  });
+
+  it('giữ localhost khi chạy ở máy phát triển — không có domain công khai để thay', () => {
+    process.env.APP_URL = 'http://localhost:3000';
+    expect(appBaseUrl()).toBe('http://localhost:3000');
+  });
+
+  it('coi chuỗi rỗng là chưa đặt và rơi xuống domain Railway', () => {
+    process.env.APP_URL = '';
+    process.env.RAILWAY_PUBLIC_DOMAIN = 'web-production-3f0b1.up.railway.app';
+    expect(appBaseUrl()).toBe('https://web-production-3f0b1.up.railway.app');
+  });
+
+  it('không cấu hình gì thì về mặc định localhost', () => {
+    expect(appBaseUrl()).toBe('http://localhost:3000');
   });
 });

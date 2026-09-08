@@ -120,14 +120,34 @@ export interface QueryPaymentInput {
 // Tiện ích dùng chung
 // ---------------------------------------------------------------------------
 
-/** URL gốc của ứng dụng — dùng cho redirect/return URL và đăng ký webhook. */
+/** Địa chỉ chỉ chạy được trên chính máy đó — vô nghĩa với cổng thanh toán ở xa. */
+function isLoopback(url: string): boolean {
+  return /^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(:\d+)?(\/|$)/i.test(url);
+}
+
+/**
+ * URL gốc của ứng dụng — dùng cho returnUrl/cancelUrl gửi sang cổng và cho URL webhook.
+ *
+ * Domain công khai của Railway được ưu tiên HƠN `APP_URL` khi `APP_URL` trỏ về
+ * loopback. Lý do rất cụ thể: `.env` phát triển để `APP_URL="http://localhost:3000"`,
+ * và biến đó rất dễ bị chép nguyên xi lên production. Khi đó `returnUrl` gửi cho
+ * PayOS thành `http://localhost:3000/...` — khách chuyển khoản xong bị ném vào một
+ * trang chết trên MÁY CỦA HỌ, còn URL webhook in ra cho người vận hành cũng sai.
+ * Thà bỏ qua một biến cấu hình sai hiển nhiên còn hơn làm hỏng đơn đã có tiền.
+ */
 export function appBaseUrl(): string {
+  const railway = process.env.RAILWAY_PUBLIC_DOMAIN?.trim()
+    ? `https://${process.env.RAILWAY_PUBLIC_DOMAIN.trim()}`
+    : null;
+
+  // Chuỗi rỗng cũng tính là chưa đặt — `??` không bắt được ca `APP_URL=""`.
+  const configured = process.env.APP_URL?.trim() || process.env.NEXT_PUBLIC_APP_URL?.trim() || null;
+
   const raw =
-    process.env.APP_URL ??
-    process.env.NEXT_PUBLIC_APP_URL ??
-    // Railway cấp sẵn biến này cho service có domain công khai.
-    (process.env.RAILWAY_PUBLIC_DOMAIN ? `https://${process.env.RAILWAY_PUBLIC_DOMAIN}` : null) ??
+    (configured && !(isLoopback(configured) && railway) ? configured : null) ??
+    railway ??
     'http://localhost:3000';
+
   return raw.replace(/\/+$/, '');
 }
 
