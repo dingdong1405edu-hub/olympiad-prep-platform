@@ -856,6 +856,7 @@ async function printSummary(startedAt: number): Promise<void> {
     assessments,
     flags,
     configs,
+    siteAssets,
   ] = await Promise.all([
     prisma.program.count(),
     prisma.cohort.count(),
@@ -875,6 +876,10 @@ async function printSummary(startedAt: number): Promise<void> {
     prisma.assessment.count(),
     prisma.featureFlag.count(),
     prisma.appConfig.count(),
+    // Đếm và CỘNG DUNG LƯỢNG, không đọc cột `data`: ảnh nằm ngay trong bảng nên
+    // một lệnh findMany vô ý ở đây sẽ kéo cả megabyte vào bộ nhớ chỉ để in ra
+    // một con số.
+    prisma.siteAsset.aggregate({ _count: { _all: true }, _sum: { sizeBytes: true } }),
   ]);
 
   const totalItems = itemsByStatus.reduce((sum, r) => sum + r._count._all, 0);
@@ -905,6 +910,10 @@ async function printSummary(startedAt: number): Promise<void> {
   row('Bài kiểm tra', num(assessments));
   row('Feature flag', num(flags));
   row('Nhóm cấu hình ghi đè', num(configs));
+  row(
+    'Ảnh trang bán hàng',
+    `${num(siteAssets._count._all)}  (${((siteAssets._sum.sizeBytes ?? 0) / 1024 / 1024).toFixed(2)} MB)`,
+  );
   console.log('===========================================================');
   console.log(`  Mật khẩu chung mọi tài khoản mẫu: ${SEED_PASSWORD}`);
   console.log(`  Thời gian nạp: ${((Date.now() - startedAt) / 1000).toFixed(1)} giây`);
