@@ -1,0 +1,857 @@
+{
+  "exam": {
+    "slug": "final-asmopss-x-science-secondary",
+    "title": "ASMOPSS X — Science Secondary (Theoretical Round)",
+    "subject": "science",
+    "grade_level": "secondary",
+    "duration_min": 180,
+    "total_points": 100,
+    "instructions": "Đề gồm 3 phần, 40 câu, 100 điểm. Phần 1: 20 câu trắc nghiệm, 1 điểm mỗi câu — chọn một phương án (A–E). Phần 2: 10 câu trả lời ngắn, 2 điểm mỗi câu — gõ đáp án; câu có nhiều chỗ trống được đánh số (1), (2), … và chấm điểm theo từng chỗ trống. Phần 3: 10 câu tự luận, 6 điểm mỗi câu — trình bày lời giải; có thể chụp ảnh bài làm viết tay rồi tải lên. Không dùng máy tính. Lấy g = 10 m/s². Hình vẽ không theo tỉ lệ."
+  },
+  "_notes": {
+    "source": "Final ASMOPSS X/ASMOPSS X, Science Secondary.pdf + ASMOPSS X, Answer Key Science Secondary.pdf",
+    "numbering": "Đề gốc đánh số lại từ 1 ở mỗi phần. Ở đây dùng số toàn cục 1–40 GIỐNG file đáp án: Part 1 = 1–20, Part 2 = 21–30 (đề in là 1–10), Part 3 = 31–40 (đề in là 1–10).",
+    "scoring": "Part 1: 20×1 = 20. Part 2: 10×2 = 20. Part 3: 10×6 = 60. Tổng 100, đúng như đề in.",
+    "grading_choice": "Part 2 và Part 3 để grading_mode='essay' kèm barem chứ không dùng 'exact', vì barem gốc chấm theo từng ý. 20 câu này cần khóa AI mới chấm được; 20 câu Part 1 chấm máy tức thì.",
+    "images": "Hình được RENDER thẳng từ vùng trang PDF để giữ cả hình vector lẫn nhãn cạnh hình. Câu 10 có phương án LÀ NHÃN TRÊN SƠ ĐỒ nên options chỉ ghi A–E.",
+    "formulas": "Barem Part 3 của bản gốc là công thức nhúng, bóc text ra bị vỡ hoàn toàn (ví dụ câu 36 thành '0.1 2500 40 50W 200'). Đã dựng lại từng phép tính và đối chiếu ra đúng các giá trị bản gốc in: 50 W, 60 °C, 250000 J/kg, 5000 J/(kg·K); 3 kg, 0,5 g/ml, 2 kg; 4 V và 2/3 A; tỉ số 1; 180 m."
+  },
+  "questions": [
+    {
+      "number": 1,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 1,
+      "prompt_md": "What structures are part of a *Shigella dysenteriae* cell?",
+      "options": [
+        "Ribosomes, nucleoid and Golgi apparatus",
+        "Ribosomes, mitochondria and pili",
+        "Cell wall, plasma membrane and nuclear membrane",
+        "Pili, flagella and cytoplasm",
+        "Cytoplasm, ribosomes, cell wall"
+      ],
+      "answer_key": {
+        "value": "E"
+      },
+      "solution_md": "*Shigella* is a bacterium, so it is prokaryotic: no Golgi apparatus, no mitochondria and no nuclear membrane. Only option E lists structures a prokaryote actually has."
+    },
+    {
+      "number": 2,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 1,
+      "prompt_md": "Molecules A and B are amino acids and C is a dipeptide.\n\nWhich reaction represents a condensation reaction?",
+      "options": [
+        "A + B + H₂O → C",
+        "A + B → C + H₂O",
+        "C + H₂O → A + B",
+        "C → A + B + H₂O",
+        "A + H₂O → B + C"
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "A condensation reaction joins two molecules and **releases** water. Two amino acids forming a dipeptide plus water is exactly that; option C is the reverse (hydrolysis)."
+    },
+    {
+      "number": 3,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 1,
+      "prompt_md": "Why does exposure to high temperatures cause an enzyme to lose its biological properties?",
+      "options": [
+        "The substrate blocks the active site at high temperatures.",
+        "The three-dimensional structure of the enzyme becomes changed.",
+        "Chemical reactions cannot take place at high temperatures.",
+        "High temperatures increase the activation energy of reactions.",
+        "High temperature decreases the activation energy of reactions."
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "Heat breaks the bonds holding the enzyme's tertiary structure, so the active site changes shape and no longer fits the substrate — denaturation."
+    },
+    {
+      "number": 4,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 1,
+      "prompt_md": "The feather color of a certain breed of chicken is controlled by codominant alleles. A cross between a homozygous-black-feathered chicken and a homozygous-white-feathered chicken produces all speckled chickens.\n\nWhat phenotypic ratios would be expected from a cross between two speckled chickens?",
+      "options": [
+        "All speckled",
+        "1 black feathers : 1 white feathers",
+        "Speckled, black feathers and white feathers in equal numbers",
+        "1 black feathers : 2 speckled feathers : 1 white feathers",
+        "1 speckled feathers : 2 black feathers : 1 white feathers"
+      ],
+      "answer_key": {
+        "value": "D"
+      },
+      "solution_md": "The speckled birds are heterozygous (BW). Crossing BW × BW gives BB : BW : WW in a 1 : 2 : 1 ratio, and with codominance each genotype shows its own phenotype — 1 black : 2 speckled : 1 white."
+    },
+    {
+      "number": 5,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 1,
+      "prompt_md": "Which process can be used to amplify small fragments of DNA?",
+      "options": [
+        "Gel electrophoresis",
+        "Polymerase chain reaction",
+        "DNA profiling",
+        "Electron microscopy",
+        "DNA fingerprinting"
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "The polymerase chain reaction (PCR) repeatedly copies a DNA fragment. The others separate, visualise or identify DNA but do not make more of it."
+    },
+    {
+      "number": 6,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 1,
+      "prompt_md": "What will happen if all rough ER in the cells of an organism loses all its ribosomes?",
+      "options": [
+        "Protein production in the organism will stop.",
+        "Protein storage in the cell will increase.",
+        "ATP production in the cell will stop.",
+        "Cell will no longer export protein.",
+        "Protein will be imported from outside the cells."
+      ],
+      "answer_key": {
+        "value": "D"
+      },
+      "solution_md": "Ribosomes on the rough ER make the proteins destined for secretion. Free ribosomes in the cytoplasm would carry on making proteins for use inside the cell, so production does not stop — but **export** does."
+    },
+    {
+      "number": 7,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 1,
+      "prompt_md": "Which statement is correct about the arrangement of chromosomes after telophase I?",
+      "options": [
+        "Diploid, each chromosome consists of a single chromatid.",
+        "Diploid, each chromosome consists of two chromatids.",
+        "Haploid, each chromosome consists of a single chromatid.",
+        "Haploid, each chromosome consists of two chromatids.",
+        "Tetraploid, each chromosome consists of two chromatids."
+      ],
+      "answer_key": {
+        "value": "D"
+      },
+      "solution_md": "Meiosis I separates homologous pairs, so each daughter cell is haploid — but the sister chromatids are still joined, and they only separate in meiosis II."
+    },
+    {
+      "number": 8,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 1,
+      "prompt_md": "What is a correct statement about lymphocytes?",
+      "options": [
+        "Lymphocytes engulf pathogens.",
+        "Lymphocyte numbers can be reduced when a person is infected with HIV.",
+        "Lymphocytes produce antigens.",
+        "Lymphocytes transport oxygen to different parts of the body.",
+        "All lymphocytes produce antibody."
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "HIV infects and destroys helper T-lymphocytes, so their numbers fall. Engulfing pathogens is the job of phagocytes; lymphocytes make antibodies, not antigens; and only B-lymphocytes make antibodies."
+    },
+    {
+      "number": 9,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 1,
+      "prompt_md": "What is an example of active immunity?",
+      "options": [
+        "antibodies passed from the mother to fetus across the placenta",
+        "antibodies produced by another organism and injected to protect against a disease",
+        "antibodies passed from the mother in colostrum during breastfeeding",
+        "antibodies produced after the defense mechanisms have been stimulated by antigens",
+        "antibodies taken from a donor's blood plasma"
+      ],
+      "answer_key": {
+        "value": "D"
+      },
+      "solution_md": "Active immunity means the body makes its own antibodies in response to antigens. Every other option supplies ready-made antibodies from elsewhere — that is passive immunity."
+    },
+    {
+      "number": 10,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 1,
+      "prompt_md": "The diagram shows a nephron from a human kidney.\n\n**In what part of the nephron would most glucose be reabsorbed?** (Choose the label on the diagram.)",
+      "image_url": "/exam-images/final-asmopss-x/science-secondary/q10.png",
+      "options": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E"
+      ],
+      "answer_key": {
+        "value": "A"
+      }
+    },
+    {
+      "number": 11,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 1,
+      "prompt_md": "An acrobatic motorcyclist wants to travel in a straight line from point A to point B, separated by a distance of 3.5 m. His initial speed is zero. At point B his speed must be 2 m/s for his next acrobatic move. His motorcycle's maximum acceleration/deceleration is 4 m/s².\n\nWhat is the minimum time from point A to point B?",
+      "options": [
+        "1.0 s",
+        "1.5 s",
+        "2.0 s",
+        "2.5 s",
+        "3.0 s"
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "Go flat out, then brake as late as possible. If the peak speed is $v$:\n\n$$\\frac{v^2}{2 \\times 4} + \\frac{v^2 - 2^2}{2 \\times 4} = 3.5 \\Rightarrow 2v^2 - 4 = 28 \\Rightarrow v = 4\\text{ m/s}.$$\n\nSpeeding up takes $4/4 = 1$ s and braking takes $(4-2)/4 = 0.5$ s, so the minimum time is **1.5 s**."
+    },
+    {
+      "number": 12,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 1,
+      "prompt_md": "A car is moving with constant acceleration from rest. During its final second, it travels a distance of 14 m and its final speed is 16 m/s.\n\nWhat is the total distance travelled?",
+      "options": [
+        "16 m",
+        "24 m",
+        "32 m",
+        "36 m",
+        "40 m"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "With total time $T$ and $a = 16/T$, the distance in the last second is\n\n$$\\tfrac{1}{2}aT^2 - \\tfrac{1}{2}a(T-1)^2 = \\tfrac{1}{2}a(2T-1) = 16 - \\frac{8}{T} = 14 \\Rightarrow T = 4\\text{ s}.$$\n\nSo $a = 4$ m/s² and the total distance is $\\tfrac{1}{2} \\times 4 \\times 4^2 = 32$ m."
+    },
+    {
+      "number": 13,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 1,
+      "prompt_md": "A positive lens is placed between an object and a screen. A sharp real image appears on the screen with the same size as the object. The object is 40 cm from the screen.\n\nHow far should the object and the screen be moved to have a sharp real image with 1.5 times magnification?",
+      "options": [
+        "10/3 cm and 5 cm",
+        "10 cm and 5/3 cm",
+        "5 cm and 10/3 cm",
+        "5/3 cm and 10 cm",
+        "5 cm and 10 cm"
+      ],
+      "answer_key": {
+        "value": "A"
+      },
+      "solution_md": "Same-size imaging puts object and screen both at $2f$, so $4f = 40$ and $f = 10$ cm.\n\nFor $m = 1.5$ the image distance is $v = 1.5u$, and $\\dfrac{1}{10} = \\dfrac{1}{1.5u} + \\dfrac{1}{u}$ gives $u = \\dfrac{50}{3}$ cm and $v = 25$ cm.\n\nThe object moves $20 - \\dfrac{50}{3} = \\dfrac{10}{3}$ cm and the screen moves $25 - 20 = 5$ cm."
+    },
+    {
+      "number": 14,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 1,
+      "prompt_md": "Two plane mirrors are joined along one side. They make an angle of 75° relative to each other. A point source of light is placed in front of both mirrors.\n\nWhat is the maximum number of reflections for a light ray from the point source by the mirrors?",
+      "options": [
+        "2",
+        "3",
+        "4",
+        "5",
+        "6"
+      ],
+      "answer_key": {
+        "value": "B"
+      }
+    },
+    {
+      "number": 15,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 1,
+      "prompt_md": "A triangular pulse is propagating along a rope with tension $T = 100$ N and mass density per unit length $μ = 4 \\times 10^{-4}$ kg/m. See the figure. The pulse travelling to the right passes through point A in the rope.\n\nWhat is the speed and the direction of motion of point A at the particular moment shown in the figure?",
+      "image_url": "/exam-images/final-asmopss-x/science-secondary/q15.png",
+      "options": [
+        "500 m/s upward",
+        "250 m/s upward",
+        "250 m/s downward",
+        "125 m/s upward",
+        "125 m/s downward"
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "The pulse itself travels at $v = \\sqrt{T/μ} = \\sqrt{100 / (4 \\times 10^{-4})} = 500$ m/s.\n\nA point on the rope moves **transversely**, at $v_y = -v \\times (\\text{slope})$. With the slope at A equal to $-\\tfrac{1}{2}$, point A moves at $250$ m/s upward."
+    },
+    {
+      "number": 16,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 1,
+      "prompt_md": "An ant is walking at constant speed along a rope on which a standing wave is formed. It starts walking at an anti-node when it is exactly at maximum height. After walking for 40 seconds, and at a distance 40 cm horizontally from its initial position, the ant for the first time rises to its initial height.\n\nWhich of the following is **NOT** a possible wavelength and period combination of the wave in the rope?",
+      "options": [
+        "20 cm and 40 s",
+        "40 cm and 40 s",
+        "80 cm and 80 s",
+        "80/3 cm and 80 s",
+        "80 cm and 80/3 s"
+      ],
+      "answer_key": {
+        "value": "B"
+      }
+    },
+    {
+      "number": 17,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 1,
+      "prompt_md": "The Sun is shining on a frozen pond at a temperature of 0 °C. The intensity of the light received by the surface of the pond is 668 W/m².\n\nHow long will it take to melt a 1.0 cm thick layer of ice? The density of ice is 900 kg/m³ and the latent heat of ice is 334 J/g.",
+      "options": [
+        "4.5 minutes",
+        "7.5 minutes",
+        "9.0 minutes",
+        "45 minutes",
+        "75 minutes"
+      ],
+      "answer_key": {
+        "value": "E"
+      },
+      "solution_md": "Per square metre the ice has mass $900 \\times 0.01 = 9$ kg, needing\n\n$$Q = 9 \\times 334000 = 3.006 \\times 10^6 \\text{ J}.$$\n\nAt 668 W/m² that takes $3.006 \\times 10^6 / 668 = 4500$ s $= 75$ minutes."
+    },
+    {
+      "number": 18,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 1,
+      "prompt_md": "Consider the electrical circuit below. Battery A and Battery B are 5 V. All resistors are 1 Ω.\n\nDetermine the current passing through battery B.",
+      "image_url": "/exam-images/final-asmopss-x/science-secondary/q18.png",
+      "options": [
+        "0 A",
+        "2.5 A",
+        "5.0 A",
+        "7.5 A",
+        "10 A"
+      ],
+      "answer_key": {
+        "value": "C"
+      }
+    },
+    {
+      "number": 19,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 1,
+      "prompt_md": "Container A is filled with 2000 cm³ of water. The hydrostatic pressure at the bottom of the container is $p_1$. After that, another container B of volume 1000 cm³ is completely submerged into the water in container A, then flipped upside-down and pulled up while fully filled with water, until the mouth of the container is exactly at the surface of the remaining water. See the figure.\n\nThe base areas of container A and B are 200 cm² and 100 cm² respectively. The hydrostatic pressure at the bottom of container A becomes $p_2$.\n\nWhat is $p_2 - p_1$?",
+      "image_url": "/exam-images/final-asmopss-x/science-secondary/q19.png",
+      "options": [
+        "−250 Pa",
+        "250 Pa",
+        "−500 Pa",
+        "500 Pa",
+        "1000 Pa"
+      ],
+      "answer_key": {
+        "value": "C"
+      }
+    },
+    {
+      "number": 20,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 1,
+      "prompt_md": "Two types of liquid, A and B, with densities $ρ_1 = 1000$ kg/m³ and $ρ_2 = 800$ kg/m³ respectively, are in a cylindrical container. Liquid A is at the bottom and liquid B is above it. The volumes of liquid A and liquid B are 500 cm³ and 300 cm³ respectively.\n\nA cylindrical weight with density $ρ_3 = 800$ kg/m³ and volume 1600 cm³ is dropped into the container. The base areas of the weight and of the container are 80 cm² and 100 cm² respectively. Assume the container does not overflow.\n\nWhat fraction of the volume of the weight is above the liquids (not submerged)?",
+      "options": [
+        "0",
+        "0.05",
+        "0.5",
+        "0.95",
+        "1"
+      ],
+      "answer_key": {
+        "value": "B"
+      }
+    },
+    {
+      "number": 21,
+      "part": "short",
+      "grading_mode": "essay",
+      "max_points": 2,
+      "prompt_md": "**State a hormone that is released in response to a low level of glucose in the blood.**",
+      "rubric": [
+        {
+          "code": "HORM",
+          "points": 2,
+          "description": "Names glucagon."
+        }
+      ],
+      "solution_md": "**Glucagon.**"
+    },
+    {
+      "number": 22,
+      "part": "short",
+      "grading_mode": "essay",
+      "max_points": 2,
+      "prompt_md": "**State what happens to the ciliary muscle when the eye is focusing on a near object.**",
+      "rubric": [
+        {
+          "code": "CILIARY",
+          "points": 2,
+          "description": "States that the ciliary muscle contracts."
+        }
+      ],
+      "solution_md": "The ciliary muscle **contracts**."
+    },
+    {
+      "number": 23,
+      "part": "short",
+      "grading_mode": "essay",
+      "max_points": 2,
+      "prompt_md": "The diagram below shows one of the modern biotechnology processes.\n\n**What is X that can produce lactose-free milk?**",
+      "image_url": "/exam-images/final-asmopss-x/science-secondary/q23.png",
+      "rubric": [
+        {
+          "code": "ENZYME",
+          "points": 2,
+          "description": "Names lactase."
+        }
+      ],
+      "solution_md": "**Lactase** — the enzyme that breaks lactose down into glucose and galactose."
+    },
+    {
+      "number": 24,
+      "part": "short",
+      "grading_mode": "essay",
+      "max_points": 2,
+      "prompt_md": "**State the name of an enzyme in DNA replication that separates the double-stranded DNA into single strands.**",
+      "rubric": [
+        {
+          "code": "ENZYME",
+          "points": 2,
+          "description": "Names helicase."
+        }
+      ],
+      "solution_md": "**Helicase.**"
+    },
+    {
+      "number": 25,
+      "part": "short",
+      "grading_mode": "essay",
+      "max_points": 2,
+      "prompt_md": "**State one similarity between the structure of bacteria and the structure of viruses.**",
+      "rubric": [
+        {
+          "code": "SIM",
+          "points": 2,
+          "description": "States that both contain genetic material (DNA or RNA), or that both contain protein."
+        }
+      ],
+      "solution_md": "Both have genetic material (DNA or RNA) — or, equally acceptable, both contain protein."
+    },
+    {
+      "number": 26,
+      "part": "short",
+      "grading_mode": "essay",
+      "max_points": 2,
+      "prompt_md": "Fill in the three blanks:\n\nThe Sun always rises in the morning and sets in the evening, while the Moon does it at (1) …… time every day. If today the Moon rises exactly at the same time as star A, tomorrow the Moon will rise (2) …… star A. If today the Moon sets exactly at the same time as star B, tomorrow the Moon will set (3) …… star B.",
+      "rubric": [
+        {
+          "code": "B1",
+          "points": 0.5,
+          "description": "Blank (1): a different time."
+        },
+        {
+          "code": "B2",
+          "points": 0.5,
+          "description": "Blank (2): after."
+        },
+        {
+          "code": "B3",
+          "points": 1,
+          "description": "Blank (3): after (the Moon lags the stars by about 50 minutes a day); the original key prints 'before' for this blank."
+        }
+      ],
+      "solution_md": "Official key: (1) a different, (2) after, (3) before."
+    },
+    {
+      "number": 27,
+      "part": "short",
+      "grading_mode": "essay",
+      "max_points": 2,
+      "prompt_md": "Two identical batteries with voltage 2 V and four identical resistors with resistance 1 Ω are in a circuit in the form of a tetrahedron.\n\nFill in the five blanks:\n\nThe current through the battery in segment AB is (1) …… the current through the battery in segment DC. The current in segment AC is (2) ……, while the current through segment BD is (3) …… . The potential difference between point A and point D is (4) ……, while the potential difference between point C and point B is (5) …… .",
+      "image_url": "/exam-images/final-asmopss-x/science-secondary/q27.png",
+      "rubric": [
+        {
+          "code": "BAND1",
+          "points": 0.5,
+          "description": "At least 1–2 of the five blanks are correct."
+        },
+        {
+          "code": "BAND2",
+          "points": 0.5,
+          "description": "At least 3 of the five blanks are correct."
+        },
+        {
+          "code": "BAND3",
+          "points": 0.5,
+          "description": "At least 4 of the five blanks are correct."
+        },
+        {
+          "code": "BAND4",
+          "points": 0.5,
+          "description": "All five blanks are correct."
+        }
+      ],
+      "solution_md": "(1) equal to, (2) 0 A, (3) 0 A, (4) 2 V, (5) 2 V."
+    },
+    {
+      "number": 28,
+      "part": "short",
+      "grading_mode": "essay",
+      "max_points": 2,
+      "prompt_md": "Fill in the three blanks:\n\nWhen the index of refraction of a lens is increased, the focal length of the lens will (1) …… . If the index of refraction of the medium around the lens is increased, the focal length will (2) …… .\n\nA lens with index of refraction $n$ is placed in a medium with index of refraction 1, and the focal length of the lens is $f$. If the index of refraction of the lens is 1 while the index of refraction of the surrounding medium is $n$, for the same lens geometry the focal length will be (3) …… .",
+      "rubric": [
+        {
+          "code": "B1",
+          "points": 0.5,
+          "description": "Blank (1): decrease."
+        },
+        {
+          "code": "B2",
+          "points": 0.5,
+          "description": "Blank (2): increase."
+        },
+        {
+          "code": "B3",
+          "points": 1,
+          "description": "Blank (3): −f (same magnitude, opposite sign — the lens changes from converging to diverging)."
+        }
+      ],
+      "solution_md": "(1) decrease, (2) increase, (3) $-f$."
+    },
+    {
+      "number": 29,
+      "part": "short",
+      "grading_mode": "essay",
+      "max_points": 2,
+      "prompt_md": "A ball is floating on a liquid. The mass density of the liquid is 1000 kg/m³.\n\nFill in the two blanks:\n\nThe mass density of the ball must be (1) …… than the mass density of the liquid. The coefficients of volume expansion of the ball and of the liquid are $10^{-6}/°C$ and $10^{-4}/°C$ respectively. After both the temperature of the liquid and of the ball are increased by 50 °C, the ball begins to sink. The initial mass density of the ball is (2) …… kg/m³.",
+      "rubric": [
+        {
+          "code": "B1",
+          "points": 1,
+          "description": "Blank (1): less."
+        },
+        {
+          "code": "B2",
+          "points": 1,
+          "description": "Blank (2): 995 kg/m³."
+        }
+      ],
+      "solution_md": "(1) less, (2) 995 kg/m³."
+    },
+    {
+      "number": 30,
+      "part": "short",
+      "grading_mode": "essay",
+      "max_points": 2,
+      "prompt_md": "Fill in the four blanks:\n\nSound can propagate as a longitudinal wave in a medium such as (1) ……, and also as a transverse wave in a medium such as (2) …… . In a longitudinal wave, the medium oscillates in a direction (3) …… to the propagation of the wave. Pressure varies along with the wave: at a location where the medium moves with maximum speed, the pressure is (4) …… .",
+      "rubric": [
+        {
+          "code": "B1",
+          "points": 0.5,
+          "description": "Blank (1): air (accept also solid or liquid)."
+        },
+        {
+          "code": "B2",
+          "points": 0.5,
+          "description": "Blank (2): solid."
+        },
+        {
+          "code": "B3",
+          "points": 0.5,
+          "description": "Blank (3): parallel."
+        },
+        {
+          "code": "B4",
+          "points": 0.5,
+          "description": "Blank (4): maximum or minimum (i.e. at an extreme)."
+        }
+      ],
+      "solution_md": "(1) air (also solid or liquid), (2) solid, (3) parallel, (4) maximum or minimum."
+    },
+    {
+      "number": 31,
+      "part": "essay",
+      "grading_mode": "essay",
+      "max_points": 6,
+      "prompt_md": "The table shows the masses and heart rates of eight mammals.\n\n**a.** Describe the general pattern shown by these results.\n\n**b.** Which mammal does not follow this general pattern? Explain your answer.\n\n**c.** Suggest a better way of presenting the data so that the pattern is more obvious.\n\n**d.** Jono finds this information on the internet: *A chicken with a body mass of 1500 g has a heart rate of 275 beats per minute.* The information for the chicken does not fit with the general pattern for mammals. Suggest why.",
+      "image_url": "/exam-images/final-asmopss-x/science-secondary/q31.png",
+      "rubric": [
+        {
+          "code": "A1",
+          "points": 1,
+          "description": "a) States that as body mass increases the heart rate decreases — a negative correlation."
+        },
+        {
+          "code": "B1",
+          "points": 2,
+          "description": "b) Names the monkey (heart rate too high for its mass) or the cat (heart rate too low for its mass), with the reason."
+        },
+        {
+          "code": "C1",
+          "points": 1,
+          "description": "c) Suggests a graph — line graph, bar chart or scatter graph."
+        },
+        {
+          "code": "D1",
+          "points": 2,
+          "description": "d) Any one valid reason: a chicken is a bird and not a mammal, so it has different physiology or metabolic rate; or its mass/heart rate would be expected to sit elsewhere in the pattern."
+        }
+      ]
+    },
+    {
+      "number": 32,
+      "part": "essay",
+      "grading_mode": "essay",
+      "max_points": 6,
+      "prompt_md": "The diagram below shows three pots of seedlings that have been kept in different conditions.\n\n**a.** Suggest why the seedlings in pot Q grow the fastest among the three pots.\n\n**b.** State the name of the growth response shown by the seedlings in pot R. Explain the advantage to the seedlings of this growth response.",
+      "image_url": "/exam-images/final-asmopss-x/science-secondary/q32.png",
+      "rubric": [
+        {
+          "code": "A1",
+          "points": 2,
+          "description": "a) Explains that the seedlings in pot Q are in the dark, so auxin works more effectively and stem elongation is fastest."
+        },
+        {
+          "code": "B1",
+          "points": 2,
+          "description": "b) Names the response: positive phototropism."
+        },
+        {
+          "code": "B2",
+          "points": 2,
+          "description": "b) Explains the advantage: growing toward light lets the seedlings absorb more light for photosynthesis, giving more growth/biomass/glucose/starch."
+        }
+      ]
+    },
+    {
+      "number": 33,
+      "part": "essay",
+      "grading_mode": "essay",
+      "max_points": 6,
+      "prompt_md": "*Rhabdostyla* is a single-celled organism that has no cell wall and no chlorophyll. It lives in freshwater habitats such as ponds, lakes and rivers. Freshwater has a very low concentration of solutes. *Rhabdostyla* has a contractile vacuole that fills with water and empties at intervals, as shown in the figure.\n\n**a.** Explain, using the term *water potential*, why *Rhabdostyla* needs to remove excess water.\n\n**b.** In an investigation, individual *Rhabdostyla* were placed into different concentrations of sea water. The rate of water excreted by the contractile vacuole of each organism was determined. The graph shows the result. Explain the results shown by the graph.\n\n**c.** Single-celled organisms with cell walls do not have contractile vacuoles. Suggest why.",
+      "image_url": "/exam-images/final-asmopss-x/science-secondary/q33.png",
+      "rubric": [
+        {
+          "code": "A1",
+          "points": 2,
+          "description": "a) Water enters by osmosis down the water potential gradient (from higher to lower water potential) through the partially permeable membrane, so the excess must be removed or the cell would burst."
+        },
+        {
+          "code": "B1",
+          "points": 2,
+          "description": "b) As the sea water concentration increases the rate of water excreted decreases, because the water potential gradient decreases so less water enters."
+        },
+        {
+          "code": "C1",
+          "points": 2,
+          "description": "c) Cell walls are rigid and inelastic, so they resist any increase in volume; turgor pressure stops further water entering and the cell cannot burst."
+        }
+      ]
+    },
+    {
+      "number": 34,
+      "part": "essay",
+      "grading_mode": "essay",
+      "max_points": 6,
+      "prompt_md": "A group of birdwatchers collected data to show how the numbers of farmland birds change over time. The graph shows the change in the number of farmland birds between 1975 and 2015.\n\n**a.** The data for each year was obtained from a lot of observations. Explain why it is a good idea to make a lot of observations.\n\n**b.** The results shown in the graph are estimates. Explain why it is not possible to find the exact number of farmland birds.\n\n**c.** The birdwatchers measured the change in numbers of farmland birds. Write down two factors that affect the number of farmland birds.",
+      "image_url": "/exam-images/final-asmopss-x/science-secondary/q34.png",
+      "rubric": [
+        {
+          "code": "A1",
+          "points": 2,
+          "description": "a) To obtain reliable results / to work out an average."
+        },
+        {
+          "code": "B1",
+          "points": 2,
+          "description": "b) Any one reason: birds are too mobile, they migrate or fly away, they are out at different times of day, there are too many over too large an area, or the same bird may be counted twice or missed."
+        },
+        {
+          "code": "C1",
+          "points": 2,
+          "description": "c) Any two factors: habitat destruction, food supply, damage to food chains, amount of prey, predation, hunting, competition, pest control, climate change, disease, season, or pollution."
+        }
+      ]
+    },
+    {
+      "number": 35,
+      "part": "essay",
+      "grading_mode": "essay",
+      "max_points": 6,
+      "prompt_md": "The figure below shows a diagram of the liver and the blood vessels that enter and exit from it.\n\n**a.** J is a vein while L is the hepatic portal vein. Explain why L carries blood with a high level of glucose.\n\n**b.** As stated, J is a vein. State two structural features of veins and explain how each feature is related to their function of returning blood to the heart.\n\n**c.** Control of blood glucose by the liver is an example of homeostasis. Explain how the liver lowers blood glucose concentration when it is too high.",
+      "image_url": "/exam-images/final-asmopss-x/science-secondary/q35.png",
+      "rubric": [
+        {
+          "code": "A1",
+          "points": 2,
+          "description": "a) Glucose absorption takes place in the small intestine, and L carries blood from the small intestine to the liver."
+        },
+        {
+          "code": "B1",
+          "points": 1,
+          "description": "b) First feature with its function — e.g. semilunar valves prevent backflow of blood."
+        },
+        {
+          "code": "B2",
+          "points": 1,
+          "description": "b) Second feature with its function — e.g. a large lumen giving low pressure and low resistance, or thin, less muscular walls that let surrounding skeletal muscle squeeze the vein."
+        },
+        {
+          "code": "C1",
+          "points": 2,
+          "description": "c) The liver responds to insulin from the pancreas by taking up glucose and converting it to glycogen (glycogenesis) for storage."
+        }
+      ]
+    },
+    {
+      "number": 36,
+      "part": "essay",
+      "grading_mode": "essay",
+      "max_points": 6,
+      "prompt_md": "100 g of a solid, initially at 20 °C, is heated by a heater of constant power. The temperature as a function of time is shown in the figure. The specific heat capacity of the solid is 2500 J/(kg·K).\n\n**a.** Determine the power of the heater.\n\n**b.** What is the melting temperature of the solid?\n\n**c.** Determine the specific latent heat of fusion.\n\n**d.** Determine the specific heat capacity in the liquid phase.",
+      "image_url": "/exam-images/final-asmopss-x/science-secondary/q36.png",
+      "rubric": [
+        {
+          "code": "A1",
+          "points": 1.5,
+          "description": "a) P = mcΔT/t = 0.1 × 2500 × 40 / 200 = 50 W."
+        },
+        {
+          "code": "B1",
+          "points": 1.5,
+          "description": "b) Melting temperature = 60 °C."
+        },
+        {
+          "code": "C1",
+          "points": 1.5,
+          "description": "c) L = Pt/m = 50 × 500 / 0.1 = 250000 J/kg."
+        },
+        {
+          "code": "D1",
+          "points": 1.5,
+          "description": "d) c = Pt/(mΔT) = 50 × 200 / (0.1 × 20) = 5000 J/(kg·K)."
+        }
+      ]
+    },
+    {
+      "number": 37,
+      "part": "essay",
+      "grading_mode": "essay",
+      "max_points": 6,
+      "prompt_md": "A solid cube is in a container. Both the cube and the container are hung by a rope through a pulley. A force measuring device is attached to the rope to measure the tension. The container is then filled with a certain liquid. The table below shows how the reading of the force changes as the volume of liquid increases. Ignore the mass of the rope and the force measuring device. Take $g = 10$ m/s².\n\nAfter 2000 ml the cube keeps moving up, separated from the liquid and the container.\n\n**a.** Determine the total combined mass of the cube and the empty container.\n\n**b.** Determine the mass density of the liquid in gram/ml.\n\n**c.** Determine the mass of the cube.",
+      "image_url": "/exam-images/final-asmopss-x/science-secondary/q37.png",
+      "rubric": [
+        {
+          "code": "A1",
+          "points": 2,
+          "description": "a) Uses the tension at zero volume: M = F/g = 15/10 = 1.5 kg per side, giving a combined mass of 3 kg."
+        },
+        {
+          "code": "B1",
+          "points": 2,
+          "description": "b) The tension rises 1 N for every 400 ml added, so the density is 1/(400 × 10) kg/ml = 0.5 g/ml."
+        },
+        {
+          "code": "C1",
+          "points": 2,
+          "description": "c) At 2000 ml the liquid mass is 2000 × 0.5 = 1000 g = 1 kg and the cube balances the liquid plus container; combined with part a) this gives a cube mass of 2 kg."
+        }
+      ]
+    },
+    {
+      "number": 38,
+      "part": "essay",
+      "grading_mode": "essay",
+      "max_points": 6,
+      "prompt_md": "The circuit below has a battery with an unknown voltage and two resistors with unknown resistances.\n\nWhen the voltage between terminals A and B is measured the reading is 2 V. When terminals A and B are shorted by a wire, the current through this wire is 1 A.\n\n**If terminals A and B are connected through another resistor with resistance 1 Ω, what is the current through this resistor?**",
+      "image_url": "/exam-images/final-asmopss-x/science-secondary/q38.png",
+      "rubric": [
+        {
+          "code": "BAT",
+          "points": 2,
+          "description": "Finds the battery voltage: 4 V."
+        },
+        {
+          "code": "RES",
+          "points": 2,
+          "description": "Finds both resistor values (4 Ω each, or equivalently the Thévenin resistance of 2 Ω)."
+        },
+        {
+          "code": "CUR",
+          "points": 2,
+          "description": "Concludes the current through the 1 Ω resistor is 2/3 A."
+        }
+      ],
+      "solution_md": "Taking the two resistors as identical (the final answer does not depend on this), the open-circuit reading gives $V_{ab} = \\tfrac{1}{2}V_\\text{bat} = 2$ V, so $V_\\text{bat} = 4$ V.\n\nShorting A–B gives $1$ A, so the series resistance is $4/1 = 4\\ Ω$.\n\nWith a 1 Ω resistor across A–B the combined resistance is $4 + \\dfrac{4 \\times 1}{4+1} = \\dfrac{24}{5}$, and $V_{ab}$ becomes $\\dfrac{2}{3}$ V, so the current is $\\dfrac{2}{3}$ A."
+    },
+    {
+      "number": 39,
+      "part": "essay",
+      "grading_mode": "essay",
+      "max_points": 6,
+      "prompt_md": "A converging lens is placed at a distance of 10 cm from a plane mirror. A point-like object is moving between the lens and the mirror, in a direction perpendicular to the optical axis connecting the centre of the lens with the mirror.\n\nA person in front of the lens sees two images that are moving in opposite directions. If the focal length of the lens is 10 cm, **determine the ratio of the speeds of the two images.**",
+      "image_url": "/exam-images/final-asmopss-x/science-secondary/q39.png",
+      "rubric": [
+        {
+          "code": "IMG1",
+          "points": 2,
+          "description": "Finds the magnification of the first image (rays going straight to the lens): M₁ = f/(s − f) = 10/(s − 10), so its speed is M₁v."
+        },
+        {
+          "code": "IMG2",
+          "points": 2,
+          "description": "Finds the second image (rays reflected by the mirror first), whose object distance is 2d − s = 20 − s, giving M₂ = 10/(10 − s) in magnitude."
+        },
+        {
+          "code": "RATIO",
+          "points": 2,
+          "description": "Concludes that the ratio of the two speeds is 1, independent of the object position s."
+        }
+      ]
+    },
+    {
+      "number": 40,
+      "part": "essay",
+      "grading_mode": "essay",
+      "max_points": 6,
+      "prompt_md": "A stone is dropped into a very deep well. A splashing sound can be heard after 6.6 seconds. If the speed of sound in the air is 300 m/s and the acceleration of gravity is 10 m/s², **how deep is the well?**",
+      "rubric": [
+        {
+          "code": "T1",
+          "points": 1,
+          "description": "Writes the fall time in terms of the depth: t₁ = √(2h/g)."
+        },
+        {
+          "code": "T2",
+          "points": 1,
+          "description": "Writes the sound travel time: t₂ = h/v_s."
+        },
+        {
+          "code": "SOLVE",
+          "points": 2,
+          "description": "Sets t₁ + t₂ = 6.6 s and solves the resulting quadratic, taking the positive root t₁ = 6 s."
+        },
+        {
+          "code": "DEPTH",
+          "points": 2,
+          "description": "Concludes the depth is 180 m."
+        }
+      ],
+      "solution_md": "Let $t_1$ be the fall time. Then $h = \\tfrac{1}{2}gt_1^2 = 5t_1^2$ and the sound takes $t_2 = \\dfrac{h}{300}$.\n\n$$t_1 + \\frac{5t_1^2}{300} = 6.6 \\Rightarrow t_1^2 + 60t_1 - 396 = 0 \\Rightarrow t_1 = 6\\text{ s}.$$\n\nSo the well is $h = 5 \\times 36 = 180$ m deep. (Check: the sound takes $180/300 = 0.6$ s, and $6 + 0.6 = 6.6$ s.)"
+    }
+  ]
+}

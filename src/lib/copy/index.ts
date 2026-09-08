@@ -20,6 +20,8 @@ import { prisma } from '@/lib/prisma';
 import { COPY_FIELD_BY_KEY, SITE_COPY_DEFAULTS } from './defaults';
 
 export * from './defaults';
+export * from './images';
+export * from './assets';
 
 const CACHE_TTL_MS = 20_000;
 

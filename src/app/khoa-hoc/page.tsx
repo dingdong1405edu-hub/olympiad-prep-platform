@@ -5,7 +5,10 @@ import { getSession } from '@/lib/auth';
 import { routes } from '@/lib/routes';
 import { formatVnd, GRADE_BAND_LABEL, SUBJECT_LABEL } from '@/lib/domain';
 import { getCopy } from '@/lib/copy';
+import { getImages, type SiteImage as SiteImageData } from '@/lib/copy/assets';
+import { courseCoverSlot } from '@/lib/copy/images';
 import { SiteShell } from '@/components/site-shell';
+import { SiteImage } from '@/components/site-image';
 import { Reveal } from '@/components/motion';
 
 export const dynamic = 'force-dynamic';
@@ -29,6 +32,8 @@ interface CourseRow {
   programName: string;
   programShort: string;
   colorHex: string;
+  /** Ảnh đại diện; `null` khi admin chưa tải ảnh cho khóa này. */
+  cover: SiteImageData | null;
 }
 
 /**
@@ -43,11 +48,12 @@ export default async function CourseCatalogPage({
 }: {
   searchParams: Promise<{ ky_thi?: string; khoi?: string; mon?: string }>;
 }) {
-  const [params, programs, session, t] = await Promise.all([
+  const [params, programs, session, t, img] = await Promise.all([
     searchParams,
     getCatalogTree(),
     getSession(),
     getCopy(),
+    getImages(),
   ]);
 
   // Làm phẳng cây danh mục thành danh sách khóa — cây tiện cho trang kỳ thi,
@@ -67,6 +73,7 @@ export default async function CourseCatalogPage({
           programName: program.name,
           programShort: program.shortName ?? program.code,
           colorHex: program.colorHex,
+          cover: img(courseCoverSlot(program.code, band.gradeBand, course.subject)),
         })),
       ),
     );
@@ -209,6 +216,19 @@ export default async function CourseCatalogPage({
               {rows.map((row, index) => (
                 <Reveal key={row.id} delay={Math.min(index, 8) * 50}>
                   <article className="hover-lift flex h-full flex-col overflow-hidden rounded-2xl bg-white ring-1 ring-warm-100 shadow-[0_2px_10px_-5px_rgb(120_70_45/0.1)]">
+                    {/* Ô ảnh đại diện. Chưa ai tải ảnh thì KHÔNG chừa chỗ xám:
+                        thẻ khép lại còn đúng vạch màu nhận diện như trước. */}
+                    {row.cover ? (
+                      <Link href={routes.course(row.id)} className="block">
+                        <SiteImage
+                          image={row.cover}
+                          alt=""
+                          aspect="16 / 9"
+                          className="h-full w-full object-cover"
+                          sizes="(min-width: 1024px) 360px, (min-width: 768px) 50vw, 100vw"
+                        />
+                      </Link>
+                    ) : null}
                     <span
                       aria-hidden
                       className="block h-1 w-full"

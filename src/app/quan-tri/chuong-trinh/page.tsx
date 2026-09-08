@@ -2,6 +2,8 @@ import { requireRole, hasRole } from '@/lib/auth';
 import { getConfig } from '@/lib/config';
 import { getProgramByCode, listCourses, listPrograms } from '@/server/catalog/service';
 import { listCoupons } from '@/server/commerce/service';
+import { listAssets } from '@/lib/copy/assets';
+import { isCourseCoverSlot } from '@/lib/copy/images';
 import { PageHeader, Alert } from '@/components/ui';
 import { ProgramManager } from './program-manager';
 
@@ -35,6 +37,17 @@ export default async function AdminProgramsPage({
   // rỗng. Hệ quả: ẩn một khóa đi là mất hẳn, không còn nút nào để mở lại.
   const hiddenCourses = selected ? await listCourses({ programId: selected.id, active: false }) : [];
 
+  /*
+   * Ảnh đại diện của các khóa. Đọc CẢ danh sách rồi lọc trong bộ nhớ thay vì
+   * truy vấn theo từng khóa: bảng SiteAsset chỉ có một dòng cho mỗi ô đã tải
+   * ảnh, và `listAssets()` cố ý không select cột bytes.
+   */
+  const coverUrlBySlot = Object.fromEntries(
+    (await listAssets().catch(() => []))
+      .filter((asset) => isCourseCoverSlot(asset.slot))
+      .map((asset) => [asset.slot, asset.url]),
+  );
+
   return (
     <div>
       <PageHeader
@@ -54,6 +67,7 @@ export default async function AdminProgramsPage({
         hiddenCourses={hiddenCourses}
         coupons={coupons.items}
         canEdit={hasRole(session, 'SUPER_ADMIN', 'PROGRAM_MANAGER')}
+        coverUrlBySlot={coverUrlBySlot}
         defaultPrice={config.commerce.defaultPrice}
         defaultCurrency={config.commerce.currency}
         defaultAccessDays={config.commerce.accessDurationDays}

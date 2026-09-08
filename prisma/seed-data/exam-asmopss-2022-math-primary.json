@@ -1,0 +1,386 @@
+{
+  "exam": {
+    "slug": "asmopss-2022-math-primary",
+    "title": "Road to ASMOPSS 2022 — Mathematics Primary",
+    "subject": "math",
+    "grade_level": "primary",
+    "duration_min": 90,
+    "total_points": 100,
+    "instructions": "20 câu trắc nghiệm, 5 điểm mỗi câu (tổng 100 điểm). Mỗi câu chọn đúng một phương án (A–E). Không dùng máy tính. Hình vẽ không theo tỉ lệ, chỉ để minh họa. LƯU Ý: đề gốc có 25 câu, mỗi câu 4 điểm và trừ 1 điểm cho mỗi câu sai. Năm câu đã được bỏ, các câu còn lại được quy lại điểm để giữ đề ở thang 100 điểm; ở đây câu sai không bị trừ điểm."
+  },
+  "_notes": {
+    "source": "Road to ASMOPSS 2022 - Math Primary (Eng).docx + Road to ASMOPSS 2022 - Answer Key - English.xlsx (cột Math / Primary).",
+    "removed": "Đề gốc ghi chú cuối trang: BỎ CÂU 2; 9; 23; 24; 25. Năm câu đó đã bỏ, 20 câu còn lại đánh số lại 1–20; đáp án lấy theo SỐ GỐC nên không lệch.",
+    "number_map": "new→orig: 1→1, 2→3, 3→4, 4→5, 5→6, 6→7, 7→8, 8→10, 9→11, 10→12, 11→13, 12→14, 13→15, 14→16, 15→17, 16→18, 17→19, 18→20, 19→21, 20→22.",
+    "reconstructed": [
+      "Câu 3, 10, 16 (gốc 4, 12, 18): công thức trong Word là đối tượng OMML, bóc ra bị làm phẳng thành 211 411 12 711 911 / 2+3+43=2020+2021+2022K / yx. Đã dựng lại bằng LaTeX và kiểm chứng khớp đáp án chính thức.",
+      "Câu 4, 8 (gốc 5, 10): hình vẽ là OLE .emf, đã convert sang PNG. Diện tích ngũ giác PQRST tính lại bằng công thức giày buộc dây = 19, khớp đáp án D."
+    ],
+    "flags": [
+      "Câu 14 (gốc 16): hai ký hiệu gốc là Wingdings 2 F098/F099, không bóc được glyph — đã thay bằng ■ và □. Ngoài ra đáp án chính thức là B (675) nhưng cách hiểu trực tiếp (ép có hai ■ cạnh nhau trong 2022 ô) cho 1012 tức phương án D. Cần đối chiếu bản in gốc trước khi dùng chấm điểm thật."
+    ]
+  },
+  "questions": [
+    {
+      "number": 1,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 5,
+      "prompt_md": "Which of the following sets of natural numbers has the largest average?",
+      "options": [
+        "Multiples of 2 no larger than 2022",
+        "Multiples of 3 no larger than 2023",
+        "Multiples of 4 no larger than 2024",
+        "Multiples of 5 no larger than 2025",
+        "Multiples of 6 no larger than 2026"
+      ],
+      "answer_key": {
+        "value": "D"
+      },
+      "solution_md": "For the multiples of $k$ up to $N$, the average is $\\dfrac{k + k⌊N/k⌋}{2}$.\n\n- A: $2 \\ldots 2022 \\Rightarrow 1012$\n- B: $3 \\ldots 2022 \\Rightarrow 1012.5$\n- C: $4 \\ldots 2024 \\Rightarrow 1014$\n- D: $5 \\ldots 2025 \\Rightarrow 1015$\n- E: $6 \\ldots 2022 \\Rightarrow 1014$\n\nThe largest is **D**."
+    },
+    {
+      "number": 2,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 5,
+      "prompt_md": "How many integers between 2 and 2022 do not contain the digit 2?",
+      "options": [
+        "648",
+        "728",
+        "1012",
+        "1376",
+        "1456"
+      ],
+      "answer_key": {
+        "value": "E"
+      },
+      "solution_md": "Count the numbers from 1 to 2021 with no digit 2:\n\n- 1 digit: $8$ (namely 1, 3–9)\n- 2 digits: $8 \\times 9 = 72$\n- 3 digits: $8 \\times 9 \\times 9 = 648$\n- 4 digits: 1000–1999 gives $1 \\times 9 \\times 9 \\times 9 = 729$, and every number from 2000 to 2021 contains a 2.\n\nTotal $= 8 + 72 + 648 + 729 = 1457$. The range is strictly between 2 and 2022, so drop the number 1: $1457 - 1 = 1456$."
+    },
+    {
+      "number": 3,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 5,
+      "prompt_md": "Twelve points are spaced at one-unit intervals around a 3×3 square, as shown in the figure below. Two of the twelve points are chosen at random.\n\nWhat is the probability that the chosen points are **more than one unit apart**?",
+      "image_url": "/exam-images/asmopss-2022/math-primary/q03.png",
+      "options": [
+        "$\\dfrac{2}{11}$",
+        "$\\dfrac{4}{11}$",
+        "$\\dfrac{1}{2}$",
+        "$\\dfrac{7}{11}$",
+        "$\\dfrac{9}{11}$"
+      ],
+      "answer_key": {
+        "value": "E"
+      },
+      "solution_md": "There are $C(12,2) = 66$ pairs in total. Exactly 12 of them are neighbouring points around the perimeter, i.e. exactly one unit apart. Hence\n\n$$P = \\frac{66 - 12}{66} = \\frac{54}{66} = \\frac{9}{11}.$$"
+    },
+    {
+      "number": 4,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 5,
+      "prompt_md": "Six 1×1 square tiles are arranged to form the shape shown below. Yosu adds 2 more tiles, so that at least one side of each new tile is shared with a side of the original shape. The modified shape can have different perimeter lengths.\n\nWhat is the difference between the longest possible and the shortest possible perimeters of the new shape?",
+      "image_url": "/exam-images/asmopss-2022/math-primary/q04.png",
+      "options": [
+        "1",
+        "2",
+        "4",
+        "6",
+        "8"
+      ],
+      "answer_key": {
+        "value": "D"
+      }
+    },
+    {
+      "number": 5,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 5,
+      "prompt_md": "On a normal day it takes Yosu a total of 24 minutes to walk from home to school. Today, however, Yosu had walked two-thirds of the distance from home to school when he realized that he was late. He then ran the rest of the way to school. He ran twice as fast as he walked.\n\nHow many minutes did it take Yosu to get from home to school today?",
+      "options": [
+        "12",
+        "15",
+        "16",
+        "18",
+        "20"
+      ],
+      "answer_key": {
+        "value": "E"
+      },
+      "solution_md": "Walking two-thirds of the way takes $\\tfrac{2}{3} \\times 24 = 16$ minutes. The remaining third would take 8 minutes at walking speed, so at double speed it takes 4 minutes.\n\nTotal $= 16 + 4 = 20$ minutes."
+    },
+    {
+      "number": 6,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 5,
+      "prompt_md": "Oca plays with unit cubes and stacks a 6-cubes-high pyramid-like structure as shown in the figure below.\n\nHow many cubes are needed to build a tower like this, but 10 cubes high?",
+      "image_url": "/exam-images/asmopss-2022/math-primary/q06.jpeg",
+      "options": [
+        "40",
+        "66",
+        "144",
+        "190",
+        "256"
+      ],
+      "answer_key": {
+        "value": "D"
+      },
+      "solution_md": "The structure is a central column of height $n$ with four arms stepping down from it, so it uses\n\n$$4 \\cdot \\frac{n(n-1)}{2} + n = 2n^2 - n \\text{ cubes.}$$\n\nCheck against the picture: $n = 6$ gives $2(36) - 6 = 66$ cubes. For $n = 10$: $2(100) - 10 = 190$."
+    },
+    {
+      "number": 7,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 5,
+      "prompt_md": "Three-fourths of the people in a bus are seated in two-thirds of the bus seats. The rest of the people are standing. If there are 6 empty seats, how many people are in the bus?",
+      "options": [
+        "6",
+        "10",
+        "12",
+        "16",
+        "18"
+      ],
+      "answer_key": {
+        "value": "D"
+      },
+      "solution_md": "Let $S$ be the number of seats. One third of the seats are empty, so $\\tfrac{S}{3} = 6 \\Rightarrow S = 18$.\n\nThe seated people number $\\tfrac{2}{3} \\times 18 = 12$, and that is three-fourths of everyone, so the number of people is $12 \\div \\tfrac{3}{4} = 16$."
+    },
+    {
+      "number": 8,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 5,
+      "prompt_md": "What is the area of the irregular pentagon $PQRST$ in the diagram below, if the area of one unit square is 1?",
+      "image_url": "/exam-images/asmopss-2022/math-primary/q08.png",
+      "options": [
+        "16",
+        "17",
+        "18",
+        "19",
+        "None of the above"
+      ],
+      "answer_key": {
+        "value": "D"
+      },
+      "solution_md": "Read the vertices off the grid: $P(1,4)$, $Q(3,6)$, $R(6,5)$, $S(6,1)$, $T(1,2)$. By the shoelace formula,\n\n$$\\text{Area} = \\tfrac{1}{2}\\left|(1{\\cdot}6 - 3{\\cdot}4) + (3{\\cdot}5 - 6{\\cdot}6) + (6{\\cdot}1 - 6{\\cdot}5) + (6{\\cdot}2 - 1{\\cdot}1) + (1{\\cdot}4 - 1{\\cdot}2)\\right| = \\frac{38}{2} = 19.$$"
+    },
+    {
+      "number": 9,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 5,
+      "prompt_md": "In GASING Republic, a president serves exactly one 3-year term. What is the maximum number of presidents GASING Republic could have during an 11-year period?",
+      "options": [
+        "3",
+        "4",
+        "5",
+        "6",
+        "42"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "Let the 11-year window start part-way through somebody's term. A term can overlap the window by as little as 1 year at each end:\n\n$$1 + 3 + 3 + 3 + 1 = 11 \\text{ years, spread over } 5 \\text{ presidents.}$$"
+    },
+    {
+      "number": 10,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 5,
+      "prompt_md": "If\n\n$$\\frac{2+3+4}{3} = \\frac{2020+2021+2022}{K},$$\n\nthen $K = ?$",
+      "options": [
+        "3",
+        "2020",
+        "2021",
+        "2022",
+        "3030"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "The left-hand side is $\\tfrac{9}{3} = 3$, the mean of three consecutive integers. The right-hand side must equal 3 as well, and $2020 + 2021 + 2022 = 6063$, so $K = \\tfrac{6063}{3} = 2021$."
+    },
+    {
+      "number": 11,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 5,
+      "prompt_md": "The 16 squares on a piece of paper are marked as shown:\n\n```\nA  B  C  D\nE  F  G  H\nI  J  K  L\nM  N  O  P\n```\n\nWhile lying on a flat surface, the paper is folded in half in the following sequence:\n\n1. fold the top half over the bottom half\n2. fold the bottom half over the top half\n3. fold the right half over the left half\n4. fold the left half over the right half\n\nAfter step 4, the square on top is the one marked with?",
+      "options": [
+        "A",
+        "I",
+        "J",
+        "N",
+        "P"
+      ],
+      "answer_key": {
+        "value": "B"
+      }
+    },
+    {
+      "number": 12,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 5,
+      "prompt_md": "A cube of edge 3 cm is cut into smaller cubes, not all the same size. If the edge of each of the smaller cubes is a whole number of centimeters, how many smaller cubes are there?",
+      "options": [
+        "4",
+        "8",
+        "12",
+        "16",
+        "20"
+      ],
+      "answer_key": {
+        "value": "E"
+      },
+      "solution_md": "The smaller cubes can only have edge 1 cm or 2 cm, and they cannot all be the same size. Exactly one 2×2×2 cube fits, using 8 cm³ of the 27 cm³; the remaining 19 cm³ must be unit cubes.\n\nTotal $= 1 + 19 = 20$ cubes."
+    },
+    {
+      "number": 13,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 5,
+      "prompt_md": "Calculate\n\n$$2022 - 2012 + 2002 - 1992 + \\ldots - 12 + 2$$",
+      "options": [
+        "−10",
+        "10",
+        "1002",
+        "1012",
+        "2020"
+      ],
+      "answer_key": {
+        "value": "D"
+      },
+      "solution_md": "The terms are $2022, 2012, 2002, \\ldots, 12, 2$ — that is $\\tfrac{2022-2}{10} + 1 = 203$ terms with alternating signs, starting positive.\n\nPair them off: $(2022-2012) + (2002-1992) + \\ldots$. Each of the 101 pairs contributes 10, and the final term $+2$ is left over.\n\n$$101 \\times 10 + 2 = 1012$$"
+    },
+    {
+      "number": 14,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 5,
+      "prompt_md": "A printer is repeatedly printing two types of symbols at random, either ■ or □, on a single line. The printer stopped working after printing 2022 symbols.\n\nWhat is the fewest number of ■ symbols that must be printed so that there are two ■ printed next to each other?",
+      "options": [
+        "674",
+        "675",
+        "1011",
+        "1012",
+        "2021"
+      ],
+      "answer_key": {
+        "value": "B"
+      }
+    },
+    {
+      "number": 15,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 5,
+      "prompt_md": "Elis buys wooden rulers in bulk at \\$15 for a pack of 60 and strategically sells them at 3 for \\$5. Her rulers sold out and gave her a profit of \\$2040.\n\nHow many packs of 60 rulers did Elis buy?",
+      "options": [
+        "8",
+        "10",
+        "24",
+        "30",
+        "480"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "One pack of 60 rulers sells as $60 \\div 3 = 20$ groups at \\$5 each, i.e. \\$100 of revenue against \\$15 of cost — a profit of \\$85 per pack.\n\n$$2040 \\div 85 = 24 \\text{ packs.}$$"
+    },
+    {
+      "number": 16,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 5,
+      "prompt_md": "If $300 \\le x \\le 800$ and $1200 \\le y \\le 2400$, then the largest value of $\\dfrac{y}{x}$ is?",
+      "options": [
+        "3",
+        "4",
+        "8",
+        "300",
+        "800"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "The quotient is largest when $y$ is as large as possible and $x$ as small as possible:\n\n$$\\frac{2400}{300} = 8.$$"
+    },
+    {
+      "number": 17,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 5,
+      "prompt_md": "In an online food delivery app, Ami saw an ad that reads “20% off after the first \\$20”. If Ami put in an order and was charged \\$72, what is the pre-sale price of the food that Ami ordered?",
+      "options": [
+        "\\$50",
+        "\\$65",
+        "\\$85",
+        "\\$90",
+        "\\$115"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "Let $P$ be the pre-sale price. The first \\$20 is charged in full and the rest is discounted by 20%:\n\n$$20 + 0.8(P - 20) = 72 \\Rightarrow 0.8(P-20) = 52 \\Rightarrow P - 20 = 65 \\Rightarrow P = 85.$$"
+    },
+    {
+      "number": 18,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 5,
+      "prompt_md": "Huey, Dewey, and Louie bought a footlong hot dog. Huey ate half of the hot dog, Dewey ate two-thirds of the remaining hot dog, and Louie ate the rest.\n\nWhat is the ratio of Huey’s to Dewey’s to Louie’s share?",
+      "options": [
+        "2 : 3 : 6",
+        "3 : 1 : 2",
+        "3 : 2 : 1",
+        "6 : 3 : 2",
+        "50 : 33 : 17"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "Huey eats $\\tfrac{1}{2}$. Of the remaining $\\tfrac{1}{2}$, Dewey eats $\\tfrac{2}{3} \\times \\tfrac{1}{2} = \\tfrac{1}{3}$, leaving Louie $\\tfrac{1}{6}$.\n\n$$\\tfrac{1}{2} : \\tfrac{1}{3} : \\tfrac{1}{6} = 3 : 2 : 1$$"
+    },
+    {
+      "number": 19,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 5,
+      "prompt_md": "Given a partially built cuboid (leftmost) and the possible remaining pieces shown below.\n\nWhich of the following pieces will complete the cuboid?",
+      "image_url": "/exam-images/asmopss-2022/math-primary/q19.png",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "answer_key": {
+        "value": "B"
+      }
+    },
+    {
+      "number": 20,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 5,
+      "prompt_md": "A 3-digit number increases by 9 when the digits in the ones and the tens place are switched. It increases by 90 if the digits in the hundreds and the tens place are switched.\n\nHow much will it increase if the digits in the ones and the hundreds place are switched?",
+      "options": [
+        "9",
+        "90",
+        "99",
+        "198",
+        "900"
+      ],
+      "answer_key": {
+        "value": "D"
+      },
+      "solution_md": "Write the number as $abc = 100a + 10b + c$.\n\n- Swapping ones and tens changes it by $9(c-b) = 9$, so $c - b = 1$.\n- Swapping hundreds and tens changes it by $90(b-a) = 90$, so $b - a = 1$.\n\nTherefore $c - a = 2$, and swapping ones and hundreds changes it by\n\n$$99(c-a) = 99 \\times 2 = 198.$$"
+    }
+  ]
+}

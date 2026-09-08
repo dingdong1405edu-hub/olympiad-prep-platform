@@ -1,0 +1,472 @@
+{
+  "exam": {
+    "slug": "asmopss-2022-science-secondary",
+    "title": "Road to ASMOPSS 2022 — Science Secondary",
+    "subject": "science",
+    "grade_level": "secondary",
+    "duration_min": 90,
+    "total_points": 100,
+    "instructions": "25 câu trắc nghiệm, 4 điểm mỗi câu (tổng 100 điểm). Mỗi câu chọn đúng một phương án (A–E). Không dùng máy tính. Hình vẽ không theo tỉ lệ, chỉ để minh họa. Lấy g = 10 m/s² khi cần. LƯU Ý: đề gốc có 30 câu (câu 1–20 mỗi câu 3 điểm, câu 21–30 mỗi câu 4 điểm) và trừ 1 điểm cho mỗi câu sai. Năm câu đã được bỏ, các câu còn lại được quy lại điểm để giữ đề ở thang 100 điểm; ở đây câu sai không bị trừ điểm."
+  },
+  "_notes": {
+    "source": "Science Secondary.docx (trùng nội dung với Road to ASMOPSS 2022 - Science Secondary (Eng).docx) + Road to ASMOPSS 2022 - Answer Key - English.xlsx (cột Science / Secondary).",
+    "removed": "Đề gốc ghi chú cuối trang: BỎ CÂU 2. 3. 6. 8. 30. Năm câu đó đã bỏ, 25 câu còn lại đánh số lại 1–25; đáp án lấy theo SỐ GỐC nên không lệch.",
+    "number_map": "new→orig: 1→1, 2→4, 3→5, 4→7, 5→9, 6→10, 7→11, 8→12, 9→13, 10→14, 11→15, 12→16, 13→17, 14→18, 15→19, 16→20, 17→21, 18→22, 19→23, 20→24, 21→25, 22→26, 23→27, 24→28, 25→29.",
+    "scoring_note": "Bảng INSTRUCTION của bản gốc ghi Part 1 được 4 điểm/câu, nhưng thân đề ghi 3 điểm/câu. Chỉ mức 3 điểm mới cho tổng đúng 100 (20×3 + 10×4), nên bảng INSTRUCTION là chỗ in sai. Ở đây mọi câu đều 4 điểm sau khi chia lại.",
+    "flags": [
+      "Câu 12 (gốc 16 — thấu kính): bản gốc ghi concave lens (thấu kính phân kỳ), mà thấu kính phân kỳ luôn cho ảnh nhỏ hơn vật nên không bao giờ có ảnh cao bằng vật — theo đó đáp án phải là E. Đáp án chính thức là D (40 cm), đúng với thấu kính HỘI TỤ đặt vật ở 2f. Nhiều khả năng bản tiếng Anh dịch nhầm cembung/cekung. Đã giữ nguyên chữ concave và đáp án chính thức D; cân nhắc sửa đề thành convex trước khi dùng chấm điểm thật."
+    ]
+  },
+  "questions": [
+    {
+      "number": 1,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Which of the following drugs has the lowest potential to cause addiction?",
+      "options": [
+        "heroin",
+        "codeine",
+        "marijuana",
+        "morphine",
+        "cocaine"
+      ],
+      "answer_key": {
+        "value": "B"
+      }
+    },
+    {
+      "number": 2,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Which of these statements could describe the effect of carbon monoxide in cigarette smoke?\n\n1. It binds irreversibly to haemoglobin.\n2. It causes mucus to accumulate in the bronchioles.\n3. It results in more carbon dioxide being transported in the blood.\n4. It temporarily increases the heart rate.",
+      "options": [
+        "1 and 2",
+        "1 only",
+        "2 and 3",
+        "3 and 4",
+        "2 and 4"
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "Carbon monoxide binds to haemoglobin to form carboxyhaemoglobin, effectively irreversibly, so less oxygen can be carried — statement 1.\n\nThe mucus build-up in statement 2 is caused by tar and by paralysed cilia, not by carbon monoxide; statement 3 is wrong because CO reduces gas transport rather than increasing CO₂ transport; and the temporary rise in heart rate in statement 4 is a nicotine effect."
+    },
+    {
+      "number": 3,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "A cell culture was supplied with radioactively labelled O₂ and the cells were monitored. In a few minutes the radioactive oxygen atoms were present in which of the following compounds?",
+      "options": [
+        "carbon dioxide",
+        "NADH and FADH₂",
+        "ATP",
+        "water",
+        "lactic acid"
+      ],
+      "answer_key": {
+        "value": "D"
+      },
+      "solution_md": "In aerobic respiration, oxygen is the **final electron acceptor** at the end of the electron transport chain, where it combines with electrons and protons to form water. So the labelled oxygen atoms turn up in water first."
+    },
+    {
+      "number": 4,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "A low progesterone level in a woman's body will trigger which hormone to work?",
+      "options": [
+        "LH",
+        "FSH",
+        "estrogen",
+        "ADH",
+        "adrenaline"
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "Progesterone inhibits the anterior pituitary. When its level falls at the end of the cycle, that inhibition is lifted and **FSH** is secreted again, starting the development of a new follicle."
+    },
+    {
+      "number": 5,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "What is the pathway taken by water as it travels through a plant?",
+      "options": [
+        "mesophyll cells → xylem → root cortex cells → root hair cells",
+        "root cortex cells → root hair cells → mesophyll cells → xylem",
+        "root hair cells → root cortex cells → xylem → mesophyll cells",
+        "xylem cells → mesophyll cells → root cortex cells → root hair cells",
+        "root hair cells → xylem → root cortex cells → mesophyll cells"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "Water enters through the root hair cells, crosses the root cortex, is carried up the xylem, and finally reaches the mesophyll cells of the leaf, where most of it evaporates."
+    },
+    {
+      "number": 6,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "How many molecules of oxygen are bound to one molecule of haemoglobin when it is fully saturated with oxygen?",
+      "options": [
+        "1",
+        "2",
+        "4",
+        "8",
+        "16"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "Haemoglobin has four polypeptide chains, each with one haem group, and each haem group binds one O₂ molecule — so **four** in total."
+    },
+    {
+      "number": 7,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Which statements are correct about speed and velocity?\n\n1. An object with 0 m/s speed has 0 m/s velocity.\n2. An object with constant speed has constant velocity.\n3. The magnitude of an object's velocity can never be greater than its speed.\n4. The speedometer in a vehicle is an instrument that measures velocity, not speed.\n5. If the speed of the object is not constant, the velocity is not constant.",
+      "options": [
+        "(1), (2), (4)",
+        "(1), (2), (5)",
+        "(1), (3), (5)",
+        "(2), (3), (5)",
+        "(3), (4), (5)"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "Statements 1, 3 and 5 are correct. Statement 2 fails because an object moving at constant speed round a bend keeps changing direction, so its velocity changes. Statement 4 is backwards — a speedometer reads speed, since it ignores direction."
+    },
+    {
+      "number": 8,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "A power bank is labelled 10000 mAh on the case.\n\nWhat quantity is shown by that number?",
+      "options": [
+        "Electric current",
+        "Electric potential",
+        "Electric energy",
+        "Electric power",
+        "Electric charge"
+      ],
+      "answer_key": {
+        "value": "E"
+      },
+      "solution_md": "A milliampere-hour is a current multiplied by a time, and current × time is **charge**: $1\\text{ mAh} = 3.6$ coulombs."
+    },
+    {
+      "number": 9,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Betty wants to make a warm drink. She mixes some boiling water with cold water at 20 °C.\n\nWhich one will make 200 ml of warm drink at 40 °C?",
+      "options": [
+        "50 ml boiling water and 150 ml cold water.",
+        "66.67 ml boiling water and 133.33 ml cold water.",
+        "80 ml boiling water and 120 ml cold water.",
+        "100 ml boiling water and 100 ml cold water.",
+        "120 ml boiling water and 80 ml cold water."
+      ],
+      "answer_key": {
+        "value": "A"
+      },
+      "solution_md": "Let $x$ be the volume of boiling water (100 °C). Heat lost equals heat gained:\n\n$$100x + 20(200 - x) = 40 \\times 200$$\n\n$$80x = 4000 \\Rightarrow x = 50\\text{ ml boiling water, and } 150\\text{ ml cold water.}$$"
+    },
+    {
+      "number": 10,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Besides the Asteroid Belt, there is also the Kuiper Belt in the solar system. The location of the Kuiper Belt is…",
+      "options": [
+        "between the Earth's and Mars' orbits.",
+        "between Mars' and Jupiter's orbits.",
+        "between Jupiter's and Saturn's orbits.",
+        "between Saturn's and Neptune's orbits.",
+        "outside Neptune's orbit."
+      ],
+      "answer_key": {
+        "value": "E"
+      },
+      "solution_md": "The Kuiper Belt is the ring of icy bodies beyond Neptune's orbit — Pluto is one of its members. (The main Asteroid Belt is the one between Mars and Jupiter.)"
+    },
+    {
+      "number": 11,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Which statement is **not** correct about sound waves?",
+      "options": [
+        "Sound waves propagate faster in a dense medium (solid) than in air.",
+        "Two sound waves can make destructive interference.",
+        "Sound waves will bend when propagating between two different media.",
+        "Sound waves can be polarized.",
+        "Sound waves cannot propagate in outer space."
+      ],
+      "answer_key": {
+        "value": "D"
+      },
+      "solution_md": "Sound is a **longitudinal** wave — the particles oscillate along the direction of travel, so there is no transverse plane to filter. Only transverse waves such as light can be polarized. All the other statements are true."
+    },
+    {
+      "number": 12,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "An object 4 cm tall stands in front of a concave lens with a 20 cm focal length. Bryan wants the image to have the same height as the object.\n\nSo, Bryan should place the object … in front of the lens.",
+      "options": [
+        "10 cm",
+        "20 cm",
+        "25 cm",
+        "40 cm",
+        "Impossible to make."
+      ],
+      "answer_key": {
+        "value": "D"
+      }
+    },
+    {
+      "number": 13,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Budi makes liquid layers in a container. The container is filled with three different liquids: vegetable oil, water and honey. The densities of vegetable oil, water and honey are 880 g/l, 1000 g/l and 1200 g/l respectively.\n\nBudi puts in four small solid objects (A, B, C and D) whose volume and mass are given in the table:\n\n| Object | Volume (ml) | Mass (gram) |\n| --- | --- | --- |\n| A | 30 | 33 |\n| B | 40 | 30 |\n| C | 50 | 45 |\n| D | 40 | 45 |\n\nWhich objects lie on the honey surface and sink in the water?",
+      "options": [
+        "Object A",
+        "Object C",
+        "Object A and D",
+        "Object B and D",
+        "No objects in that position."
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "An object rests on the honey and sinks through the water when its density is between 1000 g/l and 1200 g/l.\n\n- A: $33/30 = 1.10$ g/ml $= 1100$ g/l ✓\n- B: $30/40 = 0.75$ g/ml $= 750$ g/l — floats on the oil\n- C: $45/50 = 0.90$ g/ml $= 900$ g/l — floats on the water\n- D: $45/40 = 1.125$ g/ml $= 1125$ g/l ✓\n\nSo the answer is **A and D**."
+    },
+    {
+      "number": 14,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "There are seven identical cube boxes with 20 cm edges. Every box has a mass of 5 kg. All the boxes are stacked vertically.\n\nWhat is the pressure experienced by the top side of the bottom box? (g = 10 m/s²)",
+      "options": [
+        "1500 Pa",
+        "7500 Pa",
+        "12000 Pa",
+        "24000 Pa",
+        "37500 Pa"
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "The top face of the bottom box carries the six boxes above it:\n\n$$F = 6 \\times 5 \\times 10 = 300\\text{ N}, \\qquad A = 0.2 \\times 0.2 = 0.04\\text{ m}^2$$\n\n$$p = \\frac{300}{0.04} = 7500\\text{ Pa}$$"
+    },
+    {
+      "number": 15,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "An object is thrown vertically upward from the ground. When the object is 15 meters above the ground, the speed of the object is half its initial speed.\n\nWhat is the initial speed of the object?",
+      "options": [
+        "10 m/s",
+        "12 m/s",
+        "15 m/s",
+        "20 m/s",
+        "40 m/s"
+      ],
+      "answer_key": {
+        "value": "D"
+      },
+      "solution_md": "Using $v^2 = v_0^2 - 2gh$ with $v = \\tfrac{v_0}{2}$ and $h = 15$ m:\n\n$$\\frac{v_0^2}{4} = v_0^2 - 300 \\Rightarrow 300 = \\frac{3}{4}v_0^2 \\Rightarrow v_0^2 = 400 \\Rightarrow v_0 = 20\\text{ m/s}$$"
+    },
+    {
+      "number": 16,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Tommy wants to balance a ruler with two erasers placed on one end of the ruler. See the picture below.\n\nIt balances when the finger (fulcrum) is not at the middle of the ruler, but closer to the end with the erasers.\n\nWhich statement is correct?",
+      "image_url": "/exam-images/asmopss-2022/science-secondary/q16.png",
+      "options": [
+        "The total mass on the left side (erasers and ruler) plus the finger (fulcrum) is equal to that on the right side.",
+        "If an eraser is taken off, the fulcrum is moved to the right.",
+        "The fulcrum position is always the same if more erasers are added.",
+        "The ruler's mass is the same as the mass of two erasers.",
+        "If the erasers move slightly to the right, the fulcrum does not move, as long as the erasers are still on the left side of the fulcrum."
+      ],
+      "answer_key": {
+        "value": "B"
+      }
+    },
+    {
+      "number": 17,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "The diagram below shows the apparatus set up to investigate the effect of putting a 10 % glucose solution in a selectively permeable bag (Visking tubing) and surrounding it with water.\n\nSamples from the surrounding water were tested with Benedict's solution after 10 minutes and after 20 minutes. The change in volume of the glucose solution was observed after 20 minutes.\n\nWhich row is correct?\n\n| Row | Benedict's test after 10 min | Benedict's test after 20 min | Volume of glucose solution in Visking tubing |\n| --- | --- | --- | --- |\n| A | green | blue | increased |\n| B | green | orange | increased |\n| C | red | orange | decreased |\n| D | yellow | green | decreased |\n| E | red | blue | increased |",
+      "image_url": "/exam-images/asmopss-2022/science-secondary/q17.png",
+      "options": [
+        "Row A",
+        "Row B",
+        "Row C",
+        "Row D",
+        "Row E"
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "Glucose is small enough to pass through the Visking tubing, so the concentration in the surrounding water keeps rising — the Benedict's colour must move *up* the scale, green → orange, not back down.\n\nMeanwhile the tubing holds the more concentrated solution, so water enters it by osmosis and the volume **increases**. That is row B."
+    },
+    {
+      "number": 18,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Which analogy best fits the concept of a “photosystem” in photosynthesis?",
+      "options": [
+        "An “up” escalator beside a “down” escalator.",
+        "A windmill that harnesses the energy from moving air to turn a wheel.",
+        "A basketball team which passes the ball to a well-positioned player, who can then gain points for the team.",
+        "The sound that comes from a compact disc.",
+        "A contraption which converts sound into the physical movement of a mechanical arm, which then pushes a button."
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "In a photosystem, many antenna pigment molecules absorb photons and pass the energy inward until it reaches the reaction centre, which is the only place where an electron is actually released. That is exactly the basketball team passing the ball to the one player positioned to score."
+    },
+    {
+      "number": 19,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "The following diagram shows spermatogenesis, a meiotic cell division that happens in males.\n\nWhich cell stages have 2 sets of chromosomes?",
+      "image_url": "/exam-images/asmopss-2022/science-secondary/q19.gif",
+      "options": [
+        "Spermatogonia only",
+        "Primary spermatocyte only",
+        "Spermatogonia and primary spermatocyte",
+        "Primary and secondary spermatocyte",
+        "Spermatids"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "Both the spermatogonia and the primary spermatocyte are still **diploid** — the first meiotic division has not happened yet. Halving occurs at meiosis I, so the secondary spermatocytes and the spermatids are haploid."
+    },
+    {
+      "number": 20,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Andy checked a patient's urine. He added Biuret solution to the urine and the urine turned purple.\n\nWhat kind of problem may the patient have?",
+      "options": [
+        "Diabetes insipidus",
+        "Horseshoe kidney",
+        "Albuminuria",
+        "Anuria",
+        "Cystitis"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "The Biuret test turning purple shows **protein** in the urine. Protein in urine is albuminuria (proteinuria), a sign that the glomerular filter is leaking."
+    },
+    {
+      "number": 21,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "The hybridoma method is used for the production of monoclonal antibodies.\n\nWhich two types of cells are used in this method?",
+      "options": [
+        "Stem cell and B-lymphocyte",
+        "Stem cell and T-lymphocyte",
+        "Tumour cell and B-lymphocyte",
+        "Tumour cell and T-lymphocyte",
+        "T-lymphocyte and B-lymphocyte"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "A hybridoma fuses a **B-lymphocyte**, which makes one specific antibody, with a **tumour (myeloma) cell**, which divides indefinitely. The hybrid inherits both traits: it makes a single antibody and keeps on multiplying."
+    },
+    {
+      "number": 22,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Two blocks slide on two different surfaces. Block A slides on a frictionless surface and block B slides on a rough surface. Block A slides to the left, and block B slides to the right. Initially, both blocks have a speed of 10 m/s. After 5 seconds, block B stops.\n\nWhen block B stops, what is the distance between block A and block B?",
+      "options": [
+        "25 m",
+        "50 m",
+        "75 m",
+        "125 m",
+        "150 m"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "Block A keeps its speed, so it travels $10 \\times 5 = 50$ m to the left.\n\nBlock B decelerates uniformly from 10 m/s to 0 in 5 s, so it travels the average speed times the time: $5 \\times 5 = 25$ m to the right.\n\nThey move apart, so the gap is $50 + 25 = 75$ m."
+    },
+    {
+      "number": 23,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Handy makes an electric circuit using a battery, wires, and three resistors. Handy measures the current in each resistor and finds that all the resistors carry the same amount of current.\n\nWhich is the correct statement from the experiment?",
+      "options": [
+        "All resistors have the same value of resistance.",
+        "All resistors are connected in series.",
+        "All resistors absorb the same electric power.",
+        "If all resistors are connected in series, the resistance values are all different.",
+        "If all resistors are connected in parallel, the resistance values are the same."
+      ],
+      "answer_key": {
+        "value": "E"
+      },
+      "solution_md": "Equal currents happen automatically in a series circuit whatever the resistances, so options A, B, C and D all claim more than the measurement allows.\n\nIn a **parallel** circuit, however, each resistor gets the same voltage, so equal currents force equal resistances — statement E is the only one that must be true."
+    },
+    {
+      "number": 24,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "Amir stands on the top of a building and drops a glass to the ground. After hitting the ground, the glass breaks. Amir sees the glass break 8 seconds after he dropped it, and hears the sound of the breaking glass 1 second later.\n\nWhat is the speed of sound in the air at that moment?",
+      "options": [
+        "300 m/s",
+        "320 m/s",
+        "450 m/s",
+        "480 m/s",
+        "600 m/s"
+      ],
+      "answer_key": {
+        "value": "B"
+      },
+      "solution_md": "The height of the building follows from the 8-second fall:\n\n$$h = \\tfrac{1}{2}gt^2 = \\tfrac{1}{2} \\times 10 \\times 8^2 = 320\\text{ m}$$\n\nThe sound covers that same 320 m in 1 second, so its speed is $320$ m/s."
+    },
+    {
+      "number": 25,
+      "part": "mcq",
+      "grading_mode": "exact",
+      "max_points": 4,
+      "prompt_md": "A 10 kg object is on a rough flat surface. The static and kinetic coefficients of friction are 0.4 and 0.25 respectively. A kid pushes the object horizontally and the object moves with a constant velocity of 2 m/s.\n\nWhat is the force given by the kid?",
+      "options": [
+        "0 N",
+        "20 N",
+        "25 N",
+        "50 N",
+        "80 N"
+      ],
+      "answer_key": {
+        "value": "C"
+      },
+      "solution_md": "Constant velocity means zero net force, so the push exactly balances the **kinetic** friction (the object is already moving, so the static coefficient no longer applies):\n\n$$F = μ_k m g = 0.25 \\times 10 \\times 10 = 25\\text{ N}$$"
+    }
+  ]
+}

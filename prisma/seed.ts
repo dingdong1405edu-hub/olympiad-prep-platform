@@ -15,6 +15,7 @@ import { pathToFileURL } from 'node:url';
 import bcrypt from 'bcryptjs';
 import { SEED_MARKER_KEY, SEED_VERSION } from './seed-version';
 import { seedMockExams } from './seed-mock-exam';
+import { seedSiteAssets } from './seed-site-assets';
 import {
   PrismaClient,
   type Difficulty,
@@ -855,6 +856,7 @@ async function printSummary(startedAt: number): Promise<void> {
     assessments,
     flags,
     configs,
+    siteAssets,
   ] = await Promise.all([
     prisma.program.count(),
     prisma.cohort.count(),
@@ -874,6 +876,10 @@ async function printSummary(startedAt: number): Promise<void> {
     prisma.assessment.count(),
     prisma.featureFlag.count(),
     prisma.appConfig.count(),
+    // Đếm và CỘNG DUNG LƯỢNG, không đọc cột `data`: ảnh nằm ngay trong bảng nên
+    // một lệnh findMany vô ý ở đây sẽ kéo cả megabyte vào bộ nhớ chỉ để in ra
+    // một con số.
+    prisma.siteAsset.aggregate({ _count: { _all: true }, _sum: { sizeBytes: true } }),
   ]);
 
   const totalItems = itemsByStatus.reduce((sum, r) => sum + r._count._all, 0);
@@ -904,6 +910,10 @@ async function printSummary(startedAt: number): Promise<void> {
   row('Bài kiểm tra', num(assessments));
   row('Feature flag', num(flags));
   row('Nhóm cấu hình ghi đè', num(configs));
+  row(
+    'Ảnh trang bán hàng',
+    `${num(siteAssets._count._all)}  (${((siteAssets._sum.sizeBytes ?? 0) / 1024 / 1024).toFixed(2)} MB)`,
+  );
   console.log('===========================================================');
   console.log(`  Mật khẩu chung mọi tài khoản mẫu: ${SEED_PASSWORD}`);
   console.log(`  Thời gian nạp: ${((Date.now() - startedAt) / 1000).toFixed(1)} giây`);
@@ -1005,6 +1015,15 @@ export async function seedDatabase(): Promise<void> {
   step(7, 'Đề thi thử chấm bằng AI');
   const mockExams = await seedMockExams(prisma);
   for (const line of mockExams) done(line);
+
+  // Ảnh của trang bán hàng. Đặt sau cùng vì đây là thứ duy nhất trong seed KHÔNG
+  // ghi đè: ô nào admin đã tự tải ảnh thì giữ nguyên ảnh của họ.
+  step(8, 'Ảnh trang bán hàng');
+  const siteAssets = await seedSiteAssets(prisma);
+  done(
+    `${siteAssets.inserted} ảnh nạp mới (${(siteAssets.bytes / 1024 / 1024).toFixed(2)} MB)` +
+      `${siteAssets.kept > 0 ? `, ${siteAssets.kept} ô giữ nguyên ảnh đang có` : ''}`,
+  );
 
   // Cột mốc được ghi CUỐI CÙNG, sau khi mọi bước đều xong. Nhờ vậy nó vừa là
   // dấu "đã nạp xong phiên bản này", vừa là bằng chứng lần nạp không chết giữa

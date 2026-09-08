@@ -63,12 +63,76 @@ const SYMBOLS: Record<string, string> = {
   sum: '∑',
   prod: '∏',
   percent: '%',
+  // Chữ Hy Lạp còn thiếu — đề lý/hóa dùng ρ (khối lượng riêng), Δ (biến thiên).
+  delta: 'δ',
+  Delta: 'Δ',
+  epsilon: 'ε',
+  varepsilon: 'ε',
+  lambda: 'λ',
+  mu: 'μ',
+  rho: 'ρ',
+  sigma: 'σ',
+  Sigma: 'Σ',
+  phi: 'φ',
+  varphi: 'φ',
+  omega: 'ω',
+  Omega: 'Ω',
+  // Ô trống trong đề điền số, và ký hiệu phép toán tự định nghĩa.
+  blacksquare: '■',
+  square: '□',
+  dagger: '†',
+  ddagger: '‡',
+  // Mũi tên và quan hệ.
+  leftarrow: '←',
+  gets: '←',
+  uparrow: '↑',
+  downarrow: '↓',
+  mapsto: '↦',
+  Leftarrow: '⇐',
+  Leftrightarrow: '⇔',
+  Longrightarrow: '⟹',
+  implies: '⟹',
+  Longleftrightarrow: '⟺',
+  iff: '⟺',
+  propto: '∝',
+  sim: '∼',
+  simeq: '≃',
+  cong: '≅',
+  ll: '≪',
+  gg: '≫',
+  supset: '⊃',
+  supseteq: '⊇',
+  forall: '∀',
+  exists: '∃',
+  partial: '∂',
+  int: '∫',
+  setminus: '\\',
+  bullet: '•',
+  ast: '∗',
+  star: '⋆',
+  prime: '′',
 };
 
 /** Lệnh chỉ để canh chữ — bỏ đi, thay bằng khoảng trắng. */
 const SPACING = new Set(['quad', 'qquad', ',', ';', ':', '!', ' ']);
-/** Lệnh bao ngoặc co giãn — bỏ chính lệnh, giữ dấu ngoặc đi kèm. */
-const SIZING = new Set(['left', 'right', 'big', 'Big', 'bigg', 'Bigg', 'displaystyle', 'text', 'mathrm']);
+/**
+ * Lệnh bao ngoặc co giãn — bỏ chính lệnh, giữ dấu ngoặc đi kèm.
+ *
+ * `operatorname` nằm đây vì phần thân của nó (`\operatorname{lcm}` → `lcm`) vốn
+ * đã là chữ thường đứng, đúng thứ cần hiện; bỏ lệnh đi là ra ngay.
+ */
+const SIZING = new Set([
+  'left',
+  'right',
+  'big',
+  'Big',
+  'bigg',
+  'Bigg',
+  'displaystyle',
+  'text',
+  'mathrm',
+  'operatorname',
+]);
 
 /** Đọc một nhóm `{...}` cân bằng, hoặc một ký tự nếu không có ngoặc. */
 function readGroup(src: string, start: number): { body: string; next: number } {
@@ -110,7 +174,12 @@ function renderTex(src: string, keyPrefix: string): ReactNode[] {
       const command = match?.[1] ?? '';
       index += (match?.[0] ?? '\\').length;
 
-      if (command === 'frac' || command === 'dfrac' || command === 'tfrac') {
+      if (
+        command === 'frac' ||
+        command === 'dfrac' ||
+        command === 'tfrac' ||
+        command === 'cfrac'
+      ) {
         const numerator = readGroup(src, index);
         const denominator = readGroup(src, numerator.next);
         index = denominator.next;
@@ -120,6 +189,48 @@ function renderTex(src: string, keyPrefix: string): ReactNode[] {
             <span>{renderTex(numerator.body, nextKey())}</span>
             <span>{renderTex(denominator.body, nextKey())}</span>
           </span>,
+        );
+        continue;
+      }
+
+      // Tổ hợp: hai tầng số như phân số nhưng KHÔNG có gạch ngang, đóng ngoặc lớn.
+      if (command === 'binom' || command === 'dbinom' || command === 'tbinom') {
+        const top = readGroup(src, index);
+        const bottom = readGroup(src, top.next);
+        index = bottom.next;
+        flush();
+        out.push(
+          <span className="tex-binom" key={nextKey()}>
+            <span className="tex-binom-paren">(</span>
+            <span className="tex-binom-stack">
+              <span>{renderTex(top.body, nextKey())}</span>
+              <span>{renderTex(bottom.body, nextKey())}</span>
+            </span>
+            <span className="tex-binom-paren">)</span>
+          </span>,
+        );
+        continue;
+      }
+
+      // Đồng dư: `\pmod{10}` phải ra “(mod 10)”, không phải chữ “pmod”.
+      if (command === 'pmod') {
+        const modulus = readGroup(src, index);
+        index = modulus.next;
+        buffer += ' (mod ';
+        flush();
+        out.push(<span key={nextKey()}>{renderTex(modulus.body, nextKey())}</span>);
+        buffer += ')';
+        continue;
+      }
+
+      if (command === 'textbf') {
+        const body = readGroup(src, index);
+        index = body.next;
+        flush();
+        out.push(
+          <strong className="font-semibold" key={nextKey()}>
+            {renderTex(body.body, nextKey())}
+          </strong>,
         );
         continue;
       }
@@ -189,16 +300,31 @@ export function MathSpan({ tex, display = false }: { tex: string; display?: bool
 // Markdown nội dòng
 // ---------------------------------------------------------------------------
 
-/** Cắt chuỗi theo `$...$`, `**đậm**` và `` `mã` ``. */
+/**
+ * Trả `\$` về dấu `$` bình thường.
+ *
+ * Đề toán tiền tệ viết `\$2` để dấu đô-la khỏi bị hiểu là mở công thức; nếu
+ * không gỡ dấu thoát ở đây thì học sinh đọc phải "\$2".
+ */
+function unescapeDollar(text: string): string {
+  return text.replace(/\\\$/g, '$');
+}
+
+/**
+ * Cắt chuỗi theo `$...$`, `**đậm**` và `` `mã` ``.
+ *
+ * Dấu `$` đã thoát (`\$`) không được tính là mốc mở/đóng công thức — nếu tính
+ * thì "\$2 cà phê và \$4 taxi" biến phần chữ ở giữa thành công thức toán.
+ */
 function renderInline(text: string, keyPrefix: string): ReactNode[] {
   const out: ReactNode[] = [];
-  const pattern = /(\$[^$\n]+\$)|(\*\*[^*\n]+\*\*)|(`[^`\n]+`)/g;
+  const pattern = /((?<!\\)\$(?:[^$\n\\]|\\.)+?(?<!\\)\$)|(\*\*[^*\n]+\*\*)|(`[^`\n]+`)/g;
   let cursor = 0;
   let key = 0;
   let match: RegExpExecArray | null;
 
   while ((match = pattern.exec(text)) !== null) {
-    if (match.index > cursor) out.push(text.slice(cursor, match.index));
+    if (match.index > cursor) out.push(unescapeDollar(text.slice(cursor, match.index)));
     const token = match[0];
     key += 1;
 
@@ -223,7 +349,7 @@ function renderInline(text: string, keyPrefix: string): ReactNode[] {
     cursor = match.index + token.length;
   }
 
-  if (cursor < text.length) out.push(text.slice(cursor));
+  if (cursor < text.length) out.push(unescapeDollar(text.slice(cursor)));
   return out;
 }
 

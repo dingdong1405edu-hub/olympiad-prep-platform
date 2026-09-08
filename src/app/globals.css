@@ -768,6 +768,26 @@ body {
   padding: 0.05em 0.28em 0;
 }
 
+/* Tổ hợp C(n,k): hai tầng số trong ngoặc lớn, KHÔNG gạch ngang như phân số */
+.tex-binom {
+  display: inline-flex;
+  align-items: center;
+  margin: 0 0.1em;
+}
+.tex-binom-paren {
+  font-size: 1.9em;
+  line-height: 0.8;
+  font-weight: 300;
+}
+.tex-binom-stack {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 0.15em;
+  line-height: 1.1;
+  font-size: 0.92em;
+}
+
 /* Căn bậc hai: dấu √ đã in ở trước, phần này là vạch ngang phủ lên biểu thức */
 .tex-sqrt {
   border-top: 1px solid currentColor;
