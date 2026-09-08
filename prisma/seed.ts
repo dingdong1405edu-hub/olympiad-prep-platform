@@ -15,6 +15,7 @@ import { pathToFileURL } from 'node:url';
 import bcrypt from 'bcryptjs';
 import { SEED_MARKER_KEY, SEED_VERSION } from './seed-version';
 import { seedMockExams } from './seed-mock-exam';
+import { seedSiteAssets } from './seed-site-assets';
 import {
   PrismaClient,
   type Difficulty,
@@ -1005,6 +1006,15 @@ export async function seedDatabase(): Promise<void> {
   step(7, 'Đề thi thử chấm bằng AI');
   const mockExams = await seedMockExams(prisma);
   for (const line of mockExams) done(line);
+
+  // Ảnh của trang bán hàng. Đặt sau cùng vì đây là thứ duy nhất trong seed KHÔNG
+  // ghi đè: ô nào admin đã tự tải ảnh thì giữ nguyên ảnh của họ.
+  step(8, 'Ảnh trang bán hàng');
+  const siteAssets = await seedSiteAssets(prisma);
+  done(
+    `${siteAssets.inserted} ảnh nạp mới (${(siteAssets.bytes / 1024 / 1024).toFixed(2)} MB)` +
+      `${siteAssets.kept > 0 ? `, ${siteAssets.kept} ô giữ nguyên ảnh đang có` : ''}`,
+  );
 
   // Cột mốc được ghi CUỐI CÙNG, sau khi mọi bước đều xong. Nhờ vậy nó vừa là
   // dấu "đã nạp xong phiên bản này", vừa là bằng chứng lần nạp không chết giữa
