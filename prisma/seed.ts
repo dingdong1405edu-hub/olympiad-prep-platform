@@ -250,6 +250,7 @@ async function seedCatalog(): Promise<CatalogResult> {
         active: true,
         tagline: c.tagline,
         longDescription: c.longDescription,
+        introVideoUrl: c.introVideoUrl,
         outcomes: c.outcomes as Prisma.InputJsonValue,
         syllabus: c.syllabus as Prisma.InputJsonValue,
       },
@@ -259,6 +260,7 @@ async function seedCatalog(): Promise<CatalogResult> {
         active: true,
         tagline: c.tagline,
         longDescription: c.longDescription,
+        introVideoUrl: c.introVideoUrl,
         outcomes: c.outcomes as Prisma.InputJsonValue,
         syllabus: c.syllabus as Prisma.InputJsonValue,
       },
@@ -1016,13 +1018,15 @@ export async function seedDatabase(): Promise<void> {
   const mockExams = await seedMockExams(prisma);
   for (const line of mockExams) done(line);
 
-  // Ảnh của trang bán hàng. Đặt sau cùng vì đây là thứ duy nhất trong seed KHÔNG
-  // ghi đè: ô nào admin đã tự tải ảnh thì giữ nguyên ảnh của họ.
+  // Ảnh của trang bán hàng. Ảnh seed cũ được làm mới theo bộ hiện hành, còn ảnh
+  // admin đã tự tải vẫn giữ nguyên trừ khi chủ động đặt SEED_SITE_ASSETS_FORCE=1.
   step(8, 'Ảnh trang bán hàng');
   const siteAssets = await seedSiteAssets(prisma);
   done(
-    `${siteAssets.inserted} ảnh nạp mới (${(siteAssets.bytes / 1024 / 1024).toFixed(2)} MB)` +
-      `${siteAssets.kept > 0 ? `, ${siteAssets.kept} ô giữ nguyên ảnh đang có` : ''}`,
+    `${siteAssets.inserted} ảnh nạp mới, ${siteAssets.updated} ảnh mẫu cập nhật ` +
+      `(${(siteAssets.bytes / 1024 / 1024).toFixed(2)} MB)` +
+      `${siteAssets.kept > 0 ? `, ${siteAssets.kept} ô giữ nguyên ảnh đang có` : ''}` +
+      `${siteAssets.removed > 0 ? `, ${siteAssets.removed} ảnh seed cũ đã gỡ` : ''}`,
   );
 
   // Cột mốc được ghi CUỐI CÙNG, sau khi mọi bước đều xong. Nhờ vậy nó vừa là

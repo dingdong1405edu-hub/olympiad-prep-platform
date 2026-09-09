@@ -355,9 +355,25 @@ export interface CourseSeed {
   description: string;
   tagline: string;
   longDescription: string;
+  /** Video mở đầu theo môn, phát tại trang giới thiệu khóa học. */
+  introVideoUrl: string;
   outcomes: string[];
   syllabus: { title: string; detail: string }[];
 }
+
+/**
+ * Video nhập môn được chọn theo từng môn trong catalog. Cùng một môn dùng chung
+ * video mở đầu để mọi khóa đều có tài liệu xem được ngay; quản trị viên vẫn có
+ * thể thay bằng video chuyên biệt cho từng khóa ở khu quản trị.
+ */
+const INTRO_VIDEO_BY_SUBJECT: Record<Subject, string> = {
+  MATH: 'https://www.youtube.com/watch?v=HhEu0rfVclw',
+  SCIENCE: 'https://www.youtube.com/watch?v=X2Ph2G9qXnE',
+  PHYSICS: 'https://www.youtube.com/watch?v=hp7ObUoXOd4',
+  CHEMISTRY: 'https://www.youtube.com/watch?v=Zkt2DaBE4qI',
+  BIOLOGY: 'https://www.youtube.com/watch?v=Hmwvj9X4GNY',
+  IT: 'https://www.youtube.com/watch?v=5aCgEkR-gtM',
+};
 
 /** Tên khóa dạng "NEO – Khối 6–7 – Toán". */
 export function courseName(programCode: string, gradeBand: GradeBand, subject: Subject): string {
@@ -400,6 +416,7 @@ export function buildCourses(programs: ProgramSeed[] = PROGRAMS): CourseSeed[] {
             'Con bắt đầu bằng bài kiểm tra đầu vào 15 câu. Xong bài là có ngay bản đồ kỹ năng: mạnh ở đâu, hổng ở đâu, nên sửa theo thứ tự nào. Từ đó hệ thống dựng lộ trình theo ngày vừa với quỹ thời gian gia đình khai báo.',
             'Mỗi 14 ngày có một bài kiểm tra tiến bộ dùng câu neo để đo mức tiến bộ thật, kèm buổi tư vấn 20 phút với giáo viên đã đọc trước toàn bộ hồ sơ của con.',
           ].join('\n\n'),
+          introVideoUrl: INTRO_VIDEO_BY_SUBJECT[subject],
           outcomes: [
             `Biết chính xác con đang hổng kỹ năng ${subjectName.toLowerCase()} nào và ở mức nào`,
             'Có lộ trình theo ngày vừa sức, tự dàn lại lịch khi học không kịp',

@@ -7,12 +7,12 @@
  * lần đổi một tấm ảnh là một dòng diff dài hai triệu ký tự. Để nguyên dạng nhị
  * phân thì git nén tốt hơn và `git diff` chỉ nói "binary file changed".
  *
- * QUY TẮC QUAN TRỌNG NHẤT Ở ĐÂY: chỉ ghi vào ô CÒN TRỐNG.
+ * QUY TẮC QUAN TRỌNG NHẤT Ở ĐÂY: không đè ảnh do admin tự tải.
  *
- * Seed chạy lại ở mọi lần deploy có đổi `SEED_VERSION`. Nếu nó ghi đè thì tấm
- * ảnh admin vừa thay trên bản chạy thật sẽ lặng lẽ quay về ảnh mẫu sau lần
- * deploy kế tiếp, và không ai hiểu vì sao. Ảnh mẫu là thứ để môi trường mới có
- * cái mà hiện — không phải nguồn sự thật đè lên người vận hành.
+ * Seed chạy lại ở mọi lần deploy có đổi `SEED_VERSION`. Các ảnh do seed trước
+ * đó tạo ra được cập nhật để bản product nhận bộ ảnh mới; ảnh được admin tải
+ * qua giao diện thì giữ nguyên. Khi chủ động cần ghi đè toàn bộ, chạy seed với
+ * `SEED_SITE_ASSETS_FORCE=1`.
  *
  * Hệ quả cần biết: đổi một ảnh mẫu trong thư mục này KHÔNG cập nhật được các
  * môi trường đã seed. Muốn đổi ảnh ở đó thì gỡ ảnh trong `/quan-tri/giao-dien`
@@ -20,8 +20,9 @@
  * cho việc này.
  */
 import { readFileSync } from 'node:fs';
-import type { PrismaClient } from '@prisma/client';
-import { resolveImageSlot } from '../src/lib/copy/images';
+import type { GradeBand, PrismaClient } from '@prisma/client';
+import { courseCoverSlot, resolveImageSlot } from '../src/lib/copy/images';
+import { buildCourses } from './seed-data/catalog';
 
 interface SeedAsset {
   /** Khóa ô ảnh; phải khớp `SITE_IMAGE_GROUPS` trong `src/lib/copy/images.ts`. */
@@ -33,46 +34,58 @@ interface SeedAsset {
 }
 
 /**
- * Chụp lại đúng những ô đã được dựng trên máy phát triển.
- *
- * Không có ô nào của `home.gallery.4` hay `nav.brand.logo`: hai ô đó cố ý để
- * trống, và trang đã có sẵn đường lui cho chúng (dồn lưới lại, dùng khiên vẽ
- * sẵn). Ô trống trong danh sách này là một lựa chọn, không phải thiếu sót.
+ * Chụp lại đúng những ô cố định đã được dựng trên máy phát triển. Ảnh cover
+ * của khóa được bổ sung bên dưới từ danh sách course seed để mọi khóa đều có
+ * ảnh khi chạy lại database mới.
  */
-const SEED_ASSETS: SeedAsset[] = [
-  { slot: 'home.hero.background', file: 'home.hero.background.webp', mimeType: 'image/webp', width: 600, height: 315 },
-  { slot: 'home.hero.portrait', file: 'home.hero.portrait.webp', mimeType: 'image/webp', width: 1000, height: 666 },
-  { slot: 'home.hero.skillmap', file: 'home.hero.skillmap.webp', mimeType: 'image/webp', width: 1024, height: 768 },
-  { slot: 'home.features.1.image', file: 'home.features.1.image.webp', mimeType: 'image/webp', width: 1600, height: 1072 },
-  { slot: 'home.features.2.image', file: 'home.features.2.image.webp', mimeType: 'image/webp', width: 1319, height: 879 },
-  { slot: 'home.features.3.image', file: 'home.features.3.image.webp', mimeType: 'image/webp', width: 1600, height: 1000 },
-  { slot: 'home.gallery.1', file: 'home.gallery.1.webp', mimeType: 'image/webp', width: 1600, height: 1066 },
-  { slot: 'home.gallery.2', file: 'home.gallery.2.webp', mimeType: 'image/webp', width: 1200, height: 800 },
-  { slot: 'home.gallery.3', file: 'home.gallery.3.webp', mimeType: 'image/webp', width: 2000, height: 1334 },
-  { slot: 'home.parents.photo', file: 'home.parents.photo.webp', mimeType: 'image/webp', width: 600, height: 315 },
-  { slot: 'home.parents.report', file: 'home.parents.report.webp', mimeType: 'image/webp', width: 1341, height: 894 },
-  { slot: 'home.cta.image', file: 'home.cta.image.webp', mimeType: 'image/webp', width: 1341, height: 894 },
-  { slot: 'site.og.image', file: 'site.og.image.webp', mimeType: 'image/webp', width: 870, height: 580 },
+const STATIC_SEED_ASSETS: SeedAsset[] = [
+  { slot: 'home.hero.background', file: 'home.hero.background.webp', mimeType: 'image/webp', width: 2000, height: 1125 },
+  { slot: 'home.hero.portrait', file: 'home.hero.portrait.webp', mimeType: 'image/webp', width: 750, height: 1000 },
+  { slot: 'home.hero.skillmap', file: 'home.hero.skillmap.webp', mimeType: 'image/webp', width: 1400, height: 875 },
+  { slot: 'home.features.1.image', file: 'home.features.1.image.webp', mimeType: 'image/webp', width: 1400, height: 875 },
+  { slot: 'home.features.2.image', file: 'home.features.2.image.webp', mimeType: 'image/webp', width: 1400, height: 875 },
+  { slot: 'home.features.3.image', file: 'home.features.3.image.webp', mimeType: 'image/webp', width: 1400, height: 875 },
+  { slot: 'home.gallery.1', file: 'home.gallery.1.webp', mimeType: 'image/webp', width: 1200, height: 900 },
+  { slot: 'home.gallery.2', file: 'home.gallery.2.webp', mimeType: 'image/webp', width: 900, height: 900 },
+  { slot: 'home.gallery.3', file: 'home.gallery.3.webp', mimeType: 'image/webp', width: 900, height: 900 },
+  { slot: 'home.parents.photo', file: 'home.parents.photo.webp', mimeType: 'image/webp', width: 1000, height: 750 },
+  { slot: 'home.parents.report', file: 'home.parents.report.webp', mimeType: 'image/webp', width: 1400, height: 875 },
+  { slot: 'home.cta.image', file: 'home.cta.image.webp', mimeType: 'image/webp', width: 1600, height: 686 },
+  { slot: 'site.og.image', file: 'site.og.image.webp', mimeType: 'image/webp', width: 1200, height: 630 },
 
-  /*
-   * Ảnh đại diện bốn khóa Toán Olympic.
-   *
-   * Đây là họ ô ĐỘNG (`course.<mã>-<khối>-<môn>.cover`, xem images.ts), nên khác
-   * mọi dòng phía trên: khóa ô không có trong `SITE_IMAGE_GROUPS` mà được nhận
-   * diện bằng khuôn. Ảnh vẽ bằng mã, không phải ảnh chụp — chọn vậy vì bộ dữ
-   * liệu demo phải đi kèm repo mà không kéo theo vấn đề bản quyền ảnh người thật.
-   * Admin thay bằng ảnh thật ngay trong biểu mẫu sửa khóa học.
-   */
-  { slot: 'course.olp-a-math.cover', file: 'course.olp-a-math.cover.png', mimeType: 'image/png', width: 1200, height: 675 },
-  { slot: 'course.olp-b-math.cover', file: 'course.olp-b-math.cover.png', mimeType: 'image/png', width: 1200, height: 675 },
-  { slot: 'course.olp-c-math.cover', file: 'course.olp-c-math.cover.png', mimeType: 'image/png', width: 1200, height: 675 },
-  { slot: 'course.olp-d-math.cover', file: 'course.olp-d-math.cover.png', mimeType: 'image/png', width: 1200, height: 675 },
 ];
+
+/*
+ * Dùng lại bộ cover gốc theo khối, tất cả đều là PNG 1200×675. Các slot database
+ * vẫn riêng từng khóa nên quản trị viên thay ảnh một khóa không ảnh hưởng các
+ * khóa khác. Nhờ cùng tỉ lệ/kích thước, lưới danh mục không bị lệch khi load.
+ */
+const COURSE_COVER_BY_BAND: Record<GradeBand, Omit<SeedAsset, 'slot'>> = {
+  A: { file: 'course.olp-a-math.cover.png', mimeType: 'image/png', width: 1200, height: 675 },
+  B: { file: 'course.olp-b-math.cover.png', mimeType: 'image/png', width: 1200, height: 675 },
+  C: { file: 'course.olp-c-math.cover.png', mimeType: 'image/png', width: 1200, height: 675 },
+  D: { file: 'course.olp-d-math.cover.png', mimeType: 'image/png', width: 1200, height: 675 },
+};
+
+const COURSE_COVER_ASSETS: SeedAsset[] = buildCourses().map((course) => ({
+  slot: courseCoverSlot(course.programCode, course.gradeBand, course.subject),
+  ...COURSE_COVER_BY_BAND[course.gradeBand],
+}));
+
+const SEED_ASSETS: SeedAsset[] = [...STATIC_SEED_ASSETS, ...COURSE_COVER_ASSETS];
 
 export interface SeedSiteAssetsResult {
   inserted: number;
+  updated: number;
   kept: number;
+  removed: number;
   bytes: number;
+}
+
+const SEED_ASSET_VERSION = 'seed:2026.09.09-uniform-course-covers';
+
+function isSeedAssetVersion(version: string): boolean {
+  return version === 'seed' || version.startsWith('seed:');
 }
 
 export async function seedSiteAssets(prisma: PrismaClient): Promise<SeedSiteAssetsResult> {
@@ -92,38 +105,64 @@ export async function seedSiteAssets(prisma: PrismaClient): Promise<SeedSiteAsse
     );
   }
 
-  // Đọc một lượt xem ô nào đã có người ghi, thay vì hỏi database từng ô một.
-  const existing = new Set(
-    (await prisma.siteAsset.findMany({ select: { slot: true } })).map((row) => row.slot),
+  // `home.gallery.4` từng là ảnh tạo từ thư mục tham khảo cục bộ. Chỉ xóa bản
+  // do seed tạo, tuyệt đối không đụng tới ảnh quản trị viên đã tự tải lên ô này.
+  const removed = await prisma.siteAsset.deleteMany({
+    where: {
+      slot: 'home.gallery.4',
+      OR: [{ version: 'seed' }, { version: { startsWith: 'seed:' } }],
+    },
+  });
+
+  // Đọc một lượt để chỉ cập nhật ảnh được seed ở lần trước. Bản admin tải lên
+  // mang version dạng timestamp, nên được giữ nguyên trừ khi có lệnh ép rõ ràng.
+  const existing = new Map(
+    (await prisma.siteAsset.findMany({ select: { slot: true, version: true } })).map((row) => [
+      row.slot,
+      row.version,
+    ]),
   );
+  const force = process.env.SEED_SITE_ASSETS_FORCE === '1';
 
   let inserted = 0;
+  let updated = 0;
+  let kept = 0;
   let bytes = 0;
 
   for (const asset of SEED_ASSETS) {
-    if (existing.has(asset.slot)) continue;
+    const currentVersion = existing.get(asset.slot);
+    if (currentVersion && !force && !isSeedAssetVersion(currentVersion)) {
+      kept += 1;
+      continue;
+    }
 
     const data = readFileSync(new URL(`./seed-data/site-assets/${asset.file}`, import.meta.url));
 
-    await prisma.siteAsset.create({
-      data: {
-        slot: asset.slot,
-        mimeType: asset.mimeType,
-        sizeBytes: data.byteLength,
-        width: asset.width,
-        height: asset.height,
-        data,
-        // Cùng một `version` cho mọi lần seed là CỐ Ý: chạy lại seed không được
-        // làm đổi URL ảnh, nếu không mọi trình duyệt và mọi bộ nhớ đệm của
-        // Facebook, Zalo sẽ phải tải lại toàn bộ ảnh chỉ vì một lần deploy.
-        version: 'seed',
-        updatedById: null,
-      },
-    });
+    const record = {
+      mimeType: asset.mimeType,
+      sizeBytes: data.byteLength,
+      width: asset.width,
+      height: asset.height,
+      data,
+      version: SEED_ASSET_VERSION,
+      updatedById: null,
+    };
 
-    inserted += 1;
+    if (currentVersion) {
+      await prisma.siteAsset.update({ where: { slot: asset.slot }, data: record });
+      updated += 1;
+    } else {
+      await prisma.siteAsset.create({
+        data: {
+          slot: asset.slot,
+          ...record,
+        },
+      });
+      inserted += 1;
+    }
+
     bytes += data.byteLength;
   }
 
-  return { inserted, kept: SEED_ASSETS.length - inserted, bytes };
+  return { inserted, updated, kept, removed: removed.count, bytes };
 }

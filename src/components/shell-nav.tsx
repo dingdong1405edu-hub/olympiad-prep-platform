@@ -75,7 +75,7 @@ export function ShellNav({ items, className }: { items: ShellNavItem[]; classNam
           onClick={() => setOpen((value) => !value)}
           aria-expanded={open}
           aria-haspopup="menu"
-          className="press flex w-full items-center justify-between gap-2 rounded-lg bg-warm-50 px-3 py-2 text-sm font-semibold text-warm-900 ring-1 ring-warm-100"
+          className="press flex min-h-11 w-full items-center justify-between gap-2 rounded-lg bg-warm-50 px-3 py-2 text-sm font-semibold text-warm-900 ring-1 ring-warm-100"
         >
           <span className="truncate">{current?.label ?? 'Chọn mục'}</span>
           <span className="flex shrink-0 items-center gap-1.5 text-xs font-medium text-warm-500">
@@ -113,7 +113,7 @@ export function ShellNav({ items, className }: { items: ShellNavItem[]; classNam
                   role="menuitem"
                   aria-current={active ? 'page' : undefined}
                   className={cx(
-                    'block rounded-lg px-3 py-2.5 text-sm transition-colors',
+                    'flex min-h-11 items-center rounded-lg px-3 py-2.5 text-sm transition-colors',
                     active
                       ? 'bg-warm-50 font-semibold text-warm-900'
                       : 'font-medium text-warm-600 hover:bg-warm-50 hover:text-warm-900',

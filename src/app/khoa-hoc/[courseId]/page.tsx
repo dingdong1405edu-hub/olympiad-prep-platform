@@ -63,6 +63,9 @@ export default async function CourseDetailPage({
   const cover = img(courseCoverSlot(course.program.code, course.gradeBand, course.subject));
   const hasIntro = Boolean(course.longDescription || course.introVideoUrl || cover);
   const buyHref = routes.checkout(course.id);
+  const youtubeUrl =
+    course.introVideoUrl ??
+    `https://www.youtube.com/results?search_query=${encodeURIComponent(`${course.name} ${course.subjectLabel} Olympic`)}`;
 
   return (
     <SiteShell signedIn={Boolean(session)}>
@@ -136,6 +139,18 @@ export default async function CourseDetailPage({
                 {t('course.cta.button')}
                 <span aria-hidden>→</span>
               </Link>
+
+              <a
+                href={youtubeUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="mt-3 flex min-h-11 w-full items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-[13px] font-semibold text-brand-700 ring-1 ring-warm-200 transition-colors hover:bg-warm-50 hover:text-warm-900"
+              >
+                <svg viewBox="0 0 24 24" className="h-4 w-4 fill-current" aria-hidden>
+                  <path d="M21.58 7.19a2.99 2.99 0 0 0-2.1-2.12C17.63 4.57 12 4.57 12 4.57s-5.63 0-7.48.5a3 3 0 0 0-2.1 2.12A31.03 31.03 0 0 0 1.92 12c0 1.61.2 3.22.5 4.81a2.99 2.99 0 0 0 2.1 2.12c1.85.5 7.48.5 7.48.5s5.63 0 7.48-.5a2.99 2.99 0 0 0 2.1-2.12c.3-1.59.5-3.2.5-4.81 0-1.61-.2-3.22-.5-4.81ZM9.99 15.3V8.7L15.7 12l-5.71 3.3Z" />
+                </svg>
+                Xem video trên YouTube
+              </a>
 
               <p className="mt-3 text-center text-[12px] text-warm-400">
                 {course.publishedItemCount} câu hỏi · {course.skillCount} kỹ năng
