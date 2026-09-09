@@ -124,7 +124,12 @@ export function AppShell({
   return (
     <div className="flex min-h-screen flex-col">
       <header className="sticky top-0 z-30 border-b border-warm-100 bg-white/88 backdrop-blur-md">
-        <div className={cx('mx-auto flex items-center gap-3 px-4 py-2.5 sm:gap-4', container)}>
+        <div
+          className={cx(
+            'mx-auto flex flex-wrap items-center gap-3 px-4 py-2.5 sm:flex-nowrap sm:gap-4',
+            container,
+          )}
+        >
           <Wordmark href={homeHref} compact />
 
           {/* Dải chuyển khu vực — chỉ hiện khi tài khoản thật sự vào được nhiều
@@ -135,7 +140,7 @@ export function AppShell({
           {showAreaSwitcher ? (
             <nav
               aria-label="Chuyển khu vực"
-              className="flex shrink-0 items-center gap-0.5 rounded-lg bg-warm-50 p-0.5 ring-1 ring-warm-100"
+              className="order-3 flex basis-full items-center gap-0.5 overflow-x-auto rounded-lg bg-warm-50 p-0.5 ring-1 ring-warm-100 sm:order-none sm:basis-auto"
             >
               {areas.map((item) => (
                 <Link
@@ -143,7 +148,7 @@ export function AppShell({
                   href={AREA_META[item].href}
                   aria-current={item === area ? 'page' : undefined}
                   className={cx(
-                    'rounded-md px-2 py-1.5 text-xs font-semibold whitespace-nowrap transition-colors sm:px-2.5 sm:text-sm',
+                    'flex min-h-11 shrink-0 items-center rounded-md px-2 py-1.5 text-xs font-semibold whitespace-nowrap transition-colors sm:min-h-0 sm:px-2.5 sm:text-sm',
                     item === area
                       ? 'bg-white text-warm-900 shadow-[0_1px_2px_rgb(120_70_45/0.12)]'
                       : 'text-warm-500 hover:text-warm-900',
@@ -165,7 +170,7 @@ export function AppShell({
             <div className="flex items-center gap-1.5 sm:gap-2">
               <Link
                 href={routes.account()}
-                className="flex items-center gap-2 rounded-lg px-2 py-1.5 transition-colors hover:bg-warm-50"
+                className="flex min-h-11 items-center gap-2 rounded-lg px-2 py-1.5 transition-colors hover:bg-warm-50"
               >
                 <span
                   aria-hidden
@@ -184,7 +189,7 @@ export function AppShell({
               <form action={API.logout} method="post">
                 <button
                   type="submit"
-                  className="press flex items-center gap-1.5 rounded-lg px-2.5 py-2 text-sm font-medium text-warm-500 transition-colors hover:bg-rose-50 hover:text-rose-600"
+                  className="press flex min-h-11 items-center gap-1.5 rounded-lg px-2.5 py-2 text-sm font-medium text-warm-500 transition-colors hover:bg-rose-50 hover:text-rose-600"
                 >
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
                     <path

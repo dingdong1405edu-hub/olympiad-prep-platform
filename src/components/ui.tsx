@@ -46,7 +46,7 @@ const BUTTON_SIZE: Record<ButtonSize, string> = {
 };
 
 const BUTTON_BASE =
-  'press inline-flex items-center justify-center rounded-lg font-medium transition-all duration-200 disabled:pointer-events-none disabled:opacity-55';
+  'press inline-flex max-w-full items-center justify-center rounded-lg text-center leading-snug font-medium whitespace-normal transition-all duration-200 disabled:pointer-events-none disabled:opacity-55';
 
 /** Vòng quay không cần hook — chỉ là SVG có animation CSS. */
 function InlineSpinner() {
@@ -185,14 +185,14 @@ export function PageHeader({
 }) {
   return (
     <div className="animate-fade-up mb-6 flex flex-wrap items-end justify-between gap-3">
-      <div>
+      <div className="min-w-0">
         {eyebrow ? (
           <p className="mb-1 text-xs font-semibold tracking-wider text-brand-700 uppercase">
             {eyebrow}
           </p>
         ) : null}
-        <h1 className="text-2xl font-bold tracking-tight text-ink-900">{title}</h1>
-        {subtitle ? <p className="mt-1 text-sm text-ink-500">{subtitle}</p> : null}
+        <h1 className="break-words text-2xl font-bold tracking-tight text-ink-900">{title}</h1>
+        {subtitle ? <p className="mt-1 break-words text-sm text-ink-500">{subtitle}</p> : null}
       </div>
       {action}
     </div>
@@ -267,7 +267,7 @@ export function Badge({
   return (
     <span
       className={cx(
-        'inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium whitespace-nowrap',
+        'inline-flex max-w-full items-center gap-1.5 rounded-full px-2.5 py-0.5 text-left text-xs leading-snug font-medium whitespace-normal break-words',
         BADGE_TONE[tone],
         className,
       )}
@@ -535,16 +535,16 @@ export function StatTile({
   return (
     <div
       className={cx(
-        'hover-lift rounded-xl bg-white p-4 ring-1 ring-ink-100 shadow-[0_1px_3px_rgb(120_70_45/0.05)]',
+        'hover-lift min-w-0 rounded-xl bg-white p-4 ring-1 ring-ink-100 shadow-[0_1px_3px_rgb(120_70_45/0.05)]',
         className,
       )}
     >
       <div className="flex items-start justify-between gap-2">
-        <p className="text-xs font-medium tracking-wide text-ink-500 uppercase">{label}</p>
+        <p className="break-words text-xs font-medium tracking-wide text-ink-500 uppercase">{label}</p>
         {icon ? <span className="text-ink-300">{icon}</span> : null}
       </div>
-      <p className="mt-1.5 text-2xl font-bold text-ink-900">{value}</p>
-      <div className="mt-1 flex items-center gap-2 text-sm text-ink-500">
+      <p className="mt-1.5 break-words text-2xl font-bold text-ink-900">{value}</p>
+      <div className="mt-1 flex min-w-0 flex-wrap items-start gap-1.5 text-sm text-ink-500">
         {typeof trend === 'number' && trend !== 0 ? (
           <span
             className={cx(
@@ -555,7 +555,15 @@ export function StatTile({
             {trend > 0 ? '↑' : '↓'} {Math.abs(trend)}
           </span>
         ) : null}
-        {hint ? tone ? <Badge tone={tone}>{hint}</Badge> : <span>{hint}</span> : null}
+        {hint ? (
+          tone ? (
+            <Badge tone={tone} className="max-w-full text-left">
+              {hint}
+            </Badge>
+          ) : (
+            <span className="min-w-0 basis-full break-words">{hint}</span>
+          )
+        ) : null}
       </div>
     </div>
   );

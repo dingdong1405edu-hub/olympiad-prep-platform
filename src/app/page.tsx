@@ -141,7 +141,7 @@ export default async function HomePage() {
 
               <h1 className="animate-fade-up delay-1 font-display mt-6 max-w-[15ch] text-[40px] leading-[1.04] font-bold tracking-tight text-warm-900 text-balance sm:text-[54px] lg:text-[68px]">
                 {t('home.hero.title.before')}{' '}
-                <span className="flame-underline flame-text">
+                <span className="flame-underline flame-text sm:whitespace-nowrap">
                   {t('home.hero.title.highlight')}
                   <svg viewBox="0 0 300 12" preserveAspectRatio="none" aria-hidden>
                     <defs>

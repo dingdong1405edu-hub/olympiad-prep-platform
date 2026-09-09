@@ -547,7 +547,6 @@ body {
  */
 .flame-underline {
   position: relative;
-  white-space: nowrap;
 }
 .flame-underline > svg {
   position: absolute;
@@ -748,6 +747,8 @@ body {
 
 .tex-display {
   display: inline-block;
+  max-width: 100%;
+  overflow-x: auto;
   font-size: 1.15em;
 }
 

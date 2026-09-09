@@ -307,10 +307,10 @@ function CourseCard({ card }: { card: StudyCard }) {
 
 function Stat({ label, value, hint }: { label: string; value: React.ReactNode; hint: string }) {
   return (
-    <div className="hover-lift rounded-xl bg-white p-4 ring-1 ring-ink-100 shadow-[0_1px_3px_rgb(120_70_45/0.05)]">
-      <p className="text-xs font-medium tracking-wide text-ink-500 uppercase">{label}</p>
-      <p className="mt-1.5 text-2xl font-bold text-ink-900 tabular-nums">{value}</p>
-      <p className="mt-1 text-sm text-ink-500">{hint}</p>
+    <div className="hover-lift min-w-0 rounded-xl bg-white p-4 ring-1 ring-ink-100 shadow-[0_1px_3px_rgb(120_70_45/0.05)]">
+      <p className="break-words text-xs font-medium tracking-wide text-ink-500 uppercase">{label}</p>
+      <p className="mt-1.5 break-words text-2xl font-bold text-ink-900 tabular-nums">{value}</p>
+      <p className="mt-1 break-words text-sm text-ink-500">{hint}</p>
     </div>
   );
 }

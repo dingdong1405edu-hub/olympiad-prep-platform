@@ -181,7 +181,7 @@ export function MarketingHeader({ signedIn, copy }: { signedIn: boolean; copy: S
           <button
             type="button"
             onClick={() => setMenuOpen((open) => !open)}
-            className="press -mr-1 rounded-xl bg-white p-2.5 text-warm-700 shadow-[inset_0_0_0_1.5px_var(--color-warm-250)] transition-colors hover:text-brand-700 lg:hidden"
+            className="press -mr-1 flex min-h-11 min-w-11 items-center justify-center rounded-xl bg-white p-2.5 text-warm-700 shadow-[inset_0_0_0_1.5px_var(--color-warm-250)] transition-colors hover:text-brand-700 lg:hidden"
             aria-label={menuOpen ? 'Đóng menu' : 'Mở menu'}
             aria-expanded={menuOpen}
           >
